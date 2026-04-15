@@ -18,7 +18,7 @@ mount_vm_storage=true
 mount_client=true
 mount_server=true
 container_name="winarena"
-browser_port=8006
+browser_port=9006
 rdp_port=3390
 start_client=true
 agent="navi"
@@ -139,7 +139,7 @@ while [[ $# -gt 0 ]]; do
             echo "  --mount-vm-storage <true/false> : Mount the VM storage directory (default: true)"
             echo "  --mount-client <true/false> : Mount the client directory (default: true)"
             echo "  --mount-server <true/false> : Mount the server directory. Applies only for --mode dev. (default: true)"
-            echo "  --browser-port <port> : Port to expose for connecting to the VM using browser (default: 8006)"
+            echo "  --browser-port <port> : Port to expose for connecting to the VM using browser (default: 9006)"
             echo "  --rdp-port <port> : Port to expose for connecting to the VM using RDP (default: 3390)"
             echo "  --start-client <true/false> : Whether to start the arena client process (default: true)"
             echo "  --agent <navi> : Agent to use for the arena container (default: navi)"
@@ -232,7 +232,7 @@ invoke_docker_container() {
     docker_command+=" --rm"
 
     # Map ports from the container to the host
-    docker_command+=" -p ${browser_port}:8006"
+    docker_command+=" -p ${browser_port}:9006"
     docker_command+=" -p ${rdp_port}:3389"
 
     # Set the container name
