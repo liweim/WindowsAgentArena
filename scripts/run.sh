@@ -15,6 +15,7 @@ use_kvm=true
 ram_size=8G
 cpu_cores=8
 mount_vm_storage=true
+ephemeral_vm_storage=false
 mount_client=true
 mount_server=true
 container_name="winarena"
@@ -25,6 +26,12 @@ agent="navi"
 model="gpt-4-vision-preview"
 som_origin="oss"
 a11y_backend="uia"
+clean_results=true
+worker_id="0"
+num_workers="1"
+result_dir="./results"
+json_name="evaluation_examples_windows/test_all.json"
+diff_lvl="normal"
 gpu_enabled=false
 OPENAI_API_KEY=""
 AZURE_API_KEY=""
@@ -69,6 +76,10 @@ while [[ $# -gt 0 ]]; do
             mount_vm_storage=$2
             shift 2
             ;;
+        --ephemeral-vm-storage)
+            ephemeral_vm_storage=$2
+            shift 2
+            ;;
         --mount-client)
             mount_client=$2
             shift 2
@@ -89,6 +100,26 @@ while [[ $# -gt 0 ]]; do
             start_client=$2
             shift 2
             ;;
+        --clean-results)
+            clean_results=$2
+            shift 2
+            ;;
+        --worker-id)
+            worker_id=$2
+            shift 2
+            ;;
+        --num-workers)
+            num_workers=$2
+            shift 2
+            ;;
+        --result-dir)
+            result_dir=$2
+            shift 2
+            ;;
+        --json-name)
+            json_name=$2
+            shift 2
+            ;;
         --agent)
             agent=$2
             shift 2
@@ -103,6 +134,10 @@ while [[ $# -gt 0 ]]; do
             ;;
         --a11y-backend)
             a11y_backend=$2
+            shift 2
+            ;;
+        --diff-lvl)
+            diff_lvl=$2
             shift 2
             ;;
         --gpu-enabled)
@@ -137,15 +172,22 @@ while [[ $# -gt 0 ]]; do
             echo "  --ram-size <ram_size> : RAM size for the VM (default: 8GB)"
             echo "  --cpu-cores <cpu_cores> : Number of CPU cores for the VM (default: 8)"
             echo "  --mount-vm-storage <true/false> : Mount the VM storage directory (default: true)"
+            echo "  --ephemeral-vm-storage <true/false> : Copy the VM storage to a temporary directory for this run and delete it afterwards. Useful for clean per-run state in Docker mode. (default: false)"
             echo "  --mount-client <true/false> : Mount the client directory (default: true)"
             echo "  --mount-server <true/false> : Mount the server directory. Applies only for --mode dev. (default: true)"
             echo "  --browser-port <port> : Port to expose for connecting to the VM using browser (default: 9006)"
             echo "  --rdp-port <port> : Port to expose for connecting to the VM using RDP (default: 3390)"
             echo "  --start-client <true/false> : Whether to start the arena client process (default: true)"
+            echo "  --clean-results <true/false> : Clean the results directory before running the client (default: true)"
+            echo "  --worker-id <id> : Worker ID for the client process (default: 0)"
+            echo "  --num-workers <num> : Number of workers for the client process (default: 1)"
+            echo "  --result-dir <dir> : Result directory inside the client mount (default: ./results)"
+            echo "  --json-name <path> : Task meta JSON path relative to /client (default: evaluation_examples_windows/test_all.json)"
             echo "  --agent <navi> : Agent to use for the arena container (default: navi)"
             echo "  --model <model>: The model to use (default: gpt-4-vision-preview, available options are: gpt-4o-mini, gpt-4-vision-preview, gpt-4o, gpt-4-1106-vision-preview)"
             echo "  --som-origin <som_origin>: The SoM (Set-of-Mark) origin to use (default: oss, available options are: oss, a11y, mixed-oss, omni, mixed-omni)"
             echo "  --a11y-backend <a11y_backend>: The a11y accessibility backend to use (default: uia, available options are: uia, win32)"
+            echo "  --diff-lvl <level> : Benchmark difficulty level passed to the client (default: normal)"
             echo "  --gpu-enabled <true/false> : Enable GPU support (default: false)"
             echo "  --openai-api-key <key> : The OpenAI API key"
             echo "  --azure-api-key <key> : The Azure OpenAI API key"
@@ -208,15 +250,45 @@ if [ ! -e /dev/kvm ]; then
     use_kvm=false
 fi
 
-# Check if at least one key has been set: OPENAI_API_KEY or both AZURE_API_KEY and AZURE_ENDPOINT
-if [[ -z "$OPENAI_API_KEY" && (-z "$AZURE_API_KEY" || -z "$AZURE_ENDPOINT") ]]; then
-    log_error_exit "Either OPENAI_API_KEY must be set or both AZURE_API_KEY and AZURE_ENDPOINT must be set: $1"
-fi
-
 # Function to build container image
 build_container_image() {
     echo "Building Container Image..."
     source "$SCRIPT_DIR/build-container-image.sh" --mode $mode
+}
+
+ephemeral_vm_storage_dir=""
+
+cleanup_ephemeral_vm_storage() {
+    if [ -n "$ephemeral_vm_storage_dir" ] && [ -d "$ephemeral_vm_storage_dir" ]; then
+        echo "Removing ephemeral VM storage directory: $ephemeral_vm_storage_dir"
+        rm -rf "$ephemeral_vm_storage_dir"
+    fi
+}
+
+prepare_vm_storage_mount_path() {
+    if [ "$mount_vm_storage" != true ]; then
+        return
+    fi
+
+    if [ "$ephemeral_vm_storage" != true ]; then
+        return
+    fi
+
+    if [ "$prepare_image" = true ]; then
+        log_error_exit "'--ephemeral-vm-storage true' is incompatible with '--prepare-image true' because image preparation needs persistent VM storage."
+    fi
+
+    if [ "$connect" = true ]; then
+        log_error_exit "'--ephemeral-vm-storage true' is incompatible with '--connect true' because the ephemeral storage path would not match an existing container."
+    fi
+
+    ephemeral_vm_storage_dir=$(mktemp -d -t winarena-storage-XXXXXX)
+    trap cleanup_ephemeral_vm_storage EXIT
+
+    echo "Creating ephemeral VM storage copy at: $ephemeral_vm_storage_dir"
+    cp -a --reflink=auto "${vm_storage_mount_path}/." "$ephemeral_vm_storage_dir/"
+    vm_storage_mount_path="$ephemeral_vm_storage_dir"
+    echo "Using ephemeral VM storage mount path: $vm_storage_mount_path"
 }
 
 # Function to invoke Docker container
@@ -302,7 +374,7 @@ invoke_docker_container() {
     docker_command+=" $winarena_full_image_name:$winarena_image_tag"
     
     # Set the entrypoint arguments
-    entrypoint_args=" -c './entry.sh --prepare-image $prepare_image --start-client $start_client --agent $agent --model $model --som-origin $som_origin --a11y-backend $a11y_backend'"
+    entrypoint_args=" -c './entry.sh --prepare-image $prepare_image --start-client $start_client --agent $agent --model $model --som-origin $som_origin --a11y-backend $a11y_backend --clean-results $clean_results --worker-id $worker_id --num-workers $num_workers --result-dir $result_dir --json-name $json_name --diff-lvl $diff_lvl'"
     if [ "$interactive" = true ]; then
         entrypoint_args=""
     fi
@@ -336,5 +408,7 @@ fi
 if [ "$skip_build" = false ]; then
     build_container_image
 fi
+
+prepare_vm_storage_mount_path
 
 invoke_docker_container
