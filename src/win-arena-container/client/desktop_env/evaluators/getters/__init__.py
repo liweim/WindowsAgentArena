@@ -15,6 +15,7 @@ from .chrome import (
     get_googledrive_file,
     get_active_tab_info,
     get_enable_do_not_track,
+    get_live_caption_enabled,
     get_enable_enhanced_safety_browsing,
     get_new_startup_page,
     get_find_unpacked_extension_path,

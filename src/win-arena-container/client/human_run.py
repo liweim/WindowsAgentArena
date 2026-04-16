@@ -50,8 +50,10 @@ def human_agent():
     parser.add_argument('-e', '--example', type=str, help="Path to the example json file.")
     args = parser.parse_args(sys.argv[1:])
 
-    example_path = args.example if args.example is not None and os.path.exists(args.example) else \
-        'evaluation_examples_windows/examples/chrome/af630914-714e-4a24-a7bb-f9af687d3b91-wos.json'
+    if args.example is not None and os.path.exists(args.example):
+        example_path = args.example
+    else:
+        raise ValueError(f"Example file {args.example} does not exist.")
     with open(example_path, "r", encoding="utf-8") as f:
         example = json.load(f)
 
@@ -66,10 +68,16 @@ def human_agent():
     done = False
     logger.info('\x1b[32m[TASK INSTRUCTION]: \x1b[32;3m%s\x1b[0m', example["instruction"])
 
-    input("Press Enter to start human operation...")
+    print("Press Enter to start human operation...", flush=True)
+    input()
     human_start_time = time.time()
-    input("Press Enter to finish human operation.")
+    print("Human operation started. Complete the task in the Windows VM, then return here.", flush=True)
+    print("Press Enter to finish human operation.", flush=True)
+    input()
     print("Time elapsed of human operation: %.2f" % (time.time() - human_start_time))
+
+    print("Waiting for the environment to be stable...")
+    time.sleep(3)
 
     result = env.evaluate()
     logger.info("Result: %.2f", result)
