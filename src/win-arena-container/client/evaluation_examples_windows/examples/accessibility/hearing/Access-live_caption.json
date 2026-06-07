@@ -1,9 +1,13 @@
 {
   "id": "Access-live_caption",
   "snapshot": "chrome",
+  "category": "Access",
   "instruction": "I have trouble hearing audio in videos unless subtitles are available. Please turn on Live Caption in Chrome for me.",
   "source": "chrome://settings/accessibility > Live Caption",
-  "_comments": "Accessibility hearing task: force Live Caption off before launch, then require the agent to enable it.",
+  "gt_steps": [
+    "Open chrome://settings/accessibility.",
+    "Turn on Live Caption."
+  ],
   "config": [
     {
       "type": "launch",
