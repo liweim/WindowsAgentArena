@@ -1,5 +1,5 @@
 {
-  "id": "Access-live_caption",
+  "id": "Access-chrome_live_caption",
   "snapshot": "chrome",
   "category": "Access",
   "instruction": "I have trouble hearing audio in videos unless subtitles are available. Please turn on Live Caption in Chrome for me.",

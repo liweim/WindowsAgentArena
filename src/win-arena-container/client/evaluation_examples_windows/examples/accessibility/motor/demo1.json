@@ -1,7 +1,7 @@
 {
-  "id": "35253b65-1c19-4304-8aa4-6884b8218fc0",
+  "id": "service-nsw-letter-authority-pdf",
   "snapshot": "chrome",
-  "instruction": "Search for the OSWorld GitHub repository in the browser, take a screenshot of the page, and save it as 'osworld.png' on the Desktop",
+  "instruction": "Using the On-Screen Keyboard, open the Service NSW website. Search for \"Forms in PDF format\". From the list of PDF links, click \"Letter of Authority - PDF\" and download the PDF to the Desktop.",
   "source": "human",
   "config": [
     {
@@ -9,7 +9,8 @@
       "parameters": {
         "command": [
           "google-chrome",
-          "--remote-debugging-port=1337"
+          "--remote-debugging-port=1337",
+          "--user-data-dir=/tmp/chrome-service-nsw"
         ]
       }
     },
@@ -25,27 +26,23 @@
     }
   ],
   "trajectory": "trajectories/",
-  "related_apps": [
-    "chrome"
-  ],
+  "related_apps": ["chrome"],
   "evaluator": {
     "func": "check_include_exclude",
     "result": {
       "type": "vm_command_line",
-      "command": "cmd /c if exist C:\\Users\\Docker\\Desktop\\osworld.png echo osworld.png",
+      "command": "cmd /c dir C:\\Users\\Docker\\Downloads C:\\Users\\Docker\\Desktop",
       "shell": true
     },
     "expected": {
       "type": "rule",
       "rules": {
-        "include": [
-          "osworld.png"
-        ],
+        "include": [".pdf"],
         "exclude": []
       }
     }
   },
   "proxy": true,
   "fixed_ip": false,
-  "possibility_of_env_change": "low"
+  "possibility_of_env_change": "medium"
 }

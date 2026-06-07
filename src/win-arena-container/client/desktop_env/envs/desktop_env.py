@@ -257,7 +257,7 @@ class DesktopEnv(gym.Env):
             # TODO: Implement this
             # self.controller.revert_to_snapshot(self.snapshot_name)
             
-            logger.error("Not implemented! Reverting to snapshot is not supported for remote VMs! Closing all applications instead")
+            logger.warning("Not implemented! Reverting to snapshot is not supported for remote VMs! Closing all applications instead")
             self.setup_controller._close_all_setup()
 
         time.sleep(5)

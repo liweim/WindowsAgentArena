@@ -1,15 +1,17 @@
 {
-  "id": "Service-ftc_complaint_2",
+  "id": "Information-ftc_explore_data_1",
   "snapshot": "chrome",
-  "category": "Service",
-  "instruction": "Turn on captions in the opened YouTube video, then watch it and answer: how many minutes of calling time did the phone card promise? Save the answer in `answer.txt` on the Desktop.",
-  "source": "https://www.youtube.com/watch?v=3LvMO5UMCl8",
+  "category": "Information",
+  "instruction": "Turn on captions in the opened YouTube video, then use the FTC Explore Data tool shown in the video to view Florida's fraud and identity theft combined state data.",
+  "source": "https://www.youtube.com/watch?v=F2wQGBjKiaM",
   "gt_steps": [
     "Turn on captions in the YouTube player.",
-    "Play the video and use the YouTube captions to identify how many minutes of calling time the phone card promised.",
-    "Create answer.txt on the Desktop.",
-    "Write `350 minutes` in answer.txt.",
-    "Save and close answer.txt."
+    "Play the video and use the YouTube captions to identify the FTC Explore Data address.",
+    "Open https://ftc.gov/exploredata.",
+    "Go to State and Metro Area Maps.",
+    "Open Fraud & ID Theft by State.",
+    "Select Florida on the map.",
+    "Stay on the Florida state data page or data panel."
   ],
   "config": [
     {
@@ -35,7 +37,7 @@
     {
       "type": "chrome_execute_script",
       "parameters": {
-        "url": "https://www.youtube.com/watch?v=3LvMO5UMCl8",
+        "url": "https://www.youtube.com/watch?v=F2wQGBjKiaM",
         "wait_seconds": 1,
         "script": "async () => { const sleep = ms => new Promise(resolve => setTimeout(resolve, ms)); for (let i = 0; i < 20; i++) { const video = document.querySelector('video'); if (video) { video.pause(); break; } await sleep(500); } for (let i = 0; i < 20; i++) { const captionsButton = document.querySelector('.ytp-subtitles-button'); if (captionsButton) { const title = (captionsButton.getAttribute('title') || '').toLowerCase(); const isOn = captionsButton.getAttribute('aria-pressed') === 'true' || captionsButton.classList.contains('ytp-button-active') || title.includes('turn off'); if (isOn) captionsButton.click(); break; } await sleep(500); } }"
       }
@@ -60,12 +62,12 @@
     "result": [
       {
         "type": "youtube_captions_enabled",
-        "url": "https://www.youtube.com/watch?v=3LvMO5UMCl8"
+        "url": "https://www.youtube.com/watch?v=F2wQGBjKiaM"
       },
       {
-        "type": "is_file_saved_desktop",
-        "filename": "answer.txt",
-        "textcontent": "350 minutes"
+        "type": "active_tab_contains_text",
+        "url": "https://public.tableau.com/app/profile/federal.trade.commission/viz/FraudandIDTheftMaps/AllReportsbyState",
+        "expected_text": "Florida"
       }
     ],
     "expected": [

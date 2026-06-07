@@ -1,0 +1,27 @@
+{
+  "id": "export-accessible-report-pdf",
+  "snapshot": "libreoffice",
+  "instruction": "Open the file report.pdf in LibreOffice Draw or Okular, export it as a tagged accessible PDF with selectable text enabled, and save it as accessible_report.pdf on the Desktop.",
+  "source": "human",
+  "config": [],
+  "trajectory": "trajectories/",
+  "related_apps": ["libreoffice", "okular"],
+  "evaluator": {
+    "func": "check_include_exclude",
+    "result": {
+      "type": "vm_command_line",
+      "command": "cmd /c dir C:\\Users\\Docker\\Desktop",
+      "shell": true
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "include": ["accessible_report.pdf"],
+        "exclude": []
+      }
+    }
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}
