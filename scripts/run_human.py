@@ -30,7 +30,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--use-kvm", type=str, default="true")
     parser.add_argument("--ram-size", type=str, default="8G")
     parser.add_argument("--cpu-cores", type=str, default="8")
-    parser.add_argument("--mode", type=str, default="azure")
+    parser.add_argument("--mode", type=str, default="dev")
     parser.add_argument(
         "--keep-container",
         type=str,

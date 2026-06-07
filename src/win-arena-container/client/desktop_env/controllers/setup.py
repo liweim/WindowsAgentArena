@@ -245,6 +245,16 @@ class SetupController:
             logger.warning("Command should be a list of strings. Now it is a string. Will split it by space.")
             command = command.split()
 
+        if isinstance(command, list) and any(arg in ("google-chrome", "chrome") for arg in command):
+            has_remote_debugging = any(str(arg).startswith("--remote-debugging-port=") for arg in command)
+            has_user_data_dir = any(str(arg).startswith("--user-data-dir=") for arg in command)
+            is_accessibility_chrome = "--force-renderer-accessibility" in command
+            if has_remote_debugging and is_accessibility_chrome and not has_user_data_dir:
+                command.append(r"--user-data-dir=C:\Temp\winarena-chrome-debug")
+            for flag in ("--no-first-run", "--no-default-browser-check"):
+                if has_remote_debugging and is_accessibility_chrome and flag not in command:
+                    command.append(flag)
+
         payload = json.dumps({"command": command, "shell": shell})
         headers = {"Content-Type": "application/json"}
 
@@ -497,20 +507,54 @@ class SetupController:
                     if i == 0:
                         context = browser.contexts[0]
 
-                    page = context.new_page()  # Create a new page (tab) within the existing context
+                    if i == 0:
+                        startup_pages = [
+                            page for page in context.pages
+                            if page.url.startswith(("about:", "chrome://"))
+                        ]
+                        page = startup_pages[0] if startup_pages else context.new_page()
+                    else:
+                        page = context.new_page()
                     try:
                         page.goto(url, timeout=60000)
                     except:
                         logger.warning("Opening %s exceeds time limit", url)  # only for human test
                     logger.info(f"Opened tab {i + 1}: {url}")
 
-                    if i == 0:
-                        # clear the default tab
-                        default_page = context.pages[0]
-                        default_page.close()
+                self._close_chrome_startup_tabs(remote_debugging_url, urls_to_open)
 
                 # Do not close the context or browser; they will remain open after script ends
                 return browser, context
+
+    def _close_chrome_startup_tabs(self, remote_debugging_url: str, urls_to_keep: List[str]):
+        keep_urls = set(urls_to_keep)
+        startup_titles = {"New Tab", "Sign in to Chrome", "What's New - Google Chrome"}
+        try:
+            response = requests.get(f"{remote_debugging_url}/json/list", timeout=3)
+            response.raise_for_status()
+            targets = response.json()
+        except Exception as e:
+            logger.warning("Failed to list Chrome startup tabs: %s", e)
+            return
+
+        for target in targets:
+            target_id = target.get("id")
+            target_url = target.get("url")
+            target_title = target.get("title")
+            target_type = target.get("type")
+            is_startup_page = (
+                target_url not in keep_urls
+                and (
+                    str(target_url).startswith(("chrome://", "about:"))
+                    or target_title in startup_titles
+                )
+            )
+            if target_type == "page" and target_id and is_startup_page:
+                try:
+                    requests.get(f"{remote_debugging_url}/json/close/{target_id}", timeout=3)
+                    logger.info("Closed Chrome startup tab/window: %s (%s)", target_title, target_url)
+                except Exception as e:
+                    logger.warning("Failed to close Chrome startup tab/window %s: %s", target_url, e)
             
     def _edge_open_tabs_setup(self, urls_to_open: List[str]):
 
@@ -902,4 +946,3 @@ class SetupController:
             logger.error("An error occurred while trying to send the request: %s", e)
 
         self._execute_setup(["sudo chown -R user:user /home/user/.config/google-chrome/Default/History"], shell=True)
-

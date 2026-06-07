@@ -979,33 +979,44 @@ def get_enable_do_not_track(env, config: Dict[str, str]):
 def get_live_caption_enabled(env, config: Dict[str, str]):
     os_type = env.vm_platform
     if os_type == 'Windows':
-        preference_file_path = env.controller.execute_python_command(
-            "import os; print(os.path.join(os.getenv('LOCALAPPDATA'), 'Google/Chrome/User Data/Default/Preferences'))"
-        )['output'].strip()
+        preference_file_paths = [
+            env.controller.execute_python_command(
+                "import os; print(os.path.join(os.getenv('LOCALAPPDATA'), 'Google/Chrome/User Data/Default/Preferences'))"
+            )['output'].strip(),
+            "C:\\Temp\\winarena-chrome-debug\\Default\\Preferences",
+        ]
     elif os_type == 'Darwin':
-        preference_file_path = env.controller.execute_python_command(
-            "import os; print(os.path.join(os.getenv('HOME'), 'Library/Application Support/Google/Chrome/Default/Preferences'))"
-        )['output'].strip()
+        preference_file_paths = [
+            env.controller.execute_python_command(
+                "import os; print(os.path.join(os.getenv('HOME'), 'Library/Application Support/Google/Chrome/Default/Preferences'))"
+            )['output'].strip()
+        ]
     elif os_type == 'Linux':
         if "arm" in platform.machine():
-            preference_file_path = env.controller.execute_python_command(
-                "import os; print(os.path.join(os.getenv('HOME'), 'snap/chromium/common/chromium/Default/Preferences'))"
-            )['output'].strip()
+            preference_file_paths = [
+                env.controller.execute_python_command(
+                    "import os; print(os.path.join(os.getenv('HOME'), 'snap/chromium/common/chromium/Default/Preferences'))"
+                )['output'].strip()
+            ]
         else:
-            preference_file_path = env.controller.execute_python_command(
-                "import os; print(os.path.join(os.getenv('HOME'), '.config/google-chrome/Default/Preferences'))"
-            )['output'].strip()
+            preference_file_paths = [
+                env.controller.execute_python_command(
+                    "import os; print(os.path.join(os.getenv('HOME'), '.config/google-chrome/Default/Preferences'))"
+                )['output'].strip()
+            ]
     else:
         raise Exception('Unsupported operating system')
 
-    try:
-        content = env.controller.get_file(preference_file_path)
-        data = json.loads(content)
-        live_caption_enabled = data.get('accessibility', {}).get('captions', {}).get('live_caption_enabled', False)
-        return "true" if live_caption_enabled else "false"
-    except Exception as e:
-        logger.error(f"Error: {e}")
-        return "false"
+    for preference_file_path in preference_file_paths:
+        try:
+            content = env.controller.get_file(preference_file_path)
+            data = json.loads(content)
+            live_caption_enabled = data.get('accessibility', {}).get('captions', {}).get('live_caption_enabled', False)
+            if live_caption_enabled:
+                return "true"
+        except Exception as e:
+            logger.error(f"Error reading {preference_file_path}: {e}")
+    return "false"
 
 
 def get_enable_enhanced_safety_browsing(env, config: Dict[str, str]):

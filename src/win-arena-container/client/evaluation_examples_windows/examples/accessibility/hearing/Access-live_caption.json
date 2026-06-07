@@ -1,5 +1,5 @@
 {
-  "id": "turn_on_chrome_live_caption",
+  "id": "Access-live_caption",
   "snapshot": "chrome",
   "instruction": "I have trouble hearing audio in videos unless subtitles are available. Please turn on Live Caption in Chrome for me.",
   "source": "chrome://settings/accessibility > Live Caption",

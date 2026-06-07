@@ -1,4 +1,5 @@
 *.out
+tmp
 
 # a few testing images
 *.proposed_region_screenbert_test.png
