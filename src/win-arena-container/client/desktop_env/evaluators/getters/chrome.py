@@ -15,6 +15,7 @@ from lxml.etree import _Element
 from playwright.sync_api import sync_playwright, expect
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive, GoogleDriveFileList, GoogleDriveFile
+from desktop_env.evaluators.metrics.utils import compare_urls
 
 import LnkParse3
 from io import BytesIO, StringIO
@@ -710,6 +711,146 @@ def get_active_tab_info(env, config: Dict[str, str]):
         # print("active_tab_url: {}".format(active_tab_info.get('url', 'None')))
         # print("active_tab_content: {}".format(active_tab_info.get('content', 'None')))
         return active_tab_info
+
+
+def get_youtube_captions_enabled(env, config: Dict[str, str]):
+    host = env.vm_ip
+    port = 9222  # fixme: this port is hard-coded, need to be changed from config file
+    remote_debugging_url = f"http://{host}:{port}"
+    url = config.get("url", "")
+    url_prefix = config.get("url_prefix", "https://www.youtube.com/watch")
+
+    script = """async () => {
+        const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+        for (let i = 0; i < 20; i++) {
+            const button = document.querySelector('.ytp-subtitles-button');
+            if (button) {
+                const title = (button.getAttribute('title') || '').toLowerCase();
+                const ariaPressed = button.getAttribute('aria-pressed');
+                const isEnabled = ariaPressed === 'true'
+                    || button.classList.contains('ytp-button-active')
+                    || title.includes('turn off');
+                return isEnabled ? 'true' : 'false';
+            }
+            await sleep(500);
+        }
+        return 'false';
+    }"""
+
+    with sync_playwright() as p:
+        try:
+            browser = p.chromium.connect_over_cdp(remote_debugging_url)
+        except Exception as e:
+            logger.error("Failed to connect to Chrome for YouTube captions check: %s", e)
+            return "false"
+
+        target_page = None
+        created_page = False
+        context = browser.contexts[0] if browser.contexts else None
+        if context is None:
+            return "false"
+
+        for browser_context in browser.contexts:
+            for page in browser_context.pages:
+                if page.url.startswith(url_prefix):
+                    target_page = page
+                    context = browser_context
+                    break
+            if target_page:
+                break
+
+        if not target_page and url:
+            target_page = context.new_page()
+            created_page = True
+            try:
+                target_page.goto(url, timeout=60000)
+            except Exception as e:
+                logger.warning("Opening %s for YouTube captions check failed: %s", url, e)
+                target_page.close()
+                return "false"
+
+        if not target_page:
+            logger.warning("No YouTube tab matched URL prefix: %s", url_prefix)
+            return "false"
+
+        try:
+            target_page.wait_for_load_state("domcontentloaded", timeout=30000)
+            result = target_page.evaluate(script)
+            if created_page:
+                target_page.close()
+            return result
+        except Exception as e:
+            logger.warning("Failed to check YouTube captions on %s: %s", target_page.url, e)
+            if created_page:
+                target_page.close()
+            return "false"
+
+
+def get_active_tab_contains_text(env, config: Dict[str, Any]):
+    config = {"goto_prefix": "https://", **config}
+    active_tab_url = get_active_url_from_accessTree(env, config)
+    if not isinstance(active_tab_url, str):
+        logger.error("active_tab_url is not a string")
+        return "false"
+
+    expected_url = config.get("url", "")
+    url_contains = config.get("url_contains", "")
+    expected_text = config.get("expected_text", "")
+    timeout = int(config.get("timeout", 30000))
+    if expected_url and not compare_urls(expected_url, active_tab_url):
+        logger.info("Active tab URL does not match expected URL '%s': %s", expected_url, active_tab_url)
+        return "false"
+    if url_contains and url_contains not in active_tab_url:
+        logger.info("Active tab URL does not contain expected text '%s': %s", url_contains, active_tab_url)
+        return "false"
+    if not expected_text:
+        logger.error("expected_text is required")
+        return "false"
+
+    host = env.vm_ip
+    port = 9222  # fixme: this port is hard-coded, need to be changed from config file
+    remote_debugging_url = f"http://{host}:{port}"
+    script = """async expectedText => {
+        const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+        const containsText = () => {
+            const bodyText = document.body ? document.body.innerText : '';
+            if (bodyText && bodyText.includes(expectedText)) return true;
+            for (const frame of document.querySelectorAll('iframe')) {
+                try {
+                    const frameText = frame.contentDocument && frame.contentDocument.body
+                        ? frame.contentDocument.body.innerText
+                        : '';
+                    if (frameText && frameText.includes(expectedText)) return true;
+                } catch (e) {}
+            }
+            return false;
+        };
+        for (let i = 0; i < 30; i++) {
+            if (containsText()) return 'true';
+            await sleep(1000);
+        }
+        return 'false';
+    }"""
+
+    with sync_playwright() as p:
+        try:
+            browser = p.chromium.connect_over_cdp(remote_debugging_url)
+        except Exception as e:
+            logger.error("Failed to connect to Chrome for active tab text check: %s", e)
+            return "false"
+
+        for context in browser.contexts:
+            for page in context.pages:
+                if unquote(page.url) == unquote(active_tab_url):
+                    try:
+                        page.wait_for_load_state("domcontentloaded", timeout=timeout)
+                        return page.evaluate(script, expected_text)
+                    except Exception as e:
+                        logger.warning("Failed to check active tab text on %s: %s", page.url, e)
+                        return "false"
+
+    logger.warning("No open Chrome tab matched active tab URL: %s", active_tab_url)
+    return "false"
 
 
 def get_pdf_from_url(env, config: Dict[str, str]) -> str:

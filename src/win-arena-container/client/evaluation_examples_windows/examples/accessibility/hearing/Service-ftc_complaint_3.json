@@ -2,12 +2,11 @@
   "id": "Service-ftc_complaint_3",
   "snapshot": "chrome",
   "category": "Service",
-  "instruction": "Turn on Live Caption in Chrome, then use the video on the opened FTC page to answer this question: what personal financial information did the scammer ask for in the fake job opportunity example? Save only the answer in a text file named answer.txt on the Desktop.",
-  "source": "https://consumer.ftc.gov/media/video-0054-how-file-complaint-federal-trade-commission",
+  "instruction": "Turn on captions in the opened YouTube video, then watch it and answer: what personal financial information did the scammer ask for in the fake job opportunity example? Save the answer in `answer.txt` on the Desktop.",
+  "source": "https://www.youtube.com/watch?v=3LvMO5UMCl8",
   "gt_steps": [
-    "Open chrome://settings/accessibility.",
-    "Turn on Live Caption.",
-    "Play the video and use Live Caption to identify the personal financial information requested in the fake job opportunity example.",
+    "Turn on captions in the YouTube player.",
+    "Play the video and use the YouTube captions to identify the personal financial information requested in the fake job opportunity example.",
     "Create answer.txt on the Desktop.",
     "Write `bank account number` in answer.txt.",
     "Save and close answer.txt."
@@ -34,11 +33,11 @@
       }
     },
     {
-      "type": "chrome_open_tabs",
+      "type": "chrome_execute_script",
       "parameters": {
-        "urls_to_open": [
-          "https://consumer.ftc.gov/media/video-0054-how-file-complaint-federal-trade-commission"
-        ]
+        "url": "https://www.youtube.com/watch?v=3LvMO5UMCl8",
+        "wait_seconds": 1,
+        "script": "async () => { const sleep = ms => new Promise(resolve => setTimeout(resolve, ms)); for (let i = 0; i < 20; i++) { const video = document.querySelector('video'); if (video) { video.pause(); break; } await sleep(500); } for (let i = 0; i < 20; i++) { const captionsButton = document.querySelector('.ytp-subtitles-button'); if (captionsButton) { const title = (captionsButton.getAttribute('title') || '').toLowerCase(); const isOn = captionsButton.getAttribute('aria-pressed') === 'true' || captionsButton.classList.contains('ytp-button-active') || title.includes('turn off'); if (isOn) captionsButton.click(); break; } await sleep(500); } }"
       }
     },
     {
@@ -60,7 +59,8 @@
     "conj": "and",
     "result": [
       {
-        "type": "live_caption_enabled"
+        "type": "youtube_captions_enabled",
+        "url": "https://www.youtube.com/watch?v=3LvMO5UMCl8"
       },
       {
         "type": "is_file_saved_desktop",

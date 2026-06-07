@@ -471,6 +471,35 @@ class SetupController:
         except requests.exceptions.RequestException as e:
             logger.error("An error occurred while trying to send the request: %s", e)
 
+    def _connect_browser_over_cdp(
+            self,
+            playwright,
+            remote_debugging_url: str,
+            browser_name: str,
+            attempts: int = 15,
+            initial_wait_seconds: float = 2,
+            retry_wait_seconds: float = 5
+    ):
+        if initial_wait_seconds:
+            time.sleep(initial_wait_seconds)
+
+        for attempt in range(attempts):
+            try:
+                return playwright.chromium.connect_over_cdp(remote_debugging_url)
+            except Exception as e:
+                if attempt < attempts - 1:
+                    logger.info(
+                        "%s DevTools endpoint is not ready yet, retrying (%d/%d): %s",
+                        browser_name,
+                        attempt + 1,
+                        attempts,
+                        e
+                    )
+                    time.sleep(retry_wait_seconds)
+                else:
+                    logger.error("Failed to connect to %s after multiple attempts: %s", browser_name, e)
+                    raise e
+
     # Chrome setup
     def _chrome_open_tabs_setup(self, urls_to_open: List[str]):
 
@@ -480,51 +509,36 @@ class SetupController:
         remote_debugging_url = f"http://{host}:{port}"
         logger.info("Connect to Chrome @: %s", remote_debugging_url)
         logger.debug("PLAYWRIGHT ENV: %s", repr(os.environ))
-        for attempt in range(15):
-            if attempt > 0:
-                time.sleep(5)
+        with sync_playwright() as p:
+            browser = self._connect_browser_over_cdp(p, remote_debugging_url, "Chrome")
 
-            browser = None
-            with sync_playwright() as p:
+            if not browser:
+                return
+
+            logger.info("Opening %s...", urls_to_open)
+            for i, url in enumerate(urls_to_open):
+                # Use the first context (which should be the only one if using default profile)
+                if i == 0:
+                    context = browser.contexts[0]
+
+                if i == 0:
+                    startup_pages = [
+                        page for page in context.pages
+                        if page.url.startswith(("about:", "chrome://"))
+                    ]
+                    page = startup_pages[0] if startup_pages else context.new_page()
+                else:
+                    page = context.new_page()
                 try:
-                    browser = p.chromium.connect_over_cdp(remote_debugging_url)
-                    # break
-                except Exception as e:
-                    if attempt < 14:
-                        logger.error(f"Attempt {attempt + 1}: Failed to connect, retrying. Error: {e}")
-                        # time.sleep(10)
-                        continue
-                    else:
-                        logger.error(f"Failed to connect after multiple attempts: {e}")
-                        raise e
+                    page.goto(url, timeout=60000)
+                except:
+                    logger.warning("Opening %s exceeds time limit", url)  # only for human test
+                logger.info(f"Opened tab {i + 1}: {url}")
 
-                if not browser:
-                    return
+            self._close_chrome_startup_tabs(remote_debugging_url, urls_to_open)
 
-                logger.info("Opening %s...", urls_to_open)
-                for i, url in enumerate(urls_to_open):
-                    # Use the first context (which should be the only one if using default profile)
-                    if i == 0:
-                        context = browser.contexts[0]
-
-                    if i == 0:
-                        startup_pages = [
-                            page for page in context.pages
-                            if page.url.startswith(("about:", "chrome://"))
-                        ]
-                        page = startup_pages[0] if startup_pages else context.new_page()
-                    else:
-                        page = context.new_page()
-                    try:
-                        page.goto(url, timeout=60000)
-                    except:
-                        logger.warning("Opening %s exceeds time limit", url)  # only for human test
-                    logger.info(f"Opened tab {i + 1}: {url}")
-
-                self._close_chrome_startup_tabs(remote_debugging_url, urls_to_open)
-
-                # Do not close the context or browser; they will remain open after script ends
-                return browser, context
+            # Do not close the context or browser; they will remain open after script ends
+            return browser, context
 
     def _close_chrome_startup_tabs(self, remote_debugging_url: str, urls_to_keep: List[str]):
         keep_urls = set(urls_to_keep)
@@ -564,46 +578,32 @@ class SetupController:
         remote_debugging_url = f"http://{host}:{port}"
         logger.info("Connect to Microsoft Edge @: %s", remote_debugging_url)
         logger.debug("PLAYWRIGHT ENV: %s", repr(os.environ))
-        for attempt in range(15):
-            if attempt > 0:
-                time.sleep(5)
+        with sync_playwright() as p:
+            browser = self._connect_browser_over_cdp(p, remote_debugging_url, "Microsoft Edge")
 
-            browser = None
-            with sync_playwright() as p:
+            if not browser:
+                return
+
+            logger.info("Opening %s...", urls_to_open)
+            for i, url in enumerate(urls_to_open):
+                # Use the first context (which should be the only one if using default profile)
+                if i == 0:
+                    context = browser.contexts[0]
+
+                page = context.new_page()  # Create a new page (tab) within the existing context
                 try:
-                    browser = p.chromium.connect_over_cdp(remote_debugging_url)
-                    # break
-                except Exception as e:
-                    if attempt < 14:
-                        logger.error(f"Attempt {attempt + 1}: Failed to connect, retrying. Error: {e}")
-                        continue
-                    else:
-                        logger.error(f"Failed to connect after multiple attempts: {e}")
-                        raise e
+                    page.goto(url, timeout=60000)
+                except:
+                    logger.warning("Opening %s exceeds time limit", url)  # only for human test
+                logger.info(f"Opened tab {i + 1}: {url}")
 
-                if not browser:
-                    return
+                if i == 0:
+                    # clear the default tab
+                    default_page = context.pages[0]
+                    default_page.close()
 
-                logger.info("Opening %s...", urls_to_open)
-                for i, url in enumerate(urls_to_open):
-                    # Use the first context (which should be the only one if using default profile)
-                    if i == 0:
-                        context = browser.contexts[0]
-
-                    page = context.new_page()  # Create a new page (tab) within the existing context
-                    try:
-                        page.goto(url, timeout=60000)
-                    except:
-                        logger.warning("Opening %s exceeds time limit", url)  # only for human test
-                    logger.info(f"Opened tab {i + 1}: {url}")
-
-                    if i == 0:
-                        # clear the default tab
-                        default_page = context.pages[0]
-                        default_page.close()
-
-                # Do not close the context or browser; they will remain open after script ends
-                return browser, context
+            # Do not close the context or browser; they will remain open after script ends
+            return browser, context
 
     def _chrome_close_tabs_setup(self, urls_to_close: List[str]):
         time.sleep(5)  # Wait for Chrome to finish launching
@@ -613,18 +613,7 @@ class SetupController:
 
         remote_debugging_url = f"http://{host}:{port}"
         with sync_playwright() as p:
-            browser = None
-            for attempt in range(15):
-                try:
-                    browser = p.chromium.connect_over_cdp(remote_debugging_url)
-                    break
-                except Exception as e:
-                    if attempt < 14:
-                        logger.error(f"Attempt {attempt + 1}: Failed to connect, retrying. Error: {e}")
-                        time.sleep(5)
-                    else:
-                        logger.error(f"Failed to connect after multiple attempts: {e}")
-                        raise e
+            browser = self._connect_browser_over_cdp(p, remote_debugging_url, "Chrome")
 
             if not browser:
                 return
@@ -645,6 +634,66 @@ class SetupController:
 
             # Do not close the context or browser; they will remain open after script ends
             return browser, context
+
+    def _chrome_execute_script_setup(
+            self,
+            script: str,
+            url: Optional[str] = None,
+            url_prefix: Optional[str] = None,
+            timeout: int = 30000,
+            wait_seconds: float = 0
+    ):
+        if not url and not url_prefix:
+            raise ValueError("chrome_execute_script requires either url or url_prefix")
+
+        host = self.vm_ip
+        port = 9222  # fixme: this port is hard-coded, need to be changed from config file
+
+        remote_debugging_url = f"http://{host}:{port}"
+        target_prefix = url_prefix or url
+        with sync_playwright() as p:
+            browser = self._connect_browser_over_cdp(p, remote_debugging_url, "Chrome")
+
+            if not browser:
+                return
+
+            target_page = None
+            target_context = browser.contexts[0]
+            for context in browser.contexts:
+                for page in context.pages:
+                    if page.url.startswith(target_prefix):
+                        target_page = page
+                        target_context = context
+                        break
+                if target_page:
+                    break
+
+            if not target_page and url:
+                startup_pages = [
+                    page for page in target_context.pages
+                    if page.url.startswith(("about:", "chrome://"))
+                ]
+                target_page = startup_pages[0] if startup_pages else target_context.new_page()
+                try:
+                    target_page.goto(url, timeout=60000)
+                    logger.info("Opened tab for Chrome script: %s", url)
+                except Exception as e:
+                    logger.warning("Opening %s exceeds time limit: %s", url, e)
+                self._close_chrome_startup_tabs(remote_debugging_url, [url])
+
+            if not target_page:
+                logger.warning("No Chrome tab matched URL prefix: %s", target_prefix)
+                return
+
+            if wait_seconds:
+                time.sleep(wait_seconds)
+
+            try:
+                target_page.wait_for_load_state("domcontentloaded", timeout=timeout)
+                target_page.evaluate(script)
+                logger.info("Executed Chrome script on tab: %s", target_page.url)
+            except Exception as e:
+                logger.warning("Failed to execute Chrome script on %s: %s", target_page.url, e)
 
     # google drive setup
     def _googledrive_setup(self, **config):
@@ -744,18 +793,7 @@ class SetupController:
 
         remote_debugging_url = f"http://{host}:{port}"
         with sync_playwright() as p:
-            browser = None
-            for attempt in range(15):
-                try:
-                    browser = p.chromium.connect_over_cdp(remote_debugging_url)
-                    break
-                except Exception as e:
-                    if attempt < 14:
-                        logger.error(f"Attempt {attempt + 1}: Failed to connect, retrying. Error: {e}")
-                        time.sleep(5)
-                    else:
-                        logger.error(f"Failed to connect after multiple attempts: {e}")
-                        raise e
+            browser = self._connect_browser_over_cdp(p, remote_debugging_url, "Chrome")
             if not browser:
                 return
 

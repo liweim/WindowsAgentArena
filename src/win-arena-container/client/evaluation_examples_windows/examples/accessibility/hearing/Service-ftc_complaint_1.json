@@ -2,13 +2,12 @@
   "id": "Service-ftc_complaint_1",
   "snapshot": "chrome",
   "category": "Service",
-  "instruction": "Turn on Live Caption in Chrome, then use the video on the opened FTC page to answer this question: where does the video say victims should go to file a complaint online? Open that complaint page in Chrome.",
-  "source": "https://consumer.ftc.gov/media/video-0054-how-file-complaint-federal-trade-commission",
+  "instruction": "Turn on captions in the opened YouTube video, then watch it and open the complaint website it mentions in a new Chrome tab.",
+  "source": "https://www.youtube.com/watch?v=3LvMO5UMCl8",
   "gt_steps": [
-    "Open chrome://settings/accessibility.",
-    "Turn on Live Caption.",
-    "Play the video and use Live Caption to identify where victims should go to file a complaint online.",
-    "Open https://ftc.gov/complaint."
+    "Turn on captions in the YouTube player.",
+    "Play the video and use the YouTube captions to identify where victims should go to file a complaint online.",
+    "Open https://ftc.gov/complaint in a new Chrome tab."
   ],
   "config": [
     {
@@ -32,11 +31,11 @@
       }
     },
     {
-      "type": "chrome_open_tabs",
+      "type": "chrome_execute_script",
       "parameters": {
-        "urls_to_open": [
-          "https://consumer.ftc.gov/media/video-0054-how-file-complaint-federal-trade-commission"
-        ]
+        "url": "https://www.youtube.com/watch?v=3LvMO5UMCl8",
+        "wait_seconds": 1,
+        "script": "async () => { const sleep = ms => new Promise(resolve => setTimeout(resolve, ms)); for (let i = 0; i < 20; i++) { const video = document.querySelector('video'); if (video) { video.pause(); break; } await sleep(500); } for (let i = 0; i < 20; i++) { const captionsButton = document.querySelector('.ytp-subtitles-button'); if (captionsButton) { const title = (captionsButton.getAttribute('title') || '').toLowerCase(); const isOn = captionsButton.getAttribute('aria-pressed') === 'true' || captionsButton.classList.contains('ytp-button-active') || title.includes('turn off'); if (isOn) captionsButton.click(); break; } await sleep(500); } }"
       }
     },
     {
@@ -58,7 +57,8 @@
     "conj": "and",
     "result": [
       {
-        "type": "live_caption_enabled"
+        "type": "youtube_captions_enabled",
+        "url": "https://www.youtube.com/watch?v=3LvMO5UMCl8"
       },
       {
         "type": "active_tab_info",

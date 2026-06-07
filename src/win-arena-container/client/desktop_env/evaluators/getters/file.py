@@ -144,3 +144,5 @@ def get_vm_file_exists_in_vm_folder(env, config) -> str:
         return 1.0
     else:
         return 0.0
+
+
