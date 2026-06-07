@@ -124,14 +124,18 @@ Each task JSON should define:
 
 * `id`: task identifier.
 * `snapshot`: base environment snapshot.
+* `category`: task category label, using one of the labels listed in Task Categories.
 * `instruction`: user-facing task instruction.
 * `source`: grounding source for the scenario.
+* `gt_steps`: ground-truth completion steps for human reproduction and task verification. These steps should describe only the actions needed after setup; do not include initialization actions already handled by `config`, such as launching the app or opening pages prepared by setup.
 * `config`: setup actions for the app, page, file, media, or system state.
 * `trajectory`: trajectory output directory.
 * `related_apps`: applications involved in the task.
 * `evaluator`: deterministic checks for task success.
 
 When a task has multiple required success conditions, use an `and` conjunction so all conditions must be satisfied.
+
+Do not use `_comments` or `standard_steps` in task JSON files. Put reproducible reference steps in `gt_steps` instead.
 
 ## Naming Rules
 
@@ -144,6 +148,7 @@ Task JSON filenames and ids should use this pattern:
 Rules:
 
 * The category prefix must use the exact category label.
+* The JSON `category` value must match the category prefix.
 * The short task name should use lowercase snake case.
 * The JSON `id` must match the filename without `.json`.
 * Add a short suffix only when needed to avoid duplicate names.

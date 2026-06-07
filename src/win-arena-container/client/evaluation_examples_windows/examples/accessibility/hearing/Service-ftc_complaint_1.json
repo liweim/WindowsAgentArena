@@ -1,9 +1,15 @@
 {
   "id": "Service-ftc_complaint_1",
   "snapshot": "chrome",
-  "instruction": "Turn on Live Caption in Chrome, then use the video on the opened FTC page to answer this question: where does the video say victims should go to file a complaint online? Save only the answer in a text file named answer.txt on the Desktop.",
+  "category": "Service",
+  "instruction": "Turn on Live Caption in Chrome, then use the video on the opened FTC page to answer this question: where does the video say victims should go to file a complaint online? Open that complaint page in Chrome.",
   "source": "https://consumer.ftc.gov/media/video-0054-how-file-complaint-federal-trade-commission",
-  "_comments": "Accessibility hearing task: start on the FTC video page, require Chrome Live Caption to be enabled, and evaluate the recovered answer via a Desktop text file because this evaluator stack does not expose the agent's final natural-language response.",
+  "gt_steps": [
+    "Open chrome://settings/accessibility.",
+    "Turn on Live Caption.",
+    "Play the video and use Live Caption to identify where victims should go to file a complaint online.",
+    "Open https://ftc.gov/complaint."
+  ],
   "config": [
     {
       "type": "launch",
@@ -47,7 +53,7 @@
   "evaluator": {
     "func": [
       "exact_match",
-      "exact_match"
+      "is_expected_active_tab"
     ],
     "conj": "and",
     "result": [
@@ -55,9 +61,8 @@
         "type": "live_caption_enabled"
       },
       {
-        "type": "is_file_saved_desktop",
-        "filename": "answer.txt",
-        "textcontent": "ftc.gov/complaint"
+        "type": "active_tab_info",
+        "goto_prefix": "https://"
       }
     ],
     "expected": [
@@ -70,7 +75,8 @@
       {
         "type": "rule",
         "rules": {
-          "expected": "true"
+          "type": "url",
+          "url": "https://reportfraud.ftc.gov"
         }
       }
     ]

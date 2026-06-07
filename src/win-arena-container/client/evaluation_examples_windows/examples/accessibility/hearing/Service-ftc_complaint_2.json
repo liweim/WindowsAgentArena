@@ -1,9 +1,17 @@
 {
   "id": "Service-ftc_complaint_2",
   "snapshot": "chrome",
+  "category": "Service",
   "instruction": "Turn on Live Caption in Chrome, then use the video on the opened FTC page to answer this question: how many minutes of calling time did the phone card promise? Save only the answer in a text file named answer.txt on the Desktop.",
   "source": "https://consumer.ftc.gov/media/video-0054-how-file-complaint-federal-trade-commission",
-  "_comments": "Accessibility hearing task: start on the FTC video page, require Chrome Live Caption to be enabled, and evaluate the recovered answer via a Desktop text file because this evaluator stack does not expose the agent's final natural-language response.",
+  "gt_steps": [
+    "Open chrome://settings/accessibility.",
+    "Turn on Live Caption.",
+    "Play the video and use Live Caption to identify how many minutes of calling time the phone card promised.",
+    "Create answer.txt on the Desktop.",
+    "Write `350 minutes` in answer.txt.",
+    "Save and close answer.txt."
+  ],
   "config": [
     {
       "type": "launch",
