@@ -1,0 +1,78 @@
+{
+  "id": "Service-ftc_complaint_1",
+  "snapshot": "chrome",
+  "instruction": "Turn on Live Caption in Chrome, then use the video on the opened FTC page to answer this question: where does the video say victims should go to file a complaint online? Save only the answer in a text file named answer.txt on the Desktop.",
+  "source": "https://consumer.ftc.gov/media/video-0054-how-file-complaint-federal-trade-commission",
+  "_comments": "Accessibility hearing task: start on the FTC video page, require Chrome Live Caption to be enabled, and evaluate the recovered answer via a Desktop text file because this evaluator stack does not expose the agent's final natural-language response.",
+  "config": [
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port=1337",
+          "--force-renderer-accessibility"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    },
+    {
+      "type": "chrome_open_tabs",
+      "parameters": {
+        "urls_to_open": [
+          "https://consumer.ftc.gov/media/video-0054-how-file-complaint-federal-trade-commission"
+        ]
+      }
+    },
+    {
+      "type": "activate_window",
+      "parameters": {
+        "window_name": "Google Chrome"
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "chrome"
+  ],
+  "evaluator": {
+    "func": [
+      "exact_match",
+      "exact_match"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "live_caption_enabled"
+      },
+      {
+        "type": "is_file_saved_desktop",
+        "filename": "answer.txt",
+        "textcontent": "ftc.gov/complaint"
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "expected": "true"
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "expected": "true"
+        }
+      }
+    ]
+  }
+}

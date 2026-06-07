@@ -286,6 +286,12 @@ def launch_app():
             index = command.index('google-chrome')
             command[index] = 'chrome'
 
+        if user_platform == 'Windows' and ('chrome' in command or 'google-chrome' in command):
+            has_remote_debugging = any(str(arg).startswith('--remote-debugging-port=') for arg in command)
+            has_user_data_dir = any(str(arg).startswith('--user-data-dir=') for arg in command)
+            is_accessibility_chrome = '--force-renderer-accessibility' in command
+            if has_remote_debugging and is_accessibility_chrome and not has_user_data_dir:
+                command.append(r'--user-data-dir=C:\Temp\winarena-chrome-debug')
 
         if 'google-chrome' in command and _get_machine_architecture() == 'arm':
             index = command.index('google-chrome')
