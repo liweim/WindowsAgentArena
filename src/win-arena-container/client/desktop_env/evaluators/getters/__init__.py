@@ -18,6 +18,7 @@ from .chrome import (
     get_active_tab_contains_text,
     get_enable_do_not_track,
     get_live_caption_enabled,
+    get_live_caption_languages,
     get_enable_enhanced_safety_browsing,
     get_new_startup_page,
     get_find_unpacked_extension_path,
@@ -70,7 +71,12 @@ from .settings import (
     get_active_hours_of_user_to_not_interrupt_for_windows_updates,
     get_system_timezone,
     get_desktop_background,
-    get_system_notifications
+    get_system_notifications,
+    get_mono_audio_enabled,
+    get_visual_audio_alerts,
+    get_notification_duration,
+    get_caption_style_names,
+    get_selected_caption_style_name
 )
 from .msedge import (
     get_edge_home_page,

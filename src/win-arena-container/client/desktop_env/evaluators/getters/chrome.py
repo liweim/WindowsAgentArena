@@ -1160,6 +1160,78 @@ def get_live_caption_enabled(env, config: Dict[str, str]):
     return "false"
 
 
+def get_live_caption_languages(env, config: Dict[str, str]):
+    os_type = env.vm_platform
+    if os_type == 'Windows':
+        state_file_paths = [
+            env.controller.execute_python_command(
+                "import os; print(os.path.join(os.getenv('LOCALAPPDATA'), 'Google/Chrome/User Data/Local State'))"
+            )['output'].strip(),
+            "C:\\Temp\\winarena-chrome-debug\\Local State",
+        ]
+        preference_file_paths = [
+            env.controller.execute_python_command(
+                "import os; print(os.path.join(os.getenv('LOCALAPPDATA'), 'Google/Chrome/User Data/Default/Preferences'))"
+            )['output'].strip(),
+            "C:\\Temp\\winarena-chrome-debug\\Default\\Preferences",
+        ]
+    elif os_type == 'Darwin':
+        state_file_paths = [
+            env.controller.execute_python_command(
+                "import os; print(os.path.join(os.getenv('HOME'), 'Library/Application Support/Google/Chrome/Local State'))"
+            )['output'].strip()
+        ]
+        preference_file_paths = [
+            env.controller.execute_python_command(
+                "import os; print(os.path.join(os.getenv('HOME'), 'Library/Application Support/Google/Chrome/Default/Preferences'))"
+            )['output'].strip()
+        ]
+    elif os_type == 'Linux':
+        if "arm" in platform.machine():
+            state_file_paths = [
+                env.controller.execute_python_command(
+                    "import os; print(os.path.join(os.getenv('HOME'), 'snap/chromium/common/chromium/Local State'))"
+                )['output'].strip()
+            ]
+            preference_file_paths = [
+                env.controller.execute_python_command(
+                    "import os; print(os.path.join(os.getenv('HOME'), 'snap/chromium/common/chromium/Default/Preferences'))"
+                )['output'].strip()
+            ]
+        else:
+            state_file_paths = [
+                env.controller.execute_python_command(
+                    "import os; print(os.path.join(os.getenv('HOME'), '.config/google-chrome/Local State'))"
+                )['output'].strip()
+            ]
+            preference_file_paths = [
+                env.controller.execute_python_command(
+                    "import os; print(os.path.join(os.getenv('HOME'), '.config/google-chrome/Default/Preferences'))"
+                )['output'].strip()
+            ]
+    else:
+        raise Exception('Unsupported operating system')
+
+    all_languages = []
+
+    for state_file_path in state_file_paths + preference_file_paths:
+        try:
+            content = env.controller.get_file(state_file_path)
+            data = json.loads(content)
+            packs = data.get('accessibility', {}).get('captions', {}).get('soda_registered_language_packs', [])
+            if not isinstance(packs, list):
+                continue
+            for pack in packs:
+                if not isinstance(pack, str):
+                    continue
+                language = "es" if pack == "es" or pack.startswith("es-") else pack
+                if language not in all_languages:
+                    all_languages.append(language)
+        except Exception as e:
+            logger.error(f"Error reading {state_file_path}: {e}")
+    return all_languages
+
+
 def get_enable_enhanced_safety_browsing(env, config: Dict[str, str]):
     os_type = env.vm_platform
     if os_type == 'Windows':

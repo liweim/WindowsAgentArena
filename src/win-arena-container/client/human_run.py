@@ -56,6 +56,7 @@ def human_agent():
         raise ValueError(f"Example file {args.example} does not exist.")
     with open(example_path, "r", encoding="utf-8") as f:
         example = json.load(f)
+    example["__task_config_path"] = os.path.abspath(example_path)
 
     env = DesktopEnv(
         action_space="pyautogui",

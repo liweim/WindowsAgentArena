@@ -220,6 +220,7 @@ def test(
 
             with open(config_file, "r", encoding="utf-8") as f:
                 example = json.load(f)
+            example["__task_config_path"] = os.path.abspath(config_file)
 
             logger.info(f"[Domain]: {domain}")
             logger.info(f"[Example ID]: {example_id}")

@@ -1,0 +1,30 @@
+{
+  "id": "Access-windows_notification",
+  "snapshot": "base_setup",
+  "category": "Access",
+  "instruction": "Set Windows notifications to stay visible for 5 minutes.",
+  "source": "Settings > Accessibility > Visual effects > Dismiss notifications after this amount of time",
+  "gt_steps": [
+    "Open Windows Settings.",
+    "Go to Accessibility > Visual effects.",
+    "Find Dismiss notifications after this amount of time.",
+    "Set it to 5 minutes."
+  ],
+  "config": [],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "settings"
+  ],
+  "evaluator": {
+    "func": "exact_match",
+    "result": {
+      "type": "notification_duration"
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "expected": "5 minutes"
+      }
+    }
+  }
+}

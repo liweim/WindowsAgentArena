@@ -1,0 +1,104 @@
+{
+  "id": "Information-fema_emergency_kit",
+  "snapshot": "chrome",
+  "category": "Information",
+  "instruction": "Enable Chrome Live Caption, watch the video, and enter each must-have emergency kit item mentioned in the video into `~/Desktop/emergency_kit_items.xlsx`. Use one row per item in the `Item` column, then save the spreadsheet.",
+  "source": "https://www.youtube.com/watch?v=o4enqHGluLI",
+  "gt_steps": [
+    "Open the FEMA emergency kit video in Chrome.",
+    "Turn on Chrome Live Caption.",
+    "Play the video and use Live Caption to identify the must-have emergency kit items.",
+    "Open `emergency_kit_items.xlsx` from the Desktop.",
+    "Fill the `Item` column with one item per row: `Water`, `Nonperishable food`, `Manual can opener`, `Flashlight`, `Extra batteries`, `Weather radio`, `First aid kit`, `Children's essentials`, `Pet supplies`, `Prescriptions and over-the-counter medications`.",
+    "Save the completed spreadsheet."
+  ],
+  "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/emergency_kit_items.xlsx",
+            "path": "C:\\Users\\Docker\\Desktop\\emergency_kit_items.xlsx"
+          }
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port=1337",
+          "--force-renderer-accessibility"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    },
+    {
+      "type": "chrome_prepare_youtube_for_live_caption",
+      "parameters": {
+        "url": "https://www.youtube.com/watch?v=o4enqHGluLI",
+        "wait_seconds": 1
+      }
+    },
+    {
+      "type": "execute",
+      "parameters": {
+        "command": [
+          "powershell",
+          "-NoProfile",
+          "-Command",
+          "$exe='C:\\Program Files\\LibreOffice\\program\\scalc.exe'; $file='C:\\Users\\Docker\\Desktop\\emergency_kit_items.xlsx'; Start-Process -FilePath $exe -ArgumentList @($file)"
+        ]
+      }
+    },
+    {
+      "type": "activate_window",
+      "parameters": {
+        "window_name": "Google Chrome"
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "chrome",
+    "libreoffice_calc"
+  ],
+  "evaluator": {
+    "func": "compare_emergency_kit_items_xlsx",
+    "result": {
+      "type": "vm_file",
+      "path": "C:\\Users\\Docker\\Desktop\\emergency_kit_items.xlsx",
+      "dest": "emergency_kit_items.xlsx"
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "column_name": "Item",
+        "threshold": 90,
+        "expected": [
+          "Water",
+          "Nonperishable food",
+          "Manual can opener",
+          "Flashlight",
+          "Extra batteries",
+          "Weather radio",
+          "First aid kit",
+          "Children's essentials",
+          "Pet supplies",
+          "Prescriptions and over-the-counter medications"
+        ]
+      }
+    }
+  }
+}

@@ -32,9 +32,22 @@ class SetupController:
         self.http_server: str = f"http://{vm_ip}:5000"
         self.http_server_setup_root: str = f"http://{vm_ip}:5000/setup"
         self.cache_dir: str = cache_dir
+        self.task_config_dir: Optional[str] = None
 
     def reset_cache_dir(self, cache_dir: str):
         self.cache_dir = cache_dir
+
+    def set_task_config_dir(self, task_config_dir: Optional[str]):
+        self.task_config_dir = task_config_dir
+
+    def _resolve_local_path(self, local_path: str) -> str:
+        if os.path.isabs(local_path):
+            return local_path
+        if self.task_config_dir:
+            candidate = os.path.normpath(os.path.join(self.task_config_dir, local_path))
+            if os.path.exists(candidate):
+                return candidate
+        return local_path
 
     def setup(self, config: List[Dict[str, Any]]):
         """
@@ -159,7 +172,7 @@ class SetupController:
               }
         """
         for f in files:
-            local_path: str = f["local_path"]
+            local_path: str = self._resolve_local_path(f["local_path"])
             path: str = f["path"]
 
             if not os.path.exists(local_path):
@@ -694,6 +707,62 @@ class SetupController:
                 logger.info("Executed Chrome script on tab: %s", target_page.url)
             except Exception as e:
                 logger.warning("Failed to execute Chrome script on %s: %s", target_page.url, e)
+
+    @staticmethod
+    def _build_youtube_live_caption_prep_script(
+            pause_video: bool = True,
+            disable_youtube_captions: bool = True
+    ) -> str:
+        script_lines = [
+            "async () => {",
+            "  const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));",
+        ]
+        if pause_video:
+            script_lines.extend([
+                "  for (let i = 0; i < 20; i++) {",
+                "    const video = document.querySelector('video');",
+                "    if (video) {",
+                "      video.pause();",
+                "      break;",
+                "    }",
+                "    await sleep(500);",
+                "  }",
+            ])
+        if disable_youtube_captions:
+            script_lines.extend([
+                "  for (let i = 0; i < 20; i++) {",
+                "    const captionsButton = document.querySelector('.ytp-subtitles-button');",
+                "    if (captionsButton) {",
+                "      const title = (captionsButton.getAttribute('title') || '').toLowerCase();",
+                "      const isOn = captionsButton.getAttribute('aria-pressed') === 'true'",
+                "        || captionsButton.classList.contains('ytp-button-active')",
+                "        || title.includes('turn off');",
+                "      if (isOn) captionsButton.click();",
+                "      break;",
+                "    }",
+                "    await sleep(500);",
+                "  }",
+            ])
+        script_lines.append("}")
+        return "\n".join(script_lines)
+
+    def _chrome_prepare_youtube_for_live_caption_setup(
+            self,
+            url: str,
+            wait_seconds: float = 1,
+            timeout: int = 30000,
+            pause_video: bool = True,
+            disable_youtube_captions: bool = True
+    ):
+        self._chrome_execute_script_setup(
+            script=self._build_youtube_live_caption_prep_script(
+                pause_video=pause_video,
+                disable_youtube_captions=disable_youtube_captions,
+            ),
+            url=url,
+            timeout=timeout,
+            wait_seconds=wait_seconds,
+        )
 
     # google drive setup
     def _googledrive_setup(self, **config):

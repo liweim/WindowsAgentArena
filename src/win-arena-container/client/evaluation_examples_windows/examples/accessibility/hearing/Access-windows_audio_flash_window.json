@@ -1,0 +1,30 @@
+{
+  "id": "Access-windows_audio_flash_window",
+  "snapshot": "base_setup",
+  "category": "Access",
+  "instruction": "Set Windows to flash the active window during audio notifications.",
+  "source": "Settings > Accessibility > Audio > Flash my screen during audio notifications",
+  "gt_steps": [
+    "Open Windows Settings.",
+    "Go to Accessibility > Audio.",
+    "Find the audio notification flash setting.",
+    "Select Flash the active window."
+  ],
+  "config": [],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "settings"
+  ],
+  "evaluator": {
+    "func": "exact_match",
+    "result": {
+      "type": "visual_audio_alerts"
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "expected": "active_window"
+      }
+    }
+  }
+}

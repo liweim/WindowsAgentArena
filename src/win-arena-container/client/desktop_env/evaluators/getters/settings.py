@@ -1,5 +1,13 @@
 from typing import Dict
 import json
+import logging
+
+logger = logging.getLogger("desktopenv.getters.settings")
+
+
+BUILTIN_CAPTION_STYLE_GUIDS = {
+    "{c9fc6a2c-d04b-41bb-bc5a-b764515c29fd}": "Large text",
+}
 
 def generate_time(hour, minute):
     if hour < 12:
@@ -145,3 +153,134 @@ def get_system_notifications(env, config: Dict[str,str]):
     except Exception as e:
         print("Error retrieving notification setting")
         return "Uanble to get the notifications settings state"    
+
+
+def get_mono_audio_enabled(env, config: Dict[str, str]):
+    key_path = r"HKCU:\Software\Microsoft\Multimedia\Audio"
+    setting_path = "AccessibilityMonoMixState"
+    result = env.controller.get_registry_key(key_path, setting_path)
+    try:
+        return "true" if result['output'].split('\n')[0] == "1" else "false"
+    except Exception:
+        return "false"
+
+
+def get_visual_audio_alerts(env, config: Dict[str, str]):
+    key_path = r"HKCU:\Control Panel\Accessibility\SoundSentry"
+    flags = env.controller.get_registry_key(key_path, "Flags")
+    effect = env.controller.get_registry_key(key_path, "WindowsEffect")
+    try:
+        flags_value = flags['output'].split('\n')[0]
+        effect_value = effect['output'].split('\n')[0]
+    except Exception:
+        return "off"
+
+    if flags_value != "3":
+        return "off"
+    if effect_value == "3":
+        return "entire_screen"
+    if effect_value == "2":
+        return "active_window"
+    if effect_value == "1":
+        return "title_bar"
+    return "off"
+
+
+def get_notification_duration(env, config: Dict[str, str]):
+    key_path = r"HKCU:\Control Panel\Accessibility"
+    setting_path = "MessageDuration"
+    result = env.controller.get_registry_key(key_path, setting_path)
+    try:
+        value = int(result['output'].split('\n')[0])
+    except Exception:
+        return None
+
+    duration_map = {
+        5: "5 seconds",
+        7: "7 seconds",
+        15: "15 seconds",
+        30: "30 seconds",
+        60: "1 minute",
+        300: "5 minutes",
+    }
+    return duration_map.get(value, str(value))
+
+
+def get_caption_style_names(env, config: Dict[str, str]):
+    command = (
+        "powershell -Command \""
+        "$key = 'HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\ClosedCaptioning\\Theme'; "
+        "if (Test-Path $key) { "
+        "Get-ChildItem $key | ForEach-Object { "
+        "try { Get-ItemPropertyValue -Path $_.PSPath -Name 'Name' } catch {} "
+        "} | ConvertTo-Json -Compress "
+        "} else { '[]' }\""
+    )
+    try:
+        result = env.controller.execute_shell_command(command)
+        output = result.get('output', '').strip()
+        if not output:
+            return []
+        parsed = json.loads(output)
+        if isinstance(parsed, list):
+            return [name for name in parsed if isinstance(name, str)]
+        if isinstance(parsed, str):
+            return [parsed]
+    except Exception:
+        return []
+    return []
+
+
+def get_selected_caption_style_name(env, config: Dict[str, str]):
+    command = (
+        "powershell -Command \""
+        "$root = 'HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\ClosedCaptioning'; "
+        "$selected = Get-ItemPropertyValue -Path $root -Name 'CurrentSelectedTheme' -ErrorAction SilentlyContinue; "
+        "if (-not $selected) { '' ; exit } "
+        "$paths = @("
+        "'HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\ClosedCaptioning\\Theme\\' + $selected, "
+        "'HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\ClosedCaptioning\\Theme\\' + $selected"
+        "); "
+        "foreach ($path in $paths) { "
+        "if (Test-Path $path) { "
+        "try { "
+        "Get-ItemPropertyValue -Path $path -Name 'Name'; "
+        "exit "
+        "} catch {} "
+        "} "
+        "} "
+        "$selected\""
+    )
+    try:
+        result = env.controller.execute_shell_command(command)
+        if result is None:
+            logger.error("selected_caption_style_name: command returned None")
+            return None
+
+        output = result.get('output', '').strip()
+        logger.info("selected_caption_style_name: raw output=%r", output)
+        if not output:
+            logger.warning("selected_caption_style_name: empty output from registry lookup")
+            return None
+
+        lines = [line.strip() for line in output.splitlines() if line.strip()]
+        resolved_value = lines[-1] if lines else None
+        if not resolved_value:
+            logger.warning("selected_caption_style_name: no resolved caption style value in output")
+            return None
+
+        normalized = resolved_value.lower()
+        if normalized in BUILTIN_CAPTION_STYLE_GUIDS:
+            mapped_value = BUILTIN_CAPTION_STYLE_GUIDS[normalized]
+            logger.info(
+                "selected_caption_style_name: mapped builtin guid %r to %r",
+                normalized,
+                mapped_value,
+            )
+            logger.info("selected_caption_style_name: normalized output=%r", mapped_value)
+            return mapped_value
+        logger.info("selected_caption_style_name: normalized output=%r", normalized)
+        return normalized
+    except Exception as exc:
+        logger.exception("selected_caption_style_name: failed to resolve selected caption style: %s", exc)
+        return None

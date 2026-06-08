@@ -1,5 +1,5 @@
 {
-  "id": "Information-census_data_1",
+  "id": "Information-census_data",
   "snapshot": "chrome",
   "category": "Information",
   "instruction": "Turn on Live Caption, watch the opened YouTube video, then open the Census data website and search for the area demonstrated in the video.",
@@ -35,11 +35,10 @@
       }
     },
     {
-      "type": "chrome_execute_script",
+      "type": "chrome_prepare_youtube_for_live_caption",
       "parameters": {
         "url": "https://www.youtube.com/watch?v=6eqpPRLndPk",
-        "wait_seconds": 1,
-        "script": "async () => { const sleep = ms => new Promise(resolve => setTimeout(resolve, ms)); for (let i = 0; i < 20; i++) { const video = document.querySelector('video'); if (video) { video.pause(); break; } await sleep(500); } for (let i = 0; i < 20; i++) { const captionsButton = document.querySelector('.ytp-subtitles-button'); if (captionsButton) { const title = (captionsButton.getAttribute('title') || '').toLowerCase(); const isOn = captionsButton.getAttribute('aria-pressed') === 'true' || captionsButton.classList.contains('ytp-button-active') || title.includes('turn off'); if (isOn) captionsButton.click(); break; } await sleep(500); } }"
+        "wait_seconds": 1
       }
     },
     {
