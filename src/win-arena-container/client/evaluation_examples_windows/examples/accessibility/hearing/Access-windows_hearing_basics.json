@@ -1,0 +1,47 @@
+{
+  "id": "Access-windows_hearing_basics",
+  "snapshot": "base_setup",
+  "category": "Access",
+  "instruction": "Enable Mono audio and set visual audio alerts to Flash the entire screen in Windows.",
+  "source": "Settings > Accessibility > Audio",
+  "gt_steps": [
+    "Open Windows Settings.",
+    "Go to Accessibility > Audio.",
+    "Turn on Mono audio.",
+    "Set Flash my screen during audio notifications to Flash the entire screen."
+  ],
+  "config": [],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "settings"
+  ],
+  "evaluator": {
+    "func": [
+      "exact_match",
+      "exact_match"
+    ],
+    "conj": "and",
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "expected": "true"
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "expected": "entire_screen"
+        }
+      }
+    ],
+    "result": [
+      {
+        "type": "mono_audio_enabled"
+      },
+      {
+        "type": "visual_audio_alerts"
+      }
+    ]
+  }
+}

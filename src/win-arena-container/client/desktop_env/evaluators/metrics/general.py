@@ -13,6 +13,7 @@ from typing import Callable, Any, Union
 from typing import Dict, List, Pattern
 
 import lxml.etree
+import openpyxl
 import pdfplumber
 import yaml
 from docx import Document
@@ -63,6 +64,75 @@ def literal_match(result: Any, expected: Any, **options) -> float:
         return float(result == expected)
     else:
         raise NotImplementedError(f"Type {type} not supported")
+
+
+def compare_emergency_kit_items_xlsx(result: str, rules: Dict[str, Any]) -> float:
+    if result is None or not os.path.exists(result):
+        return 0.
+
+    expected_items = rules.get("expected", [])
+    if not expected_items:
+        return 0.
+
+    header_row = rules.get("header_row", 1)
+    column_name = rules.get("column_name", "Item")
+    threshold = rules.get("threshold", 90)
+
+    def normalize_text(value: Any) -> str:
+        text = str(value or "").strip().lower()
+        text = text.replace("&", " and ")
+        text = re.sub(r"[’']", "", text)
+        text = text.replace("-", " ")
+        text = text.replace("/", " ")
+        text = re.sub(r"[^a-z0-9\s]", " ", text)
+        text = re.sub(r"\s+", " ", text).strip()
+        return text
+
+    try:
+        workbook = openpyxl.load_workbook(result, data_only=True)
+    except Exception:
+        return 0.
+
+    worksheet_name = rules.get("sheet_name")
+    if worksheet_name and worksheet_name in workbook.sheetnames:
+        worksheet = workbook[worksheet_name]
+    else:
+        worksheet = workbook[workbook.sheetnames[0]]
+
+    target_column = 1
+    for cell in worksheet[header_row]:
+        if normalize_text(cell.value) == normalize_text(column_name):
+            target_column = cell.column
+            break
+
+    actual_items: List[str] = []
+    seen_normalized: set[str] = set()
+    for row in range(header_row + 1, worksheet.max_row + 1):
+        value = worksheet.cell(row=row, column=target_column).value
+        normalized = normalize_text(value)
+        if not normalized or normalized in seen_normalized:
+            continue
+        seen_normalized.add(normalized)
+        actual_items.append(normalized)
+
+    if not actual_items:
+        return 0.
+
+    matched = 0
+    for expected_item in expected_items:
+        normalized_expected = normalize_text(expected_item)
+        best_score = 0
+        for actual_item in actual_items:
+            best_score = max(
+                best_score,
+                fuzz.ratio(normalized_expected, actual_item),
+                fuzz.token_sort_ratio(normalized_expected, actual_item),
+                fuzz.token_set_ratio(normalized_expected, actual_item),
+            )
+        if best_score >= threshold:
+            matched += 1
+
+    return matched / len(expected_items)
 
 
 def is_in_list(result, rules) -> float:

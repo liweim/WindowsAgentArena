@@ -195,6 +195,11 @@ class DesktopEnv(gym.Env):
         os.makedirs(self.cache_dir, exist_ok=True)
         self.instruction = task_config["instruction"]
         self.config = task_config["config"] if "config" in task_config else []
+        self.setup_controller.set_task_config_dir(
+            os.path.dirname(task_config["__task_config_path"])
+            if task_config.get("__task_config_path")
+            else None
+        )
 
         # evaluator dict
         # func -> metric function string, or list of metric function strings
