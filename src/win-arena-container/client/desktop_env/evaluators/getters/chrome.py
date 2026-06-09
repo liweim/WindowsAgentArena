@@ -684,13 +684,13 @@ def get_active_tab_info(env, config: Dict[str, str]):
     port = 9222  # fixme: this port is hard-coded, need to be changed from config file
 
     remote_debugging_url = f"http://{host}:{port}"
+
     with sync_playwright() as p:
         # connect to remote Chrome instance, since it is supposed to be the active one, we won't start a new one if failed
         try:
             browser = p.chromium.connect_over_cdp(remote_debugging_url)
         except Exception as e:
             return None
-
         active_tab_info = {}
         # go to the target URL page
         page = browser.new_page()
@@ -705,6 +705,7 @@ def get_active_tab_info(env, config: Dict[str, str]):
             'url': page.url,
             'content': page.content()  # get the HTML content of the page
         }
+        print(active_tab_info)
 
         browser.close()
         # print("active_tab_title: {}".format(active_tab_info.get('title', 'None')))
@@ -850,6 +851,81 @@ def get_active_tab_contains_text(env, config: Dict[str, Any]):
                         return "false"
 
     logger.warning("No open Chrome tab matched active tab URL: %s", active_tab_url)
+    return "false"
+
+
+def get_google_maps_state(env, config: Dict[str, Any]):
+    host = env.vm_ip
+    port = 9222  # fixme: this port is hard-coded, need to be changed from config file
+    remote_debugging_url = f"http://{host}:{port}"
+    mode = config.get("mode", "")
+    required_text = config.get("required_text", [])
+    if isinstance(required_text, str):
+        required_text = [required_text]
+
+    script = """({mode, requiredText}) => {
+        const url = decodeURIComponent(window.location.href);
+        const normalizedUrl = url.replace(/\\+/g, ' ');
+        const bodyText = document.body ? document.body.innerText : '';
+        const haystack = `${normalizedUrl}\\n${document.title}\\n${bodyText}`;
+        const normalizedHaystack = haystack.toLowerCase();
+        const hasAllText = requiredText.every(text => {
+            const alternatives = Array.isArray(text) ? text : [text];
+            return alternatives.some(item => normalizedHaystack.includes(String(item).toLowerCase()));
+        });
+        if (!url.includes('google.') || !url.includes('/maps')) return 'false';
+        if (!hasAllText) return 'false';
+
+        if (mode === 'street_view') {
+            const streetViewUrl = /\\/maps\\/@[^/]*,3a/.test(url)
+                || url.includes('!3m') && url.includes('!1e1');
+            const hasStreetViewText = bodyText.includes('Street View');
+            return (streetViewUrl || hasStreetViewText) ? 'true' : 'false';
+        }
+
+        if (mode === 'directions_driving') {
+            const directionsUrl = url.includes('/dir/') || bodyText.includes('Directions');
+            const drivingCandidates = Array.from(document.querySelectorAll('[aria-label], [title]')).map(el => {
+                const label = `${el.getAttribute('aria-label') || ''} ${el.getAttribute('title') || ''}`;
+                const selected = el.getAttribute('aria-checked') === 'true'
+                    || el.getAttribute('aria-selected') === 'true'
+                    || el.getAttribute('aria-pressed') === 'true'
+                    || el.className.toString().includes('selected');
+                return {label: label.trim(), selected};
+            }).filter(item => /driving|car/i.test(item.label));
+            const drivingSelected = drivingCandidates.some(item => item.selected);
+            const hasDrivingText = bodyText.includes('Driving');
+            return (directionsUrl && (drivingSelected || hasDrivingText)) ? 'true' : 'false';
+        }
+
+        if (mode === 'place_details') {
+            const placeUrl = url.includes('/place/') || url.includes('query_place_id');
+            const hasOverviewText = bodyText.includes('Overview');
+            const hasReviewsText = bodyText.includes('Reviews');
+            return (placeUrl || hasOverviewText || hasReviewsText) ? 'true' : 'false';
+        }
+
+        return 'false';
+    }"""
+
+    with sync_playwright() as p:
+        try:
+            browser = p.chromium.connect_over_cdp(remote_debugging_url)
+        except Exception as e:
+            logger.error("Failed to connect to Chrome for Google Maps state check: %s", e)
+            return "false"
+
+        for context in browser.contexts:
+            for page in context.pages:
+                if "google." in page.url and "/maps" in page.url:
+                    try:
+                        page.wait_for_load_state("domcontentloaded", timeout=int(config.get("timeout", 30000)))
+                        return page.evaluate(script, {"mode": mode, "requiredText": required_text})
+                    except Exception as e:
+                        logger.warning("Failed to check Google Maps state on %s: %s", page.url, e)
+                        return "false"
+
+    logger.warning("No open Google Maps tab found")
     return "false"
 
 
@@ -1666,3 +1742,24 @@ def get_url_dashPart(env, config: Dict[str, str]):
         return dash_part
     elif config["returnType"] == "json":
         return {config["key"]: dash_part}
+
+
+def get_active_tab_info_simple(env, config):
+    """
+    Simple active tab getter.
+    It only uses the accessibility tree URL and does not connect to Chrome CDP.
+    Good for URL-based evaluators.
+    """
+    active_tab_url = get_active_url_from_accessTree(env, config)
+
+    if active_tab_url is None:
+        logger.error("Failed to get active tab URL")
+        return None
+
+    print("Simple active tab url:", active_tab_url)
+
+    return {
+        "url": active_tab_url,
+        "title": "",
+        "content": ""
+    }
