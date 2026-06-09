@@ -1,15 +1,15 @@
 {
-  "id": "Information-fema_emergency_kit",
+  "id": "Information-child_visit_preparation",
   "snapshot": "chrome",
   "category": "Information",
-  "instruction": "Enable Chrome Live Caption, watch the video, and enter each must-have emergency kit item mentioned in the video into `~/Desktop/items.xlsx`. Use one row per phrase in the `items` column. Each answer should contain the complete phrase exactly as it appears in the captions.",
-  "source": "https://www.youtube.com/watch?v=o4enqHGluLI",
+  "instruction": "Enable Chrome Live Caption, watch the video, and enter the specific comfort items, clothing choices, or appointment actions recommended in the video into the spreadsheet. Use one row per phrase in the `items` column. Each answer should contain the complete phrase exactly as it appears in the captions.",
+  "source": "https://www.youtube.com/watch?v=2BuJuk4BQIs",
   "gt_steps": [
-    "Open the FEMA emergency kit video in Chrome.",
+    "Open the child visit preparation video in Chrome.",
     "Turn on Chrome Live Caption.",
-    "Play the video and use Live Caption to identify the must-have emergency kit items.",
+    "Play the video and use Live Caption to identify the recommended comfort items, clothing choices, or appointment actions.",
     "Open `items.xlsx` from the Desktop.",
-    "Fill the `items` column with one item per row: `water`, `food`, `manual can opener`, `flashlight`, `extra batteries`, `weather radio`, `hand-cranked radio`, `first aid kit`, `diapers`, `infant formula`, `medicine bottles`, `children`, `pets`, `extra food`, `collapsible bowls`, `medicine`, `prescriptions`, `over-the-counter medications`.",
+    "Fill the `items` column with one phrase per row: `short sleeve shirt`, `easy to remove`, `holding and talking`, `breastfeeding`, `favourite toy`, `music`, `book`, `bandage`, `reward`, `vaccination record`, `15 minutes`.",
     "Save the completed spreadsheet."
   ],
   "config": [
@@ -47,7 +47,7 @@
     {
       "type": "chrome_prepare_youtube_for_live_caption",
       "parameters": {
-        "url": "https://www.youtube.com/watch?v=o4enqHGluLI",
+        "url": "https://www.youtube.com/watch?v=2BuJuk4BQIs",
         "wait_seconds": 1
       }
     },
@@ -81,24 +81,17 @@
       "rules": {
         "column_name": "items",
         "expected": [
-          "water",
-          "food",
-          "manual can opener",
-          "flashlight",
-          "extra batteries",
-          "weather radio",
-          "hand-cranked radio",
-          "first aid kit",
-          "diapers",
-          "infant formula",
-          "medicine bottles",
-          "children",
-          "pets",
-          "extra food",
-          "collapsible bowls",
-          "medicine",
-          "prescriptions",
-          "over-the-counter medications"
+          "short sleeve shirt",
+          "easy to remove",
+          "holding and talking",
+          "breastfeeding",
+          "favourite toy",
+          "music",
+          "book",
+          "bandage",
+          "reward",
+          "vaccination record",
+          "15 minutes"
         ]
       }
     }

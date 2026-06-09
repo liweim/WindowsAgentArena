@@ -860,10 +860,13 @@ def get_google_maps_state(env, config: Dict[str, Any]):
     remote_debugging_url = f"http://{host}:{port}"
     mode = config.get("mode", "")
     required_text = config.get("required_text", [])
+    travel_modes = config.get("travel_modes", [])
     if isinstance(required_text, str):
         required_text = [required_text]
+    if isinstance(travel_modes, str):
+        travel_modes = [travel_modes]
 
-    script = """({mode, requiredText}) => {
+    script = """({mode, requiredText, travelModes}) => {
         const url = decodeURIComponent(window.location.href);
         const normalizedUrl = url.replace(/\\+/g, ' ');
         const bodyText = document.body ? document.body.innerText : '';
@@ -883,19 +886,39 @@ def get_google_maps_state(env, config: Dict[str, Any]):
             return (streetViewUrl || hasStreetViewText) ? 'true' : 'false';
         }
 
-        if (mode === 'directions_driving') {
+        if (mode === 'directions' || mode.startsWith('directions_')) {
             const directionsUrl = url.includes('/dir/') || bodyText.includes('Directions');
-            const drivingCandidates = Array.from(document.querySelectorAll('[aria-label], [title]')).map(el => {
+            const inferredMode = mode.startsWith('directions_') ? mode.slice('directions_'.length) : null;
+            const requestedModes = (travelModes && travelModes.length ? travelModes : [inferredMode || 'any'])
+                .map(item => String(item).toLowerCase().replace(/[-\\s]+/g, '_'));
+            const modeAliases = {
+                driving: [/driving|drive|car/i, /!3e0(?:[/?&#]|$)/i],
+                walking: [/walking|walk|pedestrian/i, /!3e2(?:[/?&#]|$)/i],
+                bicycling: [/bicycling|cycling|bike|bicycle/i, /!3e1(?:[/?&#]|$)/i],
+                cycling: [/bicycling|cycling|bike|bicycle/i, /!3e1(?:[/?&#]|$)/i],
+                transit: [/transit|public transport|bus|train|subway|rail/i, /!3e3(?:[/?&#]|$)/i],
+                public_transport: [/transit|public transport|bus|train|subway|rail/i],
+                two_wheeler: [/two-wheeler|two wheeler|motorcycle|scooter/i],
+                any: [/.*/]
+            };
+            const travelModeCandidates = Array.from(document.querySelectorAll('[aria-label], [title]')).map(el => {
                 const label = `${el.getAttribute('aria-label') || ''} ${el.getAttribute('title') || ''}`;
                 const selected = el.getAttribute('aria-checked') === 'true'
                     || el.getAttribute('aria-selected') === 'true'
                     || el.getAttribute('aria-pressed') === 'true'
                     || el.className.toString().includes('selected');
                 return {label: label.trim(), selected};
-            }).filter(item => /driving|car/i.test(item.label));
-            const drivingSelected = drivingCandidates.some(item => item.selected);
-            const hasDrivingText = bodyText.includes('Driving');
-            return (directionsUrl && (drivingSelected || hasDrivingText)) ? 'true' : 'false';
+            }).filter(item => item.label);
+            const travelModeMatched = requestedModes.includes('any') || requestedModes.some(requestedMode => {
+                const patterns = modeAliases[requestedMode] || [new RegExp(requestedMode.replace(/_/g, ' '), 'i')];
+                const selectedCandidate = travelModeCandidates.find(item => (
+                    item.selected && patterns.some(pattern => pattern.test(item.label))
+                ));
+                const bodyMatched = patterns.some(pattern => pattern.test(bodyText));
+                const urlMatched = patterns.some(pattern => pattern.test(url));
+                return Boolean(selectedCandidate) || bodyMatched || urlMatched;
+            });
+            return (directionsUrl && travelModeMatched) ? 'true' : 'false';
         }
 
         if (mode === 'place_details') {
@@ -920,7 +943,10 @@ def get_google_maps_state(env, config: Dict[str, Any]):
                 if "google." in page.url and "/maps" in page.url:
                     try:
                         page.wait_for_load_state("domcontentloaded", timeout=int(config.get("timeout", 30000)))
-                        return page.evaluate(script, {"mode": mode, "requiredText": required_text})
+                        return page.evaluate(
+                            script,
+                            {"mode": mode, "requiredText": required_text, "travelModes": travel_modes},
+                        )
                     except Exception as e:
                         logger.warning("Failed to check Google Maps state on %s: %s", page.url, e)
                         return "false"

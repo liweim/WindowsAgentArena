@@ -234,6 +234,38 @@ class SetupController:
         if not path:
             raise Exception(f"Setup Open - Invalid path ({path}).")
 
+        lower_path = path.lower()
+        if lower_path.endswith((".xlsx", ".xls", ".ods")):
+            self._execute_setup(
+                r'taskkill /IM soffice.bin /F 2>NUL & taskkill /IM soffice.exe /F 2>NUL & taskkill /IM scalc.exe /F 2>NUL & '
+                r'rmdir /S /Q "C:\Temp\winarena-libreoffice-profile" 2>NUL & mkdir "C:\Temp\winarena-libreoffice-profile"',
+                shell=True,
+            )
+            self._launch_setup([
+                r"C:\Program Files\LibreOffice\program\scalc.exe",
+                "--norestore",
+                "--nolockcheck",
+                "-env:UserInstallation=file:///C:/Temp/winarena-libreoffice-profile",
+                path,
+            ])
+            time.sleep(2)
+            return
+        if lower_path.endswith((".docx", ".doc", ".odt")):
+            self._execute_setup(
+                r'taskkill /IM soffice.bin /F 2>NUL & taskkill /IM soffice.exe /F 2>NUL & taskkill /IM swriter.exe /F 2>NUL & '
+                r'rmdir /S /Q "C:\Temp\winarena-libreoffice-profile" 2>NUL & mkdir "C:\Temp\winarena-libreoffice-profile"',
+                shell=True,
+            )
+            self._launch_setup([
+                r"C:\Program Files\LibreOffice\program\swriter.exe",
+                "--norestore",
+                "--nolockcheck",
+                "-env:UserInstallation=file:///C:/Temp/winarena-libreoffice-profile",
+                path,
+            ])
+            time.sleep(2)
+            return
+
         payload = json.dumps({"path": path})
         headers = {
             'Content-Type': 'application/json'
@@ -759,6 +791,31 @@ class SetupController:
                 pause_video=pause_video,
                 disable_youtube_captions=disable_youtube_captions,
             ),
+            url=url,
+            timeout=timeout,
+            wait_seconds=wait_seconds,
+        )
+
+    def _chrome_pause_video_setup(
+            self,
+            url: str,
+            wait_seconds: float = 1,
+            timeout: int = 30000
+    ):
+        self._chrome_execute_script_setup(
+            script="\n".join([
+                "async () => {",
+                "  const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));",
+                "  for (let i = 0; i < 20; i++) {",
+                "    const video = document.querySelector('video');",
+                "    if (video) {",
+                "      video.pause();",
+                "      break;",
+                "    }",
+                "    await sleep(500);",
+                "  }",
+                "}",
+            ]),
             url=url,
             timeout=timeout,
             wait_seconds=wait_seconds,

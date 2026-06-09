@@ -1,13 +1,15 @@
 {
-  "id": "Service-ftc_complaint_2",
+  "id": "Health-celiac_disease_treatment",
   "snapshot": "chrome",
-  "category": "Service",
-  "instruction": "Turn on captions in the opened YouTube video, then open the website the video says to use for reporting identity theft in a new Chrome tab.",
-  "source": "https://www.youtube.com/watch?v=0GGDKL7TVPo",
+  "category": "Health",
+  "instruction": "I have been diagnosed with celiac disease and want to know the treatment mentioned in the video. Turn on captions in the opened YouTube video, then watch it and save the answer in `answer.txt` on the Desktop.",
+  "source": "https://www.youtube.com/watch?v=A9pbzFAqaho",
   "gt_steps": [
     "Turn on captions in the YouTube player.",
-    "Play the video and use the YouTube captions to identify the website used for reporting identity theft.",
-    "Open https://www.identitytheft.gov/ in a new Chrome tab."
+    "Play the video and use the YouTube captions to identify the treatment mentioned for celiac disease.",
+    "Create answer.txt on the Desktop.",
+    "Write `gluten-free diet` in answer.txt.",
+    "Save and close answer.txt."
   ],
   "config": [
     {
@@ -33,7 +35,7 @@
     {
       "type": "chrome_prepare_youtube_for_live_caption",
       "parameters": {
-        "url": "https://www.youtube.com/watch?v=0GGDKL7TVPo",
+        "url": "https://www.youtube.com/watch?v=A9pbzFAqaho",
         "wait_seconds": 1
       }
     },
@@ -51,17 +53,18 @@
   "evaluator": {
     "func": [
       "exact_match",
-      "is_expected_active_tab"
+      "exact_match"
     ],
     "conj": "and",
     "result": [
       {
         "type": "youtube_captions_enabled",
-        "url": "https://www.youtube.com/watch?v=0GGDKL7TVPo"
+        "url": "https://www.youtube.com/watch?v=A9pbzFAqaho"
       },
       {
-        "type": "active_tab_info",
-        "goto_prefix": "https://"
+        "type": "is_file_saved_desktop",
+        "filename": "answer.txt",
+        "textcontent": "gluten-free diet"
       }
     ],
     "expected": [
@@ -74,8 +77,7 @@
       {
         "type": "rule",
         "rules": {
-          "type": "url",
-          "url": "https://www.identitytheft.gov/"
+          "expected": "true"
         }
       }
     ]

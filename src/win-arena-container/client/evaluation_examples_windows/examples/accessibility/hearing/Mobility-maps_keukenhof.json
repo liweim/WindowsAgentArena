@@ -1,13 +1,14 @@
 {
-  "id": "Service-ftc_complaint_2",
+  "id": "Mobility-maps_keukenhof",
   "snapshot": "chrome",
-  "category": "Service",
-  "instruction": "Turn on captions in the opened YouTube video, then open the website the video says to use for reporting identity theft in a new Chrome tab.",
-  "source": "https://www.youtube.com/watch?v=0GGDKL7TVPo",
+  "category": "Mobility",
+  "instruction": "I really like the garden shown in the video. Turn on Chrome Live Caption, find out where it is, then open Google Maps and check its location.",
+  "source": "https://www.youtube.com/watch?v=EnnurXLooZw",
   "gt_steps": [
-    "Turn on captions in the YouTube player.",
-    "Play the video and use the YouTube captions to identify the website used for reporting identity theft.",
-    "Open https://www.identitytheft.gov/ in a new Chrome tab."
+    "Enable Chrome Live Caption.",
+    "Watch the YouTube video and identify `Keukenhof` from the captions.",
+    "Open Google Maps.",
+    "Search for `Keukenhof`."
   ],
   "config": [
     {
@@ -33,7 +34,7 @@
     {
       "type": "chrome_prepare_youtube_for_live_caption",
       "parameters": {
-        "url": "https://www.youtube.com/watch?v=0GGDKL7TVPo",
+        "url": "https://www.youtube.com/watch?v=EnnurXLooZw",
         "wait_seconds": 1
       }
     },
@@ -51,17 +52,20 @@
   "evaluator": {
     "func": [
       "exact_match",
-      "is_expected_active_tab"
+      "exact_match"
     ],
     "conj": "and",
     "result": [
       {
         "type": "youtube_captions_enabled",
-        "url": "https://www.youtube.com/watch?v=0GGDKL7TVPo"
+        "url": "https://www.youtube.com/watch?v=EnnurXLooZw"
       },
       {
-        "type": "active_tab_info",
-        "goto_prefix": "https://"
+        "type": "google_maps_state",
+        "mode": "place_details",
+        "required_text": [
+          "Keukenhof"
+        ]
       }
     ],
     "expected": [
@@ -74,8 +78,7 @@
       {
         "type": "rule",
         "rules": {
-          "type": "url",
-          "url": "https://www.identitytheft.gov/"
+          "expected": "true"
         }
       }
     ]
