@@ -1,13 +1,15 @@
 {
-  "id": "Service-ftc_complaint_2",
+  "id": "Mobility-maps_street_view_giverny",
   "snapshot": "chrome",
-  "category": "Service",
-  "instruction": "Turn on captions in the opened YouTube video, then open the website the video says to use for reporting identity theft in a new Chrome tab.",
-  "source": "https://www.youtube.com/watch?v=0GGDKL7TVPo",
+  "category": "Mobility",
+  "instruction": "The scenic spot in the video looks beautiful. Turn on Chrome Live Caption, find out what it is, then open Google Maps and look around it in Street View.",
+  "source": "https://www.youtube.com/watch?v=UZvi7K32qGw",
   "gt_steps": [
-    "Turn on captions in the YouTube player.",
-    "Play the video and use the YouTube captions to identify the website used for reporting identity theft.",
-    "Open https://www.identitytheft.gov/ in a new Chrome tab."
+    "Enable Chrome Live Caption.",
+    "Watch the YouTube video and identify `Giverny, France` from the captions.",
+    "Open Google Maps.",
+    "Search for `Giverny, France`.",
+    "Drag Pegman onto the map near Giverny, France."
   ],
   "config": [
     {
@@ -33,7 +35,7 @@
     {
       "type": "chrome_prepare_youtube_for_live_caption",
       "parameters": {
-        "url": "https://www.youtube.com/watch?v=0GGDKL7TVPo",
+        "url": "https://www.youtube.com/watch?v=UZvi7K32qGw",
         "wait_seconds": 1
       }
     },
@@ -51,17 +53,20 @@
   "evaluator": {
     "func": [
       "exact_match",
-      "is_expected_active_tab"
+      "exact_match"
     ],
     "conj": "and",
     "result": [
       {
         "type": "youtube_captions_enabled",
-        "url": "https://www.youtube.com/watch?v=0GGDKL7TVPo"
+        "url": "https://www.youtube.com/watch?v=UZvi7K32qGw"
       },
       {
-        "type": "active_tab_info",
-        "goto_prefix": "https://"
+        "type": "google_maps_state",
+        "mode": "street_view",
+        "required_text": [
+          "Giverny, France"
+        ]
       }
     ],
     "expected": [
@@ -74,8 +79,7 @@
       {
         "type": "rule",
         "rules": {
-          "type": "url",
-          "url": "https://www.identitytheft.gov/"
+          "expected": "true"
         }
       }
     ]

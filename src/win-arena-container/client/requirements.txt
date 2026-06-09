@@ -45,7 +45,7 @@ google-generativeai
 PyYaml
 mutagen
 easyocr
-borb
+borb==2.1.22
 pypdf2
 pdfplumber
 wandb

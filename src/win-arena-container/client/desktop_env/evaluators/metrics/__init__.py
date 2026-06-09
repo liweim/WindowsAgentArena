@@ -21,7 +21,9 @@ from .chrome import (
     is_expected_url_pattern_match,
     is_added_to_steam_cart,
     is_expected_installed_extensions,
-    compare_pdf_images
+    compare_pdf_images,
+    check_chrome_weather_bookmark,
+    check_digital_accessibility_page
 )
 from .docs import (
     compare_font_names,
@@ -75,6 +77,7 @@ from .general import (
     compare_python_pure_text,
     diff_text_file,
     literal_match,
+    compare_xlsx_items,
     compare_emergency_kit_items_xlsx
 )
 from .gimp import (

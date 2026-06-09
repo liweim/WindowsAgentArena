@@ -28,9 +28,8 @@
     },
     "LibreOffice": {
         "mirrors": [
-            "https://mirror.raiolanetworks.com/tdf/libreoffice/stable/24.8.2/win/x86_64/LibreOffice_24.8.2_Win_x86-64.msi",
-            "https://mirrors.iu13.net/tdf/libreoffice/stable/24.8.2/win/x86_64/LibreOffice_24.8.2_Win_x86-64.msi",
-            "https://download.documentfoundation.org/libreoffice/stable/24.8.2/win/x86_64/LibreOffice_24.8.2_Win_x86-64.msi"
+            "https://mirror.yandex.ru/libreoffice/libreoffice/stable/25.8.6/win/x86_64/LibreOffice_25.8.6_Win_x86-64.msi",
+            "https://es.libreoffice.org/apoyo/dl/win-x86_64/25.8.6/tl/LibreOffice_25.8.6_Win_x86-64.msi"
         ]
     },
     "VLC": {

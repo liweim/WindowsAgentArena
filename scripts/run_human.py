@@ -26,7 +26,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--browser-port", type=str, default="9006")
     parser.add_argument("--rdp-port", type=str, default="3390")
-    parser.add_argument("--skip-build", type=str, default="false")
+    parser.add_argument("--skip-build", type=str, default="true")
     parser.add_argument("--use-kvm", type=str, default="true")
     parser.add_argument("--ram-size", type=str, default="8G")
     parser.add_argument("--cpu-cores", type=str, default="8")

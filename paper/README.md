@@ -83,6 +83,28 @@ Useful sources include:
 
 The task `source` field should point to the concrete webpage, document, support article, app documentation, file, or media page used by the task whenever possible.
 
+
+### Hearing Video Tasks
+
+For hearing-impairment tasks that require captions or live captions to extract spoken video content, follow these additional rules:
+
+* Prefer ordinary online video pages that require playback with captions or live captions. Do not use YouTube Shorts or other short-form pages.
+* The video should be short enough for practical evaluation, preferably no longer than 3 minutes.
+* The video must have captions or produce reliable live captions.
+* Avoid sources where the full transcript is directly visible on the task page before playback. If a source page exposes a transcript in page text, prefer the corresponding YouTube or embedded video page instead.
+* The user-facing task should require the relevant caption tool, such as Chrome Live Caption, Windows Live Captions, or Android Live Caption.
+* Expected answers should be extractable from captions alone unless the instruction explicitly permits visual inference.
+* For answer-list tasks, prefer concrete nouns, noun phrases, or short action phrases over open-ended summaries.
+* Expected answers must be unambiguous, stable, and directly grounded in the video transcript or captions.
+* When possible, expected answers should be the shortest complete continuous phrase that appears exactly in the transcript or captions.
+* Do not use paraphrased expected answers when an exact caption phrase can be used.
+
+Instruction wording for these tasks should constrain the answer format. A typical pattern is:
+
+```text
+Enable Chrome Live Caption, watch the video, and enter each [target item type] mentioned in the video into `~/Desktop/[file].xlsx`. Use one row per phrase in the `[column]` column. Each answer should contain the complete phrase exactly as it appears in the captions, with no timestamps or explanations.
+```
+
 ## Task Construction Workflow
 
 A task should be constructed through the following process:
@@ -174,6 +196,29 @@ Evaluators may check:
 * whether the output is stable across repeated runs.
 
 Expected outputs should be short, stable, and unambiguous. Avoid tasks that depend on current news, changing rankings, personalized recommendations, or volatile page layouts unless the source is pinned or cached.
+
+### Caption Phrase Evaluation
+
+For hearing-impairment video tasks where the user extracts a list of answers from captions into a spreadsheet, use a phrase-containment coverage metric unless a task has a stronger task-specific evaluator.
+
+The evaluator should:
+
+1. Read the target answer column from the spreadsheet.
+2. Remove blank rows and duplicate actual answers.
+3. For each expected answer, check whether any actual answer contains the complete expected phrase after light normalization.
+4. Count the expected answer as matched if the complete normalized expected phrase is contained in at least one normalized actual answer.
+5. Compute coverage as `matched_expected_count / expected_count`.
+
+Use only light normalization, such as lowercasing, trimming whitespace, and collapsing repeated spaces. 
+
+The expected answer list must therefore be designed for containment matching:
+
+* Each expected answer should be a complete, continuous phrase that appears exactly in the captions or transcript.
+* Each expected answer should be as short as possible while preserving the intended meaning.
+* Avoid broad single-word expected answers when the caption provides a more specific phrase.
+* Avoid overlapping expected answers where one expected answer contains another, unless the task intentionally wants both.
+* Avoid paraphrases, synonyms, or inferred answers in `expected` unless they are explicitly listed as task-specific aliases.
+* If visual inference is not part of the task, do not include answers that require watching the image rather than reading captions.
 
 ## Task Quality Checklist
 

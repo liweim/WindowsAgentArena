@@ -66,7 +66,7 @@ def literal_match(result: Any, expected: Any, **options) -> float:
         raise NotImplementedError(f"Type {type} not supported")
 
 
-def compare_emergency_kit_items_xlsx(result: str, rules: Dict[str, Any]) -> float:
+def compare_xlsx_items(result: str, rules: Dict[str, Any]) -> float:
     if result is None or not os.path.exists(result):
         return 0.
 
@@ -76,17 +76,12 @@ def compare_emergency_kit_items_xlsx(result: str, rules: Dict[str, Any]) -> floa
 
     header_row = rules.get("header_row", 1)
     column_name = rules.get("column_name", "Item")
-    threshold = rules.get("threshold", 90)
 
     def normalize_text(value: Any) -> str:
-        text = str(value or "").strip().lower()
-        text = text.replace("&", " and ")
-        text = re.sub(r"[’']", "", text)
-        text = text.replace("-", " ")
-        text = text.replace("/", " ")
-        text = re.sub(r"[^a-z0-9\s]", " ", text)
-        text = re.sub(r"\s+", " ", text).strip()
-        return text
+        return " ".join(str(value or "").lower().strip().split())
+
+    def contains_match(expected: str, actual: str) -> bool:
+        return normalize_text(expected) in normalize_text(actual)
 
     try:
         workbook = openpyxl.load_workbook(result, data_only=True)
@@ -118,21 +113,14 @@ def compare_emergency_kit_items_xlsx(result: str, rules: Dict[str, Any]) -> floa
     if not actual_items:
         return 0.
 
-    matched = 0
-    for expected_item in expected_items:
-        normalized_expected = normalize_text(expected_item)
-        best_score = 0
-        for actual_item in actual_items:
-            best_score = max(
-                best_score,
-                fuzz.ratio(normalized_expected, actual_item),
-                fuzz.token_sort_ratio(normalized_expected, actual_item),
-                fuzz.token_set_ratio(normalized_expected, actual_item),
-            )
-        if best_score >= threshold:
-            matched += 1
+    return sum(
+        any(contains_match(expected_item, actual_item) for actual_item in actual_items)
+        for expected_item in expected_items
+    ) / len(expected_items)
 
-    return matched / len(expected_items)
+
+def compare_emergency_kit_items_xlsx(result: str, rules: Dict[str, Any]) -> float:
+    return compare_xlsx_items(result, rules)
 
 
 def is_in_list(result, rules) -> float:

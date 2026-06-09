@@ -22,8 +22,9 @@ def is_expected_active_tab(active_tab_info: Dict[str, str], rule: Dict[str, Any]
         return 0.
 
     match_type = rule['type']
-
+    print('not start')
     if match_type == "url":
+        print("start")
         expected_url = rule['url']
         if isinstance(active_tab_info, Dict):
             actual_url = active_tab_info.get('url', None)
@@ -141,6 +142,8 @@ def is_expected_bookmarks(bookmarks: List[str], rule: Dict[str, Any]) -> float:
             return 0.
     else:
         raise TypeError(f"{rule['type']} not support yet!")
+
+
 
 
 def is_expected_search_query(active_tab_info: Dict[str, str], rules: Dict[str, Any]) -> float:
@@ -417,3 +420,60 @@ def is_added_to_steam_cart(active_tab_info, rule):
             return 0.
 
     return 1.
+
+
+def check_chrome_weather_bookmark(env, config):
+
+    bookmark_paths = [
+        r"C:\Users\Docker\AppData\Local\Google\Chrome\User Data\Default\Bookmarks",
+        r"C:\Users\Docker\AppData\Local\Google\Chrome\User Data\Profile 1\Bookmarks"
+    ]
+
+    for path in bookmark_paths:
+
+        if not os.path.exists(path):
+            continue
+
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                bookmarks = json.load(f)
+
+            stack = [bookmarks]
+
+            while stack:
+                node = stack.pop()
+
+                if isinstance(node, dict):
+
+                    url = str(node.get("url", "")).lower()
+                    name = str(node.get("name", "")).lower()
+
+                    text = name + " " + url
+
+                    if "sydney" in text and "weather" in text:
+                        return 1.0
+
+                    for value in node.values():
+                        stack.append(value)
+
+                elif isinstance(node, list):
+                    stack.extend(node)
+
+        except Exception:
+            continue
+
+    return 0.0
+
+
+def check_digital_accessibility_page(active_tab_info, rule):
+    if not active_tab_info:
+        return 0.0
+
+    if isinstance(active_tab_info, dict):
+        url = active_tab_info.get("url", "")
+    else:
+        url = str(active_tab_info)
+
+    print("Checking URL:", url)
+
+    return 1.0 if "digital.gov.au/about/accessibility" in url else 0.0

@@ -1,0 +1,68 @@
+{
+  "id": "Consumption-dyson_airstrait",
+  "snapshot": "chrome",
+  "category": "Consumption",
+  "instruction": "Turn on Chrome Live Caption, watch the opened YouTube product video, identify the product, then open its product page on the official website. Leave the official product page open in the active tab.",
+  "source": "https://www.youtube.com/watch?v=3ucfKv2YbU0",
+  "gt_steps": [
+    "Enable Chrome Live Caption.",
+    "Watch the YouTube video and identify the product as `Dyson Airstrait straightener`.",
+    "Open the official Dyson website.",
+    "Find and open the Dyson Airstrait straightener product page.",
+    "Leave the product page open in the active tab."
+  ],
+  "config": [
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port=1337",
+          "--force-renderer-accessibility"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    },
+    {
+      "type": "chrome_prepare_youtube_for_live_caption",
+      "parameters": {
+        "url": "https://www.youtube.com/watch?v=3ucfKv2YbU0",
+        "wait_seconds": 1
+      }
+    },
+    {
+      "type": "activate_window",
+      "parameters": {
+        "window_name": "Google Chrome"
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "chrome"
+  ],
+  "evaluator": {
+    "func": "is_expected_url_pattern_match",
+    "result": {
+      "type": "active_tab_info_simple"
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "expected": [
+          "https?://(www\\.)?dyson\\.[a-z]{2,}(\\.[a-z]{2})?/",
+          "dyson-airstrait-straightener"
+        ]
+      }
+    }
+  }
+}

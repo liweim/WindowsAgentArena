@@ -1,7 +1,7 @@
 {
-  "id": "service-nsw-letter-authority-pdf",
+  "id": "bendigo-personal-demo-transfer-food",
   "snapshot": "chrome",
-  "instruction": "Using the On-Screen Keyboard, open the Service NSW website. Search for \"Forms in PDF format\". From the list of PDF links, click \"Letter of Authority - PDF\" and download the PDF to the Desktop.",
+  "instruction": "Using On-Screen Keyboard, open Chrome and go to the Bendigo Bank interactive e-banking demo. Choose \"Launch Personal Demo\". Transfer $10 from \"Demo Everyday Account\" to \"Demo Multi Signatory Account\". Add \"Food\" as the description and send the transfer now. After the confirmation page appears, take a screenshot and save it to the Desktop as bendigo_transfer.png.",
   "source": "human",
   "config": [
     {
@@ -10,7 +10,8 @@
         "command": [
           "google-chrome",
           "--remote-debugging-port=1337",
-          "--user-data-dir=/tmp/chrome-service-nsw"
+          "--user-data-dir=/tmp/chrome-bendigo-demo",
+          "https://demo.bendigobank.com.au/banking/sign_in"
         ]
       }
     },
@@ -31,13 +32,13 @@
     "func": "check_include_exclude",
     "result": {
       "type": "vm_command_line",
-      "command": "cmd /c dir C:\\Users\\Docker\\Downloads C:\\Users\\Docker\\Desktop",
+      "command": "cmd /c dir C:\\Users\\Docker\\Desktop",
       "shell": true
     },
     "expected": {
       "type": "rule",
       "rules": {
-        "include": [".pdf"],
+        "include": ["bendigo_transfer.png"],
         "exclude": []
       }
     }

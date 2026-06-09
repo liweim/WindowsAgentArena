@@ -194,7 +194,7 @@ if (-not [string]::IsNullOrWhiteSpace($installedVersion)) {
     Write-Host "LibreOffice $version is already installed."
 } else {
     Write-Host "LibreOffice is not installed. Downloading and installing LibreOffice..."
-    $libreOfficeInstallerFilePath = "$env:TEMP\libreOffice_installer.exe"
+    $libreOfficeInstallerFilePath = "$env:TEMP\libreOffice_installer.msi"
     
     $downloadResult = Invoke-DownloadFileFromAvailableMirrors -mirrorUrls $libreOfficeToolDetails.mirrors -outfile $libreOfficeInstallerFilePath
     if (-not $downloadResult) {

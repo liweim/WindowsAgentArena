@@ -16,6 +16,7 @@ from .chrome import (
     get_active_tab_info,
     get_youtube_captions_enabled,
     get_active_tab_contains_text,
+    get_google_maps_state,
     get_enable_do_not_track,
     get_live_caption_enabled,
     get_live_caption_languages,
@@ -29,7 +30,8 @@ from .chrome import (
     get_url_dashPart,
     get_active_url_from_accessTree,
     get_find_installed_extension_name,
-    get_info_from_website
+    get_info_from_website,
+    get_active_tab_info_simple
 )
 from .file import get_cloud_file, get_vm_file, get_cache_file, get_content_from_vm_file, get_vm_file_exists_in_vm_folder
 from .fileexplorer import (

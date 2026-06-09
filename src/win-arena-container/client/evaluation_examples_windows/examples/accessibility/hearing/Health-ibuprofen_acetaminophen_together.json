@@ -1,13 +1,15 @@
 {
-  "id": "Service-ftc_complaint_2",
+  "id": "Health-ibuprofen_acetaminophen_together",
   "snapshot": "chrome",
-  "category": "Service",
-  "instruction": "Turn on captions in the opened YouTube video, then open the website the video says to use for reporting identity theft in a new Chrome tab.",
-  "source": "https://www.youtube.com/watch?v=0GGDKL7TVPo",
+  "category": "Health",
+  "instruction": "I am considering taking ibuprofen and acetaminophen and need to know whether they can be taken together. Turn on captions in the opened YouTube video, then watch it and save the answer in `answer.txt` on the Desktop.",
+  "source": "https://www.youtube.com/watch?v=2324zMLFYC8",
   "gt_steps": [
     "Turn on captions in the YouTube player.",
-    "Play the video and use the YouTube captions to identify the website used for reporting identity theft.",
-    "Open https://www.identitytheft.gov/ in a new Chrome tab."
+    "Play the video and use the YouTube captions to determine whether ibuprofen and acetaminophen can be taken together.",
+    "Create answer.txt on the Desktop.",
+    "Write `yes` in answer.txt.",
+    "Save and close answer.txt."
   ],
   "config": [
     {
@@ -33,7 +35,7 @@
     {
       "type": "chrome_prepare_youtube_for_live_caption",
       "parameters": {
-        "url": "https://www.youtube.com/watch?v=0GGDKL7TVPo",
+        "url": "https://www.youtube.com/watch?v=2324zMLFYC8",
         "wait_seconds": 1
       }
     },
@@ -51,17 +53,18 @@
   "evaluator": {
     "func": [
       "exact_match",
-      "is_expected_active_tab"
+      "exact_match"
     ],
     "conj": "and",
     "result": [
       {
         "type": "youtube_captions_enabled",
-        "url": "https://www.youtube.com/watch?v=0GGDKL7TVPo"
+        "url": "https://www.youtube.com/watch?v=2324zMLFYC8"
       },
       {
-        "type": "active_tab_info",
-        "goto_prefix": "https://"
+        "type": "is_file_saved_desktop",
+        "filename": "answer.txt",
+        "textcontent": "yes"
       }
     ],
     "expected": [
@@ -74,8 +77,7 @@
       {
         "type": "rule",
         "rules": {
-          "type": "url",
-          "url": "https://www.identitytheft.gov/"
+          "expected": "true"
         }
       }
     ]
