@@ -2,6 +2,7 @@
   "id": "Information-handwashing_steps",
   "snapshot": "chrome",
   "category": "Information",
+  "difficulty": "hard",
   "instruction": "Enable Chrome Live Caption, watch the video, and enter the hand-washing steps mentioned in the video into the spreadsheet. Use one row per phrase in the `items` column. Each answer should contain the complete phrase exactly as it appears in the captions.",
   "source": "https://www.youtube.com/watch?v=UitUdTjhZz8",
   "gt_steps": [

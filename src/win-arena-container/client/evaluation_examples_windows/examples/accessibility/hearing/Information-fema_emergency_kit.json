@@ -2,6 +2,7 @@
   "id": "Information-fema_emergency_kit",
   "snapshot": "chrome",
   "category": "Information",
+  "difficulty": "hard",
   "instruction": "Enable Chrome Live Caption, watch the video, and enter each must-have emergency kit item mentioned in the video into `~/Desktop/items.xlsx`. Use one row per phrase in the `items` column. Each answer should contain the complete phrase exactly as it appears in the captions.",
   "source": "https://www.youtube.com/watch?v=o4enqHGluLI",
   "gt_steps": [

@@ -2,6 +2,7 @@
   "id": "Consumption-sony_alpha",
   "snapshot": "chrome",
   "category": "Consumption",
+  "difficulty": "medium",
   "instruction": "Turn on Chrome Live Caption, watch the opened YouTube product video, identify the product, then search for it on Amazon. Leave the Amazon search results page open.",
   "source": "https://www.youtube.com/watch?v=AnMRYwWF988",
   "gt_steps": [

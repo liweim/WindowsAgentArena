@@ -32,8 +32,9 @@ from .chrome import (
     get_find_installed_extension_name,
     get_info_from_website,
     get_active_tab_info_simple
+    
 )
-from .file import get_cloud_file, get_vm_file, get_cache_file, get_content_from_vm_file, get_vm_file_exists_in_vm_folder
+from .file import get_cloud_file, get_vm_file, get_cache_file, get_content_from_vm_file, get_vm_file_exists_in_vm_folder, get_desktop_file_content
 from .fileexplorer import (
     get_vm_folder_exists_in_documents, 
     get_vm_file_exists_in_desktop,

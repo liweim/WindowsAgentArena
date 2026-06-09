@@ -2,6 +2,7 @@
   "id": "Mobility-maps_navigation_fish_market",
   "snapshot": "chrome",
   "category": "Mobility",
+  "difficulty": "medium",
   "instruction": "I’m at Sydney Central Station and I want to go to the place mentioned in the video. Turn on Chrome Live Caption, identify the destination, find the driving route, then open Google Maps and start navigation",
   "source": "https://www.youtube.com/watch?v=M06i_wiKzYU",
   "gt_steps": [

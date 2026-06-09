@@ -2,6 +2,7 @@
   "id": "Information-child_visit_preparation",
   "snapshot": "chrome",
   "category": "Information",
+  "difficulty": "hard",
   "instruction": "Enable Chrome Live Caption, watch the video, and enter the specific comfort items, clothing choices, or appointment actions recommended in the video into the spreadsheet. Use one row per phrase in the `items` column. Each answer should contain the complete phrase exactly as it appears in the captions.",
   "source": "https://www.youtube.com/watch?v=2BuJuk4BQIs",
   "gt_steps": [

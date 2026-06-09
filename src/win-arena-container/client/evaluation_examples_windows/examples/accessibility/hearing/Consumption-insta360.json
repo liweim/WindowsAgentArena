@@ -2,6 +2,7 @@
   "id": "Consumption-insta360",
   "snapshot": "chrome",
   "category": "Consumption",
+  "difficulty": "medium",
   "instruction": "Turn on Chrome Live Caption, watch the opened YouTube product video, identify the product, then search for it on Amazon. Leave the Amazon search results page open.",
   "source": "https://www.youtube.com/watch?v=8SoY7hiXc4M",
   "gt_steps": [

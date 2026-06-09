@@ -1789,3 +1789,5 @@ def get_active_tab_info_simple(env, config):
         "title": "",
         "content": ""
     }
+
+

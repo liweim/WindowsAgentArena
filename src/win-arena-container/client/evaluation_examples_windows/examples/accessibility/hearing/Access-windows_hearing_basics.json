@@ -2,6 +2,7 @@
   "id": "Access-windows_hearing_basics",
   "snapshot": "base_setup",
   "category": "Access",
+  "difficulty": "easy",
   "instruction": "Enable Mono audio and set visual audio alerts to Flash the entire screen in Windows.",
   "source": "Settings > Accessibility > Audio",
   "gt_steps": [

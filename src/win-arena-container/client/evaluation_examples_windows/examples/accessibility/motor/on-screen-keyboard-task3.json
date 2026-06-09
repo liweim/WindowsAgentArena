@@ -1,0 +1,58 @@
+{
+  "id": "chrome-sydney-weather-bookmark",
+  "snapshot": "chrome",
+  "instruction": "Enable the On-Screen Keyboard. Using the On-Screen Keyboard, open Google Chrome, navigate to https://www.weatherzone.com.au/nsw/sydney/sydney, and bookmark the page.",
+  "source": "human",
+  "gt_steps": [
+    "Enable the On-Screen Keyboard.",
+    "Open Google Chrome.",
+    "Place the cursor in the address bar.",
+    "Type https://www.weatherzone.com.au/nsw/sydney/sydney using the On-Screen Keyboard.",
+    "Press Enter to navigate to the page.",
+    "Wait for the Sydney weather page to load.",
+    "Bookmark the page.",
+    "Leave the bookmark saved."
+  ],
+  "config": [
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port=1337"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    }
+  ],
+  "trajectory": "trajectories/",
+  "related_apps": [
+    "chrome"
+  ],
+  "evaluator": {
+    "func": "is_expected_bookmark_anywhere",
+    "result": {
+      "type": "bookmarks"
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "urls": [
+          "https://www.weatherzone.com.au/nsw/sydney/sydney"
+        ]
+      }
+    }
+  },
+  "proxy": true,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

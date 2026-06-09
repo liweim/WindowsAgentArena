@@ -145,4 +145,29 @@ def get_vm_file_exists_in_vm_folder(env, config) -> str:
     else:
         return 0.0
 
+def get_desktop_file_content(env, config):
+    paths = [
+        config.get("path", ""),
+        r"C:\Users\Docker\Desktop\shopping.txt",
+        r"C:\Users\docker\Desktop\shopping.txt",
+        r"C:\Users\Public\Desktop\shopping.txt",
+        r"C:\Users\Docker\Downloads\shopping.txt"
+    ]
+
+    for path in paths:
+        if not path:
+            continue
+
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                content = f.read()
+            print("Found file at:", path)
+            print("Desktop file content:", content)
+            return content
+        except Exception:
+            pass
+
+    print("Could not find shopping.txt in checked paths:", paths)
+    return ""
+
 

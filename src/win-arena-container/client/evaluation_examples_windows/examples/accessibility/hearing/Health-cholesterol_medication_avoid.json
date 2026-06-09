@@ -2,6 +2,7 @@
   "id": "Health-cholesterol_medication_avoid",
   "snapshot": "chrome",
   "category": "Health",
+  "difficulty": "medium",
   "instruction": "I am taking cholesterol-lowering medicine and need to know what I should not eat or drink. Turn on captions in the opened YouTube video, then watch it and save the answer in `answer.txt` on the Desktop.",
   "source": "https://www.youtube.com/watch?v=Jy6ShnLDBWg",
   "gt_steps": [

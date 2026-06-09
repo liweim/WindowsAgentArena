@@ -2,6 +2,7 @@
   "id": "Mobility-maps_navigation_alhambra",
   "snapshot": "chrome",
   "category": "Mobility",
+  "difficulty": "medium",
   "instruction": "I’m at Granada Train Station and I want to walk to the place mentioned in the video. Turn on Chrome Live Caption, identify the destination, find the route, then open Google Maps and start navigation there.",
   "source": "https://www.youtube.com/watch?v=iEseJViidy8",
   "gt_steps": [
