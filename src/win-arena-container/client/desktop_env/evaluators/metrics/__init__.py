@@ -23,7 +23,9 @@ from .chrome import (
     is_expected_installed_extensions,
     compare_pdf_images,
     check_chrome_weather_bookmark,
-    check_digital_accessibility_page
+    check_digital_accessibility_page,
+    is_expected_bookmark_anywhere,
+    compare_text_content
 )
 from .docs import (
     compare_font_names,

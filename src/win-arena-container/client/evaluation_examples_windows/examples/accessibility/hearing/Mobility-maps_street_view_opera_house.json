@@ -2,6 +2,7 @@
   "id": "Mobility-maps_street_view_opera_house",
   "snapshot": "chrome",
   "category": "Mobility",
+  "difficulty": "easy",
   "instruction": "The scenic spot in the video looks beautiful. Turn on Chrome Live Caption, find out what it is, then open Google Maps and look around it in Street View.",
   "source": "https://www.youtube.com/watch?v=KAYLcWhyWj4",
   "gt_steps": [

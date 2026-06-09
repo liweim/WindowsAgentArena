@@ -2,6 +2,7 @@
   "id": "Mobility-maps_rottnest_island",
   "snapshot": "chrome",
   "category": "Mobility",
+  "difficulty": "easy",
   "instruction": "I really like the island shown in the video. Turn on Chrome Live Caption, find out where it is, then open Google Maps and check its location.",
   "source": "https://www.youtube.com/watch?v=Js4BR1Qz0Hs",
   "gt_steps": [

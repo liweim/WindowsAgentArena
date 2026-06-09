@@ -111,6 +111,7 @@ def is_expected_bookmarks(bookmarks: List[str], rule: Dict[str, Any]) -> float:
     elif rule['type'] == "bookmark_bar_websites_urls":
         bookmark_bar_websites_urls = [bookmark['url'] for bookmark in bookmarks['bookmark_bar']['children'] if
                                       bookmark['type'] == 'url']
+        print(bookmark_bar_websites_urls)
         
         if set(rule['urls']).issubset(set(bookmark_bar_websites_urls)):
             return 1.
@@ -477,3 +478,39 @@ def check_digital_accessibility_page(active_tab_info, rule):
     print("Checking URL:", url)
 
     return 1.0 if "digital.gov.au/about/accessibility" in url else 0.0
+
+def is_expected_bookmark_anywhere(bookmarks, rule):
+    if not bookmarks:
+        return 0.0
+
+    expected_urls = set(rule["urls"])
+    actual_urls = set()
+
+    def walk(node):
+        if isinstance(node, dict):
+            if node.get("type") == "url":
+                actual_urls.add(node["url"])
+
+            for value in node.values():
+                walk(value)
+
+        elif isinstance(node, list):
+            for item in node:
+                walk(item)
+
+    walk(bookmarks)
+
+    print("Expected bookmark URLs:", expected_urls)
+    print("Actual bookmark URLs:", actual_urls)
+
+    return 1.0 if expected_urls.issubset(actual_urls) else 0.0
+    return 1.0 if expected_urls.issubset(actual_urls) else 0.0
+
+def compare_text_content(result, rule):
+    expected = rule.get("content", "").strip()
+    actual = result.strip()
+
+    print("Expected text:", expected)
+    print("Actual text:", actual)
+
+    return 1.0 if actual == expected else 0.0

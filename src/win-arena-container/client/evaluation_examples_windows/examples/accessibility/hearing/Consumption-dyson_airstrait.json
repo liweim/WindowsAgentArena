@@ -2,6 +2,7 @@
   "id": "Consumption-dyson_airstrait",
   "snapshot": "chrome",
   "category": "Consumption",
+  "difficulty": "medium",
   "instruction": "Turn on Chrome Live Caption, watch the opened YouTube product video, identify the product, then open its product page on the official website. Leave the official product page open in the active tab.",
   "source": "https://www.youtube.com/watch?v=3ucfKv2YbU0",
   "gt_steps": [

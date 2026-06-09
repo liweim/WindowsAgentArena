@@ -2,6 +2,7 @@
   "id": "Service-ftc_complaint_3",
   "snapshot": "chrome",
   "category": "Service",
+  "difficulty": "medium",
   "instruction": "Turn on captions in the opened YouTube video, then watch it and answer: what personal financial information did the scammer ask for in the fake job opportunity example? Save the answer in `answer.txt` on the Desktop.",
   "source": "https://www.youtube.com/watch?v=3LvMO5UMCl8",
   "gt_steps": [
