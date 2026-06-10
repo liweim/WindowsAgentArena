@@ -1791,3 +1791,20 @@ def get_active_tab_info_simple(env, config):
     }
 
 
+
+
+def get_chrome_page_zoom_from_access_tree(env, config):
+    """
+    Estimate Chrome page zoom using the accessibility tree.
+    This avoids Chrome CDP and Preferences file issues.
+    """
+    try:
+        obs = env._get_obs()
+        tree = obs.get("accessibility_tree", "")
+
+        print("Accessibility tree length:", len(str(tree)))
+
+        return str(tree)
+    except Exception as e:
+        print("Failed to get accessibility tree:", e)
+        return ""

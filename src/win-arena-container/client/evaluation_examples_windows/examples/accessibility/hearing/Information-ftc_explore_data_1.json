@@ -2,8 +2,8 @@
   "id": "Information-ftc_explore_data_1",
   "snapshot": "chrome",
   "category": "Information",
-  "difficulty": "hard",
-  "instruction": "Turn on captions in the opened YouTube video, then use the FTC Explore Data tool shown in the video to view Florida's fraud and identity theft combined state data.",
+  "difficulty": "medium",
+  "instruction": "Turn on captions in the opened YouTube video, then use the tool shown in the video to view Florida's fraud and identity theft combined state data.",
   "source": "https://www.youtube.com/watch?v=F2wQGBjKiaM",
   "gt_steps": [
     "Turn on captions in the YouTube player.",

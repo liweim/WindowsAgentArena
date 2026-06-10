@@ -514,3 +514,37 @@ def compare_text_content(result, rule):
     print("Actual text:", actual)
 
     return 1.0 if actual == expected else 0.0
+
+
+
+def check_zoom_150_access_tree(result, rule):
+    """
+    Checks for Chrome zoom level text shown in browser UI/accessibility tree.
+    Works when Chrome exposes '150%' in the toolbar/menu/accessibility tree.
+    """
+    if not result:
+        return 0.0
+
+    result = str(result)
+    print("Checking accessibility tree for 150%")
+
+    if "150%" in result or "150 %" in result:
+        return 1.0
+
+    return 0.0
+
+def check_zoom_200_access_tree(result, rule):
+    """
+    Checks for Chrome zoom level text shown in browser UI/accessibility tree.
+    Works when Chrome exposes '200%' in the toolbar/menu/accessibility tree.
+    """
+    if not result:
+        return 0.0
+
+    result = str(result)
+    print("Checking accessibility tree for 200%")
+
+    if "200%" in result or "200 %" in result:
+        return 1.0
+
+    return 0.0
