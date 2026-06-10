@@ -25,7 +25,9 @@ from .chrome import (
     check_chrome_weather_bookmark,
     check_digital_accessibility_page,
     is_expected_bookmark_anywhere,
-    compare_text_content
+    compare_text_content,
+    check_zoom_150_access_tree,
+    check_zoom_200_access_tree
 )
 from .docs import (
     compare_font_names,

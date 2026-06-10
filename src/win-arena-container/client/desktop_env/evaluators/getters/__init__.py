@@ -31,7 +31,8 @@ from .chrome import (
     get_active_url_from_accessTree,
     get_find_installed_extension_name,
     get_info_from_website,
-    get_active_tab_info_simple
+    get_active_tab_info_simple,
+    get_chrome_page_zoom_from_access_tree
     
 )
 from .file import get_cloud_file, get_vm_file, get_cache_file, get_content_from_vm_file, get_vm_file_exists_in_vm_folder, get_desktop_file_content
