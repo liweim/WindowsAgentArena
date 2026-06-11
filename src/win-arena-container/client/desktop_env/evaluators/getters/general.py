@@ -47,3 +47,32 @@ def get_vm_command_error(env, config: Dict[str, str]):
 
 def get_vm_terminal_output(env, config: Dict[str, str]):
     return env.controller.get_terminal_output()
+
+
+def get_sticky_notes_content(env, config: Dict[str, str]):
+    command = [
+        "python",
+        "-c",
+        (
+            "import glob, os, sqlite3; "
+            "base=os.path.join(os.environ['LOCALAPPDATA'], 'Packages', "
+            "'Microsoft.MicrosoftStickyNotes_8wekyb3d8bbwe', 'LocalState'); "
+            "paths=glob.glob(os.path.join(base, 'plum.sqlite')); out=[]\n"
+            "for path in paths:\n"
+            "    try:\n"
+            "        con=sqlite3.connect(path); cur=con.cursor();\n"
+            "        for table in ('Note', 'LegacyNote'):\n"
+            "            try:\n"
+            "                cols=[r[1] for r in cur.execute('PRAGMA table_info(%s)' % table)];\n"
+            "                for col in ('Text', 'Body', 'Content'):\n"
+            "                    if col in cols:\n"
+            "                        out.extend(str(r[0] or '') for r in cur.execute('SELECT %s FROM %s' % (col, table)))\n"
+            "            except Exception:\n"
+            "                pass\n"
+            "        con.close()\n"
+            "    except Exception:\n"
+            "        pass\n"
+            "print('\\n'.join(out))"
+        )
+    ]
+    return get_vm_command_line(env, {"command": command, "shell": config.get("shell", False)})

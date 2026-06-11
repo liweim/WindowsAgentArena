@@ -123,6 +123,29 @@ def compare_emergency_kit_items_xlsx(result: str, rules: Dict[str, Any]) -> floa
     return compare_xlsx_items(result, rules)
 
 
+def check_text_points(result: str, rules: Dict[str, Any]) -> float:
+    if result is None:
+        return 0.
+
+    points: List[List[str]] = rules.get("points", [])
+    if not points:
+        return 0.
+
+    ignore_case = rules.get("ignore_case", True)
+
+    def normalize_text(value: Any) -> str:
+        text = " ".join(str(value or "").split())
+        return text.lower() if ignore_case else text
+
+    actual = normalize_text(result)
+    matched = 0
+    for variants in points:
+        if any(normalize_text(variant) in actual for variant in variants):
+            matched += 1
+
+    return matched / len(points)
+
+
 def is_in_list(result, rules) -> float:
     expect = rules["expected"]
     if expect in result:

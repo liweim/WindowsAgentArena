@@ -1,0 +1,185 @@
+{
+  "id": "Communication-community_class_registration",
+  "snapshot": "chrome",
+  "category": "Communication",
+  "difficulty": "medium",
+  "instruction": "The community center sent an audio announcement about next week's free workshops. Enable Live Caption and listen to the recording to identify which class is free, its start date, and the required card to bring for registration. Then compose a registration email in Thunderbird, but do not send it. Set the recipient to register@communitycenter.org, set the subject to 'Free Workshop Registration', and in the email body state the class you want to register for, the date, and the card you will bring while asking to reserve a spot.",
+  "source": "synthetic",
+  "transcript": "Hey neighbors! Exciting news from the center. Registration opens next Monday for our summer workshops. We have baking, oil painting, and our super popular Beginner Pottery Class. Great news: the Pottery class is completely free this month! It officially starts on July 6th. Due to high demand, spots are limited. To register, please email us and make sure to bring your Local Library Card on the first day to verify your residency. See you there!",
+  "gt_steps": [
+    "Open the community center workshop audio file in Chrome.",
+    "Turn on Chrome Live Caption.",
+    "Use the captions to identify the free class, start date, and required card.",
+    "In Thunderbird, compose a new email.",
+    "Set the recipient to register@communitycenter.org.",
+    "Set the subject to `Free Workshop Registration`.",
+    "Include Beginner Pottery Class, July 6th, and Local Library Card in the body.",
+    "Do not send the email."
+  ],
+  "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/Communication-community_class_registration.mp3",
+            "path": "C:\\Users\\Docker\\Desktop\\Communication-community_class_registration.mp3"
+          }
+        ]
+      }
+    },
+    {
+      "type": "download",
+      "parameters": {
+        "files": [
+          {
+            "url": "https://huggingface.co/datasets/xlangai/ubuntu_osworld_file_cache/resolve/main/thunderbird/dd84e895-72fd-4023-a336-97689ded257c/thunderbird-profile.tar.gz",
+            "path": "C:\\Users\\Docker\\Downloads\\thunderbird-profile.tar.gz"
+          }
+        ]
+      }
+    },
+    {
+      "type": "execute",
+      "parameters": {
+        "command": [
+          "powershell",
+          "-NoProfile",
+          "-ExecutionPolicy",
+          "Bypass",
+          "-Command",
+          "$ErrorActionPreference = 'Stop'; Stop-Process -Name thunderbird -Force -ErrorAction SilentlyContinue; $profileRoot = 'C:\\Users\\Docker\\AppData\\Roaming'; $legacyRoot = Join-Path $profileRoot '.thunderbird'; if (Test-Path $legacyRoot) { Remove-Item $legacyRoot -Recurse -Force }; tar.exe -xzf 'C:\\Users\\Docker\\Downloads\\thunderbird-profile.tar.gz' -C $profileRoot; $prefs = 'C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release\\prefs.js'; $content = Get-Content -Path $prefs -Raw; $content = $content -replace 'user_pref\\(\"mail\\.identity\\.id1\\.draft_folder\", \"[^\"]*\"\\);', 'user_pref(\"mail.identity.id1.draft_folder\", \"mailbox://nobody@Local%20Folders/Drafts\");'; $content = $content -replace 'user_pref\\(\"mail\\.identity\\.id1\\.drafts_folder_picker_mode\", \"[^\"]*\"\\);', 'user_pref(\"mail.identity.id1.drafts_folder_picker_mode\", \"1\");'; Set-Content -Path $prefs -Value $content -Encoding ASCII; New-Item -ItemType File -Path 'C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release\\Mail\\Local Folders\\Drafts' -Force | Out-Null"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port=1337",
+          "--force-renderer-accessibility"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "thunderbird.exe",
+          "-profile",
+          "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release"
+        ]
+      }
+    },
+    {
+      "type": "sleep",
+      "parameters": {
+        "seconds": 2
+      }
+    },
+    {
+      "type": "chrome_open_tabs",
+      "parameters": {
+        "urls_to_open": [
+          "file:///C:/Users/Docker/Desktop/Communication-community_class_registration.mp3"
+        ]
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "chrome",
+    "thunderbird"
+  ],
+  "evaluator": {
+    "postconfig": [
+      {
+        "type": "execute",
+        "parameters": {
+          "command": [
+            "python",
+            "-c",
+            "import pyautogui, pygetwindow as gw, time; wins=[w for w in gw.getAllWindows() if 'Write:' in w.title or 'Free Workshop Registration' in w.title]; w=wins[0] if wins else None; (w.restore() if w and w.isMinimized else None); (w.activate() if w else None); time.sleep(0.5); pyautogui.hotkey('ctrl', 's'); time.sleep(1)"
+          ]
+        }
+      },
+      {
+        "type": "sleep",
+        "parameters": {
+          "seconds": 1
+        }
+      },
+      {
+        "type": "close_window",
+        "parameters": {
+          "window_name": "Thunderbird",
+          "strict": false
+        }
+      },
+      {
+        "type": "sleep",
+        "parameters": {
+          "seconds": 0.5
+        }
+      }
+    ],
+    "func": [
+      "check_thunderbird_email_composition",
+      "exact_match"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "vm_file",
+        "path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release\\Mail\\Local Folders\\Drafts",
+        "dest": "thunderbird-drafts.mbox"
+      },
+      {
+        "type": "live_caption_enabled"
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "to": "register@communitycenter.org",
+          "subject": "Free Workshop Registration",
+          "body_points": [
+            [
+              "Beginner Pottery Class"
+            ],
+            [
+              "July 6th",
+              "July 6",
+              "Jul 6th",
+              "Jul 6"
+            ],
+            [
+              "Local Library Card"
+            ]
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "expected": "true"
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

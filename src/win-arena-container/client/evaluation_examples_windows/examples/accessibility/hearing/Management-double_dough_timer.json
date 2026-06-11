@@ -80,8 +80,8 @@
     "func": "exact_match",
     "result": {
       "type": "check_if_timer_started",
-      "hours": 0,
-      "minutes": 120,
+      "hours": 2,
+      "minutes": 0,
       "seconds": 0
     },
     "expected": {
