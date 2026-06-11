@@ -82,7 +82,8 @@ from .general import (
     diff_text_file,
     literal_match,
     compare_xlsx_items,
-    compare_emergency_kit_items_xlsx
+    compare_emergency_kit_items_xlsx,
+    check_text_points
 )
 from .gimp import (
     check_structure_sim_resized,
@@ -130,7 +131,8 @@ from .table import (
 from .thunderbird import (
     check_thunderbird_prefs,
     check_thunderbird_filter,
-    check_thunderbird_folder
+    check_thunderbird_folder,
+    check_thunderbird_email_composition
 )
 from .vlc import (
     is_vlc_playing,

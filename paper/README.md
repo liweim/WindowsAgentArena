@@ -159,7 +159,7 @@ Evaluators may check:
 
 Expected outputs should be short, stable, and unambiguous. Avoid tasks that depend on current news, changing rankings, personalized recommendations, or volatile page layouts unless the source is pinned or cached.
 
-## Hearing Video Tasks
+## Hearing Tasks
 
 For hearing-impairment tasks that require captions or live captions to extract spoken video content:
 
@@ -172,6 +172,8 @@ For hearing-impairment tasks that require captions or live captions to extract s
 7. For answer-list tasks, prefer concrete nouns, noun phrases, or short action phrases.
 8. Expected answers must be unambiguous, stable, and directly grounded in the captions.
 9. When possible, use the shortest complete continuous phrase that appears exactly in the captions.
+
+Hearing-impairment tasks may also use AI text-to-speech audio instead of online videos. In particular, an `.mp3` file generated with ElevenLabs from a fixed script can be used as the caption input, which makes the spoken content easier to control, keeps expected answers stable, and reduces errors caused by unreliable live-caption recognition. The script should be saved with the task materials and treated as the source of truth for expected answers. The task should still require Windows Live Captions, Chrome Live Caption, or Android Live Caption, and the expected answers should be exact continuous phrases from the TTS script.
 
 ## Caption Phrase Evaluation
 
@@ -196,3 +198,26 @@ Expected answers should be complete, continuous caption phrases. Avoid broad sin
 | Hearing impairment   | Communication / Information | Android  | Enable Live Caption and watch a video with spoken content                               |
 | Motor impairment     | Access / Management         | Windows  | Open the On-Screen Keyboard and use it to enter a piece of text                         |
 | Cognitive impairment | Information                 | Windows  | Enable Reading Mode in Chrome, read a web article, and adjust the font size or theme    |
+
+## Benchmark Comparison
+
+The following table compares our benchmark with representative GUI-agent, multimodal GUI, and accessibility-related benchmarks.
+
+| Category                            | Benchmark      |                      Scale | Real OS / Interactive Env. | Text Input | Video Input | Audio Input | Accessibility-Oriented | Daily-Life Tasks |   Multi-Scenario   | End-to-End GUI Execution |
+| ----------------------------------- | -------------- | -------------------------: | :------------------------: | :--------: | :---------: | :---------: | :--------------------: | :--------------: | :----------------: | :----------------------: |
+| Web GUI Agents                      | WebArena       |                  812 tasks |              ◐             |      ✓     |      ✗      |      ✗      |            ✗           |         ◐        |          ✓         |             ✓            |
+| Web GUI Agents                      | VisualWebArena |                  910 tasks |              ◐             |      ✓     |      ✗      |      ✗      |            ✗           |         ◐        |          ✓         |             ✓            |
+| OS / Mobile Computer Use            | OSWorld        |                  369 tasks |              ✓             |      ✓     |      ✗      |      ✗      |            ✗           |         ◐        |          ✓         |             ✓            |
+| OS / Mobile Computer Use            | AndroidWorld   |             116 task types |              ✓             |      ✓     |      ✗      |      ✗      |            ✗           |         ✓        |          ✓         |             ✓            |
+| Multimodal / Video-Aware GUI Agents | VideoWebArena  |                2,021 tasks |              ◐             |      ✓     |      ✓      |      ◐      |            ✗           |         ◐        |          ✓         |             ✓            |
+| Multimodal / Video-Aware GUI Agents | VideoGUI       |    86 tasks / 463 subtasks |              ◐             |      ✓     |      ✓      |      ✗      |            ✗           |         ✗        |          ✓         |             ◐            |
+| Multimodal / Video-Aware GUI Agents | OmniGUI        | 709 episodes / 2,579 steps |              ✓             |      ✓     |      ✓      |      ✓      |            ✗           |         ◐        |          ✓         |             ◐            |
+| Accessibility / User Assistance     | A11y-CUA       |                   60 tasks |              ✓             |      ✓     |      ✓      |      ✓      |            ✓           |         ✓        |          ◐         |             ✗            |
+| Accessibility / User Assistance     | GUIDE          |   67.5h videos / 120 users |              ◐             |      ✓     |      ✓      |      ✓      |            ✗           |         ✗        |          ✓         |             ✗            |
+| **Ours**                            | **Ours**       |              **200 tasks** |            **✓**           |    **✓**   |    **✓**    |    **✓**    |          **✓**         |       **✓**      | **✓, 8 scenarios** |           **✓**          |
+
+**Symbols:** ✓ = supported; ✗ = not supported; ◐ = partially supported or limited setting.
+
+Benchmarks are grouped by their primary focus: web-based GUI agents, OS/mobile computer-use agents, multimodal GUI agents, and accessibility/user-assistance datasets. Our benchmark is listed last for comparison.
+
+Compared with existing benchmarks, our benchmark is designed specifically for accessibility-oriented GUI-agent evaluation. It combines real OS or mobile interactive environments, multimodal inputs including text, video, and audio, daily-life accessibility scenarios, and end-to-end GUI execution. Unlike general GUI benchmarks that mainly test web or app operation ability, our benchmark explicitly requires agents to use accessibility tools such as captions, screen readers, reading modes, and alternative input features. Compared with accessibility/user-assistance datasets that may focus on user behavior analysis or non-executable assistance, our benchmark provides executable tasks with deterministic evaluators, making it suitable for measuring whether GUI agents can actually complete accessibility-related workflows in realistic environments.
