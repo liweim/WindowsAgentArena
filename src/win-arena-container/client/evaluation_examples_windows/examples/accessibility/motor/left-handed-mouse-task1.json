@@ -1,6 +1,8 @@
 {
   "id": "left-handed-mouse-create-photos-folder",
   "snapshot": "windows",
+  "category": "Left-handed",
+  "difficulty": "Easy",
   "instruction": "Enable left-handed mouse mode and create a new folder called Photos on the Desktop.",
   "source": "https://abilitynet.org.uk/",
   "gt_steps": [

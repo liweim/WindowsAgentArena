@@ -1,0 +1,46 @@
+{
+  "id": "Health-prescription_refill_instructions",
+  "snapshot": "windows",
+  "category": "Motor Impairment",
+  "difficulty": "Medium",
+  "instruction": "Using the On-Screen Keyboard, search for how to request a prescription refill and save the instructions in a text file named prescription_refill.txt on the Desktop.",
+  "source": "https://abilitynet.org.uk/",
+  "gt_steps": [
+    "Enable the On-Screen Keyboard.",
+    "Open a web browser.",
+    "Using the On-Screen Keyboard, search for how to request a prescription refill.",
+    "Open a relevant healthcare, pharmacy, or government website.",
+    "Find the instructions for requesting a prescription refill.",
+    "Open Notepad.",
+    "Type or copy the refill instructions into the document.",
+    "Save the file as prescription_refill.txt on the Desktop.",
+    "Leave the saved file on the Desktop."
+  ],
+  "config": [],
+  "trajectory": "trajectories/",
+  "related_apps": [
+    "on_screen_keyboard",
+    "chrome",
+    "notepad"
+  ],
+  "evaluator": {
+    "func": "check_include_exclude",
+    "result": {
+      "type": "vm_command_line",
+      "command": "cmd /c if exist C:\\Users\\Docker\\Desktop\\prescription_refill.txt echo FILE_EXISTS",
+      "shell": true
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "include": [
+          "FILE_EXISTS"
+        ],
+        "exclude": []
+      }
+    }
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "medium"
+}

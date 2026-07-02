@@ -130,6 +130,166 @@ def get_edge_font_size(env, config: Dict[str, str]):
             "default_font_size": 16
         }
 
+def get_edge_immersive_reader_state(env, config: Dict[str, str]):
+    """
+    Inspect visible Microsoft Edge Immersive Reader controls.
+
+    Reader Mode itself is detected from the active tab URL. Options such as
+    Line focus are in-page UI state, so the Reading preferences panel must be
+    visible for those fields to be detected.
+    """
+    if env.vm_platform != 'Windows':
+        raise Exception('Unsupported operating system')
+
+    state = {
+        "active_url": "",
+        "reader_mode_open": False,
+        "line_focus_visible": False,
+        "one_line_focus_visible": False,
+        "one_line_focus_selected": False,
+    }
+
+    if config.get("activate_edge"):
+        command = r'''
+Add-Type -AssemblyName Microsoft.VisualBasic
+$p = Get-Process msedge | Where-Object { $_.MainWindowHandle -ne 0 } | Select-Object -First 1
+if ($p) {
+  [Microsoft.VisualBasic.Interaction]::AppActivate($p.Id) | Out-Null
+  Start-Sleep -Milliseconds 500
+}
+'''
+        try:
+            env.controller.execute_python_command(
+                "import subprocess; "
+                f"subprocess.run({['powershell', '-NoProfile', '-Command', command]!r}, check=False)"
+            )
+        except Exception as e:
+            logger.error(f"Error activating Edge before Reader check: {e}")
+
+    if config.get("switch_to_previous_tab"):
+        command = r'''
+Add-Type -AssemblyName UIAutomationClient
+Add-Type -AssemblyName UIAutomationTypes
+$p = Get-Process msedge | Where-Object { $_.MainWindowHandle -ne 0 } | Select-Object -First 1
+if (-not $p) { exit }
+
+$edge = [System.Windows.Automation.AutomationElement]::FromHandle($p.MainWindowHandle)
+if (-not $edge) { exit }
+
+$tabItems = @($edge.FindAll(
+  [System.Windows.Automation.TreeScope]::Descendants,
+  [System.Windows.Automation.PropertyCondition]::new(
+    [System.Windows.Automation.AutomationElement]::ControlTypeProperty,
+    [System.Windows.Automation.ControlType]::TabItem
+  )
+))
+
+if ($tabItems.Count -lt 2) { exit }
+
+$selectedIndex = -1
+for ($i = 0; $i -lt $tabItems.Count; $i++) {
+  try {
+    $pat = $tabItems[$i].GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern)
+    if ($pat.Current.IsSelected) {
+      $selectedIndex = $i
+      break
+    }
+  } catch {}
+}
+
+if ($selectedIndex -gt 0) {
+  try {
+    $pat = $tabItems[$selectedIndex - 1].GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern)
+    $pat.Select()
+    Start-Sleep -Milliseconds 700
+  } catch {}
+}
+'''
+        try:
+            env.controller.execute_python_command(
+                "import subprocess; "
+                f"subprocess.run({['powershell', '-NoProfile', '-Command', command]!r}, check=False)"
+            )
+        except Exception as e:
+            logger.error(f"Error switching to previous Edge tab before Reader check: {e}")
+
+    try:
+        from .chrome import get_active_url_from_accessTree
+        active_url = get_active_url_from_accessTree(env, config)
+        if isinstance(active_url, str):
+            state["active_url"] = active_url
+            state["reader_mode_open"] = "read://" in active_url
+    except Exception as e:
+        logger.error(f"Error checking Edge Immersive Reader URL state: {e}")
+
+    command = r'''
+[Console]::OutputEncoding = [System.Text.UTF8Encoding]::new()
+Add-Type -AssemblyName UIAutomationClient
+Add-Type -AssemblyName UIAutomationTypes
+
+$result = [ordered]@{
+  line_focus_visible = $false
+  one_line_focus_visible = $false
+  one_line_focus_selected = $false
+}
+
+$p = Get-Process msedge | Where-Object { $_.MainWindowHandle -ne 0 } | Select-Object -First 1
+if (-not $p) {
+  $result | ConvertTo-Json -Compress
+  exit
+}
+
+$edge = [System.Windows.Automation.AutomationElement]::FromHandle($p.MainWindowHandle)
+if (-not $edge) {
+  $result | ConvertTo-Json -Compress
+  exit
+}
+
+$all = $edge.FindAll(
+  [System.Windows.Automation.TreeScope]::Descendants,
+  [System.Windows.Automation.Condition]::TrueCondition
+)
+
+foreach ($e in $all) {
+  $name = $e.Current.Name
+  if ($name -match 'Line focus') {
+    $result.line_focus_visible = $true
+  }
+  if ($name -match '(?i)^(1 line|one line)$' -or $name -match '(?i)(1|one).{0,12}line' -or $name -match '(?i)line.{0,12}(1|one)') {
+    $result.one_line_focus_visible = $true
+    try {
+      $pat = $e.GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern)
+      if ($pat.Current.IsSelected) { $result.one_line_focus_selected = $true }
+    } catch {}
+    try {
+      $pat = $e.GetCurrentPattern([System.Windows.Automation.TogglePattern]::Pattern)
+      if ($pat.Current.ToggleState -eq [System.Windows.Automation.ToggleState]::On) {
+        $result.one_line_focus_selected = $true
+      }
+    } catch {}
+    try {
+      $pat = $e.GetCurrentPattern([System.Windows.Automation.LegacyIAccessiblePattern]::Pattern)
+      if (($pat.Current.State -band 2) -or ($pat.Current.State -band 16)) {
+        $result.one_line_focus_selected = $true
+      }
+    } catch {}
+  }
+}
+
+$result | ConvertTo-Json -Compress
+'''
+
+    try:
+        output = env.controller.execute_python_command(
+            "import subprocess; "
+            f"print(subprocess.check_output({['powershell', '-NoProfile', '-Command', command]!r}, encoding='utf-8', errors='replace'))"
+        )['output'].strip()
+        if output:
+            state.update(json.loads(output))
+    except Exception as e:
+        logger.error(f"Error checking Edge Immersive Reader controls: {e}")
+    return state
+
 def get_enable_enhanced_safety_browsing_from_edge(env, config: Dict[str, str]):
     os_type = env.vm_platform
     if os_type == 'Windows':

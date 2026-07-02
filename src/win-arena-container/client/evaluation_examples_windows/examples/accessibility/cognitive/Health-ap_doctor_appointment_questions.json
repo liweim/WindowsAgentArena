@@ -1,0 +1,101 @@
+{
+  "id": "Health-ap_doctor_appointment_questions",
+  "snapshot": "msedge",
+  "category": "Health",
+  "difficulty": "hard",
+  "instruction": "Use Immersive Reader to focus on the appointment-preparation advice. In Thunderbird Calendar, create a 2-hour appointment reminder for 9:00 AM tomorrow. Set the title to `Doctor appointment`. In the event description, include the items the article says to bring or prepare before a doctor's appointment. Do not paraphrase.",
+  "source": "https://apnews.com/article/3fcde5b5c927734429818bd0ed1c6680",
+  "gt_steps": [
+    "Start from the already-open AP News article about getting the most out of a doctor's appointment in Microsoft Edge.",
+    "Use Immersive Reader to simplify the article.",
+    "Find the advice about preparing before the appointment.",
+    "Open Thunderbird Calendar.",
+    "In the Calendars list, enable the Home calendar if it is disabled.",
+    "Determine tomorrow's date from the system date.",
+    "Create a 2-hour calendar event for tomorrow at 9:00 AM.",
+    "Set the title to `Doctor appointment`.",
+    "Include these points in the event description: bring a list of symptoms and questions; update personal and family medical histories; include all medications and supplements; fill out paperwork ahead of time."
+  ],
+  "config": [
+    {
+      "type": "download",
+      "parameters": {
+        "files": [
+          {
+            "url": "https://huggingface.co/datasets/xlangai/ubuntu_osworld_file_cache/resolve/main/thunderbird/dd84e895-72fd-4023-a336-97689ded257c/thunderbird-profile.tar.gz",
+            "path": "C:\\Users\\Docker\\Downloads\\thunderbird-profile.tar.gz"
+          }
+        ]
+      }
+    },
+    {
+      "type": "prepare_thunderbird_profile",
+      "parameters": {}
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "thunderbird.exe",
+          "-profile",
+          "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release"
+        ]
+      }
+    },
+    {
+      "type": "sleep",
+      "parameters": {
+        "seconds": 2
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "cmd",
+          "/c",
+          "start msedge https://apnews.com/article/3fcde5b5c927734429818bd0ed1c6680"
+        ]
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "msedge",
+    "thunderbird"
+  ],
+  "evaluator": {
+    "func": "check_thunderbird_calendar_event",
+    "result": {
+      "type": "thunderbird_calendar_events",
+      "profile_path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release"
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "days_from_today": 1,
+        "hour": 9,
+        "minute": 0,
+        "duration_minutes": 120,
+        "title": "Doctor appointment",
+        "body_points": [
+          [
+            "bring a list of symptoms and questions"
+          ],
+          [
+            "personal and family medical histories"
+          ],
+          [
+            "medications and supplements"
+          ],
+          [
+            "fill out paperwork ahead of time"
+          ]
+        ]
+      }
+    }
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

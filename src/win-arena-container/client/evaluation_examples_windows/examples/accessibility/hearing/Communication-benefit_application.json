@@ -1,5 +1,6 @@
 {
   "id": "Communication-benefit_application",
+  "manually_evaluated": true,
   "snapshot": "chrome",
   "category": "Communication",
   "difficulty": "medium",
@@ -40,17 +41,8 @@
       }
     },
     {
-      "type": "execute",
-      "parameters": {
-        "command": [
-          "powershell",
-          "-NoProfile",
-          "-ExecutionPolicy",
-          "Bypass",
-          "-Command",
-          "$ErrorActionPreference = 'Stop'; Stop-Process -Name thunderbird -Force -ErrorAction SilentlyContinue; $profileRoot = 'C:\\Users\\Docker\\AppData\\Roaming'; $legacyRoot = Join-Path $profileRoot '.thunderbird'; if (Test-Path $legacyRoot) { Remove-Item $legacyRoot -Recurse -Force }; tar.exe -xzf 'C:\\Users\\Docker\\Downloads\\thunderbird-profile.tar.gz' -C $profileRoot; $prefs = 'C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release\\prefs.js'; $content = Get-Content -Path $prefs -Raw; $content = $content -replace 'user_pref\\(\"mail\\.identity\\.id1\\.draft_folder\", \"[^\"]*\"\\);', 'user_pref(\"mail.identity.id1.draft_folder\", \"mailbox://nobody@Local%20Folders/Drafts\");'; $content = $content -replace 'user_pref\\(\"mail\\.identity\\.id1\\.drafts_folder_picker_mode\", \"[^\"]*\"\\);', 'user_pref(\"mail.identity.id1.drafts_folder_picker_mode\", \"1\");'; Set-Content -Path $prefs -Value $content -Encoding ASCII; New-Item -ItemType File -Path 'C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release\\Mail\\Local Folders\\Drafts' -Force | Out-Null"
-        ]
-      }
+      "type": "prepare_thunderbird_profile",
+      "parameters": {}
     },
     {
       "type": "launch",
@@ -103,37 +95,6 @@
     "thunderbird"
   ],
   "evaluator": {
-    "postconfig": [
-      {
-        "type": "execute",
-        "parameters": {
-          "command": [
-            "python",
-            "-c",
-            "import pyautogui, pygetwindow as gw, time; wins=[w for w in gw.getAllWindows() if 'Write:' in w.title or 'Equipment Reimbursement Request' in w.title]; w=wins[0] if wins else None; (w.restore() if w and w.isMinimized else None); (w.activate() if w else None); time.sleep(0.5); pyautogui.hotkey('ctrl', 's'); time.sleep(1)"
-          ]
-        }
-      },
-      {
-        "type": "sleep",
-        "parameters": {
-          "seconds": 1
-        }
-      },
-      {
-        "type": "close_window",
-        "parameters": {
-          "window_name": "Thunderbird",
-          "strict": false
-        }
-      },
-      {
-        "type": "sleep",
-        "parameters": {
-          "seconds": 0.5
-        }
-      }
-    ],
     "func": [
       "check_thunderbird_email_composition",
       "exact_match"

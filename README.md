@@ -201,6 +201,11 @@ At first sight it might seem challenging to develop/debug code running inside th
 - How to attach a VSCode window (with debugger) to the running container
 - How to change the agent and Windows server code from your local machine and see the changes reflected in real time in the container
 
+#### 4.3 Task authoring notes
+
+- Use Sticky Notes for note-taking tasks.
+- Use Notepad for direct question-answering tasks, saving the answer in a text file.
+
 ## 🌐 Azure Deployment -> Parallelizing the benchmark 
 
 We offer a seamless way to run the Windows Agent Arena on Azure ML Compute VMs. This option will significantly reduce the time needed to test your agent in all benchmark tasks from hours/days to minutes.

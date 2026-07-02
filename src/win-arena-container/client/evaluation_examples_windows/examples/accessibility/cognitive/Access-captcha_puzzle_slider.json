@@ -1,0 +1,46 @@
+{
+  "id": "Access-captcha_puzzle_slider",
+  "snapshot": "msedge",
+  "category": "Access",
+  "difficulty": "medium",
+  "instruction": "Complete the puzzle slider CAPTCHA verification in Microsoft Edge.",
+  "source": "local CAPTCHA service using Pillow with background image from https://commons.wikimedia.org/wiki/File:Road_in_Norway.jpg",
+  "gt_steps": [
+    "Open the puzzle slider CAPTCHA page in Microsoft Edge.",
+    "Move the slider until the puzzle piece aligns with the missing square.",
+    "Press Continue and leave the verification complete page open."
+  ],
+  "config": [
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "cmd",
+          "/c",
+          "start msedge http://host.docker.internal:8765/captcha?type=puzzle_slider^&seed=access-puzzle-slider-001^&session=access-captcha-puzzle-slider"
+        ]
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "msedge"
+  ],
+  "evaluator": {
+    "func": "is_expected_url_pattern_match",
+    "result": {
+      "type": "active_tab_info_simple"
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "expected": [
+          "https?://host\\.docker\\.internal:8765/success\\?type=puzzle_slider&seed=access-puzzle-slider-001&session=access-captcha-puzzle-slider"
+        ]
+      }
+    }
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

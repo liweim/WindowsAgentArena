@@ -1,6 +1,8 @@
 {
   "id": "sticky-keys-screenshot-desktop",
   "snapshot": "windows",
+  "category": "Sticky keys",
+  "difficulty": "Easy",
   "instruction": "Enable Sticky Keys, take a screenshot using keyboard shortcuts, and save it as screenshot.png on the Desktop.",
   "source": "https://abilitynet.org.uk/",
   "gt_steps": [

@@ -3,28 +3,16 @@
   "snapshot": "chrome",
   "category": "Information",
   "difficulty": "hard",
-  "instruction": "Enable Chrome Live Caption, watch the video, and enter each must-have emergency kit item mentioned in the video into `~/Desktop/items.xlsx`. Use one row per phrase in the `items` column. Each answer should contain the complete phrase exactly as it appears in the captions.",
+  "instruction": "Enable Chrome Live Caption, watch the video, and write each must-have emergency kit item mentioned in the video in a sticky note. Each answer should contain the complete phrase exactly as it appears in the captions.",
   "source": "https://www.youtube.com/watch?v=o4enqHGluLI",
   "gt_steps": [
     "Open the FEMA emergency kit video in Chrome.",
     "Turn on Chrome Live Caption.",
     "Play the video and use Live Caption to identify the must-have emergency kit items.",
-    "Open `items.xlsx` from the Desktop.",
-    "Fill the `items` column with one item per row: `water`, `food`, `manual can opener`, `flashlight`, `extra batteries`, `weather radio`, `hand-cranked radio`, `first aid kit`, `diapers`, `infant formula`, `medicine bottles`, `children`, `pets`, `extra food`, `collapsible bowls`, `medicine`, `prescriptions`, `over-the-counter medications`.",
-    "Save the completed spreadsheet."
+    "Open Sticky Notes.",
+    "Write the items in a sticky note: `water`, `food`, `manual can opener`, `flashlight`, `extra batteries`, `weather radio`, `hand-cranked radio`, `first aid kit`, `diapers`, `infant formula`, `medicine bottles`, `children`, `pets`, `extra food`, `collapsible bowls`, `medicine`, `prescriptions`, `over-the-counter medications`."
   ],
   "config": [
-    {
-      "type": "upload_file",
-      "parameters": {
-        "files": [
-          {
-            "local_path": "assets/items.xlsx",
-            "path": "C:\\Users\\Docker\\Desktop\\items.xlsx"
-          }
-        ]
-      }
-    },
     {
       "type": "launch",
       "parameters": {
@@ -53,9 +41,16 @@
       }
     },
     {
-      "type": "open",
+      "type": "execute",
       "parameters": {
-        "path": "C:\\Users\\Docker\\Desktop\\items.xlsx"
+        "command": [
+          "powershell",
+          "-NoProfile",
+          "-ExecutionPolicy",
+          "Bypass",
+          "-Command",
+          "Start-Process 'shell:AppsFolder\\Microsoft.MicrosoftStickyNotes_8wekyb3d8bbwe!App'"
+        ]
       }
     },
     {
@@ -68,38 +63,74 @@
   "trajectory": "trajectories\\",
   "related_apps": [
     "chrome",
-    "libreoffice_calc"
+    "sticky_notes"
   ],
   "evaluator": {
-    "func": "compare_xlsx_items",
+    "func": "check_text_points",
     "result": {
-      "type": "vm_file",
-      "path": "C:\\Users\\Docker\\Desktop\\items.xlsx",
-      "dest": "items.xlsx"
+      "type": "sticky_notes_content"
     },
     "expected": {
       "type": "rule",
       "rules": {
-        "column_name": "items",
-        "expected": [
-          "water",
-          "food",
-          "manual can opener",
-          "flashlight",
-          "extra batteries",
-          "weather radio",
-          "hand-cranked radio",
-          "first aid kit",
-          "diapers",
-          "infant formula",
-          "medicine bottles",
-          "children",
-          "pets",
-          "extra food",
-          "collapsible bowls",
-          "medicine",
-          "prescriptions",
-          "over-the-counter medications"
+        "ignore_case": true,
+        "points": [
+          [
+            "water"
+          ],
+          [
+            "food"
+          ],
+          [
+            "manual can opener"
+          ],
+          [
+            "flashlight"
+          ],
+          [
+            "extra batteries"
+          ],
+          [
+            "weather radio"
+          ],
+          [
+            "hand-cranked radio",
+            "hand cranked radio"
+          ],
+          [
+            "first aid kit"
+          ],
+          [
+            "diapers"
+          ],
+          [
+            "infant formula"
+          ],
+          [
+            "medicine bottles"
+          ],
+          [
+            "children"
+          ],
+          [
+            "pets"
+          ],
+          [
+            "extra food"
+          ],
+          [
+            "collapsible bowls"
+          ],
+          [
+            "medicine"
+          ],
+          [
+            "prescriptions"
+          ],
+          [
+            "over-the-counter medications",
+            "over the counter medications"
+          ]
         ]
       }
     }

@@ -15,9 +15,9 @@ The benchmark supports platform-specific implementations while following shared 
 
 | Disability Group     | Assignees    |
 | -------------------- | ------------ |
-| Visual impairment    | chaw / kaung |
+| Visual impairment    | chaw         |
 | Hearing impairment   | weiming      |
-| Motor impairment     | chaw / kaung |
+| Motor impairment     | kaung        |
 | Cognitive impairment | weiming      |
 
 ## Disability Groups and Assistive Tools
@@ -79,6 +79,24 @@ Each task should include:
 6. A deterministic evaluator that checks the result and, when possible, the required accessibility tool state.
 
 If the task requires text output, the answer should be saved to a specified file so it can be evaluated deterministically.
+
+## Supported Windows Apps and Tools
+
+Windows tasks should use stable, commonly available applications when possible. Current supported target apps include:
+
+| App / Tool                 | Typical Use                                                                 |
+| -------------------------- | --------------------------------------------------------------------------- |
+| Microsoft Edge             | Web reading, Immersive Reader, browser-based information lookup             |
+| Google Chrome              | Web browsing, Chrome Live Caption, online video/audio, and web tasks        |
+| Thunderbird Mail           | Communication tasks such as composing, replying to, or saving email drafts  |
+| Thunderbird Calendar       | Calendar tasks such as creating events, appointments, and reminders         |
+| Windows Clock              | Timer, alarm, stopwatch, and clock-related management tasks                 |
+| Sticky Notes               | Short reminders, quick notes, and lightweight memory-support outputs        |
+| Notepad                    | Plain-text notes, short checklists, copied phrases, and deterministic files |
+| LibreOffice Calc           | Spreadsheets, small tables, lists, comparisons, and structured outputs      |
+| LibreOffice Writer         | Documents, formatted notes, letters, forms, and longer text outputs         |
+
+For example, appointment or reminder tasks can use Thunderbird Calendar events, communication tasks can use Thunderbird email drafts, captioned media tasks can use Chrome, timing tasks can use Windows Clock, note-taking tasks can use Sticky Notes or Notepad, and office-document tasks can use LibreOffice Calc or LibreOffice Writer.
 
 ## Task Construction Workflow
 
@@ -158,6 +176,25 @@ Evaluators may check:
 4. Whether the output is stable across repeated runs.
 
 Expected outputs should be short, stable, and unambiguous. Avoid tasks that depend on current news, changing rankings, personalized recommendations, or volatile page layouts unless the source is pinned or cached.
+
+## Cognitive Tasks
+
+For cognitive-impairment tasks on Windows, use Microsoft Edge Immersive Reader as the primary assistive feature. The task should reflect a realistic situation where a user benefits from reduced page clutter, simplified reading, or stronger focus while handling ordinary digital information.
+
+Appropriate cognitive-access scenarios include older adults with memory or attention difficulties, users with dyslexia or reading difficulties, users with ADHD or distractibility, and users who need help turning dense instructions into a short actionable output. Do not equate age itself with cognitive impairment; use aging-related scenarios only when the task clearly involves cognitive load, memory support, attention support, or simplified interaction.
+
+Cognitive tasks should:
+
+1. Use realistic everyday pages, such as news articles, scam guidance, health instructions, travel assistance pages, government service pages, shopping policies, or bill/payment instructions.
+2. Prefer pages where Immersive Reader is actually useful because the original page is long, cluttered, multi-section, or distracting.
+3. Require the agent to use Immersive Reader or a specific Reader preference when the task is about configuring access.
+4. Avoid putting the final answer directly in the user-facing instruction. The instruction may describe the information type to find, but the answer should have to come from the source page.
+5. Prefer exact sentences, exact short phrases, dates, phone numbers, form names, or URLs that appear on the source page. If paraphrases would create many valid answers, require copying the original wording.
+6. Save extracted information into a natural target app for the scenario, such as Thunderbird for a reply email, Sticky Notes for a quick reminder, Notepad for a checklist, or LibreOffice Calc for a short list.
+7. Use deterministic evaluators that check complete phrase containment, exact field values, saved files, email drafts, spreadsheet cells, or Reader state.
+8. For Access tasks, it is acceptable to evaluate only the accessibility tool state, such as whether Edge is in Immersive Reader mode or whether a required Reader preference is enabled.
+
+Expected answers for cognitive reading tasks should be stable and unique. Avoid broad questions such as "summarize what to do" unless the evaluator checks specific required source phrases. For email or note tasks, the body may be free-form, but the evaluator should require the complete expected source phrases to appear.
 
 ## Hearing Tasks
 

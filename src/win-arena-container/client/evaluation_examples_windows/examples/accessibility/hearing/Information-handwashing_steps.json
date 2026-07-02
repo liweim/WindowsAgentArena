@@ -3,28 +3,16 @@
   "snapshot": "chrome",
   "category": "Information",
   "difficulty": "hard",
-  "instruction": "Enable Chrome Live Caption, watch the video, and enter the hand-washing steps mentioned in the video into the spreadsheet. Use one row per phrase in the `items` column. Each answer should contain the complete phrase exactly as it appears in the captions.",
+  "instruction": "Enable Chrome Live Caption, watch the video, and write the hand-washing steps mentioned in the video in a sticky note. Each answer should contain the complete phrase exactly as it appears in the captions.",
   "source": "https://www.youtube.com/watch?v=UitUdTjhZz8",
   "gt_steps": [
     "Open the hand-washing video in Chrome.",
     "Turn on Chrome Live Caption.",
     "Play the video and use Live Caption to identify the hand-washing steps.",
-    "Open `items.xlsx` from the Desktop.",
-    "Fill the `items` column with one phrase per row: `warm water`, `soap`, `front and back`, `between your fingers`, `rinse and dry`.",
-    "Save the completed spreadsheet."
+    "Open Sticky Notes.",
+    "Write the phrases in a sticky note: `warm water`, `soap`, `front and back`, `between your fingers`, `rinse and dry`."
   ],
   "config": [
-    {
-      "type": "upload_file",
-      "parameters": {
-        "files": [
-          {
-            "local_path": "assets/items.xlsx",
-            "path": "C:\\Users\\Docker\\Desktop\\items.xlsx"
-          }
-        ]
-      }
-    },
     {
       "type": "launch",
       "parameters": {
@@ -53,9 +41,16 @@
       }
     },
     {
-      "type": "open",
+      "type": "execute",
       "parameters": {
-        "path": "C:\\Users\\Docker\\Desktop\\items.xlsx"
+        "command": [
+          "powershell",
+          "-NoProfile",
+          "-ExecutionPolicy",
+          "Bypass",
+          "-Command",
+          "Start-Process 'shell:AppsFolder\\Microsoft.MicrosoftStickyNotes_8wekyb3d8bbwe!App'"
+        ]
       }
     },
     {
@@ -68,25 +63,33 @@
   "trajectory": "trajectories\\",
   "related_apps": [
     "chrome",
-    "libreoffice_calc"
+    "sticky_notes"
   ],
   "evaluator": {
-    "func": "compare_xlsx_items",
+    "func": "check_text_points",
     "result": {
-      "type": "vm_file",
-      "path": "C:\\Users\\Docker\\Desktop\\items.xlsx",
-      "dest": "items.xlsx"
+      "type": "sticky_notes_content"
     },
     "expected": {
       "type": "rule",
       "rules": {
-        "column_name": "items",
-        "expected": [
-          "warm water",
-          "soap",
-          "front and back",
-          "between your fingers",
-          "rinse and dry"
+        "ignore_case": true,
+        "points": [
+          [
+            "warm water"
+          ],
+          [
+            "soap"
+          ],
+          [
+            "front and back"
+          ],
+          [
+            "between your fingers"
+          ],
+          [
+            "rinse and dry"
+          ]
         ]
       }
     }

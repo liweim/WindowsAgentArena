@@ -1,6 +1,8 @@
 {
   "id": "motor-shopping-list-onscreen-keyboard",
   "snapshot": "windows",
+  "category": "On-screen keyboard",
+  "difficulty": "Easy",
   "instruction": "Enable the On-Screen Keyboard. Using the On-Screen Keyboard, open Text Editor and create a note with the following content:\n\nShopping List\n- Milk\n- Bread\n- Eggs\n\nSave the note as shopping.txt on the Desktop.",
   "source": "human",
   "gt_steps": [
