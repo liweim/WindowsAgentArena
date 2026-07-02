@@ -1,0 +1,46 @@
+{
+  "id": "Service-electricity_bill_payment_methods",
+  "snapshot": "windows",
+  "category": "Motor Impairment",
+  "difficulty": "Medium",
+  "instruction": "Using the On-Screen Keyboard, find information on how to pay an electricity bill online and save the payment methods in a text file named electricity_payment_methods.txt on the Desktop.",
+  "source": "https://abilitynet.org.uk/",
+  "gt_steps": [
+    "Enable the On-Screen Keyboard.",
+    "Open a web browser.",
+    "Using the On-Screen Keyboard, search for how to pay an electricity bill online.",
+    "Open a relevant electricity provider or government information website.",
+    "Find the available online payment methods.",
+    "Open Notepad.",
+    "Type or copy the payment methods into the document.",
+    "Save the file as electricity_payment_methods.txt on the Desktop.",
+    "Leave the saved file on the Desktop."
+  ],
+  "config": [],
+  "trajectory": "trajectories/",
+  "related_apps": [
+    "on_screen_keyboard",
+    "chrome",
+    "notepad"
+  ],
+  "evaluator": {
+    "func": "check_include_exclude",
+    "result": {
+      "type": "vm_command_line",
+      "command": "cmd /c if exist C:\\Users\\Docker\\Desktop\\electricity_payment_methods.txt echo FILE_EXISTS",
+      "shell": true
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "include": [
+          "FILE_EXISTS"
+        ],
+        "exclude": []
+      }
+    }
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "medium"
+}

@@ -310,6 +310,10 @@ invoke_docker_container() {
     # Set the container name
     docker_command+=" --name $container_name"
 
+    # Allow processes inside the container, and the Windows VM via hosts setup,
+    # to reach services exposed on the Docker host.
+    docker_command+=" --add-host=host.docker.internal:host-gateway"
+
     # Set the platform
     docker_command+=" --platform linux/amd64"
 

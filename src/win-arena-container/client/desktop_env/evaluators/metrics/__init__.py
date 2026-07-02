@@ -16,10 +16,12 @@ from .chrome import (
     check_font_size,
     check_enabled_experiments,
     check_history_deleted,
+    check_history_contains,
     is_expected_search_query,
     is_expected_active_tab,
     is_expected_url_pattern_match,
     is_added_to_steam_cart,
+    is_page_contains_items,
     is_expected_installed_extensions,
     compare_pdf_images,
     check_chrome_weather_bookmark,
@@ -132,7 +134,8 @@ from .thunderbird import (
     check_thunderbird_prefs,
     check_thunderbird_filter,
     check_thunderbird_folder,
-    check_thunderbird_email_composition
+    check_thunderbird_email_composition,
+    check_thunderbird_calendar_event
 )
 from .vlc import (
     is_vlc_playing,
@@ -165,7 +168,8 @@ from .vscode import (
 
 from.edge import (
     check_edge_font_size,
-    is_url_shortcut_on_desktop
+    is_url_shortcut_on_desktop,
+    check_edge_immersive_reader_state
 )
 
 

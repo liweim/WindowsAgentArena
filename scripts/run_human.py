@@ -26,6 +26,12 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--browser-port", type=str, default="9006")
     parser.add_argument("--rdp-port", type=str, default="3390")
+    parser.add_argument(
+        "--captcha-port",
+        type=str,
+        default="8765",
+        help="Host port for the local CAPTCHA service to expose inside the Windows VM.",
+    )
     parser.add_argument("--skip-build", type=str, default="true")
     parser.add_argument("--use-kvm", type=str, default="true")
     parser.add_argument("--ram-size", type=str, default="8G")
@@ -128,6 +134,95 @@ def start_vm(container_name: str, cwd: Path) -> None:
     )
 
 
+def configure_shopping_base_url(cwd: Path) -> None:
+    base_url = "http://host.docker.internal:7770/"
+    commands = [
+        [
+            "docker",
+            "exec",
+            "shopping",
+            "/var/www/magento2/bin/magento",
+            "setup:store-config:set",
+            f"--base-url={base_url}",
+        ],
+        [
+            "docker",
+            "exec",
+            "shopping",
+            "mysql",
+            "-u",
+            "magentouser",
+            "-pMyPassword",
+            "magentodb",
+            "-e",
+            f"UPDATE core_config_data SET value='{base_url}' WHERE path='web/secure/base_url';",
+        ],
+        [
+            "docker",
+            "exec",
+            "shopping",
+            "/var/www/magento2/bin/magento",
+            "cache:flush",
+        ],
+    ]
+    for cmd in commands:
+        subprocess.run(cmd, cwd=str(cwd), check=False, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+
+def configure_self_hosted_services(container_name: str, cwd: Path) -> None:
+    run_command(
+        [
+            "docker",
+            "exec",
+            container_name,
+            "/bin/bash",
+            "-lc",
+            (
+                "host_ip=$(getent hosts host.docker.internal | awk '{print $1; exit}'); "
+                "if [ -z \"$host_ip\" ]; then host_ip=$(ip route | awk '/default/ {print $3; exit}'); fi; "
+                "curl --silent --max-time 5 http://$host_ip:7770/ >/dev/null || exit 0; "
+                "HOST_IP=$host_ip python3 - <<'PY'\n"
+                "import os, requests\n"
+                "host_ip = os.environ['HOST_IP']\n"
+                "cmd = \"$h='C:\\\\Windows\\\\System32\\\\drivers\\\\etc\\\\hosts'; \" \\\n"
+                "      \"$entry='%s host.docker.internal'; \" \\\n"
+                "      \"(Get-Content $h) | Where-Object {$_ -notmatch 'host\\\\.docker\\\\.internal'} | Set-Content $h; \" \\\n"
+                "      \"Add-Content -Path $h -Value \\\"`n$entry\\\"\" % host_ip\n"
+                "requests.post('http://20.20.20.21:5000/execute', json={'command': ['powershell','-NoProfile','-ExecutionPolicy','Bypass','-Command', cmd], 'shell': False}, timeout=10)\n"
+                "PY\n"
+            ),
+        ],
+        cwd=cwd,
+    )
+
+
+def configure_captcha_service_host(container_name: str, cwd: Path, captcha_port: str) -> None:
+    run_command(
+        [
+            "docker",
+            "exec",
+            container_name,
+            "/bin/bash",
+            "-lc",
+            (
+                "host_ip=$(getent hosts host.docker.internal | awk '{print $1; exit}'); "
+                "if [ -z \"$host_ip\" ]; then host_ip=$(ip route | awk '/default/ {print $3; exit}'); fi; "
+                f"curl --silent --max-time 5 http://$host_ip:{captcha_port}/status >/dev/null || exit 0; "
+                "HOST_IP=$host_ip python3 - <<'PY'\n"
+                "import os, requests\n"
+                "host_ip = os.environ['HOST_IP']\n"
+                "cmd = \"$h='C:\\\\Windows\\\\System32\\\\drivers\\\\etc\\\\hosts'; \" \\\n"
+                "      \"$entry='%s host.docker.internal'; \" \\\n"
+                "      \"(Get-Content $h) | Where-Object {$_ -notmatch 'host\\\\.docker\\\\.internal'} | Set-Content $h; \" \\\n"
+                "      \"Add-Content -Path $h -Value \\\"`n$entry\\\"\" % host_ip\n"
+                "requests.post('http://20.20.20.21:5000/execute', json={'command': ['powershell','-NoProfile','-ExecutionPolicy','Bypass','-Command', cmd], 'shell': False}, timeout=10)\n"
+                "PY\n"
+            ),
+        ],
+        cwd=cwd,
+    )
+
+
 def ensure_vm_ready(container_name: str, cwd: Path, timeout_seconds: int = 300) -> None:
     deadline = time.time() + timeout_seconds
     while time.time() < deadline:
@@ -200,6 +295,9 @@ def main() -> int:
         start_vm(args.container_name, script_dir)
         print("Waiting for Windows VM to become ready...", flush=True)
         ensure_vm_ready(args.container_name, script_dir)
+        configure_shopping_base_url(script_dir)
+        configure_self_hosted_services(args.container_name, script_dir)
+        configure_captcha_service_host(args.container_name, script_dir, args.captcha_port)
         print(f"Windows VM is ready. Connect via RDP at localhost:{args.rdp_port}.", flush=True)
         print("Launching interactive human_run.py session...", flush=True)
 

@@ -1,0 +1,46 @@
+{
+  "id": "Health-telehealth_eligibility_requirements",
+  "snapshot": "windows",
+  "category": "Health",
+  "difficulty": "Medium",
+  "instruction": "Using the On-Screen Keyboard, find information about telehealth appointments and save the eligibility requirements in a document named telehealth_eligibility.txt on the Desktop.",
+  "source": "https://abilitynet.org.uk/",
+  "gt_steps": [
+    "Enable the On-Screen Keyboard.",
+    "Open a web browser.",
+    "Using the On-Screen Keyboard, search for information about telehealth appointments.",
+    "Open a relevant healthcare or government website about telehealth appointments.",
+    "Find the eligibility requirements for telehealth appointments.",
+    "Open Notepad.",
+    "Type or copy the eligibility requirements into the document.",
+    "Save the document as telehealth_eligibility.txt on the Desktop.",
+    "Leave the saved document on the Desktop."
+  ],
+  "config": [],
+  "trajectory": "trajectories/",
+  "related_apps": [
+    "on_screen_keyboard",
+    "chrome",
+    "notepad"
+  ],
+  "evaluator": {
+    "func": "check_include_exclude",
+    "result": {
+      "type": "vm_command_line",
+      "command": "cmd /c if exist C:\\Users\\Docker\\Desktop\\telehealth_eligibility.txt echo FILE_EXISTS",
+      "shell": true
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "include": [
+          "FILE_EXISTS"
+        ],
+        "exclude": []
+      }
+    }
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "medium"
+}

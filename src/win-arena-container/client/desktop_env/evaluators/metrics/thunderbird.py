@@ -1,9 +1,11 @@
 import email
+import datetime
 import html
 import json
 import logging
 import mailbox
 import re
+from zoneinfo import ZoneInfo
 from email.header import decode_header, make_header
 from email.message import Message
 from email import policy
@@ -291,5 +293,180 @@ def check_thunderbird_email_composition(result: Union[str, List[str]], rules: Di
                 best_score = max(best_score, _message_score(message, rules))
         except Exception as exc:
             logger.warning("Failed to score Thunderbird composition %s: %s", path, exc)
+
+    return best_score
+
+
+def _calendar_timestamp_to_datetime(value: Any, timezone_name: str = "") -> Union[datetime.datetime, None]:
+    if value is None or value == "":
+        return None
+    if isinstance(value, str):
+        text = value.strip()
+        if not text:
+            return None
+        try:
+            return datetime.datetime.fromisoformat(text.replace("Z", "+00:00")).replace(tzinfo=None)
+        except Exception:
+            try:
+                value = int(text)
+            except Exception:
+                return None
+    try:
+        number = int(value)
+    except Exception:
+        return None
+
+    timezone = None
+    if timezone_name:
+        try:
+            timezone = ZoneInfo(timezone_name)
+        except Exception:
+            timezone = None
+
+    candidates = []
+    for divisor in (1000000, 1000, 1):
+        try:
+            timestamp = number / divisor
+            if timezone:
+                candidates.append(
+                    datetime.datetime.fromtimestamp(timestamp, datetime.timezone.utc)
+                    .astimezone(timezone)
+                    .replace(tzinfo=None)
+                )
+            candidates.append(datetime.datetime.fromtimestamp(timestamp))
+        except Exception:
+            pass
+    for candidate in candidates:
+        if 2000 <= candidate.year <= 2100:
+            return candidate
+    return None
+
+
+def _calendar_event_text(event: Dict[str, Any]) -> str:
+    parts = []
+    values = list(event.items())
+    for related in event.get("related", []):
+        if isinstance(related, dict):
+            values.extend(related.items())
+    for key, value in values:
+        if value is None:
+            continue
+        if isinstance(value, str):
+            parts.append(value)
+    return _normalize_email_text(" ".join(parts)).lower()
+
+
+def _calendar_event_description_text(event: Dict[str, Any]) -> str:
+    parts = []
+    for key, value in event.items():
+        key_lower = key.lower()
+        if isinstance(value, str) and any(token in key_lower for token in ["description", "descr", "notes"]):
+            parts.append(value)
+    for related in event.get("related", []):
+        if not isinstance(related, dict):
+            continue
+        related_text = " ".join(str(value) for value in related.values() if isinstance(value, str))
+        related_key_text = " ".join(str(key).lower() for key in related.keys())
+        if any(token in related_key_text or token in related_text.lower() for token in ["description", "descr", "notes"]):
+            parts.append(related_text)
+    return _normalize_email_text(" ".join(parts)).lower()
+
+
+def _calendar_event_datetime(event: Dict[str, Any], preferred_keys: List[str], fallback_name: str) -> Union[datetime.datetime, None]:
+    timezone_name = ""
+    for key in event:
+        key_lower = key.lower()
+        if "tz" in key_lower and fallback_name in key_lower and event.get(key):
+            timezone_name = str(event.get(key))
+            break
+    for key in preferred_keys:
+        if key in event:
+            parsed = _calendar_timestamp_to_datetime(event.get(key), timezone_name)
+            if parsed:
+                return parsed
+    for key, value in event.items():
+        if fallback_name in key.lower():
+            parsed = _calendar_timestamp_to_datetime(value, timezone_name)
+            if parsed:
+                return parsed
+    return None
+
+
+def _calendar_event_start(event: Dict[str, Any]) -> Union[datetime.datetime, None]:
+    return _calendar_event_datetime(event, [
+        "event_start",
+        "start_time",
+        "start",
+        "dtstart",
+        "startDate",
+    ], "start")
+
+
+def _calendar_event_end(event: Dict[str, Any]) -> Union[datetime.datetime, None]:
+    return _calendar_event_datetime(event, [
+        "event_end",
+        "end_time",
+        "end",
+        "dtend",
+        "endDate",
+    ], "end")
+
+
+def check_thunderbird_calendar_event(result: Dict[str, Any], rules: Dict[str, Any]) -> float:
+    """
+    Score a Thunderbird calendar event.
+
+    Rules:
+      - days_from_today: integer offset for expected event date
+      - hour: expected local start hour
+      - minute: expected local start minute, default 0
+      - duration_minutes: expected event duration
+      - title: expected title phrase
+      - body_points: list of acceptable phrase variants, like email scoring
+    """
+    if not result:
+        return 0.
+
+    try:
+        today = datetime.date.fromisoformat(result["today"])
+    except Exception:
+        today = datetime.date.today()
+    expected_date = today + datetime.timedelta(days=int(rules.get("days_from_today", 1)))
+    expected_hour = int(rules.get("hour", 9))
+    expected_minute = int(rules.get("minute", 0))
+    expected_duration = rules.get("duration_minutes")
+    expected_title = rules.get("title", "")
+    body_points: List[List[str]] = rules.get("body_points", [])
+
+    best_score = 0.
+    for event in result.get("events", []):
+        if not isinstance(event, dict):
+            continue
+        start = _calendar_event_start(event)
+        if not start:
+            continue
+        if start.date() != expected_date or start.hour != expected_hour or start.minute != expected_minute:
+            continue
+        if expected_duration is not None:
+            end = _calendar_event_end(event)
+            if not end:
+                continue
+            duration_minutes = int((end - start).total_seconds() / 60)
+            if duration_minutes != int(expected_duration):
+                continue
+
+        event_text = _calendar_event_text(event)
+        if expected_title and _normalize_email_text(expected_title).lower() not in event_text:
+            continue
+
+        if not body_points:
+            return 1.
+
+        text = _calendar_event_description_text(event)
+        matched = 0
+        for variants in body_points:
+            if any(_normalize_email_text(variant).lower() in text for variant in variants):
+                matched += 1
+        best_score = max(best_score, matched / len(body_points))
 
     return best_score

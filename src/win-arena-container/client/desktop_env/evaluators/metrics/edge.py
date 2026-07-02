@@ -15,6 +15,29 @@ def check_edge_font_size(font_size, rule):
         return 1. if rule['min'] <= default_font_size < rule['max'] else 0.
     else:
         raise TypeError(f"{rule['type']} not support yet!")
+
+def check_edge_immersive_reader_state(state: Dict[str, Any], rule):
+    """
+    Check visible Microsoft Edge Immersive Reader UI state.
+
+    Supported rule keys:
+      - reader_mode_open: bool
+      - line_focus_visible: bool
+      - one_line_focus_visible: bool
+      - one_line_focus_selected: bool
+    """
+    if not state:
+        return 0.
+
+    for key in [
+        "reader_mode_open",
+        "line_focus_visible",
+        "one_line_focus_visible",
+        "one_line_focus_selected",
+    ]:
+        if key in rule and bool(state.get(key)) != bool(rule[key]):
+            return 0.
+    return 1.
     
 def is_url_shortcut_on_desktop(shortcuts: Dict[str, str], rule):
     """

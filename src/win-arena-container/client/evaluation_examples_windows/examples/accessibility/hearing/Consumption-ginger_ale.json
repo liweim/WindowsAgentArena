@@ -1,0 +1,106 @@
+{
+  "id": "Consumption-add_shopping_cart",
+  "snapshot": "chrome",
+  "category": "Consumption",
+  "difficulty": "medium",
+  "instruction": "Your roommate sent an audio shopping reminder. Open the audio in Chrome, enable Live Caption, listen for the exact item to buy, then find that item on the shopping website and add it to the shopping cart.",
+  "source": "synthetic",
+  "transcript": "Hey Mary, could you do me one grocery favor before the cookout tonight? I already grabbed the limes, mint, and snacks, but I forgot the mixer for the mocktails. Please order Q Mixers ginger ale from the online store, and make sure it is the twenty-four bottle pack. Thanks, that is the one everyone liked last time.",
+  "gt_steps": [
+    "Open the ginger ale shopping reminder audio file in Chrome.",
+    "Turn on Chrome Live Caption.",
+    "Play the audio and use the captions to identify the item to buy: Q Mixers Premium Ginger Ale, 6.7 fl oz, 24 bottles.",
+    "Use the already-open shopping website.",
+    "Find the Q Mixers ginger ale product on the website.",
+    "Add the product to the shopping cart."
+  ],
+  "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/Consumption-ginger_ale.mp3",
+            "path": "C:\\Users\\Docker\\Desktop\\Consumption-ginger_ale.mp3"
+          }
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port=1337",
+          "--force-renderer-accessibility"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    },
+    {
+      "type": "sleep",
+      "parameters": {
+        "seconds": 1
+      }
+    },
+    {
+      "type": "chrome_open_tabs",
+      "parameters": {
+        "urls_to_open": [
+          "file:///C:/Users/Docker/Desktop/Consumption-ginger_ale.mp3",
+          "http://host.docker.internal:7770"
+        ]
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "chrome"
+  ],
+  "evaluator": {
+    "func": [
+      "is_page_contains_items",
+      "exact_match"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "page_info",
+        "url": "http://host.docker.internal:7770/checkout/cart/",
+        "load_state": "networkidle"
+      },
+      {
+        "type": "live_caption_enabled"
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "items": [
+            "Q Mixers Premium Ginger Ale",
+            "24 Bottles"
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "expected": "true"
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

@@ -383,6 +383,23 @@ def check_history_deleted(history_data, rule):
         raise TypeError(f"{rule['type']} not support yet!")
 
 
+def check_history_contains(history_data, rule):
+    """
+    Check whether browser history contains each expected URL pattern.
+    """
+    if not history_data:
+        return 0.
+
+    if rule['type'] != 'url_patterns':
+        raise TypeError(f"{rule['type']} not support yet!")
+
+    history_urls = [history[0] for history in history_data if history and history[0]]
+    for pattern in rule['patterns']:
+        if not any(re.search(pattern, url) for url in history_urls):
+            return 0.
+    return 1.
+
+
 def check_enabled_experiments(enabled_experiments, rule):
     """
     Check if the enabled experiments are as expected.
@@ -412,6 +429,13 @@ def check_font_size(font_size, rule):
 def is_added_to_steam_cart(active_tab_info, rule):
     """
     Check if the item is added to the Steam cart.
+    """
+    return is_page_contains_items(active_tab_info, rule)
+
+
+def is_page_contains_items(active_tab_info, rule):
+    """
+    Check whether all expected item strings appear in a page's HTML content.
     """
     items = rule['items']
     content = active_tab_info['content']

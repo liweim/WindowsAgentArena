@@ -1,5 +1,6 @@
 {
   "id": "Communication-laundry_tag_investigation",
+  "manually_evaluated": true,
   "snapshot": "chrome",
   "category": "Communication",
   "difficulty": "medium",
@@ -88,14 +89,6 @@
     "sticky_notes"
   ],
   "evaluator": {
-    "postconfig": [
-      {
-        "type": "sleep",
-        "parameters": {
-          "seconds": 1
-        }
-      }
-    ],
     "func": [
       "check_text_points",
       "exact_match"

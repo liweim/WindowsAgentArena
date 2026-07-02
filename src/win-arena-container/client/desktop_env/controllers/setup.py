@@ -368,6 +368,36 @@ class SetupController:
             if not terminates:
                 time.sleep(0.3)
 
+    def _prepare_thunderbird_profile_setup(
+            self,
+            archive_path: str = r"C:\Users\Docker\Downloads\thunderbird-profile.tar.gz",
+            profile_name: str = "t5q2a5hp.default-release",
+    ):
+        command = (
+            "$ErrorActionPreference = 'Stop'; "
+            "Stop-Process -Name thunderbird -Force -ErrorAction SilentlyContinue; "
+            "$profileRoot = 'C:\\Users\\Docker\\AppData\\Roaming'; "
+            "$legacyRoot = Join-Path $profileRoot '.thunderbird'; "
+            "if (Test-Path $legacyRoot) { Remove-Item $legacyRoot -Recurse -Force }; "
+            f"tar.exe -xzf '{archive_path}' -C $profileRoot; "
+            f"$prefs = 'C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\{profile_name}\\prefs.js'; "
+            "$content = Get-Content -Path $prefs -Raw; "
+            "$content = $content -replace 'user_pref\\(\\\"mail\\.identity\\.id1\\.draft_folder\\\", \\\"[^\\\"]*\\\"\\);', "
+            "'user_pref(\"mail.identity.id1.draft_folder\", \"mailbox://nobody@Local%20Folders/Drafts\");'; "
+            "$content = $content -replace 'user_pref\\(\\\"mail\\.identity\\.id1\\.drafts_folder_picker_mode\\\", \\\"[^\\\"]*\\\"\\);', "
+            "'user_pref(\"mail.identity.id1.drafts_folder_picker_mode\", \"1\");'; "
+            "Set-Content -Path $prefs -Value $content -Encoding ASCII; "
+            f"New-Item -ItemType File -Path 'C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\{profile_name}\\Mail\\Local Folders\\Drafts' -Force | Out-Null"
+        )
+        self._execute_setup([
+            "powershell",
+            "-NoProfile",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-Command",
+            command,
+        ])
+
     def _command_setup(self, command: List[str], **kwargs):
         self._execute_setup(command, **kwargs)
 

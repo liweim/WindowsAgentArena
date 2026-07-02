@@ -67,7 +67,8 @@ from .microsoftpaint import (
     get_image_dimension_matches_input
 )
 from .windows_clock import get_check_if_timer_started, get_check_if_world_clock_exists
-from .edge import get_profile_name_from_edge, get_favorites, get_cookie_data_for_edge, get_history_for_edge, get_enable_do_not_track_from_edge, get_enable_enhanced_safety_browsing_from_edge, get_data_delete_automacally_from_edge, get_edge_font_size, get_default_search_engine_from_edge, get_url_shortcuts_on_desktop
+from .thunderbird import get_thunderbird_calendar_events
+from .edge import get_profile_name_from_edge, get_favorites, get_cookie_data_for_edge, get_history_for_edge, get_enable_do_not_track_from_edge, get_enable_enhanced_safety_browsing_from_edge, get_data_delete_automacally_from_edge, get_edge_font_size, get_default_search_engine_from_edge, get_url_shortcuts_on_desktop, get_edge_immersive_reader_state
 from .settings import (
     get_night_light_state,
     get_default_browser,
