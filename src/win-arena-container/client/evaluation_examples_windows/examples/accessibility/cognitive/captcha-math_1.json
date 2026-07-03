@@ -1,0 +1,44 @@
+{
+  "id": "captcha-math_1",
+  "snapshot": "msedge",
+  "category": "captcha",
+  "difficulty": "easy",
+  "instruction": "Complete the math CAPTCHA verification in Microsoft Edge.",
+  "source": "local CAPTCHA service using deterministic arithmetic expressions",
+  "gt_steps": [
+    "Solve the arithmetic expression and enter the result."
+  ],
+  "config": [
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "cmd",
+          "/c",
+          "start msedge http://host.docker.internal:8765/captcha?type=math^&seed=access-math-001^&session=access-captcha-math"
+        ]
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "msedge"
+  ],
+  "evaluator": {
+    "func": "is_expected_url_pattern_match",
+    "result": {
+      "type": "active_tab_info_simple"
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "expected": [
+          "https?://host\\.docker\\.internal:8765/success\\?type=math&seed=access-math-001&session=access-captcha-math"
+        ]
+      }
+    }
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

@@ -1,0 +1,86 @@
+{
+  "id": "service-ftc_complaint_3",
+  "snapshot": "chrome",
+  "category": "Service",
+  "difficulty": "medium",
+  "instruction": "Turn on captions in the opened YouTube video, then watch it and answer: what personal financial information did the scammer ask for in the fake job opportunity example? Save the answer in `answer.txt` on the Desktop.",
+  "source": "https://www.youtube.com/watch?v=3LvMO5UMCl8",
+  "gt_steps": [
+    "Turn on captions in the YouTube player.",
+    "Play the video and use the YouTube captions to identify the personal financial information requested in the fake job opportunity example.",
+    "Create answer.txt on the Desktop.",
+    "Write `bank account number` in answer.txt.",
+    "Save and close answer.txt."
+  ],
+  "config": [
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port=1337",
+          "--force-renderer-accessibility"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    },
+    {
+      "type": "chrome_prepare_youtube_for_live_caption",
+      "parameters": {
+        "url": "https://www.youtube.com/watch?v=3LvMO5UMCl8",
+        "wait_seconds": 1
+      }
+    },
+    {
+      "type": "activate_window",
+      "parameters": {
+        "window_name": "Google Chrome"
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "chrome"
+  ],
+  "evaluator": {
+    "func": [
+      "exact_match",
+      "exact_match"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "youtube_captions_enabled",
+        "url": "https://www.youtube.com/watch?v=3LvMO5UMCl8"
+      },
+      {
+        "type": "is_file_saved_desktop",
+        "filename": "answer.txt",
+        "textcontent": "bank account number"
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "expected": "true"
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "expected": "true"
+        }
+      }
+    ]
+  }
+}

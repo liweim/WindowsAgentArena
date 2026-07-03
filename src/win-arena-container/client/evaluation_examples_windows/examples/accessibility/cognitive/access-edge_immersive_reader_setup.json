@@ -1,0 +1,48 @@
+{
+  "id": "access-edge_immersive_reader_setup",
+  "snapshot": "msedge",
+  "category": "Access",
+  "difficulty": "medium",
+  "instruction": "You get distracted when reading long entertainment news articles. In Microsoft Edge, open the Guardian entertainment guide, enter Immersive Reader, and set Reading preferences to one-line focus.",
+  "source": "https://www.theguardian.com/culture/2026/jun/27/entertainment-guide-week-ahead-supergirl-silo-jackass-life-larry-pursuit-unhappiness",
+  "gt_steps": [
+    "Open the address bar More actions (...) menu and choose Immersive Reader.",
+    "Open Reading preferences.",
+    "Turn on Line focus.",
+    "Choose the one-line focus option."
+  ],
+  "config": [
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "cmd",
+          "/c",
+          "start msedge https://www.theguardian.com/culture/2026/jun/27/entertainment-guide-week-ahead-supergirl-silo-jackass-life-larry-pursuit-unhappiness"
+        ]
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "msedge"
+  ],
+  "evaluator": {
+    "func": "check_edge_immersive_reader_state",
+    "result": {
+      "type": "edge_immersive_reader_state"
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "reader_mode_open": true,
+        "line_focus_visible": true,
+        "one_line_focus_visible": true,
+        "one_line_focus_selected": true
+      }
+    }
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

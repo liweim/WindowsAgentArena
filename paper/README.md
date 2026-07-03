@@ -39,14 +39,15 @@ Use one of the following category labels:
 
 | Category        | Description                                                                                                                                         |
 | --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Communication` | Messaging, email, meetings, contacts, and social interaction                                                                                        |
-| `Information`   | Browsing, reading documents, searching, and comparing content                                                                                       |
-| `Management`    | Calendars, reminders, to-do items, bills, deliveries, and appointments                                                                              |
-| `Mobility`      | Route planning, ride-hailing, transit schedules, location search, and accessible entrance lookup                                                    |
-| `Consumption`   | Product search, price comparison, add-to-cart, orders, after-sales service, and coupon use                                                          |
-| `Service`       | Bill payment, statement inquiry, form submission, government services, and identity verification                                                    |
-| `Health`        | Medical appointments, health records, prescriptions, hospital information, and emergency contacts                                                   |
-| `Access`        | Enabling or configuring accessibility tools such as screen readers, captions, magnification, reading mode, keyboard assistance, or mouse assistance |
+| `communication` | Messaging, email, meetings, contacts, and social interaction                                                                                        |
+| `information`   | Browsing, reading documents, searching, and comparing content                                                                                       |
+| `management`    | Calendars, reminders, to-do items, bills, deliveries, and appointments                                                                              |
+| `mobility`      | Route planning, ride-hailing, transit schedules, location search, and accessible entrance lookup                                                    |
+| `consumption`   | Product search, price comparison, add-to-cart, orders, after-sales service, and coupon use                                                          |
+| `service`       | Bill payment, statement inquiry, form submission, government services, and identity verification                                                    |
+| `health`        | Medical appointments, health records, prescriptions, hospital information, and emergency contacts                                                   |
+| `access`        | Enabling or configuring accessibility tools such as screen readers, captions, magnification, reading mode, keyboard assistance, or mouse assistance |
+| `captcha`       | CAPTCHA, audio CAPTCHA, visual CAPTCHA, accessible challenge handling, anti-bot verification, and workflows blocked by CAPTCHA-style identity checks |
 
 ## Source Grounding
 

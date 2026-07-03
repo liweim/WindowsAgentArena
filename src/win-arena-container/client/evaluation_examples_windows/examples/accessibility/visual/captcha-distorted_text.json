@@ -1,0 +1,44 @@
+{
+  "id": "captcha-distorted_text",
+  "snapshot": "msedge",
+  "category": "captcha",
+  "difficulty": "easy",
+  "instruction": "Complete the CAPTCHA verification in Microsoft Edge.",
+  "source": "local CAPTCHA service using the Python `captcha` package",
+  "gt_steps": [
+    "Complete the CAPTCHA verification."
+  ],
+  "config": [
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "cmd",
+          "/c",
+          "start msedge http://host.docker.internal:8765/captcha?type=distorted_text^&seed=distorted-text-001^&session=access-captcha-distorted-text"
+        ]
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "msedge"
+  ],
+  "evaluator": {
+    "func": "is_expected_url_pattern_match",
+    "result": {
+      "type": "active_tab_info_simple"
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "expected": [
+          "https?://host\\.docker\\.internal:8765/success\\?type=distorted_text&seed=distorted-text-001&session=access-captcha-distorted-text"
+        ]
+      }
+    }
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

@@ -1,0 +1,39 @@
+{
+  "id": "access-windows_live_caption",
+  "manually_evaluated": false,
+  "snapshot": "base_setup",
+  "category": "Access",
+  "difficulty": "easy",
+  "instruction": "Help me turn on Windows Live captions.",
+  "source": "Settings > Accessibility > Captions > Live captions",
+  "gt_steps": [
+    "Open Windows Settings to Accessibility > Captions.",
+    "Turn on Live captions.",
+    "Wait for the initial configuration."
+  ],
+  "config": [],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "settings"
+  ],
+  "evaluator": {
+    "func": "check_include_exclude",
+    "result": {
+      "type": "vm_command_line",
+      "command": [
+        "powershell",
+        "-NoProfile",
+        "-Command",
+        "$found = Get-Process | Where-Object { $_.ProcessName -match 'LiveCaptions|LiveCaption' -or $_.MainWindowTitle -match 'Live captions|Live Caption' }; if ($found) { 'windows_live_caption_enabled' }"
+      ]
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "include": [
+          "windows_live_caption_enabled"
+        ]
+      }
+    }
+  }
+}

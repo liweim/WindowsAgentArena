@@ -1,0 +1,46 @@
+{
+  "id": "health-nearest_hospital_emergency",
+  "snapshot": "windows",
+  "category": "Motor Impairment",
+  "difficulty": "Medium",
+  "instruction": "Using the On-Screen Keyboard, locate the nearest hospital emergency department and save its address and phone number in a text file named emergency_department_contact.txt on the Desktop.",
+  "source": "https://abilitynet.org.uk/",
+  "gt_steps": [
+    "Enable the On-Screen Keyboard.",
+    "Open a web browser.",
+    "Using the On-Screen Keyboard, search for the nearest hospital emergency department.",
+    "Open a relevant hospital listing or official hospital website.",
+    "Find the emergency department's address and phone number.",
+    "Open Notepad.",
+    "Type the hospital name, address, and phone number into the document.",
+    "Save the file as emergency_department_contact.txt on the Desktop.",
+    "Leave the saved file on the Desktop."
+  ],
+  "config": [],
+  "trajectory": "trajectories/",
+  "related_apps": [
+    "on_screen_keyboard",
+    "chrome",
+    "notepad"
+  ],
+  "evaluator": {
+    "func": "check_include_exclude",
+    "result": {
+      "type": "vm_command_line",
+      "command": "cmd /c if exist C:\\Users\\Docker\\Desktop\\emergency_department_contact.txt echo FILE_EXISTS",
+      "shell": true
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "include": [
+          "FILE_EXISTS"
+        ],
+        "exclude": []
+      }
+    }
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "medium"
+}

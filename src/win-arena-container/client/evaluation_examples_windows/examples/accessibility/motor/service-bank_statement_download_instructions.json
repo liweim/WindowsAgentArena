@@ -1,0 +1,45 @@
+{
+  "id": "service-bank_statement_download_instructions",
+  "snapshot": "windows",
+  "category": "Motor Impairment",
+  "difficulty": "Medium",
+  "instruction": "Using the On-Screen Keyboard, find instructions for downloading a bank statement and save the webpage as a PDF named bank_statement_instructions.pdf on the Desktop.",
+  "source": "https://abilitynet.org.uk/",
+  "gt_steps": [
+    "Enable the On-Screen Keyboard.",
+    "Open a web browser.",
+    "Using the On-Screen Keyboard, search for instructions on downloading a bank statement.",
+    "Open a relevant bank help page or support article.",
+    "Review the instructions for downloading a bank statement.",
+    "Open the browser's Print dialog.",
+    "Choose 'Save as PDF' as the destination.",
+    "Save the webpage as bank_statement_instructions.pdf on the Desktop.",
+    "Leave the PDF file on the Desktop."
+  ],
+  "config": [],
+  "trajectory": "trajectories/",
+  "related_apps": [
+    "on_screen_keyboard",
+    "chrome"
+  ],
+  "evaluator": {
+    "func": "check_include_exclude",
+    "result": {
+      "type": "vm_command_line",
+      "command": "cmd /c if exist C:\\Users\\Docker\\Desktop\\bank_statement_instructions.pdf echo FILE_EXISTS",
+      "shell": true
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "include": [
+          "FILE_EXISTS"
+        ],
+        "exclude": []
+      }
+    }
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "medium"
+}
