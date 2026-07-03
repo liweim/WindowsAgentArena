@@ -47,7 +47,29 @@ Use one of the following category labels:
 | `service`       | Bill payment, statement inquiry, form submission, government services, and identity verification                                                    |
 | `health`        | Medical appointments, health records, prescriptions, hospital information, and emergency contacts                                                   |
 | `access`        | Enabling or configuring accessibility tools such as screen readers, captions, magnification, reading mode, keyboard assistance, or mouse assistance |
-| `captcha`       | CAPTCHA, audio CAPTCHA, visual CAPTCHA, accessible challenge handling, anti-bot verification, and workflows blocked by CAPTCHA-style identity checks |
+| `Captcha`       | Focused stress-test tasks for CAPTCHA-style verification barriers, including visual CAPTCHA, audio CAPTCHA, accessible challenge switching, retry handling, timeout recovery, and interactive anti-bot checks. |
+
+### Supported CAPTCHA Types
+
+The `Captcha` category is treated as a focused stress-test slice rather than a standard daily-life workflow category. It is included because CAPTCHA-style verification is a well-documented accessibility barrier, especially for screen-reader users and users with visual impairments. These tasks are analyzed separately to measure whether GUI agents can handle verification barriers that may otherwise block end-to-end digital assistance.
+
+The local Windows CAPTCHA service currently supports the following deterministic challenge types:
+
+| CAPTCHA Type        | Source             | Interaction Required                                      |
+| ------------------- | ------------------ | --------------------------------------------------------- |
+| `audio`             | Local mock service | Listen to an audio code and enter the digits              |
+| `click_sequence`    | Local mock service | Click scattered characters in the requested order         |
+| `count_chars`       | Local mock service | Count occurrences of a target character                   |
+| `distorted_text`    | Local mock service | Read and enter a distorted text code                      |
+| `math`              | Local mock service | Solve an arithmetic expression                            |
+| `robot_checkbox`    | Local mock service | Click an "I'm not a robot" checkbox after a short delay   |
+| `geometry_click`    | OpenCaptchaWorld   | Click the requested geometric shape or object             |
+| `slide_puzzle`      | OpenCaptchaWorld   | Drag the puzzle component to the target position          |
+| `image_recognition` | OpenCaptchaWorld   | Select all images matching the prompt                     |
+| `patch_select`      | OpenCaptchaWorld   | Select all grid patches containing the requested object   |
+| `hold_button`       | OpenCaptchaWorld   | Press and hold a button until the progress completes      |
+
+The OpenCaptchaWorld-derived types use copied local image assets and ground-truth metadata from `/home/weimingli/projects/OpenCaptchaWorld/captcha_data`. They are served locally by `src/win-arena-container/client/captcha_service.py` and do not contact external CAPTCHA providers.
 
 ## Source Grounding
 

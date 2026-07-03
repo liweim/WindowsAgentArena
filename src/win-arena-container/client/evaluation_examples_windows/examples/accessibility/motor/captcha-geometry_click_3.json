@@ -1,0 +1,44 @@
+{
+  "id": "captcha-geometry_click_3",
+  "snapshot": "msedge",
+  "category": "captcha",
+  "difficulty": "easy",
+  "instruction": "Complete the geometry-click CAPTCHA verification in Microsoft Edge.",
+  "source": "local CAPTCHA service using OpenCaptchaWorld geometry_click data",
+  "gt_steps": [
+    "Read the prompt and click the requested shape or object in the image."
+  ],
+  "config": [
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "cmd",
+          "/c",
+          "start msedge http://host.docker.internal:8765/captcha?type=geometry_click^&seed=access-geometry-click-003^&session=access-captcha-geometry-click"
+        ]
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "msedge"
+  ],
+  "evaluator": {
+    "func": "is_expected_url_pattern_match",
+    "result": {
+      "type": "active_tab_info_simple"
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "expected": [
+          "https?://host\\.docker\\.internal:8765/success\\?type=geometry_click&seed=access-geometry-click-003&session=access-captcha-geometry-click"
+        ]
+      }
+    }
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

@@ -1,0 +1,44 @@
+{
+  "id": "captcha-robot_checkbox_1",
+  "snapshot": "msedge",
+  "category": "captcha",
+  "difficulty": "easy",
+  "instruction": "Complete the I'm-not-a-robot CAPTCHA verification in Microsoft Edge.",
+  "source": "local CAPTCHA service using a classic checkbox CAPTCHA mock image",
+  "gt_steps": [
+    "Click the I'm not a robot checkbox, then continue."
+  ],
+  "config": [
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "cmd",
+          "/c",
+          "start msedge http://host.docker.internal:8765/captcha?type=robot_checkbox^&seed=access-robot-checkbox-001^&session=access-captcha-robot-checkbox"
+        ]
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "msedge"
+  ],
+  "evaluator": {
+    "func": "is_expected_url_pattern_match",
+    "result": {
+      "type": "active_tab_info_simple"
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "expected": [
+          "https?://host\\.docker\\.internal:8765/success\\?type=robot_checkbox&seed=access-robot-checkbox-001&session=access-captcha-robot-checkbox"
+        ]
+      }
+    }
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

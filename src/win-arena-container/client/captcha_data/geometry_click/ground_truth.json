@@ -1,0 +1,121 @@
+{
+  "dingxiang_000001.jpg": {
+    "answer": {
+      "type": "Letter A",
+      "area": [
+        [
+          50,
+          35
+        ],
+        [
+          90,
+          80
+        ]
+      ]
+    },
+    "prompt": "Click the Letter on the left of the Parallelogram",
+    "description": "Geometry click puzzle with a cube and letters"
+  },
+  "dingxiang_000002.jpg": {
+    "answer": {
+      "type": "circle",
+      "area": [
+        [
+          240,
+          65
+        ],
+        [
+          295,
+          115
+        ]
+      ]
+    },
+    "prompt": "Click the 2-D Shape",
+    "description": "Geometry click puzzle with a cube and letters"
+  },
+  "dingxiang_000003.jpg": {
+    "answer": {
+      "type": "circle",
+      "area": [
+        [
+          100,
+          65
+        ],
+        [
+          125,
+          145
+        ]
+      ]
+    },
+    "prompt": "Click the letter closest to the cube",
+    "description": "Geometry click puzzle with a cube and letters"
+  },
+  "dingxiang_000004.jpg": {
+    "answer": {
+      "type": "circle",
+      "area": [
+        [
+          35,
+          105
+        ],
+        [
+          75,
+          145
+        ]
+      ]
+    },
+    "prompt": "Click the 2-D Shape",
+    "description": "Geometry click puzzle with a cube and letters"
+  },
+  "dingxiang_000005.jpg": {
+    "answer": {
+      "type": "circle",
+      "area": [
+        [
+          130,
+          60
+        ],
+        [
+          185,
+          125
+        ]
+      ]
+    },
+    "prompt": "Click the 3-D Shape closest to letter T",
+    "description": "Geometry click puzzle with a cube and letters"
+  },
+  "geetest_000001.jpg": {
+    "answer": {
+      "type": "circle",
+      "area": [
+        [
+          160,
+          90
+        ],
+        [
+          210,
+          125
+        ]
+      ]
+    },
+    "prompt": "Click the yellow cylinder",
+    "description": "Geometry click puzzle with various 3D shapes"
+  },
+  "geetest_000002.jpg": {
+    "answer": {
+      "type": "circle",
+      "area": [
+        [
+          75,
+          170
+        ],
+        [
+          150,
+          230
+        ]
+      ]
+    },
+    "prompt": "Click the green icosahedron",
+    "description": "Geometry click puzzle with various 3D shapes"
+  }
+}

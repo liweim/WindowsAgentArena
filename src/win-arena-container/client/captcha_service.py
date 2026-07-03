@@ -7,13 +7,13 @@ It does not integrate with, solve, or bypass any third-party CAPTCHA provider.
 
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
-from urllib.parse import parse_qs, urlencode, urlparse
-from urllib.request import Request, urlopen
+from urllib.parse import parse_qs, quote, unquote, urlencode, urlparse
 import argparse
 import base64
 from io import BytesIO
 import html
 import json
+import mimetypes
 import os
 import random
 import string
@@ -23,9 +23,14 @@ import time
 
 HOST = "127.0.0.1"
 DEFAULT_PORT = 8765
-PUZZLE_BACKGROUND_URL = "https://commons.wikimedia.org/wiki/Special:Redirect/file/Road_in_Norway.jpg?width=640"
-PUZZLE_BACKGROUND_SOURCE = "https://commons.wikimedia.org/wiki/File:Road_in_Norway.jpg"
-PUZZLE_TOLERANCE = 2
+CAPTCHA_DATA_DIR = os.path.join(os.path.dirname(__file__), "captcha_data")
+OPENCAPTCHA_TYPES = {
+    "geometry_click",
+    "slide_puzzle",
+    "image_recognition",
+    "patch_select",
+    "hold_button",
+}
 
 CHALLENGE_TYPES = {
     "audio",
@@ -33,8 +38,8 @@ CHALLENGE_TYPES = {
     "count_chars",
     "distorted_text",
     "math",
-    "puzzle_slider",
-}
+    "robot_checkbox",
+} | OPENCAPTCHA_TYPES
 
 STARTED_AT_MTIME = os.path.getmtime(__file__)
 
@@ -129,103 +134,243 @@ def png_data_uri(image):
     return f"data:image/png;base64,{encoded}"
 
 
-def load_puzzle_background():
-    try:
-        from PIL import Image, ImageDraw
-    except ImportError as exc:
-        raise RuntimeError("Pillow is required for puzzle_slider CAPTCHA generation.") from exc
-
-    try:
-        request = Request(PUZZLE_BACKGROUND_URL, headers={"User-Agent": "WinArenaCaptchaService/1.0"})
-        with urlopen(request, timeout=8) as response:
-            data = response.read()
-        return Image.open(BytesIO(data)).convert("RGB")
-    except Exception:
-        image = Image.new("RGB", (640, 360), "#9dc3d4")
-        draw = ImageDraw.Draw(image)
-        for y in range(360):
-            shade = int(110 + y * 0.25)
-            draw.line([(0, y), (640, y)], fill=(shade // 2, min(180, shade), min(210, shade + 30)))
-        draw.rectangle([0, 230, 640, 360], fill="#5f8f4e")
-        draw.polygon([(0, 250), (180, 180), (360, 260), (640, 190), (640, 360), (0, 360)], fill="#476f3a")
-        draw.line([(0, 320), (300, 235), (640, 318)], fill="#d8d8d8", width=45)
-        draw.line([(0, 320), (300, 235), (640, 318)], fill="#586069", width=4)
-        return image
+def load_opencaptcha_ground_truth(kind):
+    path = os.path.join(CAPTCHA_DATA_DIR, kind, "ground_truth.json")
+    with open(path, "r", encoding="utf-8") as f:
+        return json.load(f)
 
 
-def puzzle_slider_body(seed):
-    try:
-        from PIL import ImageDraw, ImageFilter
-    except ImportError as exc:
-        raise RuntimeError("Pillow is required for puzzle_slider CAPTCHA generation.") from exc
+def opencaptcha_image_src(kind, *parts):
+    quoted = "/".join(quote(part) for part in (kind, *parts))
+    return f"/captcha_data/{quoted}"
 
-    rng = make_rng(seed)
-    canvas_width = 360
-    canvas_height = 220
-    piece_size = 48
-    target = rng.randint(35, 75)
-    x = int((canvas_width - piece_size - 18) * target / 100)
-    y = rng.randint(58, 132)
 
-    base = load_puzzle_background().resize((canvas_width, canvas_height))
-    piece = base.crop((x, y, x + piece_size, y + piece_size))
-    piece = piece.filter(ImageFilter.SHARPEN)
+def select_opencaptcha_item(kind, seed):
+    ground_truth = load_opencaptcha_ground_truth(kind)
+    keys = sorted(ground_truth)
+    if not keys:
+        raise ValueError(f"No CAPTCHA data for {kind}")
+    key = keys[make_rng(f"{kind}-{seed}").randrange(len(keys))]
+    return key, ground_truth[key]
 
-    draw = ImageDraw.Draw(base, "RGBA")
-    hole_box = [x, y, x + piece_size - 1, y + piece_size - 1]
-    draw.rounded_rectangle(hole_box, radius=8, fill=(255, 255, 255, 180))
-    draw.rounded_rectangle(hole_box, radius=8, outline=(30, 41, 59, 230), width=3)
 
+def opencaptcha_challenge(kind, seed):
+    puzzle_id, data = select_opencaptcha_item(kind, seed)
+    prompt = data.get("prompt") or data.get("question") or "Solve the CAPTCHA puzzle"
+
+    if kind == "geometry_click":
+        image_src = opencaptcha_image_src(kind, puzzle_id)
+        body = (
+            "<div class='ocw-click-board'>"
+            f"<img id='ocw-click-image' src='{image_src}' alt='{html.escape(prompt, quote=True)}'>"
+            "<div id='ocw-click-marker' class='ocw-click-marker'></div>"
+            "</div>"
+            "<input id='answer' name='answer' type='hidden' value=''>"
+            "<script>"
+            "const img=document.getElementById('ocw-click-image');"
+            "const answer=document.getElementById('answer');"
+            "const marker=document.getElementById('ocw-click-marker');"
+            "img.addEventListener('click',e=>{"
+            " const r=img.getBoundingClientRect();"
+            " const x=Math.round((e.clientX-r.left)*img.naturalWidth/r.width);"
+            " const y=Math.round((e.clientY-r.top)*img.naturalHeight/r.height);"
+            " answer.value=JSON.stringify([x,y]);"
+            " marker.style.left=(e.clientX-r.left)+'px'; marker.style.top=(e.clientY-r.top)+'px';"
+            " marker.style.display='block';"
+            "});"
+            "</script>"
+        )
+        return {
+            "answer": data.get("answer"),
+            "title": "Click the requested object",
+            "panel_width": 520,
+            "prompt": prompt,
+            "body": body,
+            "hint": "",
+            "ocw_type": kind,
+            "puzzle_id": puzzle_id,
+        }
+
+    if kind == "slide_puzzle":
+        image_src = opencaptcha_image_src(kind, puzzle_id)
+        component = data.get("component_image")
+        component_src = opencaptcha_image_src(kind, component)
+        body = (
+            "<div id='ocw-slide-board' class='ocw-slide-board'>"
+            f"<img class='ocw-slide-bg' src='{image_src}' alt='{html.escape(prompt, quote=True)}'>"
+            f"<img id='ocw-slide-piece' class='ocw-slide-piece' src='{component_src}' alt='Puzzle component'>"
+            "</div>"
+            "<input id='answer' name='answer' type='hidden' value='[0,0]'>"
+            "<script>"
+            "const board=document.getElementById('ocw-slide-board');"
+            "const bg=board.querySelector('.ocw-slide-bg');"
+            "const piece=document.getElementById('ocw-slide-piece');"
+            "const answer=document.getElementById('answer');"
+            "let dragging=false,dx=0,dy=0;"
+            "function sizePiece(){"
+            " if(!piece.naturalWidth||!piece.naturalHeight)return;"
+            " const w=board.clientWidth*0.12;"
+            " piece.style.width=w+'px';"
+            " piece.style.height=(w*piece.naturalHeight/piece.naturalWidth)+'px';"
+            "}"
+            "function setPos(clientX,clientY){"
+            " const r=board.getBoundingClientRect();"
+            " let x=Math.max(0,Math.min(r.width-piece.offsetWidth,clientX-r.left-dx));"
+            " let y=Math.max(0,Math.min(r.height-piece.offsetHeight,clientY-r.top-dy));"
+            " piece.style.left=x+'px'; piece.style.top=y+'px';"
+            " const scale=500/r.width;"
+            " const centerX=x+piece.offsetWidth/2;"
+            " const centerY=y+piece.offsetHeight/2;"
+            " answer.value=JSON.stringify([Math.round(centerX*scale),Math.round(centerY*scale)]);"
+            "}"
+            "if(bg.complete&&piece.complete)sizePiece();"
+            "bg.addEventListener('load',sizePiece);"
+            "piece.addEventListener('load',sizePiece);"
+            "window.addEventListener('resize',sizePiece);"
+            "piece.addEventListener('pointerdown',e=>{dragging=true;piece.setPointerCapture(e.pointerId);const pr=piece.getBoundingClientRect();dx=e.clientX-pr.left;dy=e.clientY-pr.top;e.preventDefault();});"
+            "piece.addEventListener('pointermove',e=>{if(dragging)setPos(e.clientX,e.clientY);});"
+            "piece.addEventListener('pointerup',()=>{dragging=false;});"
+            "</script>"
+        )
+        return {
+            "answer": data.get("target_position"),
+            "title": "Drag the slider component",
+            "panel_width": 520,
+            "prompt": prompt,
+            "body": body,
+            "hint": "",
+            "tolerance": data.get("tolerance", 10),
+            "ocw_type": kind,
+            "puzzle_id": puzzle_id,
+        }
+
+    if kind == "image_recognition":
+        subfolder = data.get("subfolder", puzzle_id)
+        images = data.get("images", [])
+        buttons = []
+        for idx, filename in enumerate(images):
+            src = opencaptcha_image_src(kind, subfolder, filename)
+            buttons.append(
+                "<button type='button' class='ocw-grid-cell' data-index='{idx}'>"
+                "<img src='{src}' alt='Option {num}'>"
+                "</button>".format(idx=idx, src=src, num=idx + 1)
+            )
+        body = (
+            "<div class='ocw-image-grid'>" + "".join(buttons) + "</div>"
+            "<input id='answer' name='answer' type='hidden' value='[]'>"
+            "<script>"
+            "const answer=document.getElementById('answer'); const selected=new Set();"
+            "document.querySelectorAll('.ocw-grid-cell').forEach(btn=>btn.addEventListener('click',()=>{"
+            " const i=Number(btn.dataset.index); if(selected.has(i)){selected.delete(i);btn.classList.remove('selected');}else{selected.add(i);btn.classList.add('selected');}"
+            " answer.value=JSON.stringify([...selected].sort((a,b)=>a-b));"
+            "}));"
+            "</script>"
+        )
+        return {
+            "answer": data.get("correct_selections", []),
+            "title": "Select matching images",
+            "panel_width": 520,
+            "prompt": data.get("question", prompt),
+            "body": body,
+            "hint": "",
+            "ocw_type": kind,
+            "puzzle_id": puzzle_id,
+        }
+
+    if kind == "patch_select":
+        image_src = opencaptcha_image_src(kind, puzzle_id)
+        rows, cols = data.get("grid_size", [5, 5])
+        cells = "".join(
+            f"<button type='button' class='ocw-patch-cell' data-index='{idx}' aria-label='Patch {idx + 1}'></button>"
+            for idx in range(rows * cols)
+        )
+        body = (
+            f"<div class='ocw-patch-board' style='--rows:{rows};--cols:{cols};'>"
+            f"<img src='{image_src}' alt='{html.escape(prompt, quote=True)}'>"
+            "<div class='ocw-patch-grid'>" + cells + "</div>"
+            "</div>"
+            "<input id='answer' name='answer' type='hidden' value='[]'>"
+            "<script>"
+            "const answer=document.getElementById('answer'); const selected=new Set();"
+            "document.querySelectorAll('.ocw-patch-cell').forEach(btn=>btn.addEventListener('click',()=>{"
+            " const i=Number(btn.dataset.index); if(selected.has(i)){selected.delete(i);btn.classList.remove('selected');}else{selected.add(i);btn.classList.add('selected');}"
+            " answer.value=JSON.stringify([...selected].sort((a,b)=>a-b));"
+            "}));"
+            "</script>"
+        )
+        return {
+            "answer": data.get("correct_patches", []),
+            "title": "Select all matching squares",
+            "panel_width": 520,
+            "prompt": prompt,
+            "body": body,
+            "hint": "",
+            "ocw_type": kind,
+            "puzzle_id": puzzle_id,
+        }
+
+    if kind == "hold_button":
+        image_src = opencaptcha_image_src(kind, puzzle_id)
+        hold_time = float(data.get("hold_time", 3))
+        body = (
+            f"<figure class='ocw-hold-figure'><img src='{image_src}' alt='{html.escape(prompt, quote=True)}'></figure>"
+            "<input id='answer' name='answer' type='hidden' value='0'>"
+            f"<button type='button' id='ocw-hold-button' class='ocw-hold-button' data-hold='{hold_time}'>Hold</button>"
+            "<div class='ocw-hold-meter'><div id='ocw-hold-fill'></div></div>"
+            "<script>"
+            "const btn=document.getElementById('ocw-hold-button');"
+            "const fill=document.getElementById('ocw-hold-fill');"
+            "const answer=document.getElementById('answer');"
+            "const required=Number(btn.dataset.hold); let start=0,timer=null;"
+            "function stop(){if(!start)return; const held=(performance.now()-start)/1000; answer.value=held.toFixed(2); clearInterval(timer); start=0;}"
+            "btn.addEventListener('pointerdown',e=>{start=performance.now();btn.setPointerCapture(e.pointerId);timer=setInterval(()=>{const held=(performance.now()-start)/1000;fill.style.width=Math.min(100,held*100/required)+'%';answer.value=held.toFixed(2);if(held>=required){btn.textContent='Complete';}},50);});"
+            "btn.addEventListener('pointerup',stop); btn.addEventListener('pointercancel',stop); btn.addEventListener('pointerleave',stop);"
+            "</script>"
+        )
+        return {
+            "answer": hold_time,
+            "title": "Hold the button",
+            "panel_width": 540,
+            "prompt": prompt,
+            "body": body,
+            "hint": "",
+            "ocw_type": kind,
+            "puzzle_id": puzzle_id,
+        }
+
+    raise ValueError(f"Unsupported OpenCaptchaWorld type: {kind}")
+
+
+def robot_checkbox_challenge():
+    image_src = opencaptcha_image_src("robot_checkbox", "not_robot.png")
     body = (
-        "<div class='puzzle-wrap'>"
-        f"<img class='puzzle-bg' src='{png_data_uri(base)}' alt='Puzzle CAPTCHA background with one missing square'>"
-        f"<img id='puzzle-piece' class='puzzle-piece' src='{png_data_uri(piece)}' alt='Puzzle piece to align' style='top: {y}px;'>"
+        "<div class='robot-checkbox-wrap'>"
+        f"<img src='{image_src}' alt=\"I'm not a robot CAPTCHA checkbox\">"
+        "<button type='button' id='robot-checkbox-button' class='robot-checkbox-button' "
+        "aria-label=\"I'm not a robot\"></button>"
+        "<span id='robot-checkmark' class='robot-checkmark'>✓</span>"
         "</div>"
-        "<input id='answer' name='answer' type='hidden' value='0'>"
-        "<div id='slider-track' class='slider-track' role='slider' aria-label='Puzzle slider' "
-        "aria-valuemin='0' aria-valuemax='100' aria-valuenow='0' tabindex='0'>"
-        "<div id='slider-fill' class='slider-fill'></div>"
-        "<div id='slider-thumb' class='slider-thumb'>></div>"
-        "<div class='slider-text'>Slide to complete</div>"
-        "</div>"
+        "<input id='answer' name='answer' type='hidden' value=''>"
         "<script>"
-        "const piece=document.getElementById('puzzle-piece');"
+        "const startedAt=performance.now();"
         "const answer=document.getElementById('answer');"
-        "const track=document.getElementById('slider-track');"
-        "const thumb=document.getElementById('slider-thumb');"
-        "const fill=document.getElementById('slider-fill');"
-        "const maxX=360-48-18;"
-        "let dragging=false;"
-        "function setSliderFromClientX(clientX){"
-        "  const rect=track.getBoundingClientRect();"
-        "  const maxThumb=rect.width-thumb.offsetWidth;"
-        "  const px=Math.max(0,Math.min(maxThumb,clientX-rect.left-thumb.offsetWidth/2));"
-        "  const value=Math.round(px*100/maxThumb);"
-        "  const x=Math.round(maxX*value/100);"
-        "  thumb.style.left=px+'px';"
-        "  fill.style.width=(px+thumb.offsetWidth/2)+'px';"
-        "  piece.style.left=x+'px';"
-        "  answer.value=value;"
-        "  track.setAttribute('aria-valuenow',value);"
-        "}"
-        "thumb.addEventListener('mousedown',e=>{dragging=true;e.preventDefault();});"
-        "document.addEventListener('mousemove',e=>{if(dragging)setSliderFromClientX(e.clientX);});"
-        "document.addEventListener('mouseup',()=>{dragging=false;});"
-        "track.addEventListener('click',e=>setSliderFromClientX(e.clientX));"
-        "track.addEventListener('keydown',e=>{"
-        "  let value=Number(answer.value);"
-        "  if(e.key==='ArrowRight'||e.key==='ArrowUp') value=Math.min(100,value+1);"
-        "  else if(e.key==='ArrowLeft'||e.key==='ArrowDown') value=Math.max(0,value-1);"
-        "  else return;"
-        "  e.preventDefault();"
-        "  const rect=track.getBoundingClientRect();"
-        "  const maxThumb=rect.width-thumb.offsetWidth;"
-        "  setSliderFromClientX(rect.left+(value*maxThumb/100)+thumb.offsetWidth/2);"
+        "const button=document.getElementById('robot-checkbox-button');"
+        "const checkmark=document.getElementById('robot-checkmark');"
+        "button.addEventListener('click',()=>{"
+        " const elapsed=(performance.now()-startedAt)/1000;"
+        " answer.value=JSON.stringify({checked:true,elapsed});"
+        " checkmark.style.display='block';"
         "});"
-        "setSliderFromClientX(track.getBoundingClientRect().left+thumb.offsetWidth/2);"
         "</script>"
     )
-    return body, str(target)
+    return {
+        "answer": {"checked": True, "min_elapsed": 0.7},
+        "title": "Confirm you are not a robot",
+        "panel_width": 645,
+        "prompt": "",
+        "body": body,
+        "hint": "",
+    }
 
 
 def click_sequence_body(seed):
@@ -580,6 +725,10 @@ def count_chars_body(seed):
 
 def challenge(kind, seed):
     rng = make_rng(seed)
+    if kind in OPENCAPTCHA_TYPES:
+        return opencaptcha_challenge(kind, seed)
+    if kind == "robot_checkbox":
+        return robot_checkbox_challenge()
     if kind == "audio":
         audio_choices = string.digits
         code = "".join(rng.choice(audio_choices) for _ in range(5))
@@ -643,17 +792,6 @@ def challenge(kind, seed):
             "body": body,
             "hint": "",
         }
-    if kind == "puzzle_slider":
-        body, answer = puzzle_slider_body(seed)
-        return {
-            "answer": answer,
-            "title": "Complete the puzzle slider",
-            "panel_width": 362,
-            "prompt": "",
-            "body": body,
-            "hint": "",
-            "tolerance": PUZZLE_TOLERANCE,
-        }
     raise ValueError(f"Unsupported challenge type: {kind}")
 
 
@@ -680,14 +818,6 @@ def page_template(title, body):
     .audio-captcha audio {{ display: block; width: 100%; }}
     .math-captcha {{ width: 420px; max-width: 100%; box-sizing: border-box; margin: 16px 0; padding: 0; border: 1px solid #9aa5b1; background: #eef3f7; }}
     .math-captcha img {{ display: block; width: 420px; height: 126px; max-width: 100%; }}
-    .puzzle-wrap {{ position: relative; width: 360px; height: 220px; margin: 16px 0; border: 1px solid #9aa5b1; background: #eef3f7; overflow: hidden; }}
-    .puzzle-bg {{ display: block; width: 360px; height: 220px; }}
-    .puzzle-piece {{ position: absolute; left: 0; width: 48px; height: 48px; box-sizing: border-box; border: 2px solid #1f2933; box-shadow: 0 2px 8px rgba(0,0,0,.35); }}
-    .slider-track {{ position: relative; width: 360px; height: 44px; margin: 14px 0 4px; border: 1px solid #9aa5b1; background: #eef3f7; user-select: none; cursor: pointer; }}
-    .slider-fill {{ position: absolute; left: 0; top: 0; height: 44px; width: 0; background: #cfe8d8; }}
-    .slider-thumb {{ position: absolute; left: 0; top: 0; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: #2f6f9f; color: white; font-size: 24px; font-weight: bold; cursor: grab; z-index: 2; }}
-    .slider-thumb:active {{ cursor: grabbing; }}
-    .slider-text {{ position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #52616b; pointer-events: none; }}
     .click-target {{ margin: 8px 0 12px; }}
     .click-board {{ position: relative; width: 420px; height: 260px; margin: 16px 0 12px; border: 1px solid #9aa5b1; background: #eef3f7; overflow: hidden; }}
     .click-image {{ display: block; width: 420px; height: 260px; }}
@@ -698,6 +828,32 @@ def page_template(title, body):
     .count-target {{ margin: 8px 0 12px; }}
     .count-captcha {{ width: 420px; max-width: 100%; box-sizing: border-box; margin: 16px 0; padding: 0; border: 1px solid #9aa5b1; background: #eef3f7; }}
     .count-captcha img {{ display: block; width: 420px; height: 152px; max-width: 100%; }}
+    .ocw-click-board {{ position: relative; width: fit-content; max-width: 100%; margin: 16px 0; border: 1px solid #9aa5b1; background: #eef3f7; }}
+    .ocw-click-board img {{ display: block; max-width: 100%; height: auto; cursor: crosshair; }}
+    .ocw-click-marker {{ display: none; position: absolute; width: 18px; height: 18px; margin: -9px 0 0 -9px; border: 2px solid #126b3a; background: rgba(18,107,58,.25); border-radius: 50%; pointer-events: none; }}
+    .ocw-slide-board {{ position: relative; width: 500px; max-width: 100%; margin: 16px 0; border: 1px solid #9aa5b1; background: #eef3f7; overflow: hidden; touch-action: none; }}
+    .ocw-slide-bg {{ display: block; width: 100%; height: auto; }}
+    .ocw-slide-piece {{ position: absolute; left: 0; top: 0; cursor: grab; touch-action: none; filter: drop-shadow(0 2px 5px rgba(0,0,0,.35)); }}
+    .ocw-slide-piece:active {{ cursor: grabbing; }}
+    .ocw-image-grid {{ display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; width: 420px; max-width: 100%; margin: 16px 0; }}
+    .ocw-grid-cell {{ padding: 0; margin: 0; border: 3px solid #d8dee9; background: white; aspect-ratio: 1 / 1; overflow: hidden; }}
+    .ocw-grid-cell img {{ display: block; width: 100%; height: 100%; object-fit: cover; }}
+    .ocw-grid-cell.selected {{ border-color: #126b3a; box-shadow: inset 0 0 0 3px rgba(18,107,58,.25); }}
+    .ocw-patch-board {{ position: relative; width: fit-content; max-width: 100%; margin: 16px 0; border: 1px solid #9aa5b1; background: #eef3f7; }}
+    .ocw-patch-board img {{ display: block; max-width: 100%; height: auto; }}
+    .ocw-patch-grid {{ position: absolute; inset: 0; display: grid; grid-template-columns: repeat(var(--cols), 1fr); grid-template-rows: repeat(var(--rows), 1fr); }}
+    .ocw-patch-cell {{ padding: 0; margin: 0; border: 1px solid rgba(255,255,255,.8); background: transparent; }}
+    .ocw-patch-cell.selected {{ background: rgba(18,107,58,.28); box-shadow: inset 0 0 0 3px #126b3a; }}
+    .ocw-hold-figure {{ width: 540px; max-width: 100%; margin: 16px 0; padding: 0; border: 1px solid #9aa5b1; background: #eef3f7; }}
+    .ocw-hold-figure img {{ display: block; width: 100%; height: auto; }}
+    .ocw-hold-button {{ display: block; width: 540px; max-width: 100%; height: 56px; margin: 14px 0 8px; background: #2f6f9f; color: white; border: 0; font-weight: bold; }}
+    .ocw-hold-meter {{ width: 540px; max-width: 100%; height: 12px; background: #d8dee9; }}
+    .ocw-hold-meter div {{ height: 100%; width: 0; background: #126b3a; }}
+    .robot-checkbox-wrap {{ position: relative; width: 645px; max-width: 100%; margin: 16px 0; }}
+    .robot-checkbox-wrap img {{ display: block; width: 100%; height: auto; }}
+    .robot-checkbox-button {{ position: absolute; left: 7.4%; top: 34.4%; width: 8.7%; height: 30.6%; padding: 0; margin: 0; border: 0; background: transparent; cursor: pointer; }}
+    .robot-checkbox-button:focus {{ outline: none; }}
+    .robot-checkmark {{ display: none; position: absolute; left: 9.3%; top: 36.6%; color: #126b3a; font-size: 38px; line-height: 1; font-weight: bold; pointer-events: none; }}
     .hint {{ margin-top: 18px; color: #52616b; }}
     .error {{ color: #a61b1b; font-weight: bold; }}
     .success {{ color: #126b3a; font-weight: bold; }}
@@ -709,6 +865,68 @@ def page_template(title, body):
   </main>
 </body>
 </html>"""
+
+
+def parse_json_answer(answer):
+    try:
+        return json.loads(answer)
+    except json.JSONDecodeError:
+        return None
+
+
+def point_in_area(point, answer):
+    if not isinstance(point, list) or len(point) != 2:
+        return False
+    if not isinstance(answer, dict) or "area" not in answer:
+        return False
+    try:
+        (min_x, min_y), (max_x, max_y) = answer["area"]
+        x, y = point
+        return min_x <= x <= max_x and min_y <= y <= max_y
+    except (TypeError, ValueError):
+        return False
+
+
+def same_index_set(left, right):
+    if not isinstance(left, list):
+        return False
+    try:
+        return set(int(v) for v in left) == set(int(v) for v in right)
+    except (TypeError, ValueError):
+        return False
+
+
+def verify_challenge_answer(kind, answer, item):
+    expected = item["answer"]
+    if kind == "robot_checkbox":
+        value = parse_json_answer(answer)
+        if not isinstance(value, dict) or not value.get("checked"):
+            return False
+        try:
+            return float(value.get("elapsed", 0)) >= float(expected.get("min_elapsed", 0.7))
+        except (TypeError, ValueError):
+            return False
+    if kind == "geometry_click":
+        return point_in_area(parse_json_answer(answer), expected)
+    if kind == "slide_puzzle":
+        value = parse_json_answer(answer)
+        if not isinstance(value, list) or len(value) != 2:
+            return False
+        try:
+            x, y = float(value[0]), float(value[1])
+            target_x, target_y = float(expected[0]), float(expected[1])
+            tolerance = float(item.get("tolerance", 10))
+            return ((x - target_x) ** 2 + (y - target_y) ** 2) ** 0.5 <= tolerance
+        except (TypeError, ValueError, IndexError):
+            return False
+    if kind in {"image_recognition", "patch_select"}:
+        return same_index_set(parse_json_answer(answer), expected)
+    if kind == "hold_button":
+        try:
+            return float(answer) >= float(expected)
+        except (TypeError, ValueError):
+            return False
+    return answer.lower() == str(expected).lower()
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -725,6 +943,9 @@ class Handler(BaseHTTPRequestHandler):
             return
         if parsed.path == "/success":
             self.render_success(parsed)
+            return
+        if parsed.path.startswith("/captcha_data/"):
+            self.serve_captcha_data(parsed.path)
             return
         if parsed.path == "/status":
             self.write_json({"ok": True, "records": self.server.records})
@@ -745,13 +966,7 @@ class Handler(BaseHTTPRequestHandler):
         answer = data.get("answer", [""])[0].strip()
         item = challenge(kind, seed)
         expected = item["answer"]
-        if kind == "puzzle_slider":
-            try:
-                matched = abs(int(answer or "0") - int(expected)) <= item.get("tolerance", 0)
-            except ValueError:
-                matched = False
-        else:
-            matched = answer.lower() == expected.lower()
+        matched = verify_challenge_answer(kind, answer, item)
         if matched:
             self.server.records[session] = {
                 "type": kind,
@@ -789,7 +1004,7 @@ class Handler(BaseHTTPRequestHandler):
         item = challenge(kind, seed)
         error = "<p class='error'>That answer did not match. Try again.</p>" if query.get("error") else ""
         input_html = ""
-        if kind not in {"click_sequence", "puzzle_slider"}:
+        if kind not in {"click_sequence", "robot_checkbox", *OPENCAPTCHA_TYPES}:
             input_html = "<label for='answer'>Answer</label><input id='answer' name='answer' type='text' autocomplete='off'>"
         prompt_html = f"<p>{html.escape(item['prompt'])}</p>" if item.get("prompt") else ""
         hint_html = f"<p class=\"hint\">{html.escape(item['hint'])}</p>" if item.get("hint") else ""
@@ -819,6 +1034,24 @@ class Handler(BaseHTTPRequestHandler):
 <h1 class="success">Verification complete</h1>
 """
         self.write_html(page_template("Verification complete", body))
+
+    def serve_captcha_data(self, path):
+        relative = unquote(path.removeprefix("/captcha_data/"))
+        full_path = os.path.realpath(os.path.join(CAPTCHA_DATA_DIR, relative))
+        data_root = os.path.realpath(CAPTCHA_DATA_DIR)
+        if not full_path.startswith(data_root + os.sep) or not os.path.isfile(full_path):
+            self.send_error(HTTPStatus.NOT_FOUND)
+            return
+        mime, _ = mimetypes.guess_type(full_path)
+        if not mime:
+            mime = "application/octet-stream"
+        with open(full_path, "rb") as f:
+            data = f.read()
+        self.send_response(HTTPStatus.OK)
+        self.send_header("Content-Type", mime)
+        self.send_header("Content-Length", str(len(data)))
+        self.end_headers()
+        self.wfile.write(data)
 
     def write_html(self, data):
         encoded = data.encode("utf-8")

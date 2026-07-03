@@ -1,12 +1,12 @@
 {
-  "id": "captcha-puzzle_slider_1",
+  "id": "captcha-hold_button_1",
   "snapshot": "msedge",
   "category": "captcha",
   "difficulty": "easy",
-  "instruction": "Complete the puzzle slider CAPTCHA verification in Microsoft Edge.",
-  "source": "local CAPTCHA service using Pillow with background image from https://commons.wikimedia.org/wiki/File:Road_in_Norway.jpg",
+  "instruction": "Complete the hold-button CAPTCHA verification in Microsoft Edge.",
+  "source": "local CAPTCHA service using OpenCaptchaWorld hold_button data",
   "gt_steps": [
-    "Complete the puzzle slider CAPTCHA verification."
+    "Press and hold the button until the progress completes, then continue."
   ],
   "config": [
     {
@@ -15,7 +15,7 @@
         "command": [
           "cmd",
           "/c",
-          "start msedge http://host.docker.internal:8765/captcha?type=puzzle_slider^&seed=access-puzzle-slider-001^&session=access-captcha-puzzle-slider"
+          "start msedge http://host.docker.internal:8765/captcha?type=hold_button^&seed=access-hold-button-001^&session=access-captcha-hold-button"
         ]
       }
     }
@@ -33,7 +33,7 @@
       "type": "rule",
       "rules": {
         "expected": [
-          "https?://host\\.docker\\.internal:8765/success\\?type=puzzle_slider&seed=access-puzzle-slider-001&session=access-captcha-puzzle-slider"
+          "https?://host\\.docker\\.internal:8765/success\\?type=hold_button&seed=access-hold-button-001&session=access-captcha-hold-button"
         ]
       }
     }
