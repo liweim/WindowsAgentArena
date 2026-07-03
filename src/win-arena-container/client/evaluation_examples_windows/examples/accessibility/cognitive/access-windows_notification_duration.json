@@ -1,0 +1,35 @@
+{
+  "id": "access-windows_notification_duration",
+  "manually_evaluated": false,
+  "snapshot": "base_setup",
+  "category": "access",
+  "difficulty": "easy",
+  "instruction": "Notifications disappear before you can finish reading them. Open Windows Accessibility settings and set notifications to stay visible for 5 minutes.",
+  "source": "Settings > Accessibility > Visual effects > Dismiss notifications after this amount of time",
+  "gt_steps": [
+    "Open Windows Settings.",
+    "Go to Accessibility > Visual effects.",
+    "Find Dismiss notifications after this amount of time.",
+    "Set it to 5 minutes."
+  ],
+  "config": [],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "settings"
+  ],
+  "evaluator": {
+    "func": "exact_match",
+    "result": {
+      "type": "notification_duration"
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "expected": "5 minutes"
+      }
+    }
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

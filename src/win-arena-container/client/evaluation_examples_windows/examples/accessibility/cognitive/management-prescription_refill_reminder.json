@@ -1,0 +1,75 @@
+{
+  "id": "management-prescription_refill_reminder",
+  "snapshot": "base_setup",
+  "category": "management",
+  "difficulty": "medium",
+  "instruction": "You need help remembering a pharmacy deadline. Open the pharmacy message on the Desktop and create an all-day Thunderbird Calendar event on the refill-by date. Set the title to `Refill medication`.",
+  "source": "Local pharmacy message prepared for the task",
+  "gt_steps": [
+    "Open `pharmacy_message.txt` on the Desktop.",
+    "Read that the medication should be refilled by July 20, 2026.",
+    "Open Thunderbird Calendar.",
+    "In the Calendars list, enable the Home calendar if it is disabled.",
+    "Create an all-day calendar event for July 20, 2026.",
+    "Set the title to `Refill medication`."
+  ],
+  "config": [
+    {
+      "type": "download",
+      "parameters": {
+        "files": [
+          {
+            "url": "https://huggingface.co/datasets/xlangai/ubuntu_osworld_file_cache/resolve/main/thunderbird/dd84e895-72fd-4023-a336-97689ded257c/thunderbird-profile.tar.gz",
+            "path": "C:\\Users\\Docker\\Downloads\\thunderbird-profile.tar.gz"
+          }
+        ]
+      }
+    },
+    {
+      "type": "prepare_thunderbird_profile",
+      "parameters": {}
+    },
+    {
+      "type": "execute",
+      "parameters": {
+        "command": "powershell -NoProfile -Command \"Set-Content -Path (Join-Path $env:USERPROFILE 'Desktop\\pharmacy_message.txt') -Value 'Pharmacy message: Please refill this medication by July 20, 2026.'\"",
+        "shell": true
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "thunderbird.exe",
+          "-profile",
+          "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release"
+        ]
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "notepad",
+    "thunderbird"
+  ],
+  "evaluator": {
+    "func": "check_thunderbird_calendar_event",
+    "result": {
+      "type": "thunderbird_calendar_events",
+      "profile_path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release"
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "days_from_today": 17,
+        "hour": 0,
+        "minute": 0,
+        "duration_minutes": 1440,
+        "title": "Refill medication"
+      }
+    }
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

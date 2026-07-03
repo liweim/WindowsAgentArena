@@ -113,13 +113,13 @@ Windows tasks should use stable, commonly available applications when possible. 
 | Google Chrome              | Web browsing, Chrome Live Caption, online video/audio, and web tasks        |
 | Thunderbird Mail           | Communication tasks such as composing, replying to, or saving email drafts  |
 | Thunderbird Calendar       | Calendar tasks such as creating events, appointments, and reminders         |
-| Windows Clock              | Timer, alarm, stopwatch, and clock-related management tasks                 |
+| https://vclock.com         | Browser-based timer and timing-related management tasks                     |
 | Sticky Notes               | Short reminders, quick notes, and lightweight memory-support outputs        |
 | Notepad                    | Plain-text notes, short checklists, copied phrases, and deterministic files |
 | LibreOffice Calc           | Spreadsheets, small tables, lists, comparisons, and structured outputs      |
 | LibreOffice Writer         | Documents, formatted notes, letters, forms, and longer text outputs         |
 
-For example, appointment or reminder tasks can use Thunderbird Calendar events, communication tasks can use Thunderbird email drafts, captioned media tasks can use Chrome, timing tasks can use Windows Clock, note-taking tasks can use Sticky Notes or Notepad, and office-document tasks can use LibreOffice Calc or LibreOffice Writer.
+For example, appointment or reminder tasks can use Thunderbird Calendar events, communication tasks can use Thunderbird email drafts, captioned media tasks can use Chrome, timing tasks can use https://vclock.com, note-taking tasks can use Sticky Notes or Notepad, and office-document tasks can use LibreOffice Calc or LibreOffice Writer.
 
 ## Task Construction Workflow
 

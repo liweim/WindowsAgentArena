@@ -1,0 +1,83 @@
+{
+  "id": "access-edge_text_size_cognitive",
+  "snapshot": "msedge",
+  "category": "access",
+  "difficulty": "easy",
+  "instruction": "Small web text makes it hard to stay focused while reading. In Microsoft Edge settings, set the default font size to Large.",
+  "source": "Microsoft Edge Settings > Appearance > Fonts > Font size",
+  "gt_steps": [
+    "Open Microsoft Edge.",
+    "Open Edge Settings.",
+    "Go to Appearance.",
+    "Find Fonts > Font size.",
+    "Set the font size to Large."
+  ],
+  "config": [
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "start",
+          "msedge",
+          "--remote-debugging-port=1337"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "edge"
+  ],
+  "evaluator": {
+    "postconfig": [
+      {
+        "type": "execute",
+        "parameters": {
+          "command": "taskkill /IM msedge.exe /F",
+          "shell": "true"
+        }
+      },
+      {
+        "type": "sleep",
+        "parameters": {
+          "seconds": 2
+        }
+      },
+      {
+        "type": "launch",
+        "parameters": {
+          "command": [
+            "start",
+            "msedge",
+            "--remote-debugging-port=1337"
+          ]
+        }
+      }
+    ],
+    "func": "check_edge_font_size",
+    "result": {
+      "type": "edge_font_size"
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "type": "range",
+        "min": 18,
+        "max": 24
+      }
+    }
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

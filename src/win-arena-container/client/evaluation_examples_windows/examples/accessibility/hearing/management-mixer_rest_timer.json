@@ -3,25 +3,17 @@
   "snapshot": "chrome",
   "category": "management",
   "difficulty": "medium",
-  "instruction": "Enable Windows Live Captions, watch the video, determine how long the stand mixer should rest after the first kneading period, then open the Windows Clock app and create a timer for that duration. Leave the timer visible in the Clock app.",
+  "instruction": "Enable Windows Live Captions, watch the video, determine how long the stand mixer should rest after the first kneading period, then use https://vclock.com to create a timer for that duration. Leave the timer visible in the browser.",
   "source": "https://www.youtube.com/watch?v=52TNfrsSMuA",
   "gt_steps": [
     "Turn on Windows Live captions.",
     "Watch the YouTube video and use the live captions to determine that the stand mixer should rest for 5 minutes after the first kneading period.",
-    "Open the Windows Clock app.",
+    "Open https://vclock.com in the browser.",
+    "Click the Timer page.",
     "Create and start a 5 minute timer.",
-    "Leave the timer visible in the Clock app."
+    "Leave the timer visible in the browser."
   ],
   "config": [
-    {
-      "type": "launch",
-      "parameters": {
-        "command": [
-          "start",
-          "ms-clock://Timers"
-        ]
-      }
-    },
     {
       "type": "launch",
       "parameters": {
@@ -58,36 +50,19 @@
   ],
   "trajectory": "trajectories\\",
   "related_apps": [
-    "chrome",
-    "clock"
+    "chrome"
   ],
   "evaluator": {
-    "postconfig": [
-      {
-        "type": "activate_window",
-        "parameters": {
-          "window_name": "Clock",
-          "strict": true
-        }
-      },
-      {
-        "type": "sleep",
-        "parameters": {
-          "seconds": 0.5
-        }
-      }
-    ],
-    "func": "exact_match",
+    "func": "is_expected_url_pattern_match",
     "result": {
-      "type": "check_if_timer_started",
-      "hours": 0,
-      "minutes": 5,
-      "seconds": 0
+      "type": "active_tab_info_simple"
     },
     "expected": {
       "type": "rule",
       "rules": {
-        "expected": "True"
+        "expected": [
+          "https?://(www\\.)?vclock\\.com/timer/#countdown=00:05:00(&|$)"
+        ]
       }
     }
   }

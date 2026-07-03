@@ -1,0 +1,53 @@
+{
+  "id": "management-medication_timer",
+  "snapshot": "base_setup",
+  "category": "management",
+  "difficulty": "easy",
+  "instruction": "You have trouble remembering short waiting periods. Open the caregiver note on the Desktop, then use https://vclock.com to create and start a timer for the eye-drop waiting interval in the note. Leave the timer running and visible in the browser.",
+  "source": "Local caregiver note prepared for the task",
+  "gt_steps": [
+    "Open `caregiver_note.txt` on the Desktop.",
+    "Read that the next eye drop should be given after 5 minutes.",
+    "Open https://vclock.com in a browser.",
+    "Click the Timer page.",
+    "Create and start a 5 minute timer.",
+    "Leave the timer running and visible in the browser."
+  ],
+  "config": [
+    {
+      "type": "execute",
+      "parameters": {
+        "command": "powershell -NoProfile -Command \"Set-Content -Path (Join-Path $env:USERPROFILE 'Desktop\\caregiver_note.txt') -Value 'Caregiver note: Please give the next eye drop after 5 minutes.'\"",
+        "shell": true
+      }
+    },
+    {
+      "type": "sleep",
+      "parameters": {
+        "seconds": 1
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "notepad",
+    "chrome"
+  ],
+  "evaluator": {
+    "func": "is_expected_url_pattern_match",
+    "result": {
+      "type": "active_tab_info_simple"
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "expected": [
+          "https?://(www\\.)?vclock\\.com/timer/#countdown=00:05:00(&|$)"
+        ]
+      }
+    }
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

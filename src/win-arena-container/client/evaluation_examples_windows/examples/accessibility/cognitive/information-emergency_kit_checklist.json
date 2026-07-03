@@ -1,0 +1,90 @@
+{
+  "id": "information-emergency_kit_checklist",
+  "snapshot": "msedge",
+  "category": "information",
+  "difficulty": "medium",
+  "instruction": "Long emergency-preparation pages are hard to keep track of. Use Microsoft Edge Immersive Reader on the ready.gov emergency kit page. In Sticky Notes, write the first three basic emergency supplies listed on the page. Copy the item names exactly.",
+  "source": "https://www.ready.gov/kit",
+  "gt_steps": [
+    "Open the ready.gov emergency kit page in Microsoft Edge.",
+    "Use Immersive Reader to simplify the page.",
+    "Find the Basic Disaster Supplies Kit list.",
+    "Open Sticky Notes.",
+    "Create a note.",
+    "Write the first three listed item names exactly: `Water`, `Food`, and `Battery-powered or hand crank radio and a NOAA Weather Radio with tone alert`."
+  ],
+  "config": [
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "cmd",
+          "/c",
+          "start msedge https://www.ready.gov/kit"
+        ]
+      }
+    },
+    {
+      "type": "execute",
+      "parameters": {
+        "command": [
+          "powershell",
+          "-NoProfile",
+          "-ExecutionPolicy",
+          "Bypass",
+          "-Command",
+          "Start-Process 'shell:AppsFolder\\Microsoft.MicrosoftStickyNotes_8wekyb3d8bbwe!App'"
+        ]
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "msedge",
+    "sticky_notes"
+  ],
+  "evaluator": {
+    "func": [
+      "check_text_points",
+      "check_edge_immersive_reader_state"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "sticky_notes_content"
+      },
+      {
+        "type": "edge_immersive_reader_state",
+        "activate_edge": true
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "ignore_case": true,
+          "points": [
+            [
+              "Water"
+            ],
+            [
+              "Food"
+            ],
+            [
+              "Battery-powered or hand crank radio and a NOAA Weather Radio with tone alert"
+            ]
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "reader_mode_open": true
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "medium"
+}
