@@ -1,0 +1,83 @@
+{
+  "id": "mobility-outdoor_running_supplies_note",
+  "snapshot": "msedge",
+  "category": "Mobility",
+  "difficulty": "medium",
+  "instruction": "Use Immersive Reader to focus on the outdoor running hydration advice. In Sticky Notes, copy only the short-distance water-intake line exactly as it appears in the article.",
+  "source": "https://www.self.com/gallery/best-hydration-packs",
+  "gt_steps": [
+    "Start from the already-open SELF article about hydration packs and vests in Microsoft Edge.",
+    "Use Immersive Reader to simplify the article.",
+    "Find the outdoor adventure water intake guidance for short-distance runs.",
+    "Open Sticky Notes.",
+    "Copy only this line exactly: Short distance (2 to 5 miles): 12 to 20 ounces via a handheld or belt."
+  ],
+  "config": [
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "cmd",
+          "/c",
+          "start msedge https://www.self.com/gallery/best-hydration-packs"
+        ]
+      }
+    },
+    {
+      "type": "execute",
+      "parameters": {
+        "command": [
+          "powershell",
+          "-NoProfile",
+          "-ExecutionPolicy",
+          "Bypass",
+          "-Command",
+          "Start-Process 'shell:AppsFolder\\Microsoft.MicrosoftStickyNotes_8wekyb3d8bbwe!App'"
+        ]
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "msedge",
+    "sticky_notes"
+  ],
+  "evaluator": {
+    "func": [
+      "check_text_points",
+      "check_edge_immersive_reader_state"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "sticky_notes_content"
+      },
+      {
+        "type": "edge_immersive_reader_state",
+        "activate_edge": true
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "ignore_case": true,
+          "points": [
+            [
+              "Short distance (2 to 5 miles): 12 to 20 ounces via a handheld or belt"
+            ]
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "reader_mode_open": true
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "medium"
+}

@@ -1,0 +1,44 @@
+{
+  "id": "captcha-count_chars",
+  "snapshot": "msedge",
+  "category": "captcha",
+  "difficulty": "easy",
+  "instruction": "Complete the character-count CAPTCHA verification in Microsoft Edge.",
+  "source": "local CAPTCHA service using deterministic random character strings",
+  "gt_steps": [
+    "Count how many times the target character appears and enter the count."
+  ],
+  "config": [
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "cmd",
+          "/c",
+          "start msedge http://host.docker.internal:8765/captcha?type=count_chars^&seed=access-count-chars-001^&session=access-captcha-count-chars"
+        ]
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "msedge"
+  ],
+  "evaluator": {
+    "func": "is_expected_url_pattern_match",
+    "result": {
+      "type": "active_tab_info_simple"
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "expected": [
+          "https?://host\\.docker\\.internal:8765/success\\?type=count_chars&seed=access-count-chars-001&session=access-captcha-count-chars"
+        ]
+      }
+    }
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

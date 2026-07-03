@@ -1,0 +1,46 @@
+{
+  "id": "health-dermatologist_contact_details",
+  "snapshot": "windows",
+  "category": "Health",
+  "difficulty": "Medium",
+  "instruction": "Using the On-Screen Keyboard, search for a dermatologist in Sydney, open a clinic website, find the clinic's contact details, and save the details in a text file named dermatologist_contact.txt on the Desktop.",
+  "source": "https://abilitynet.org.uk/",
+  "gt_steps": [
+    "Enable the On-Screen Keyboard.",
+    "Open a web browser.",
+    "Using the On-Screen Keyboard, search for a dermatologist in Sydney.",
+    "Open one dermatologist clinic website from the search results.",
+    "Locate the clinic's contact details.",
+    "Open Notepad.",
+    "Type the clinic name and contact details into the file.",
+    "Save the file as dermatologist_contact.txt on the Desktop.",
+    "Leave the saved file on the Desktop."
+  ],
+  "config": [],
+  "trajectory": "trajectories/",
+  "related_apps": [
+    "on_screen_keyboard",
+    "chrome",
+    "notepad"
+  ],
+  "evaluator": {
+    "func": "check_include_exclude",
+    "result": {
+      "type": "vm_command_line",
+      "command": "cmd /c if exist C:\\Users\\Docker\\Desktop\\dermatologist_contact.txt echo FILE_EXISTS",
+      "shell": true
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "include": [
+          "FILE_EXISTS"
+        ],
+        "exclude": []
+      }
+    }
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "medium"
+}

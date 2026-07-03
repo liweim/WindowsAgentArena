@@ -1,0 +1,31 @@
+{
+  "id": "access-windows_caption_contrast",
+  "manually_evaluated": false,
+  "snapshot": "base_setup",
+  "category": "Access",
+  "difficulty": "easy",
+  "instruction": "Set the caption style in Windows to Large text.",
+  "source": "Settings > Accessibility > Captions > Caption style",
+  "gt_steps": [
+    "Open Windows Settings.",
+    "Go to Accessibility > Captions.",
+    "Set Caption style to Large text."
+  ],
+  "config": [],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "settings"
+  ],
+  "evaluator": {
+    "func": "exact_match",
+    "result": {
+      "type": "selected_caption_style_name"
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "expected": "Large text"
+      }
+    }
+  }
+}

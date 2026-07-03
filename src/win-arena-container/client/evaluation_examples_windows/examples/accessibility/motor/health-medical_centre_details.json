@@ -1,0 +1,46 @@
+{
+  "id": "health-medical_centre_details",
+  "snapshot": "windows",
+  "category": "Health",
+  "difficulty": "Medium",
+  "instruction": "Using the On-Screen Keyboard, search for nearby medical centres and save the address and phone number of the closest clinic in a text document named medical_centre_contact.txt on the Desktop.",
+  "source": "https://abilitynet.org.uk/",
+  "gt_steps": [
+    "Enable the On-Screen Keyboard.",
+    "Open a web browser.",
+    "Using the On-Screen Keyboard, search for nearby medical centres.",
+    "Identify the closest medical centre or clinic from the search results.",
+    "Find the clinic's address and phone number.",
+    "Open Notepad.",
+    "Type the clinic name, address, and phone number into the document.",
+    "Save the file as medical_centre_contact.txt on the Desktop.",
+    "Leave the saved text file on the Desktop."
+  ],
+  "config": [],
+  "trajectory": "trajectories/",
+  "related_apps": [
+    "on_screen_keyboard",
+    "chrome",
+    "notepad"
+  ],
+  "evaluator": {
+    "func": "check_include_exclude",
+    "result": {
+      "type": "vm_command_line",
+      "command": "powershell -Command \"if (Test-Path 'C:\\Users\\Docker\\Desktop\\medical_centre_contact.txt') { $content = Get-Content 'C:\\Users\\Docker\\Desktop\\medical_centre_contact.txt' -Raw; if ($content.Length -gt 20) { Write-Output 'HAS_MEDICAL_CENTRE_CONTACT' } }\"",
+      "shell": true
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "include": [
+          "HAS_MEDICAL_CENTRE_CONTACT"
+        ],
+        "exclude": []
+      }
+    }
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "medium"
+}

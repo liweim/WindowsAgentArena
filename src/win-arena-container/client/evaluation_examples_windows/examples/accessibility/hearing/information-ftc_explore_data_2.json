@@ -1,0 +1,97 @@
+{
+  "id": "information-ftc_explore_data_2",
+  "snapshot": "chrome",
+  "category": "Information",
+  "difficulty": "hard",
+  "instruction": "Turn on captions in the opened YouTube video, then use the FTC Explore Data tool shown in the video to find the total number of fraud reports nationwide in 2024. Save the answer in `answer.txt` on the Desktop.",
+  "source": "https://www.youtube.com/watch?v=F2wQGBjKiaM",
+  "gt_steps": [
+    "Turn on captions in the YouTube player.",
+    "Play the video and use the YouTube captions to identify the FTC Explore Data address.",
+    "Open ftc.gov/exploredata.",
+    "Go to State and Metro Area Maps.",
+    "Open Fraud & ID Theft by State.",
+    "Set the year to 2024 and Quarter to `All`.",
+    "Create answer.txt on the Desktop.",
+    "Write `2639302` in answer.txt.",
+    "Save and close answer.txt."
+  ],
+  "config": [
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port=1337",
+          "--force-renderer-accessibility"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    },
+    {
+      "type": "chrome_prepare_youtube_for_live_caption",
+      "parameters": {
+        "url": "https://www.youtube.com/watch?v=F2wQGBjKiaM",
+        "wait_seconds": 1
+      }
+    },
+    {
+      "type": "activate_window",
+      "parameters": {
+        "window_name": "Google Chrome"
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "chrome"
+  ],
+  "evaluator": {
+    "func": [
+      "exact_match",
+      "check_include_exclude"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "youtube_captions_enabled",
+        "url": "https://www.youtube.com/watch?v=F2wQGBjKiaM"
+      },
+      {
+        "type": "vm_command_line",
+        "command": [
+          "powershell",
+          "-NoProfile",
+          "-Command",
+          "$path = Join-Path $env:USERPROFILE 'Desktop\\answer.txt'; if (Test-Path $path) { ((Get-Content $path -Raw) -replace '[,\\s]', '') }"
+        ]
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "expected": "true"
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "include": [
+            "2639302"
+          ],
+          "exclude": []
+        }
+      }
+    ]
+  }
+}

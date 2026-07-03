@@ -1,0 +1,139 @@
+{
+  "id": "communication-laundry_tag_investigation",
+  "manually_evaluated": true,
+  "snapshot": "chrome",
+  "category": "Communication",
+  "difficulty": "medium",
+  "instruction": "You just bought a premium coat, and the seller sent an audio message about fabric care restrictions. Play the audio and enable Live Caption to extract the 3 core washing and drying mistakes explicitly mentioned in the recording. Write these 3 forbidden care actions in a sticky note.",
+  "source": "synthetic",
+  "transcript": "Thank you for purchasing our premium merino wool blend coat. To keep its shape and avoid shrinking, please follow these strict care instructions. First, you must never put it in the washing machine—it's strictly dry clean or gentle hand wash only. Second, do not use standard bleach or harsh detergents, as they destroy the natural fibers. And finally, when drying, never hang it vertically while wet; always lay it flat on a towel in the shade. Hope this helps you enjoy your garment for years to much come!",
+  "gt": "Never put it in the washing machine\nDo not use standard bleach\nNever hang it vertically",
+  "gt_steps": [
+    "Open the laundry care audio file in Chrome.",
+    "Turn on Chrome Live Caption.",
+    "Play the audio and use the captions to identify the three washing and drying mistakes to avoid.",
+    "Open Sticky Notes.",
+    "Close the sign-in prompt if it appears.",
+    "Create a sticky note.",
+    "Write the three forbidden care actions in the sticky note."
+  ],
+  "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/Communication-laundry_tag_investigation.mp3",
+            "path": "C:\\Users\\Docker\\Desktop\\Communication-laundry_tag_investigation.mp3"
+          }
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port=1337",
+          "--force-renderer-accessibility"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    },
+    {
+      "type": "sleep",
+      "parameters": {
+        "seconds": 1
+      }
+    },
+    {
+      "type": "chrome_open_tabs",
+      "parameters": {
+        "urls_to_open": [
+          "file:///C:/Users/Docker/Desktop/Communication-laundry_tag_investigation.mp3"
+        ]
+      }
+    },
+    {
+      "type": "execute",
+      "parameters": {
+        "command": [
+          "powershell",
+          "-NoProfile",
+          "-ExecutionPolicy",
+          "Bypass",
+          "-Command",
+          "Start-Process 'shell:AppsFolder\\Microsoft.MicrosoftStickyNotes_8wekyb3d8bbwe!App'"
+        ]
+      }
+    },
+    {
+      "type": "activate_window",
+      "parameters": {
+        "window_name": "Google Chrome"
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "chrome",
+    "sticky_notes"
+  ],
+  "evaluator": {
+    "func": [
+      "check_text_points",
+      "exact_match"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "sticky_notes_content"
+      },
+      {
+        "type": "live_caption_enabled"
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "ignore_case": true,
+          "points": [
+            [
+              "Never put it in the washing machine",
+              "Do not put it in the washing machine",
+              "Don't put it in the washing machine"
+            ],
+            [
+              "Do not use standard bleach",
+              "Don't use standard bleach"
+            ],
+            [
+              "Never hang it vertically",
+              "Do not hang it vertically",
+              "Don't hang it vertically"
+            ]
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "expected": "true"
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

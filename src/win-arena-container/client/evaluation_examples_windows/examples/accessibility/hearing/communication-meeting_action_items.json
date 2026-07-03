@@ -1,0 +1,141 @@
+{
+  "id": "communication-meeting_action_items",
+  "snapshot": "chrome",
+  "category": "Communication",
+  "difficulty": "medium",
+  "instruction": "Your supervisor sent a meeting recording about forbidden operations for the new cloud cluster. Play the audio and use Chrome Live Caption to watch the real-time captions. Record the 3 core operational warnings mentioned aloud in the video in a sticky note. If Sticky Notes asks you to sign in after it opens, click the close button in the upper-right corner to continue without signing in.",
+  "source": "synthetic",
+  "transcript": "Alright team, thanks for joining the sync. Regarding the new deployment workflow on the cloud cluster, there are three absolute deal-breakers you need to remember. First, under no circumstances should you manually delete the cluster cache—this will crash the live gateway. Second, please, never bypass the pre-check script before pushing your updates to staging. Um, and the last one, let's see... ah, yes, do not hardcode any API tokens in the configuration files, use the environment vault instead. Make sure to log these down so the rest of the team doesn't mess up.",
+  "gt_steps": [
+    "Open the meeting audio file in Chrome.",
+    "Turn on Chrome Live Caption.",
+    "Play the audio and use the captions to identify the three core warning phrases.",
+    "Open Sticky Notes.",
+    "Close the sign-in prompt if it appears.",
+    "Create a sticky note.",
+    "Write the three warning phrases in the sticky note: Delete the cluster cache\nBypass the pre-check script\nHardcode API tokens"
+  ],
+  "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/Communication-meeting_action_items.mp3",
+            "path": "C:\\Users\\Docker\\Desktop\\Communication-meeting_action_items.mp3"
+          }
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port=1337",
+          "--force-renderer-accessibility"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    },
+    {
+      "type": "sleep",
+      "parameters": {
+        "seconds": 1
+      }
+    },
+    {
+      "type": "chrome_open_tabs",
+      "parameters": {
+        "urls_to_open": [
+          "file:///C:/Users/Docker/Desktop/Communication-meeting_action_items.mp3"
+        ]
+      }
+    },
+    {
+      "type": "execute",
+      "parameters": {
+        "command": [
+          "powershell",
+          "-NoProfile",
+          "-ExecutionPolicy",
+          "Bypass",
+          "-Command",
+          "Start-Process 'shell:AppsFolder\\Microsoft.MicrosoftStickyNotes_8wekyb3d8bbwe!App'"
+        ]
+      }
+    },
+    {
+      "type": "activate_window",
+      "parameters": {
+        "window_name": "Google Chrome"
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "chrome",
+    "sticky_notes"
+  ],
+  "evaluator": {
+    "postconfig": [
+      {
+        "type": "sleep",
+        "parameters": {
+          "seconds": 1
+        }
+      }
+    ],
+    "func": [
+      "check_text_points",
+      "exact_match"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "sticky_notes_content"
+      },
+      {
+        "type": "live_caption_enabled"
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "ignore_case": true,
+          "points": [
+            [
+              "Delete the cluster cache"
+            ],
+            [
+              "Bypass the pre-check script"
+            ],
+            [
+              "Hardcode API tokens",
+              "Hardcode any API tokens"
+            ]
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "expected": "true"
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

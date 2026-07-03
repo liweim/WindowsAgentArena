@@ -1,0 +1,148 @@
+{
+  "id": "communication-benefit_application",
+  "manually_evaluated": true,
+  "snapshot": "chrome",
+  "category": "Communication",
+  "difficulty": "medium",
+  "instruction": "HR sent an audio notice about the new work-from-home equipment reimbursement policy. Play the audio and enable Live Caption to capture the key information. Identify the application deadline and the two required document names mentioned in the recording. Then compose a new email in Thunderbird, but do not send it. Set the recipient to hr@company.com, set the subject to 'Equipment Reimbursement Request', and in the email body clearly state the two required document names and the deadline while requesting your reimbursement allowance.",
+  "source": "synthetic",
+  "transcript": "Hello everyone, this is HR with a quick update on the WFH hardware reimbursement policy for this quarter. To claim your 500-dollar allowance for home office setups, you must submit your formal request via email. There are two required documents you need to attach. First is the original merchant receipt, and the second one is your home internet bill from the same month. Please note, the strict deadline for this quarter's application is October 15th, 2026. Any submissions after October 15th will be automatically rejected. Thank you.",
+  "gt_steps": [
+    "Open the HR reimbursement audio file in Chrome.",
+    "Turn on Chrome Live Caption.",
+    "Use the captions to identify the required documents and deadline.",
+    "In Thunderbird, compose a new email.",
+    "Set the recipient to hr@company.com.",
+    "Set the subject to `Equipment Reimbursement Request`.",
+    "Include the original merchant receipt, home internet bill, and October 15th, 2026 deadline in the body.",
+    "Do not send the email."
+  ],
+  "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/Communication-benefit_application.mp3",
+            "path": "C:\\Users\\Docker\\Desktop\\Communication-benefit_application.mp3"
+          }
+        ]
+      }
+    },
+    {
+      "type": "download",
+      "parameters": {
+        "files": [
+          {
+            "url": "https://huggingface.co/datasets/xlangai/ubuntu_osworld_file_cache/resolve/main/thunderbird/dd84e895-72fd-4023-a336-97689ded257c/thunderbird-profile.tar.gz",
+            "path": "C:\\Users\\Docker\\Downloads\\thunderbird-profile.tar.gz"
+          }
+        ]
+      }
+    },
+    {
+      "type": "prepare_thunderbird_profile",
+      "parameters": {}
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port=1337",
+          "--force-renderer-accessibility"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "thunderbird.exe",
+          "-profile",
+          "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release"
+        ]
+      }
+    },
+    {
+      "type": "sleep",
+      "parameters": {
+        "seconds": 2
+      }
+    },
+    {
+      "type": "chrome_open_tabs",
+      "parameters": {
+        "urls_to_open": [
+          "file:///C:/Users/Docker/Desktop/Communication-benefit_application.mp3"
+        ]
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "chrome",
+    "thunderbird"
+  ],
+  "evaluator": {
+    "func": [
+      "check_thunderbird_email_composition",
+      "exact_match"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "vm_file",
+        "path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release\\Mail\\Local Folders\\Drafts",
+        "dest": "thunderbird-drafts.mbox"
+      },
+      {
+        "type": "live_caption_enabled"
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "to": "hr@company.com",
+          "subject": "Equipment Reimbursement Request",
+          "body_points": [
+            [
+              "original merchant receipt"
+            ],
+            [
+              "home internet bill"
+            ],
+            [
+              "October 15th, 2026",
+              "October 15, 2026",
+              "Oct 15th, 2026",
+              "Oct 15, 2026",
+              "10/15/2026",
+              "2026-10-15"
+            ]
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "expected": "true"
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

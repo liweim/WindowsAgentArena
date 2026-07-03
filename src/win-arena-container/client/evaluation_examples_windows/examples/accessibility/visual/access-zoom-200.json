@@ -1,0 +1,44 @@
+{
+  "id": "access-zoom-200",
+  "snapshot": "chrome",
+  "category": "Access",
+  "difficulty": "easy",
+  "instruction": "Open Google Chrome and navigate to https://www.digital.nsw.gov.au/delivery/accessibility-and-inclusivity-toolkit. Increase the page zoom level to 200% and leave the webpage open.",
+  "source": "human",
+  "gt_steps": [
+    "Open Google Chrome.",
+    "Navigate to https://www.digital.nsw.gov.au/delivery/accessibility-and-inclusivity-toolkit.",
+    "Wait for the webpage to load.",
+    "Open the Chrome zoom controls.",
+    "Increase the page zoom level to 150%.",
+    "Leave the webpage open with the zoom indicator showing 150%."
+  ],
+  "config": [
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port=1337"
+        ]
+      }
+    }
+  ],
+  "trajectory": "trajectories/",
+  "related_apps": [
+    "chrome"
+  ],
+  "evaluator": {
+    "func": "check_zoom_200_access_tree",
+    "result": {
+      "type": "chrome_page_zoom_from_access_tree"
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {}
+    }
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}
