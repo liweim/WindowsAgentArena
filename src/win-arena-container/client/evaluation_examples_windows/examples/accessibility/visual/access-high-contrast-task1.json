@@ -1,7 +1,7 @@
 {
   "id": "access-high-contrast-task1",
   "snapshot": "windows",
-  "category": "Access",
+  "category": "access",
   "difficulty": "easy",
   "instruction": "Enable High Contrast mode to Aquatic. Open Google Chrome and navigate to https://www.abc.net.au/news. Leave the ABC News homepage open with High Contrast mode enabled.",
   "source": "human",

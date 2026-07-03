@@ -1,7 +1,7 @@
 {
   "id": "service-government_application_form",
   "snapshot": "windows",
-  "category": "Motor Impairment",
+  "category": "motor impairment",
   "difficulty": "Medium",
   "instruction": "Using the On-Screen Keyboard, find an application form on a government website and save the PDF as government_application_form.pdf on the Desktop.",
   "source": "https://abilitynet.org.uk/",

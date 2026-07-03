@@ -2,7 +2,7 @@
   "id": "communication-benefit_application",
   "manually_evaluated": true,
   "snapshot": "chrome",
-  "category": "Communication",
+  "category": "communication",
   "difficulty": "medium",
   "instruction": "HR sent an audio notice about the new work-from-home equipment reimbursement policy. Play the audio and enable Live Caption to capture the key information. Identify the application deadline and the two required document names mentioned in the recording. Then compose a new email in Thunderbird, but do not send it. Set the recipient to hr@company.com, set the subject to 'Equipment Reimbursement Request', and in the email body clearly state the two required document names and the deadline while requesting your reimbursement allowance.",
   "source": "synthetic",

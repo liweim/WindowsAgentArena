@@ -1,7 +1,7 @@
 {
   "id": "sticky-keys-projectdocs-folder",
   "snapshot": "windows",
-  "category": "Sticky keys",
+  "category": "sticky keys",
   "difficulty": "Easy",
   "instruction": "Enable Sticky Keys, open File Explorer, create a folder called ProjectDocs on the Desktop, and move the three text files from the Desktop into the ProjectDocs folder using keyboard shortcuts.",
   "source": "human",

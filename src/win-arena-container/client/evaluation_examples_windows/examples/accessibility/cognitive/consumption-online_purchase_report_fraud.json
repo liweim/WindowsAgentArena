@@ -1,7 +1,7 @@
 {
   "id": "consumption-online_purchase_report_fraud",
   "snapshot": "msedge",
-  "category": "Consumption",
+  "category": "consumption",
   "difficulty": "medium",
   "instruction": "You paid for a product from an online seller, but the seller stopped responding and you think it was a scam. Open the FTC Consumer Advice page in Microsoft Edge and use Immersive Reader to focus on the article. Find the `Report a Scam to the FTC` section, open the reporting page in a new tab, and leave that report page active.",
   "source": "https://consumer.ftc.gov/articles/what-do-if-you-were-scammed",

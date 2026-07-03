@@ -1,7 +1,7 @@
 {
   "id": "information-fema_emergency_kit",
   "snapshot": "chrome",
-  "category": "Information",
+  "category": "information",
   "difficulty": "hard",
   "instruction": "Enable Chrome Live Caption, watch the video, and write each must-have emergency kit item mentioned in the video in a sticky note. Each answer should contain the complete phrase exactly as it appears in the captions.",
   "source": "https://www.youtube.com/watch?v=o4enqHGluLI",

@@ -1,7 +1,7 @@
 {
   "id": "consumption-SwingSet",
   "snapshot": "chrome",
-  "category": "Consumption",
+  "category": "consumption",
   "difficulty": "easy",
   "instruction": "Turn on Screen Reader. Open https://www.smythstoys.com/, and search for swing set under 49.99 pounds. Leave the search result page open",
   "source": "https://www.jbidigital.co.uk/blog/jbis-5-favourite-examples-of-accessible-and-inaccessible-websites/",

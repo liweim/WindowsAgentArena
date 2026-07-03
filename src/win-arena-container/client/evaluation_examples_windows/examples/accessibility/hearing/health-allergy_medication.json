@@ -1,7 +1,7 @@
 {
   "id": "health-allergy_medication",
   "snapshot": "chrome",
-  "category": "Health",
+  "category": "health",
   "difficulty": "hard",
   "instruction": "I have allergies and need to know what medicine to take. Open Chrome Live Caption, watch the video, and write the recommended medication name in `answer.txt` on the Desktop.",
   "source": "https://medlineplus.gov/ency/videos/mov/200094_eng.mp4",

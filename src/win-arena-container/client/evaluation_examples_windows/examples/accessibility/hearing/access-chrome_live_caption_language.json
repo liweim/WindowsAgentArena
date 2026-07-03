@@ -2,7 +2,7 @@
   "id": "access-chrome_live_caption_language",
   "manually_evaluated": true,
   "snapshot": "chrome",
-  "category": "Access",
+  "category": "access",
   "difficulty": "easy",
   "instruction": "Enable Live Caption in Chrome and add Spanish as a supported caption language.",
   "source": "chrome://settings/accessibility > Live Caption",

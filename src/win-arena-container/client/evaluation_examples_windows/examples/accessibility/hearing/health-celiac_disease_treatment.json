@@ -1,7 +1,7 @@
 {
   "id": "health-celiac_disease_treatment",
   "snapshot": "chrome",
-  "category": "Health",
+  "category": "health",
   "difficulty": "medium",
   "instruction": "I have been diagnosed with celiac disease and want to know the treatment mentioned in the video. Turn on captions in the opened YouTube video, then watch it and save the answer in `answer.txt` on the Desktop.",
   "source": "https://www.youtube.com/watch?v=A9pbzFAqaho",

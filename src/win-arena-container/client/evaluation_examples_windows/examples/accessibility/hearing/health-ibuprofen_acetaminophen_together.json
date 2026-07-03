@@ -1,7 +1,7 @@
 {
   "id": "health-ibuprofen_acetaminophen_together",
   "snapshot": "chrome",
-  "category": "Health",
+  "category": "health",
   "difficulty": "easy",
   "instruction": "I am considering taking ibuprofen and acetaminophen and need to know whether they can be taken together. Turn on captions in the opened YouTube video, then watch it and save the answer in `answer.txt` on the Desktop.",
   "source": "https://www.youtube.com/watch?v=2324zMLFYC8",

@@ -1,7 +1,7 @@
 {
   "id": "health-medical_centre_details",
   "snapshot": "windows",
-  "category": "Health",
+  "category": "health",
   "difficulty": "Medium",
   "instruction": "Using the On-Screen Keyboard, search for nearby medical centres and save the address and phone number of the closest clinic in a text document named medical_centre_contact.txt on the Desktop.",
   "source": "https://abilitynet.org.uk/",

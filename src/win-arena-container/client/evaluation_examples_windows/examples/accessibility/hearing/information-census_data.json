@@ -1,7 +1,7 @@
 {
   "id": "information-census_data",
   "snapshot": "chrome",
-  "category": "Information",
+  "category": "information",
   "difficulty": "medium",
   "instruction": "Turn on Live Caption, watch the opened YouTube video, then open the Census data website and search for the area demonstrated in the video.",
   "source": "https://www.youtube.com/watch?v=6eqpPRLndPk",

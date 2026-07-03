@@ -1,7 +1,7 @@
 {
   "id": "management-quick_sponge_timer",
   "snapshot": "chrome",
-  "category": "Management",
+  "category": "management",
   "difficulty": "medium",
   "instruction": "Enable Windows Live Captions, watch the video, determine how long the quick sponge should sit before checking whether the yeast is active, then open the Windows Clock app and create a timer for that duration. Leave the timer visible in the Clock app.",
   "source": "https://www.youtube.com/watch?v=NPiA69p4gqE",

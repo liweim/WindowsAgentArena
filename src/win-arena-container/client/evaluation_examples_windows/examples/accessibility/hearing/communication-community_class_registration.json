@@ -2,7 +2,7 @@
   "id": "communication-community_class_registration",
   "manually_evaluated": true,
   "snapshot": "chrome",
-  "category": "Communication",
+  "category": "communication",
   "difficulty": "medium",
   "instruction": "The community center sent an audio announcement about next week's free workshops. Enable Live Caption and listen to the recording to identify which class is free, its start date, and the required card to bring for registration. Then compose a registration email in Thunderbird, but do not send it. Set the recipient to register@communitycenter.org, set the subject to 'Free Workshop Registration', and in the email body state the class you want to register for, the date, and the card you will bring while asking to reserve a spot.",
   "source": "synthetic",
