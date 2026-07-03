@@ -1,12 +1,12 @@
 {
-  "id": "captcha-count_chars",
+  "id": "captcha-hold_button_2",
   "snapshot": "msedge",
   "category": "captcha",
   "difficulty": "easy",
-  "instruction": "Complete the character-count CAPTCHA verification in Microsoft Edge.",
-  "source": "local CAPTCHA service using deterministic random character strings",
+  "instruction": "Complete the hold-button CAPTCHA verification in Microsoft Edge.",
+  "source": "local CAPTCHA service using OpenCaptchaWorld hold_button data",
   "gt_steps": [
-    "Count how many times the target character appears and enter the count."
+    "Press and hold the button until the progress completes, then continue."
   ],
   "config": [
     {
@@ -15,7 +15,7 @@
         "command": [
           "cmd",
           "/c",
-          "start msedge http://host.docker.internal:8765/captcha?type=count_chars^&seed=access-count-chars-001^&session=access-captcha-count-chars"
+          "start msedge http://host.docker.internal:8765/captcha?type=hold_button^&seed=access-hold-button-002^&session=access-captcha-hold-button"
         ]
       }
     }
@@ -33,7 +33,7 @@
       "type": "rule",
       "rules": {
         "expected": [
-          "https?://host\\.docker\\.internal:8765/success\\?type=count_chars&seed=access-count-chars-001&session=access-captcha-count-chars"
+          "https?://host\\.docker\\.internal:8765/success\\?type=hold_button&seed=access-hold-button-002&session=access-captcha-hold-button"
         ]
       }
     }

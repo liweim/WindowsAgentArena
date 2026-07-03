@@ -1,12 +1,12 @@
 {
-  "id": "captcha-distorted_text",
+  "id": "captcha-click_sequence_3",
   "snapshot": "msedge",
   "category": "captcha",
   "difficulty": "easy",
-  "instruction": "Complete the CAPTCHA verification in Microsoft Edge.",
-  "source": "local CAPTCHA service using the Python `captcha` package",
+  "instruction": "Complete the click-sequence CAPTCHA verification in Microsoft Edge.",
+  "source": "local CAPTCHA service using Pillow to render scattered letters and digits",
   "gt_steps": [
-    "Complete the CAPTCHA verification."
+    "Click the requested characters in order to complete the CAPTCHA verification."
   ],
   "config": [
     {
@@ -15,7 +15,7 @@
         "command": [
           "cmd",
           "/c",
-          "start msedge http://host.docker.internal:8765/captcha?type=distorted_text^&seed=distorted-text-001^&session=access-captcha-distorted-text"
+          "start msedge http://host.docker.internal:8765/captcha?type=click_sequence^&seed=access-click-sequence-003^&session=access-captcha-click-sequence"
         ]
       }
     }
@@ -33,7 +33,7 @@
       "type": "rule",
       "rules": {
         "expected": [
-          "https?://host\\.docker\\.internal:8765/success\\?type=distorted_text&seed=distorted-text-001&session=access-captcha-distorted-text"
+          "https?://host\\.docker\\.internal:8765/success\\?type=click_sequence&seed=access-click-sequence-003&session=access-captcha-click-sequence"
         ]
       }
     }

@@ -1,0 +1,44 @@
+{
+  "id": "captcha-slide_puzzle_1",
+  "snapshot": "msedge",
+  "category": "captcha",
+  "difficulty": "easy",
+  "instruction": "Complete the puzzle slider CAPTCHA verification in Microsoft Edge.",
+  "source": "local CAPTCHA service using OpenCaptchaWorld slide_puzzle data",
+  "gt_steps": [
+    "Complete the puzzle slider CAPTCHA verification."
+  ],
+  "config": [
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "cmd",
+          "/c",
+          "start msedge http://host.docker.internal:8765/captcha?type=slide_puzzle^&seed=access-slide-puzzle-001^&session=access-captcha-slide-puzzle"
+        ]
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "msedge"
+  ],
+  "evaluator": {
+    "func": "is_expected_url_pattern_match",
+    "result": {
+      "type": "active_tab_info_simple"
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "expected": [
+          "https?://host\\.docker\\.internal:8765/success\\?type=slide_puzzle&seed=access-slide-puzzle-001&session=access-captcha-slide-puzzle"
+        ]
+      }
+    }
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}
