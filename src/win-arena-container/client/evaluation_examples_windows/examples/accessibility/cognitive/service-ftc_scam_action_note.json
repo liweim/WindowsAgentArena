@@ -1,0 +1,86 @@
+{
+  "id": "service-ftc_scam_action_note",
+  "snapshot": "msedge",
+  "category": "service",
+  "difficulty": "medium",
+  "instruction": "You received a suspicious text message and want a simple reminder of what to do. Use Microsoft Edge Immersive Reader on the FTC scam text guidance page. In Sticky Notes, write the two action headings about what to do with the message. Copy the headings exactly.",
+  "source": "https://consumer.ftc.gov/articles/how-recognize-and-report-spam-text-messages",
+  "gt_steps": [
+    "Open the FTC spam text message guidance page in Microsoft Edge.",
+    "Use Immersive Reader to simplify the page.",
+    "Find the section about what to do with spam text messages.",
+    "Open Sticky Notes.",
+    "Write the two headings exactly: `Don't respond to unwanted texts` and `Report unwanted texts`."
+  ],
+  "config": [
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "cmd",
+          "/c",
+          "start msedge https://consumer.ftc.gov/articles/how-recognize-and-report-spam-text-messages"
+        ]
+      }
+    },
+    {
+      "type": "execute",
+      "parameters": {
+        "command": [
+          "powershell",
+          "-NoProfile",
+          "-ExecutionPolicy",
+          "Bypass",
+          "-Command",
+          "Start-Process 'shell:AppsFolder\\Microsoft.MicrosoftStickyNotes_8wekyb3d8bbwe!App'"
+        ]
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "msedge",
+    "sticky_notes"
+  ],
+  "evaluator": {
+    "func": [
+      "check_text_points",
+      "check_edge_immersive_reader_state"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "sticky_notes_content"
+      },
+      {
+        "type": "edge_immersive_reader_state",
+        "activate_edge": true
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "ignore_case": true,
+          "points": [
+            [
+              "Don't respond to unwanted texts"
+            ],
+            [
+              "Report unwanted texts"
+            ]
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "reader_mode_open": true
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "medium"
+}

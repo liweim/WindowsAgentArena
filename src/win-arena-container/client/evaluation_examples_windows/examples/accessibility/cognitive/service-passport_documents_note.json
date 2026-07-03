@@ -1,0 +1,70 @@
+{
+  "id": "service-passport_documents_note",
+  "snapshot": "msedge",
+  "category": "service",
+  "difficulty": "medium",
+  "instruction": "Government service pages can be overwhelming. Open the State Department passport renewal page and use Sticky Notes to list the three ways the page says you can renew. Copy the option names exactly.",
+  "source": "https://travel.state.gov/content/travel/en/passports/have-passport/renew.html",
+  "gt_steps": [
+    "Open the State Department passport renewal page in Microsoft Edge.",
+    "Find the section that lists renewal options.",
+    "Open Sticky Notes.",
+    "Write the three option names exactly: `Renew Online`, `Renew by Mail`, and `Renew in Person`."
+  ],
+  "config": [
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "cmd",
+          "/c",
+          "start msedge https://travel.state.gov/content/travel/en/passports/have-passport/renew.html"
+        ]
+      }
+    },
+    {
+      "type": "execute",
+      "parameters": {
+        "command": [
+          "powershell",
+          "-NoProfile",
+          "-ExecutionPolicy",
+          "Bypass",
+          "-Command",
+          "Start-Process 'shell:AppsFolder\\Microsoft.MicrosoftStickyNotes_8wekyb3d8bbwe!App'"
+        ]
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "msedge",
+    "sticky_notes"
+  ],
+  "evaluator": {
+    "func": "check_text_points",
+    "result": {
+      "type": "sticky_notes_content"
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "ignore_case": true,
+        "points": [
+          [
+            "Renew Online"
+          ],
+          [
+            "Renew by Mail"
+          ],
+          [
+            "Renew in Person"
+          ]
+        ]
+      }
+    }
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "medium"
+}
