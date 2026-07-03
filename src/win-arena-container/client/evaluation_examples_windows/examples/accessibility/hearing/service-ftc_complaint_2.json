@@ -1,7 +1,7 @@
 {
   "id": "service-ftc_complaint_2",
   "snapshot": "chrome",
-  "category": "Service",
+  "category": "service",
   "difficulty": "easy",
   "instruction": "Turn on captions in the opened YouTube video, then open the website the video says to use for reporting identity theft in a new Chrome tab.",
   "source": "https://www.youtube.com/watch?v=0GGDKL7TVPo",

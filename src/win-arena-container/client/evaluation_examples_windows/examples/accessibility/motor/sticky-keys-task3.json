@@ -1,7 +1,7 @@
 {
   "id": "sticky-keys-rename-files",
   "snapshot": "windows",
-  "category": "Sticky keys",
+  "category": "sticky keys",
   "difficulty": "Easy",
   "instruction": "Enable Sticky Keys and rename the following files on the Desktop: draft1.txt to report1.txt, draft2.txt to report2.txt, and draft3.txt to report3.txt.",
   "source": "https://abilitynet.org.uk/",

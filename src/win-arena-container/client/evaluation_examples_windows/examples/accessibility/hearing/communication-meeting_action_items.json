@@ -1,7 +1,7 @@
 {
   "id": "communication-meeting_action_items",
   "snapshot": "chrome",
-  "category": "Communication",
+  "category": "communication",
   "difficulty": "medium",
   "instruction": "Your supervisor sent a meeting recording about forbidden operations for the new cloud cluster. Play the audio and use Chrome Live Caption to watch the real-time captions. Record the 3 core operational warnings mentioned aloud in the video in a sticky note. If Sticky Notes asks you to sign in after it opens, click the close button in the upper-right corner to continue without signing in.",
   "source": "synthetic",

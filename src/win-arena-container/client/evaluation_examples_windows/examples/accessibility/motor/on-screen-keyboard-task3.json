@@ -1,7 +1,7 @@
 {
   "id": "chrome-sydney-weather-bookmark",
   "snapshot": "chrome",
-  "category": "On-screen keyboard",
+  "category": "on-screen keyboard",
   "difficulty": "Easy",
   "instruction": "Enable the On-Screen Keyboard. Using the On-Screen Keyboard, open Google Chrome, navigate to https://www.weatherzone.com.au/nsw/sydney/sydney, and bookmark the page.",
   "source": "human",

@@ -1,7 +1,7 @@
 {
   "id": "health-anaphylaxis_medicine",
   "snapshot": "chrome",
-  "category": "Health",
+  "category": "health",
   "difficulty": "medium",
   "instruction": "I have anaphylaxis and need to know what medicine to take. Turn on captions in the opened YouTube video, then watch it and save the answer in `answer.txt` on the Desktop.",
   "source": "https://youtu.be/1YrKVobZnNg",

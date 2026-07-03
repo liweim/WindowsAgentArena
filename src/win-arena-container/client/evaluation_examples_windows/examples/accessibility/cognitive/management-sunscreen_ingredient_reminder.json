@@ -1,7 +1,7 @@
 {
   "id": "management-sunscreen_ingredient_reminder",
   "snapshot": "msedge",
-  "category": "Management",
+  "category": "management",
   "difficulty": "medium",
   "instruction": "Use Immersive Reader to focus on the sunscreen ingredient news. A child in the family was born on January 15, 2026. Based on the article's age guidance for the newly approved sunscreen ingredient, determine the first date the child is old enough for that ingredient. In Thunderbird Calendar, create an all-day event on that date. Set the title to `Sunscreen ingredient reminder`.",
   "source": "https://apnews.com/article/9b9c7e04b418b3c9c1fbaa7ddabade25",

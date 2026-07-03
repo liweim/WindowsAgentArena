@@ -2,7 +2,7 @@
   "id": "communication-apartment_maintenance",
   "manually_evaluated": true,
   "snapshot": "chrome",
-  "category": "Communication",
+  "category": "communication",
   "difficulty": "medium",
   "instruction": "Your apartment property manager sent an audio notice about an urgent water pipe repair tomorrow. Play the audio and use Live Caption to capture the key information. Identify the 2 items that must be turned off and the deadline mentioned in the recording. Record them in a sticky note.",
   "source": "synthetic",

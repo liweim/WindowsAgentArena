@@ -2,7 +2,7 @@
   "id": "access-chrome_live_caption",
   "manually_evaluated": true,
   "snapshot": "chrome",
-  "category": "Access",
+  "category": "access",
   "difficulty": "easy",
   "instruction": "I have trouble hearing audio in videos unless subtitles are available. Please turn on Live Caption in Chrome for me.",
   "source": "chrome://settings/accessibility > Live Caption",

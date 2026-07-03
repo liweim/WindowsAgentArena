@@ -1,7 +1,7 @@
 {
   "id": "consumption-ginger_ale",
   "snapshot": "chrome",
-  "category": "Consumption",
+  "category": "consumption",
   "difficulty": "medium",
   "instruction": "Your roommate sent an audio shopping reminder. Open the audio in Chrome, enable Live Caption, listen for the exact item to buy, then find that item on the shopping website and add it to the shopping cart.",
   "source": "synthetic",

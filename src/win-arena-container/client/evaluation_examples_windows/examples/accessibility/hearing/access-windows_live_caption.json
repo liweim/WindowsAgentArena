@@ -2,7 +2,7 @@
   "id": "access-windows_live_caption",
   "manually_evaluated": false,
   "snapshot": "base_setup",
-  "category": "Access",
+  "category": "access",
   "difficulty": "easy",
   "instruction": "Help me turn on Windows Live captions.",
   "source": "Settings > Accessibility > Captions > Live captions",

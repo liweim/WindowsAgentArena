@@ -1,7 +1,7 @@
 {
   "id": "information-child_visit_preparation",
   "snapshot": "chrome",
-  "category": "Information",
+  "category": "information",
   "difficulty": "hard",
   "instruction": "Enable Chrome Live Caption, watch the video, and write the specific comfort items, clothing choices, or appointment actions recommended in the video in a sticky note. Each answer should contain the complete phrase exactly as it appears in the captions.",
   "source": "https://www.youtube.com/watch?v=2BuJuk4BQIs",

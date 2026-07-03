@@ -1,7 +1,7 @@
 {
   "id": "health-pharmacy_opening_hours",
   "snapshot": "windows",
-  "category": "Motor Impairment",
+  "category": "motor impairment",
   "difficulty": "Easy",
   "instruction": "Using the On-Screen Keyboard, find the opening hours of a nearby pharmacy and save them in a text file named pharmacy_hours.txt on the Desktop.",
   "source": "https://abilitynet.org.uk/",

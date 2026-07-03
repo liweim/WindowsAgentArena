@@ -1,7 +1,7 @@
 {
   "id": "service-cfpb_automatic_payment_stop_answer",
   "snapshot": "msedge",
-  "category": "Service",
+  "category": "service",
   "difficulty": "medium",
   "instruction": "You need to stop automatic payments from your bank account and want fewer distractions while reading the service guidance. Use Microsoft Edge Immersive Reader on the CFPB page. Create `answer.txt` on the Desktop and write the service steps the page says to take. Copy the original wording from the page.",
   "source": "https://www.consumerfinance.gov/ask-cfpb/how-do-i-stop-automatic-payments-from-my-bank-account-en-2023/",

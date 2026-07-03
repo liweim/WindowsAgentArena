@@ -1,7 +1,7 @@
 {
   "id": "health-ap_doctor_appointment_questions",
   "snapshot": "msedge",
-  "category": "Health",
+  "category": "health",
   "difficulty": "hard",
   "instruction": "Use Immersive Reader to focus on the appointment-preparation advice. In Thunderbird Calendar, create a 2-hour appointment reminder for 9:00 AM tomorrow. Set the title to `Doctor appointment`. In the event description, include the items the article says to bring or prepare before a doctor's appointment. Do not paraphrase.",
   "source": "https://apnews.com/article/3fcde5b5c927734429818bd0ed1c6680",

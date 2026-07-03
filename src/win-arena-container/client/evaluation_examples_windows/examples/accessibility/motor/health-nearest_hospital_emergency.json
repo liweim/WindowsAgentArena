@@ -1,7 +1,7 @@
 {
   "id": "health-nearest_hospital_emergency",
   "snapshot": "windows",
-  "category": "Motor Impairment",
+  "category": "motor impairment",
   "difficulty": "Medium",
   "instruction": "Using the On-Screen Keyboard, locate the nearest hospital emergency department and save its address and phone number in a text file named emergency_department_contact.txt on the Desktop.",
   "source": "https://abilitynet.org.uk/",

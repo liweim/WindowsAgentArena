@@ -2,7 +2,7 @@
   "id": "communication-laundry_tag_investigation",
   "manually_evaluated": true,
   "snapshot": "chrome",
-  "category": "Communication",
+  "category": "communication",
   "difficulty": "medium",
   "instruction": "You just bought a premium coat, and the seller sent an audio message about fabric care restrictions. Play the audio and enable Live Caption to extract the 3 core washing and drying mistakes explicitly mentioned in the recording. Write these 3 forbidden care actions in a sticky note.",
   "source": "synthetic",

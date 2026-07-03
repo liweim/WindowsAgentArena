@@ -1,7 +1,7 @@
 {
   "id": "information-handwashing_steps",
   "snapshot": "chrome",
-  "category": "Information",
+  "category": "information",
   "difficulty": "hard",
   "instruction": "Enable Chrome Live Caption, watch the video, and write the hand-washing steps mentioned in the video in a sticky note. Each answer should contain the complete phrase exactly as it appears in the captions.",
   "source": "https://www.youtube.com/watch?v=UitUdTjhZz8",

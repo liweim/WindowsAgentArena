@@ -1,7 +1,7 @@
 {
   "id": "access-zoom-200",
   "snapshot": "chrome",
-  "category": "Access",
+  "category": "access",
   "difficulty": "easy",
   "instruction": "Open Google Chrome and navigate to https://www.digital.nsw.gov.au/delivery/accessibility-and-inclusivity-toolkit. Increase the page zoom level to 200% and leave the webpage open.",
   "source": "human",
