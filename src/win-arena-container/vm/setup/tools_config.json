@@ -66,5 +66,10 @@
             "https://caddyserver.com/api/download?os=windows&arch=amd64"
         ],
         "alias": "caddy"
+    },
+    "Microsoft Visual C++ Redistributable": {
+        "mirrors": [
+            "https://aka.ms/vs/17/release/vc_redist.x64.exe"
+        ]
     }
   }

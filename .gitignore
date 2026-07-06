@@ -1,6 +1,7 @@
 *.out
-*.mp3
+assets
 tmp
+*.bak
 
 # a few testing images
 *.proposed_region_screenbert_test.png

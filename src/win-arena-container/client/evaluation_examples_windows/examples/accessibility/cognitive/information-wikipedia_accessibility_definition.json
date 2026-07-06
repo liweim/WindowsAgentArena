@@ -1,0 +1,102 @@
+{
+  "id": "information-wikipedia_accessibility_definition",
+  "snapshot": "libreoffice_writer",
+  "category": "information",
+  "difficulty": "medium",
+  "instruction": "I am writing a paper in LibreOffice Writer and need to define the term accessibility. Use Google Chrome to find the definition in the local Wikipedia site, then add the definition to the open paper where it says `[add definition here]` and save the document.",
+  "source": "WebArena self-hosted Wikipedia/Kiwix service: http://host.docker.internal:8888",
+  "gt_steps": [
+    "Open the paper draft `accessibility_definition_paper.docx` in LibreOffice Writer.",
+    "Open the local Kiwix Wikipedia site in Google Chrome.",
+    "Search for the `Accessibility` article.",
+    "Find the first sentence that defines accessibility.",
+    "Replace `[add definition here]` in the paper draft with `accessibility is the design of products, devices, services, vehicles, or environments so as to be usable by people with disabilities`.",
+    "Save `accessibility_definition_paper.docx`."
+  ],
+  "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/information-wikipedia_accessibility_definition.docx",
+            "path": "C:\\Users\\Docker\\Desktop\\accessibility_definition_paper.docx"
+          }
+        ]
+      }
+    },
+    {
+      "type": "open",
+      "parameters": {
+        "path": "C:\\Users\\Docker\\Desktop\\accessibility_definition_paper.docx"
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "cmd",
+          "/c",
+          "start chrome http://host.docker.internal:8888/wikipedia_en_all_maxi_2022-05/A/User:The_other_Kiwix_guy/Landing"
+        ]
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "chrome",
+    "libreoffice_writer"
+  ],
+  "evaluator": {
+    "postconfig": [
+      {
+        "type": "activate_window",
+        "parameters": {
+          "window_name": "accessibility_definition_paper.docx — LibreOffice Writer",
+          "strict": true
+        }
+      },
+      {
+        "type": "sleep",
+        "parameters": {
+          "seconds": 0.5
+        }
+      },
+      {
+        "type": "execute",
+        "parameters": {
+          "command": [
+            "python",
+            "-c",
+            "import pyautogui; import time; pyautogui.hotkey('ctrl', 's'); time.sleep(0.5); "
+          ]
+        }
+      },
+      {
+        "type": "upload_file",
+        "parameters": {
+          "files": [
+            {
+              "local_path": "assets/information-wikipedia_accessibility_definition_gold.docx",
+              "path": "C:\\Users\\Docker\\AppData\\Local\\Temp\\accessibility_definition_paper_gold.docx"
+            }
+          ]
+        }
+      }
+    ],
+    "func": "compare_docx_files",
+    "result": {
+      "type": "vm_file",
+      "path": "C:\\Users\\Docker\\Desktop\\accessibility_definition_paper.docx",
+      "dest": "accessibility_definition_paper.docx"
+    },
+    "expected": {
+      "type": "vm_file",
+      "path": "C:\\Users\\Docker\\AppData\\Local\\Temp\\accessibility_definition_paper_gold.docx",
+      "dest": "information-wikipedia_accessibility_definition_gold.docx"
+    }
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

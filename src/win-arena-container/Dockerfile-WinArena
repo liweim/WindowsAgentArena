@@ -42,8 +42,12 @@ COPY src/win-arena-container/entry.sh /entry.sh
 
 RUN find / -maxdepth 3 -type f -name "*.sh" -exec dos2unix {} \; && chmod +x /*.sh
 
-# Install fuse
-RUN apt-get update && apt-get install -y fuse && pip install borb==2.1.22 rapidfuzz==3.13.0
+# Install runtime tools used by the client and task setup.
+RUN apt-get update && apt-get install -y \
+    fuse \
+    default-mysql-client \
+    && rm -rf /var/lib/apt/lists/* \
+    && pip install borb==2.1.22 rapidfuzz==3.13.0
 
 ENV YRES="900"
 ENV XRES="1440"

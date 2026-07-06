@@ -383,11 +383,34 @@ $pythonServerPort = 5000
 $onLogonTaskName = "WindowsArena_OnLogon"
 $requirementsFile = "$scriptFolder\server\requirements.txt"
 
+# - Microsoft Visual C++ Redistributable
+$vcRedistToolName = "Microsoft Visual C++ Redistributable"
+$vcRedistToolDetails = Get-ToolDetails -toolsList $toolsList -toolName $vcRedistToolName
+$vcRedistInstallerFilePath = "$env:TEMP\vc_redist.x64.exe"
+
+Write-Host "Downloading and installing Microsoft Visual C++ Redistributable..."
+$downloadResult = Invoke-DownloadFileFromAvailableMirrors -mirrorUrls $vcRedistToolDetails.mirrors -outfile $vcRedistInstallerFilePath
+if (-not $downloadResult) {
+    Write-Host "Failed to download Microsoft Visual C++ Redistributable. Please try again later or install manually."
+} else {
+    Start-Process -FilePath $vcRedistInstallerFilePath -ArgumentList "/install", "/quiet", "/norestart" -Wait
+    Write-Host "Microsoft Visual C++ Redistributable has been installed."
+}
+
 # Ensure pip is updated to the latest version
 Install-PythonPackages -Package "pip" -Arguments "--upgrade"
 
 Install-PythonPackages -Package "wheel"
+Install-PythonPackages -Package "pywin32"
 Install-PythonPackages -Package "pywinauto"
+
+$pywin32PostInstall = Join-Path (Split-Path $pythonExecutablePath -Parent) "Scripts\pywin32_postinstall.py"
+if (Test-Path $pywin32PostInstall) {
+    Write-Host "Running pywin32 post-install registration..."
+    & $pythonExecutablePath $pywin32PostInstall -install
+} else {
+    Write-Host "pywin32 post-install script was not found at $pywin32PostInstall"
+}
 
 # Install Python packages from requirements.txt using Python's pip module
 if (Test-Path $requirementsFile) {

@@ -1,0 +1,83 @@
+{
+  "id": "consumption-shopping_price_wireless_mouse",
+  "snapshot": "chrome",
+  "category": "consumption",
+  "difficulty": "medium",
+  "instruction": "You are setting up a spare home-office desk and need a basic white wireless mouse. Open the shopping website, compare wireless mouse results, choose the lowest-priced standalone wireless mouse, and add it to the cart.",
+  "source": "WebArena self-hosted OneStopShop service",
+  "gt_steps": [
+    "Open the self-hosted shopping website.",
+    "Search or browse for wireless mouse products.",
+    "Choose the lowest-priced standalone wireless mouse.",
+    "Select white.",
+    "Add `Wireless Mouse, 3 Adjustable DPI Innovative Stylish Portable Gaming Mouse, Suitable for Notebook, PC, Computer Office Home Work` to the shopping cart."
+  ],
+  "config": [
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port=1337",
+          "--force-renderer-accessibility"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    },
+    {
+      "type": "sleep",
+      "parameters": {
+        "seconds": 1
+      }
+    },
+    {
+      "type": "reset_shopping_cart",
+      "parameters": {}
+    },
+    {
+      "type": "chrome_open_tabs",
+      "parameters": {
+        "urls_to_open": [
+          "http://host.docker.internal:7770"
+        ]
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "chrome"
+  ],
+  "evaluator": {
+    "func": "is_page_contains_items",
+    "result": {
+      "type": "page_info",
+      "url": "http://host.docker.internal:7770/checkout/cart/",
+      "load_state": "networkidle"
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "items": [
+          "B09443ZWQD"
+        ],
+        "options": {
+          "B09443ZWQD": {
+            "Color": "White"
+          }
+        }
+      }
+    }
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

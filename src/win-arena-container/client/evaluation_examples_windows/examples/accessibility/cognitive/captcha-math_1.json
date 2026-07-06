@@ -1,9 +1,9 @@
 {
   "id": "captcha-math_1",
-  "snapshot": "msedge",
+  "snapshot": "chrome",
   "category": "captcha",
   "difficulty": "easy",
-  "instruction": "Complete the math CAPTCHA verification in Microsoft Edge.",
+  "instruction": "Complete the math CAPTCHA verification in Google Chrome.",
   "source": "local CAPTCHA service using deterministic arithmetic expressions",
   "gt_steps": [
     "Solve the arithmetic expression and enter the result."
@@ -15,14 +15,14 @@
         "command": [
           "cmd",
           "/c",
-          "start msedge http://host.docker.internal:8765/captcha?type=math^&seed=access-math-001^&session=access-captcha-math"
+          "start chrome http://host.docker.internal:8765/captcha?type=math^&seed=access-math-001^&session=access-captcha-math"
         ]
       }
     }
   ],
   "trajectory": "trajectories\\",
   "related_apps": [
-    "msedge"
+    "chrome"
   ],
   "evaluator": {
     "func": "is_expected_url_pattern_match",

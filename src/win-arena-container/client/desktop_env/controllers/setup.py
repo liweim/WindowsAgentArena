@@ -4,6 +4,7 @@ import os
 import os.path
 import shutil
 import sqlite3
+import subprocess
 import tempfile
 import time
 import traceback
@@ -73,6 +74,49 @@ class SetupController:
             getattr(self, setup_function)(**parameters)
 
             logger.info("SETUP: %s(%s)", setup_function, str(parameters))
+
+    def _reset_shopping_cart_setup(
+            self,
+            host: str = "host.docker.internal",
+            port: int = 13306,
+            database: str = "magentodb",
+            user: str = "magentouser",
+            password: str = "MyPassword",
+    ):
+        sql = (
+            "SET FOREIGN_KEY_CHECKS=0; "
+            "TRUNCATE TABLE quote_item_option; "
+            "TRUNCATE TABLE quote_address_item; "
+            "TRUNCATE TABLE quote_shipping_rate; "
+            "TRUNCATE TABLE quote_payment; "
+            "TRUNCATE TABLE quote_address; "
+            "TRUNCATE TABLE quote_id_mask; "
+            "TRUNCATE TABLE quote_item; "
+            "TRUNCATE TABLE quote; "
+            "SET FOREIGN_KEY_CHECKS=1;"
+        )
+        command = [
+            "mysql",
+            "--skip-ssl",
+            "-h",
+            host,
+            "-P",
+            str(port),
+            "-u",
+            user,
+            f"-p{password}",
+            database,
+            "-e",
+            sql,
+        ]
+        try:
+            subprocess.run(command, check=True, capture_output=True, text=True)
+        except FileNotFoundError:
+            logger.error("mysql client is not installed in the WinArena container.")
+            raise
+        except subprocess.CalledProcessError as e:
+            logger.error("Failed to reset shopping cart database: %s", e.stderr or e.stdout)
+            raise
     
     def _set_default_browser_setup(self, browser: str):
         # Comment: this function doesn't work. It does set the registry key correctly, but looks like there's some security mechanism that prevents the key by itself from setting the default browser

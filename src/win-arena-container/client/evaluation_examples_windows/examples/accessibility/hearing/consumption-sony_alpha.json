@@ -3,16 +3,29 @@
   "snapshot": "chrome",
   "category": "consumption",
   "difficulty": "medium",
-  "instruction": "Turn on Chrome Live Caption, watch the opened YouTube product video, identify the product, then search for it on Amazon. Leave the Amazon search results page open.",
-  "source": "https://www.youtube.com/watch?v=AnMRYwWF988",
+  "instruction": "Your roommate sent an audio shopping reminder. Open the audio in Chrome, enable Live Caption, listen for the exact item to buy, then find that item on the shopping website and add it to the shopping cart.",
+  "source": "synthetic",
+  "transcript": "Avery, the gallery asked for higher resolution photos of the ceramics collection, so I am finally upgrading the camera kit. Please order the Sony Alpha a7R IV from the shopping site. I need the bundle with the 24-70 GM lens, not the body-only listing.",
   "gt_steps": [
-    "Enable Chrome Live Caption.",
-    "Watch the YouTube video and identify the product as `Sony Alpha 7R IV`.",
-    "Open the amazon website.",
-    "Find and open the Sony Alpha 7R IV product page.",
-    "Leave the product page open in the active tab."
+    "Open the Sony Alpha shopping reminder audio file in Chrome.",
+    "Turn on Chrome Live Caption.",
+    "Play the audio and use the captions to identify the item to buy: Sony Alpha a7R IV Mirrorless Digital Camera (V2) with FE 24-70mm f/2.8 GM Lens Bundle with Backpack.",
+    "Use the already-open shopping website.",
+    "Find the Sony Alpha a7R IV V2 camera bundle product on the website.",
+    "Add the product to the shopping cart."
   ],
   "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/Consumption-sony_alpha.mp3",
+            "path": "C:\\Users\\Docker\\Desktop\\Consumption-sony_alpha.mp3"
+          }
+        ]
+      }
+    },
     {
       "type": "launch",
       "parameters": {
@@ -34,16 +47,18 @@
       }
     },
     {
-      "type": "chrome_prepare_youtube_for_live_caption",
+      "type": "sleep",
       "parameters": {
-        "url": "https://www.youtube.com/watch?v=AnMRYwWF988",
-        "wait_seconds": 1
+        "seconds": 1
       }
     },
     {
-      "type": "activate_window",
+      "type": "chrome_open_tabs",
       "parameters": {
-        "window_name": "Google Chrome"
+        "urls_to_open": [
+          "file:///C:/Users/Docker/Desktop/Consumption-sony_alpha.mp3",
+          "http://host.docker.internal:7770"
+        ]
       }
     }
   ],
@@ -52,18 +67,39 @@
     "chrome"
   ],
   "evaluator": {
-    "func": "is_expected_url_pattern_match",
-    "result": {
-      "type": "active_tab_info_simple"
-    },
-    "expected": {
-      "type": "rule",
-      "rules": {
-        "expected": [
-          "https?://(www\\.)?amazon\\.[a-z]{2,}(\\.[a-z]{2})?/",
-          "(Sony\\+)?Alpha\\+7R\\+IV"
-        ]
+    "func": [
+      "is_page_contains_items",
+      "exact_match"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "page_info",
+        "url": "http://host.docker.internal:7770/checkout/cart/",
+        "load_state": "networkidle"
+      },
+      {
+        "type": "live_caption_enabled"
       }
-    }
-  }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "items": [
+            "B09939NFBY"
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "expected": "true"
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
 }

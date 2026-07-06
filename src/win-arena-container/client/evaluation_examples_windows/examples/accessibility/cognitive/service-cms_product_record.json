@@ -1,0 +1,91 @@
+{
+  "id": "service-cms_product_record",
+  "snapshot": "chrome",
+  "category": "service",
+  "difficulty": "medium",
+  "instruction": "Your store manager asked you to verify one product before a catalog update, but the CMS has many menus and fields. Open the CMS admin site in Google Chrome, sign in with username `admin` and password `admin1234`, find the product record for `Joust Duffle Bag`, and fill in the Value column in the `cms_product_record.xlsx` spreadsheet on the Desktop.",
+  "source": "WebArena self-hosted e-commerce CMS service",
+  "gt_steps": [
+    "Open the self-hosted CMS admin site in Google Chrome.",
+    "Sign in with username `admin` and password `admin1234`.",
+    "Navigate to the catalog or products area without changing any product data.",
+    "Find the product `Joust Duffle Bag`.",
+    "Open `cms_product_record.xlsx` on the Desktop.",
+    "Fill the Value column for the prepared keys: ID, Thumbnail, Name, Type, Attribute Set, SKU, Price, Quantity, Salable Quantity, Visibility, Status, Websites, Last Updated At, and Action.",
+    "Record the product values, including Name `Joust Duffle Bag`, Type `Simple Product`, SKU `24-MB01`, Price `$34.00`, Quantity `100.0000`."
+  ],
+  "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/service-cms_product_record.xlsx",
+            "path": "C:\\Users\\Docker\\Desktop\\cms_product_record.xlsx"
+          }
+        ]
+      }
+    },
+    {
+      "type": "open",
+      "parameters": {
+        "path": "C:\\Users\\Docker\\Desktop\\cms_product_record.xlsx"
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "cmd",
+          "/c",
+          "start chrome http://host.docker.internal:7780/admin"
+        ]
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "chrome",
+    "libreoffice_calc"
+  ],
+  "evaluator": {
+    "func": "check_text_points",
+    "result": {
+      "type": "vm_command_line",
+      "command": "python -c \"from openpyxl import load_workbook; from pathlib import Path; p=Path.home()/'Desktop'/'cms_product_record.xlsx'; wb=load_workbook(p, data_only=True); ws=wb.active; print('\\n'.join(f'{ws.cell(r,1).value}: {ws.cell(r,2).value}' for r in range(2, ws.max_row+1)))\"",
+      "shell": true
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "ignore_case": true,
+        "points": [
+          [
+            "Name: Joust Duffle Bag"
+          ],
+          [
+            "Type: Simple Product"
+          ],
+          [
+            "SKU: 24-MB01"
+          ],
+          [
+            "Price: $34.00",
+            "Price: 34.00",
+            "Price: $34",
+            "Price: 34"
+          ],
+          [
+            "Quantity: 100.0000",
+            "Quantity: 100.00",
+            "Quantity: 100.0",
+            "Quantity: 100"
+          ]
+        ]
+      }
+    }
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

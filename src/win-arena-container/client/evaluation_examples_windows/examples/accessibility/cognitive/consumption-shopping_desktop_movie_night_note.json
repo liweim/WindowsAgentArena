@@ -1,0 +1,177 @@
+{
+  "id": "consumption-shopping_desktop_movie_night_note",
+  "snapshot": "chrome",
+  "category": "consumption",
+  "difficulty": "medium",
+  "instruction": "Open the shopping reminder note on the Desktop, then use the shopping website to add the needed products to the cart.",
+  "source": "WebArena self-hosted OneStopShop service",
+  "gt_steps": [
+    "Open `movie_night_note.txt` on the Desktop.",
+    "Use the note to identify the movie-night goal and vague shopping needs.",
+    "Open the self-hosted shopping website.",
+    "Add a bagged microwave popcorn product to the shopping cart.",
+    "Add a canned root beer product to the shopping cart.",
+    "Add a plain pretzel sticks product to the shopping cart.",
+    "Add a sea-salt potato chips product to the shopping cart.",
+    "Add a SpongeBob gummy patties product to the shopping cart."
+  ],
+  "config": [
+    {
+      "type": "execute",
+      "parameters": {
+        "command": "powershell -NoProfile -Command \"Set-Content -Path (Join-Path $env:USERPROFILE 'Desktop\\movie_night_note.txt') -Value @('Plan: casual movie night at home.','Please buy only the missing snacks and drink:','- bagged microwave popcorn','- canned root beer','- plain pretzel sticks','- sea-salt potato chips','- SpongeBob gummy patties')\"",
+        "shell": true
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port=1337",
+          "--force-renderer-accessibility"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    },
+    {
+      "type": "sleep",
+      "parameters": {
+        "seconds": 1
+      }
+    },
+    {
+      "type": "reset_shopping_cart",
+      "parameters": {}
+    },
+    {
+      "type": "chrome_open_tabs",
+      "parameters": {
+        "urls_to_open": [
+          "http://host.docker.internal:7770"
+        ]
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "chrome",
+    "notepad"
+  ],
+  "evaluator": {
+    "func": "is_page_contains_items",
+    "result": {
+      "type": "page_info",
+      "url": "http://host.docker.internal:7770/checkout/cart/",
+      "load_state": "networkidle"
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "item_groups": [
+          [
+                        "B07M5GS515",
+                        "B001L4U298",
+                        "B074H7K39M",
+                        "B074J9RLB8",
+                        "B0000D8Q90",
+                        "B08BJ6VG3F",
+                        "B086BZR1JN",
+                        "B016MGZZ6E",
+                        "B00BVV9OWW",
+                        "B088MDYCZJ",
+                        "B08CSJMR84",
+                        "B005R3SWO6",
+                        "B00CHTZ3QS",
+                        "B01KXVHWDS",
+                        "B005AVVP1W",
+                        "B07KN83DWL",
+                        "B000R95BWQ",
+                        "B00CQ00BNI",
+                        "B01G27KJLE",
+                        "B01MFGHLDH",
+                        "B0779GKQNX",
+                        "B0779D6X4Y",
+                        "B00EEGFV8W",
+                        "B088QV7PMW",
+                        "B00XMZ2B48",
+                        "B07VGML42J",
+                        "B07HPCJL5J",
+                        "B003Y5DYOW",
+                        "B07W4LFRM1",
+                        "B001SAXXVO",
+                        "B00KPTUM40",
+                        "B08GY549SN",
+                        "B01LXGPBGN",
+                        "B00GQVCYO2",
+                        "B0029K0W7K",
+                        "B07K12YS34",
+                        "B0052Y730Y",
+                        "B001P7AXNQ",
+                        "B07FB4M7FP",
+                        "B07QLG994X",
+                        "B072PZ683F",
+                        "B0170C6G76",
+                        "B00BHFB9T8",
+                        "B01G2AJDTA",
+                        "B08GSP2M6P",
+                        "B00EEGEKGG",
+                        "B088G2ZR11",
+                        "B07PMRB4RW",
+                        "B00382WV9K"
+          ],
+          [
+            "B07CR5PDKQ",
+            "B088MC7Z7H",
+            "B08JNYNRKB",
+            "B00YCRM14K",
+            "B08KFJ73F6",
+            "B08PZC9785",
+            "B07VB12R5C",
+            "B08FRKTFKC"
+          ],
+          [
+            "B074H5LSZQ",
+            "B003Y5C3YO",
+            "B079S3P1YF",
+            "B01K860P5U",
+            "B00BQL1PXI",
+            "B07FZ18L6M",
+            "B01LZZL158",
+            "B00LFUIUQU",
+            "B076GQHQVY",
+            "B08DLN3ZGB"
+          ],
+          [
+            "B07H5RX168",
+            "B00EEG5934",
+            "B002C50X4Y",
+            "B08PGTXP64",
+            "B08SQMHHN6",
+            "B086CXB6TF",
+            "B00TQFIKSY"
+          ],
+          [
+            "B07MBRC6W7",
+            "B09DRJ9NL4",
+            "B08G8YDQR6",
+            "B08YP8CVD4",
+            "B07VD9PDJV"
+          ]
+        ]
+      }
+    }
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

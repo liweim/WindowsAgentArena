@@ -2,6 +2,7 @@ import logging
 import os
 import re
 import shutil
+import subprocess
 from itertools import product
 from typing import Any, Dict, List, Union
 
@@ -435,16 +436,179 @@ def is_added_to_steam_cart(active_tab_info, rule):
 
 def is_page_contains_items(active_tab_info, rule):
     """
-    Check whether all expected item strings appear in a page's HTML content.
+    Score expected cart items against a page's HTML content.
+
+    The rule's items list is treated as the expected product list. For a single
+    expected item, the cart must contain exactly one product and it must match.
+    For multiple expected items, score matched expected items divided by the
+    larger of expected item count and cart item count.
+
+    The rule may alternatively include item_groups, where each inner list is a
+    set of acceptable substitutes for one expected cart item.
     """
-    items = rule['items']
+    items = rule.get('items', [])
+    item_groups = rule.get('item_groups', [])
     content = active_tab_info['content']
 
-    for item in items:
-        if item not in content:
-            return 0.
+    if not items and not item_groups:
+        return 0.
 
-    return 1.
+    db_score = _score_shopping_cart_db(rule)
+    if db_score is not None:
+        return db_score
+
+    matched = sum(1 for item in items if item in content)
+    matched += sum(
+        1 for group in item_groups
+        if any(str(item) in content for item in group)
+    )
+    cart_item_count = content.count('data-cart-item-id=')
+    if cart_item_count == 0:
+        cart_item_count = content.count('class="item-info"')
+
+    expected_count = len(items) + len(item_groups)
+
+    if expected_count == 1:
+        return 1. if matched == 1 and cart_item_count == 1 else 0.
+
+    denominator = max(expected_count, cart_item_count)
+    if denominator == 0:
+        return 0.
+
+    return matched / denominator
+
+
+def _score_shopping_cart_db(rule):
+    host = rule.get("db_host", "host.docker.internal")
+    port = str(rule.get("db_port", 13306))
+    database = rule.get("db_name", "magentodb")
+    user = rule.get("db_user", "magentouser")
+    password = rule.get("db_password", "MyPassword")
+    items = rule.get("items", [])
+    item_groups = rule.get("item_groups", [])
+    sql = (
+        "SELECT qi.item_id, qi.product_id, qi.sku, qi.name "
+        "FROM quote q JOIN quote_item qi ON qi.quote_id=q.entity_id "
+        "WHERE q.items_count > 0 AND q.is_active=1 "
+        "ORDER BY q.updated_at DESC, qi.item_id;"
+    )
+    command = [
+        "mysql",
+        "--skip-ssl",
+        "-h",
+        host,
+        "-P",
+        port,
+        "-u",
+        user,
+        f"-p{password}",
+        database,
+        "-N",
+        "-B",
+        "-e",
+        sql,
+    ]
+    try:
+        result = subprocess.run(command, check=True, capture_output=True, text=True)
+    except (FileNotFoundError, subprocess.CalledProcessError) as e:
+        logger.warning("Could not inspect shopping cart database: %s", e)
+        return None
+
+    cart_items = []
+    cart_item_ids = []
+    for line in result.stdout.splitlines():
+        fields = line.split("\t")
+        if len(fields) >= 4:
+            cart_item_ids.append(fields[0])
+            cart_items.append(" ".join(fields[1:]).lower())
+
+    if not cart_items:
+        return 0.
+
+    matched = sum(1 for item in items if any(str(item).lower() in cart_item for cart_item in cart_items))
+    matched += sum(
+        1 for group in item_groups
+        if any(
+            str(item).lower() in cart_item
+            for item in group
+            for cart_item in cart_items
+        )
+    )
+    cart_item_count = len(cart_items)
+    if matched and not _shopping_cart_options_match(rule, cart_item_ids):
+        return 0.
+
+    expected_count = len(items) + len(item_groups)
+
+    if expected_count == 1:
+        return 1. if matched == 1 and cart_item_count == 1 else 0.
+
+    denominator = max(expected_count, cart_item_count)
+    return matched / denominator if denominator else 0.
+
+
+def _shopping_cart_options_match(rule, cart_item_ids):
+    expected_options = rule.get("options", {})
+    if not expected_options:
+        return True
+
+    host = rule.get("db_host", "host.docker.internal")
+    port = str(rule.get("db_port", 13306))
+    database = rule.get("db_name", "magentodb")
+    user = rule.get("db_user", "magentouser")
+    password = rule.get("db_password", "MyPassword")
+    item_ids = ",".join(cart_item_ids)
+    if not item_ids:
+        return False
+
+    sql = (
+        "SELECT qi.sku, ot.title, ovt.title "
+        "FROM quote_item qi "
+        "JOIN quote_item_option qio ON qio.item_id=qi.item_id AND qio.code LIKE 'option_%' "
+        "JOIN catalog_product_option o ON CONCAT('option_', o.option_id)=qio.code "
+        "JOIN catalog_product_option_title ot ON ot.option_id=o.option_id "
+        "JOIN catalog_product_option_type_title ovt ON ovt.option_type_id=CAST(qio.value AS UNSIGNED) "
+        f"WHERE qi.item_id IN ({item_ids});"
+    )
+    command = [
+        "mysql",
+        "--skip-ssl",
+        "-h",
+        host,
+        "-P",
+        port,
+        "-u",
+        user,
+        f"-p{password}",
+        database,
+        "-N",
+        "-B",
+        "-e",
+        sql,
+    ]
+    try:
+        result = subprocess.run(command, check=True, capture_output=True, text=True)
+    except (FileNotFoundError, subprocess.CalledProcessError) as e:
+        logger.warning("Could not inspect shopping cart item options: %s", e)
+        return False
+
+    actual_options = {}
+    for line in result.stdout.splitlines():
+        fields = line.split("\t")
+        if len(fields) >= 3:
+            sku, option_name, option_value = fields[:3]
+            actual_options.setdefault(sku.lower(), {})[option_name.lower()] = option_value.lower()
+
+    for item, options in expected_options.items():
+        item_key = str(item).lower()
+        item_options = actual_options.get(item_key)
+        if item_options is None:
+            return False
+        for option_name, expected_value in options.items():
+            if item_options.get(str(option_name).lower()) != str(expected_value).lower():
+                return False
+
+    return True
 
 
 def check_chrome_weather_bookmark(env, config):

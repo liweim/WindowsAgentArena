@@ -63,6 +63,10 @@ while [[ $# -gt 0 ]]; do
             json_name=$2
             shift 2
             ;;
+        --diff-lvl)
+            diff_lvl=$2
+            shift 2
+            ;;
         --help)
             echo "Usage: $0 [options]"
             echo "Options:"
@@ -77,9 +81,13 @@ while [[ $# -gt 0 ]]; do
             echo "  --num-workers <num>             The number of workers"
             echo "  --result-dir <dir>              The directory to store the results (default: ./results)"
             echo "  --json-name <name>              The name of the JSON file to use (default: test_all.json)"
+            echo "  --diff-lvl <level>              Benchmark difficulty level passed to the client (default: normal)"
             exit 0
             ;;
         *)
+            echo "Unknown option: $1"
+            exit 1
+            ;;
     esac
 done
 

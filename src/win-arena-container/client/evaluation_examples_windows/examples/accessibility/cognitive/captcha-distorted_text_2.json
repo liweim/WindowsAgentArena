@@ -1,9 +1,9 @@
 {
   "id": "captcha-distorted_text_2",
-  "snapshot": "msedge",
+  "snapshot": "chrome",
   "category": "captcha",
   "difficulty": "easy",
-  "instruction": "Complete the CAPTCHA verification in Microsoft Edge.",
+  "instruction": "Complete the CAPTCHA verification in Google Chrome.",
   "source": "local CAPTCHA service using the Python `captcha` package",
   "gt_steps": [
     "Complete the CAPTCHA verification."
@@ -15,14 +15,14 @@
         "command": [
           "cmd",
           "/c",
-          "start msedge http://host.docker.internal:8765/captcha?type=distorted_text^&seed=access-distorted-text-002^&session=access-captcha-distorted-text"
+          "start chrome http://host.docker.internal:8765/captcha?type=distorted_text^&seed=access-distorted-text-002^&session=access-captcha-distorted-text"
         ]
       }
     }
   ],
   "trajectory": "trajectories\\",
   "related_apps": [
-    "msedge"
+    "chrome"
   ],
   "evaluator": {
     "func": "is_expected_url_pattern_match",

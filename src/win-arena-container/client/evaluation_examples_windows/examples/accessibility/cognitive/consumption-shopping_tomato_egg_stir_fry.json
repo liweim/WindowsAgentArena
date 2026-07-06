@@ -1,0 +1,91 @@
+{
+  "id": "consumption-shopping_tomato_egg_stir_fry",
+  "snapshot": "chrome",
+  "category": "consumption",
+  "difficulty": "medium",
+  "instruction": "You want to cook tomato-and-egg stir-fry at home. You already have the seasonings and pantry staples, so open the shopping website and add only the core ingredients you still need to the cart.",
+  "source": "WebArena self-hosted OneStopShop service",
+  "gt_steps": [
+    "Open the self-hosted shopping website.",
+    "Search or browse for products that satisfy the tomato-and-egg stir-fry goal.",
+    "Add an ordinary chicken egg product to the shopping cart.",
+    "Add a plain tomato product suitable as the tomato base of tomato-and-egg stir-fry to the shopping cart."
+  ],
+  "config": [
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port=1337",
+          "--force-renderer-accessibility"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    },
+    {
+      "type": "sleep",
+      "parameters": {
+        "seconds": 1
+      }
+    },
+    {
+      "type": "reset_shopping_cart",
+      "parameters": {}
+    },
+    {
+      "type": "chrome_open_tabs",
+      "parameters": {
+        "urls_to_open": [
+          "http://host.docker.internal:7770"
+        ]
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "chrome"
+  ],
+  "evaluator": {
+    "func": "is_page_contains_items",
+    "result": {
+      "type": "page_info",
+      "url": "http://host.docker.internal:7770/checkout/cart/",
+      "load_state": "networkidle"
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "item_groups": [
+          [
+            "B07ZS7FJ9Y",
+            "B092H4XZKY",
+            "B078158XZ4"
+          ],
+          [
+            "B074H577S3",
+            "B00IV6N3YK",
+            "B00A0OJ4EY",
+            "B07SKD2MCN",
+            "B07SH9YYHB",
+            "B07SNP3S2Q",
+            "B07SG9YX4C",
+            "B010C9RH3G"
+          ]
+        ]
+      }
+    }
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

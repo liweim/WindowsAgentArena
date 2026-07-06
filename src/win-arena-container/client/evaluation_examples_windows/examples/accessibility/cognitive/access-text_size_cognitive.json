@@ -1,15 +1,15 @@
 {
-  "id": "access-edge_text_size_cognitive",
-  "snapshot": "msedge",
+  "id": "access-text_size_cognitive",
+  "snapshot": "chrome",
   "category": "access",
   "difficulty": "easy",
-  "instruction": "Small web text makes it hard to stay focused while reading. In Microsoft Edge settings, set the default font size to Large.",
-  "source": "Microsoft Edge Settings > Appearance > Fonts > Font size",
+  "instruction": "Small web text makes it hard to stay focused while reading. In Google Chrome settings, set the default font size to Large.",
+  "source": "Google Chrome Settings > Appearance > Customize fonts > Font size",
   "gt_steps": [
-    "Open Microsoft Edge.",
-    "Open Edge Settings.",
+    "Open Google Chrome.",
+    "Open Chrome Settings.",
     "Go to Appearance.",
-    "Find Fonts > Font size.",
+    "Open Customize fonts.",
     "Set the font size to Large."
   ],
   "config": [
@@ -18,7 +18,7 @@
       "parameters": {
         "command": [
           "start",
-          "msedge",
+          "chrome",
           "--remote-debugging-port=1337"
         ]
       }
@@ -36,14 +36,14 @@
   ],
   "trajectory": "trajectories\\",
   "related_apps": [
-    "edge"
+    "chrome"
   ],
   "evaluator": {
     "postconfig": [
       {
         "type": "execute",
         "parameters": {
-          "command": "taskkill /IM msedge.exe /F",
+          "command": "taskkill /IM chrome.exe /F",
           "shell": "true"
         }
       },
@@ -58,15 +58,15 @@
         "parameters": {
           "command": [
             "start",
-            "msedge",
+            "chrome",
             "--remote-debugging-port=1337"
           ]
         }
       }
     ],
-    "func": "check_edge_font_size",
+    "func": "check_font_size",
     "result": {
-      "type": "edge_font_size"
+      "type": "chrome_font_size"
     },
     "expected": {
       "type": "rule",
