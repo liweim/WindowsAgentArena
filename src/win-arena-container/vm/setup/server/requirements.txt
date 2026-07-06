@@ -10,3 +10,4 @@ pygame
 screeninfo
 pygetwindow
 send2trash
+openpyxl

@@ -1,17 +1,17 @@
 {
-  "id": "consumption-ginger_ale",
+  "id": "consumption-dyson_travel_case",
   "snapshot": "chrome",
   "category": "consumption",
   "difficulty": "medium",
   "instruction": "Your roommate sent an audio shopping reminder. Open the audio in Chrome, enable Live Caption, listen for the exact item to buy, then find that item on the shopping website and add it to the shopping cart.",
   "source": "synthetic",
-  "transcript": "Hey Mary, could you do me one grocery favor before the cookout tonight? I already grabbed the limes, mint, and snacks, but I forgot the mixer for the mocktails. Please order Q Mixers ginger ale from the online store, and make sure it is the twenty-four bottle pack. Thanks, that is the one everyone liked last time.",
+  "transcript": "Nina, I found the missing charger, but the Dyson Corrale is still rolling around loose in my suitcase. Could you order a travel case for it from the shopping site? It is the black multifunction box that fits the straightener, the cord, and the heat mat. Please add that one to the cart before I forget again.",
   "gt_steps": [
-    "Open the ginger ale shopping reminder audio file in Chrome.",
+    "Open the Dyson shopping reminder audio file in Chrome.",
     "Turn on Chrome Live Caption.",
-    "Play the audio and use the captions to identify the item to buy: Q Mixers Premium Ginger Ale, 6.7 fl oz, 24 bottles.",
+    "Play the audio and use the captions to identify the item to buy: Hounyoln Case for Dyson Corrale Hair Straightener Travel Bag.",
     "Use the already-open shopping website.",
-    "Find the Q Mixers ginger ale product on the website.",
+    "Find the Hounyoln Dyson Corrale hair straightener travel bag product on the website.",
     "Add the product to the shopping cart."
   ],
   "config": [
@@ -20,8 +20,8 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/Consumption-ginger_ale.mp3",
-            "path": "C:\\Users\\Docker\\Desktop\\Consumption-ginger_ale.mp3"
+            "local_path": "assets/Consumption-dyson_travel_case.mp3",
+            "path": "C:\\Users\\Docker\\Desktop\\Consumption-dyson_travel_case.mp3"
           }
         ]
       }
@@ -56,7 +56,7 @@
       "type": "chrome_open_tabs",
       "parameters": {
         "urls_to_open": [
-          "file:///C:/Users/Docker/Desktop/Consumption-ginger_ale.mp3",
+          "file:///C:/Users/Docker/Desktop/Consumption-dyson_travel_case.mp3",
           "http://host.docker.internal:7770"
         ]
       }
@@ -87,7 +87,7 @@
         "type": "rule",
         "rules": {
           "items": [
-            "B071KC37VD"
+            "B08F9JS6JF"
           ]
         }
       },

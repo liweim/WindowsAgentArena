@@ -3,16 +3,29 @@
   "snapshot": "chrome",
   "category": "consumption",
   "difficulty": "medium",
-  "instruction": "Turn on Chrome Live Caption, watch the opened YouTube product video, identify the product, then search for it on Amazon. Leave the Amazon search results page open.",
-  "source": "https://www.youtube.com/watch?v=8SoY7hiXc4M",
+  "instruction": "Your roommate sent an audio shopping reminder. Open the audio in Chrome, enable Live Caption, listen for the exact item to buy, then find that item on the shopping website and add it to the shopping cart.",
+  "source": "synthetic",
+  "transcript": "Leo, the kayak rental finally confirmed our Saturday slot, so I need to replace the old action cam before we go. Can you order the Insta360 ONE X2 from the shopping site? I want that model for the paddle trip.",
   "gt_steps": [
-    "Enable Chrome Live Caption.",
-    "Watch the YouTube video and identify the product as `Insta360 X5`.",
-    "Open the amazon website.",
-    "Find and open the Insta360 X5 product page.",
-    "Leave the product page open in the active tab."
+    "Open the Insta360 shopping reminder audio file in Chrome.",
+    "Turn on Chrome Live Caption.",
+    "Play the audio and use the captions to identify the item to buy: Insta360 ONE X2 360 Degree Waterproof Action Camera.",
+    "Use the already-open shopping website.",
+    "Find the Insta360 ONE X2 waterproof action camera product on the website.",
+    "Add the product to the shopping cart."
   ],
   "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/Consumption-insta360.mp3",
+            "path": "C:\\Users\\Docker\\Desktop\\Consumption-insta360.mp3"
+          }
+        ]
+      }
+    },
     {
       "type": "launch",
       "parameters": {
@@ -34,16 +47,18 @@
       }
     },
     {
-      "type": "chrome_prepare_youtube_for_live_caption",
+      "type": "sleep",
       "parameters": {
-        "url": "https://www.youtube.com/watch?v=8SoY7hiXc4M",
-        "wait_seconds": 1
+        "seconds": 1
       }
     },
     {
-      "type": "activate_window",
+      "type": "chrome_open_tabs",
       "parameters": {
-        "window_name": "Google Chrome"
+        "urls_to_open": [
+          "file:///C:/Users/Docker/Desktop/Consumption-insta360.mp3",
+          "http://host.docker.internal:7770"
+        ]
       }
     }
   ],
@@ -52,18 +67,39 @@
     "chrome"
   ],
   "evaluator": {
-    "func": "is_expected_url_pattern_match",
-    "result": {
-      "type": "active_tab_info_simple"
-    },
-    "expected": {
-      "type": "rule",
-      "rules": {
-        "expected": [
-          "https?://(www\\.)?amazon\\.[a-z]{2,}(\\.[a-z]{2})?/",
-          "Insta360\\+X5"
-        ]
+    "func": [
+      "is_page_contains_items",
+      "exact_match"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "page_info",
+        "url": "http://host.docker.internal:7770/checkout/cart/",
+        "load_state": "networkidle"
+      },
+      {
+        "type": "live_caption_enabled"
       }
-    }
-  }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "items": [
+            "B08M3B9754"
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "expected": "true"
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
 }

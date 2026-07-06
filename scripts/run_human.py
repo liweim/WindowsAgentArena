@@ -169,6 +169,41 @@ def configure_shopping_base_url(cwd: Path) -> None:
         subprocess.run(cmd, cwd=str(cwd), check=False, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 
+def configure_shopping_admin_base_url(cwd: Path) -> None:
+    base_url = "http://host.docker.internal:7780/"
+    commands = [
+        [
+            "docker",
+            "exec",
+            "shopping_admin",
+            "/var/www/magento2/bin/magento",
+            "setup:store-config:set",
+            f"--base-url={base_url}",
+        ],
+        [
+            "docker",
+            "exec",
+            "shopping_admin",
+            "mysql",
+            "-u",
+            "magentouser",
+            "-pMyPassword",
+            "magentodb",
+            "-e",
+            f"UPDATE core_config_data SET value='{base_url}' WHERE path='web/secure/base_url';",
+        ],
+        [
+            "docker",
+            "exec",
+            "shopping_admin",
+            "/var/www/magento2/bin/magento",
+            "cache:flush",
+        ],
+    ]
+    for cmd in commands:
+        subprocess.run(cmd, cwd=str(cwd), check=False, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+
 def configure_self_hosted_services(container_name: str, cwd: Path) -> None:
     run_command(
         [
@@ -180,7 +215,8 @@ def configure_self_hosted_services(container_name: str, cwd: Path) -> None:
             (
                 "host_ip=$(getent hosts host.docker.internal | awk '{print $1; exit}'); "
                 "if [ -z \"$host_ip\" ]; then host_ip=$(ip route | awk '/default/ {print $3; exit}'); fi; "
-                "curl --silent --max-time 5 http://$host_ip:7770/ >/dev/null || exit 0; "
+                "(curl --silent --max-time 5 http://$host_ip:7770/ >/dev/null || "
+                "curl --silent --max-time 5 http://$host_ip:7780/ >/dev/null) || exit 0; "
                 "HOST_IP=$host_ip python3 - <<'PY'\n"
                 "import os, requests\n"
                 "host_ip = os.environ['HOST_IP']\n"
@@ -296,6 +332,7 @@ def main() -> int:
         print("Waiting for Windows VM to become ready...", flush=True)
         ensure_vm_ready(args.container_name, script_dir)
         configure_shopping_base_url(script_dir)
+        configure_shopping_admin_base_url(script_dir)
         configure_self_hosted_services(args.container_name, script_dir)
         configure_captcha_service_host(args.container_name, script_dir, args.captcha_port)
         print(f"Windows VM is ready. Connect via RDP at localhost:{args.rdp_port}.", flush=True)

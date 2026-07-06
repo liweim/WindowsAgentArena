@@ -1,9 +1,9 @@
 {
   "id": "captcha-count_chars_1",
-  "snapshot": "msedge",
+  "snapshot": "chrome",
   "category": "captcha",
   "difficulty": "easy",
-  "instruction": "Complete the character-count CAPTCHA verification in Microsoft Edge.",
+  "instruction": "Complete the character-count CAPTCHA verification in Google Chrome.",
   "source": "local CAPTCHA service using deterministic random character strings",
   "gt_steps": [
     "Count how many times the target character appears and enter the count."
@@ -15,14 +15,14 @@
         "command": [
           "cmd",
           "/c",
-          "start msedge http://host.docker.internal:8765/captcha?type=count_chars^&seed=access-count-chars-001^&session=access-captcha-count-chars"
+          "start chrome http://host.docker.internal:8765/captcha?type=count_chars^&seed=access-count-chars-001^&session=access-captcha-count-chars"
         ]
       }
     }
   ],
   "trajectory": "trajectories\\",
   "related_apps": [
-    "msedge"
+    "chrome"
   ],
   "evaluator": {
     "func": "is_expected_url_pattern_match",

@@ -1,9 +1,9 @@
 {
   "id": "captcha-patch_select_1",
-  "snapshot": "msedge",
+  "snapshot": "chrome",
   "category": "captcha",
   "difficulty": "medium",
-  "instruction": "Complete the patch-select CAPTCHA verification in Microsoft Edge.",
+  "instruction": "Complete the patch-select CAPTCHA verification in Google Chrome.",
   "source": "local CAPTCHA service using OpenCaptchaWorld patch_select data",
   "gt_steps": [
     "Select all grid squares containing the requested object, then continue."
@@ -15,14 +15,14 @@
         "command": [
           "cmd",
           "/c",
-          "start msedge http://host.docker.internal:8765/captcha?type=patch_select^&seed=access-patch-select-001^&session=access-captcha-patch-select"
+          "start chrome http://host.docker.internal:8765/captcha?type=patch_select^&seed=access-patch-select-001^&session=access-captcha-patch-select"
         ]
       }
     }
   ],
   "trajectory": "trajectories\\",
   "related_apps": [
-    "msedge"
+    "chrome"
   ],
   "evaluator": {
     "func": "is_expected_url_pattern_match",

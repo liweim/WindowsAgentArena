@@ -1,0 +1,76 @@
+{
+  "id": "consumption-shopping_title_elsa_bottle",
+  "snapshot": "chrome",
+  "category": "consumption",
+  "difficulty": "easy",
+  "instruction": "You are packing a lunch bag for a child and need an Elsa water bottle. Open the shopping website, find the product whose title matches that request, and add it to the cart.",
+  "source": "WebArena self-hosted OneStopShop service",
+  "gt_steps": [
+    "Open the self-hosted shopping website.",
+    "Find the Elsa water bottle product.",
+    "Add `Disney Frozen 2 Elsa 24 oz. Tritan Water Bottle` to the shopping cart."
+  ],
+  "config": [
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port=1337",
+          "--force-renderer-accessibility"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    },
+    {
+      "type": "sleep",
+      "parameters": {
+        "seconds": 1
+      }
+    },
+    {
+      "type": "reset_shopping_cart",
+      "parameters": {}
+    },
+    {
+      "type": "chrome_open_tabs",
+      "parameters": {
+        "urls_to_open": [
+          "http://host.docker.internal:7770"
+        ]
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "chrome"
+  ],
+  "evaluator": {
+    "func": "is_page_contains_items",
+    "result": {
+      "type": "page_info",
+      "url": "http://host.docker.internal:7770/checkout/cart/",
+      "load_state": "networkidle"
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "items": [
+          "B09LMSGJW6"
+        ]
+      }
+    }
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

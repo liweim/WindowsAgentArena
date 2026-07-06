@@ -1,12 +1,12 @@
 {
   "id": "service-passport_documents_note",
-  "snapshot": "msedge",
+  "snapshot": "chrome",
   "category": "service",
   "difficulty": "medium",
   "instruction": "Government service pages can be overwhelming. Open the State Department passport renewal page and use Sticky Notes to list the three ways the page says you can renew. Copy the option names exactly.",
   "source": "https://travel.state.gov/content/travel/en/passports/have-passport/renew.html",
   "gt_steps": [
-    "Open the State Department passport renewal page in Microsoft Edge.",
+    "Open the State Department passport renewal page in Google Chrome.",
     "Find the section that lists renewal options.",
     "Open Sticky Notes.",
     "Write the three option names exactly: `Renew Online`, `Renew by Mail`, and `Renew in Person`."
@@ -18,7 +18,7 @@
         "command": [
           "cmd",
           "/c",
-          "start msedge https://travel.state.gov/content/travel/en/passports/have-passport/renew.html"
+          "start chrome https://travel.state.gov/content/travel/en/passports/have-passport/renew.html"
         ]
       }
     },
@@ -38,7 +38,7 @@
   ],
   "trajectory": "trajectories\\",
   "related_apps": [
-    "msedge",
+    "chrome",
     "sticky_notes"
   ],
   "evaluator": {

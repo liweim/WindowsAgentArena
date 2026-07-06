@@ -1,9 +1,9 @@
 {
   "id": "captcha-image_recognition_2",
-  "snapshot": "msedge",
+  "snapshot": "chrome",
   "category": "captcha",
   "difficulty": "easy",
-  "instruction": "Complete the image-recognition CAPTCHA verification in Microsoft Edge.",
+  "instruction": "Complete the image-recognition CAPTCHA verification in Google Chrome.",
   "source": "local CAPTCHA service using OpenCaptchaWorld image_recognition data",
   "gt_steps": [
     "Select every image matching the prompt, then continue."
@@ -15,14 +15,14 @@
         "command": [
           "cmd",
           "/c",
-          "start msedge http://host.docker.internal:8765/captcha?type=image_recognition^&seed=access-image-recognition-002^&session=access-captcha-image-recognition"
+          "start chrome http://host.docker.internal:8765/captcha?type=image_recognition^&seed=access-image-recognition-002^&session=access-captcha-image-recognition"
         ]
       }
     }
   ],
   "trajectory": "trajectories\\",
   "related_apps": [
-    "msedge"
+    "chrome"
   ],
   "evaluator": {
     "func": "is_expected_url_pattern_match",

@@ -1,9 +1,9 @@
 {
   "id": "captcha-audio_1",
-  "snapshot": "msedge",
+  "snapshot": "chrome",
   "category": "captcha",
   "difficulty": "easy",
-  "instruction": "Complete the audio CAPTCHA verification in Microsoft Edge.",
+  "instruction": "Complete the audio CAPTCHA verification in Google Chrome.",
   "source": "local CAPTCHA service using the Python `captcha` package audio generator",
   "gt_steps": [
     "Listen to the audio CAPTCHA and type the five-digit verification code."
@@ -15,14 +15,14 @@
         "command": [
           "cmd",
           "/c",
-          "start msedge http://host.docker.internal:8765/captcha?type=audio^&seed=access-audio-001^&session=access-captcha-audio"
+          "start chrome http://host.docker.internal:8765/captcha?type=audio^&seed=access-audio-001^&session=access-captcha-audio"
         ]
       }
     }
   ],
   "trajectory": "trajectories\\",
   "related_apps": [
-    "msedge"
+    "chrome"
   ],
   "evaluator": {
     "func": "is_expected_url_pattern_match",

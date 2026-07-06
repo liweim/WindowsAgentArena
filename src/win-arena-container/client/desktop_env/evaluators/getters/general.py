@@ -17,10 +17,12 @@ def get_vm_command_line(env, config: Dict[str, str]):
     logger.info(f"COMMAND: {command}")
     logger.info(f"SHELL: {shell}")
     response = requests.post(f"http://{vm_ip}:{port}/execute", json={"command": command, "shell": shell})
-    # logger.info(f"VM CMD LINE: {response.json}")
     # response = requests.post("/execute", json={"command": command, "shell": shell})
     if response.status_code == 200:
-        return response.json()["output"]
+        result = response.json()
+        print("VM CMD LINE:", result)
+        logger.info("VM CMD LINE: %s", result)
+        return result["output"]
         # logger.info(f"CMD and SHELL: {command, shell}")
         # logger.info(f"RESPONSE succ: {response}")
         # return response.json()
