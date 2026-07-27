@@ -1,0 +1,32 @@
+{
+  "id": "access-windows_magnifier_open",
+  "_comment": "",
+  "snapshot": "base_setup",
+  "category": "access",
+  "difficulty": "easy",
+  "instruction": "Open magnifier UI with Windows Key + Plus Sign (+).",
+  "source": "human",
+  "gt_steps": [
+    "Press Windows Key + Plus Sign (+).",
+    "Magnifier UI shows up."
+  ],
+  "config": [],
+  "trajectory": "trajectories/",
+  "related_apps": [
+    "settings",
+    "basic_os"
+  ],
+  "evaluator": {
+    "func": "check_magnifier_ui_open",
+    "result": {
+      "type": "access_tree_and_process"
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {}
+    }
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

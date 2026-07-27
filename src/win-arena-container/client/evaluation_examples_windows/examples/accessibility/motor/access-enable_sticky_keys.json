@@ -1,0 +1,43 @@
+{
+  "id": "access-enable_sticky_keys",
+  "manually_evaluated": false,
+  "_comment": "The `instruction` is too explicit and spells out all the operational steps. I suggest making it more high-level.",
+  "snapshot": "windows",
+  "category": "access",
+  "difficulty": "easy",
+  "instruction": "Open Accessibility settings, navigate to Keyboard settings, enable Sticky Keys, and leave Sticky Keys turned on.",
+  "source": "Settings > Accessibility > Keyboard > Sticky Keys",
+  "gt_steps": [
+    "Open Windows settings.",
+    "Navigate to Keyboard accessibility settings.",
+    "Turn on Sticky Keys.",
+    "Keep the Sticky Keys enabled."
+  ],
+  "config": [],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "settings"
+  ],
+  "evaluator": {
+    "func": "check_include_exclude",
+    "result": {
+      "type": "vm_command_line",
+      "command": "powershell -NoProfile -Command \"$flags = [int](Get-ItemPropertyValue -Path 'HKCU:\\Control Panel\\Accessibility\\StickyKeys' -Name 'Flags'); if (($flags -band 1) -eq 1) { Write-Output 'STICKY_KEYS_ENABLED' } else { Write-Output 'STICKY_KEYS_DISABLED' }\"",
+      "shell": true
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "include": [
+          "STICKY_KEYS_ENABLED"
+        ],
+        "exclude": [
+          "STICKY_KEYS_DISABLED"
+        ]
+      }
+    }
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

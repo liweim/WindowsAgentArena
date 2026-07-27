@@ -1,12 +1,13 @@
 {
-  "id": "consumption-SwingSet",
+  "id": "consumption-SwingSet_price_filter",
+  "_comment": "Use the self-hosted shopping service, since the data is more stable.",
   "snapshot": "chrome",
   "category": "consumption",
   "difficulty": "easy",
-  "instruction": "Turn on Screen Reader. Open https://www.smythstoys.com/, and search for swing set under 49.99 pounds. Leave the search result page open",
+  "instruction": "Turn on Window Narrator from Accessibility Setting. Open https://www.smythstoys.com/, and search for swing set under 49.99 pounds. Leave the search result page open",
   "source": "https://www.jbidigital.co.uk/blog/jbis-5-favourite-examples-of-accessible-and-inaccessible-websites/",
   "gt_steps": [
-    "Enable chrome screen reader",
+    "Enable Window's Narrator.",
     "Open https://www.smythstoys.com/",
     "Find swing set",
     "Filter the price to be under 49.99 pounds",
@@ -47,13 +48,13 @@
   ],
   "evaluator": {
     "func": [
-      "exact_match",
+      "check_narrator_enabled",
       "is_expected_url_pattern_match"
     ],
     "conj": "and",
     "result": [
       {
-        "type": "screen_reader_enabled"
+        "type": "narrator_status"
       },
       {
         "type": "active_tab_info_simple"
@@ -62,9 +63,7 @@
     "expected": [
       {
         "type": "rule",
-        "rules": {
-          "expected": "true"
-        }
+        "rules": {}
       },
       {
         "type": "rule",

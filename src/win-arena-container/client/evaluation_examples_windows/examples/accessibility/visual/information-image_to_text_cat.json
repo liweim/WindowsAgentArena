@@ -1,0 +1,75 @@
+{
+  "id": "information-image_to_text_cat",
+  "_comment": "The evaluator `points` list contains redundant entries and I suggest to use existing webpage with image.",
+  "snapshot": "libreoffice_writer",
+  "category": "information",
+  "difficulty": "medium",
+  "instruction": "The image in this file does not have alt text for voice over feature. Add descriptive alt text for the image. Save the file after adding alt text, and if prompt shows up to choose between odt and word format, choose word format to save the file.",
+  "source": "https://www.acquia.com/blog/accessibility-issues-visual-impairmenthttps://www.acquia.com/blog/accessibility-issues-visual-impairment",
+  "gt_steps": [
+    "Close if the pop up window for Libre tour shows up.",
+    "Select the image (simply click the image to focus).",
+    "Go to Format > Alt Text in the tabs.",
+    "Fill out the alt text description as 'A cat sitting on the hood of a red car photo'.",
+    "Click 'OK' and save the file.",
+    "If prompt shows up to choose between odt and word format, choose word format to save the file."
+  ],
+  "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/information-image_to_text_cat.docx",
+            "path": "C:\\Users\\Docker\\Desktop\\information-image_to_text_cat.docx"
+          }
+        ]
+      }
+    },
+    {
+      "type": "open",
+      "parameters": {
+        "path": "C:\\Users\\Docker\\Desktop\\information-image_to_text_cat.docx"
+      }
+    }
+  ],
+  "trajectory": "trajectories/",
+  "related_apps": [
+    "libreoffice_writer"
+  ],
+  "evaluator": {
+    "func": "check_docx_image_alt_text",
+    "result": {
+      "type": "vm_file",
+      "path": "C:\\Users\\Docker\\Desktop\\information-image_to_text_cat.docx",
+      "dest": "information-image_to_text_cat.docx"
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+          "ignore_case": true,
+          "points": [
+            [
+              "cat",
+              "the cat"
+            ],
+            [
+              "red"
+            ],
+            [
+              "car",
+              "the car",
+              "hood of the car"
+            ],
+            [
+              "sit",
+              "sitting"
+            ]
+          ]
+        }
+    }
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

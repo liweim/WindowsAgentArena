@@ -1,23 +1,19 @@
-Electricity Bill Information
+https://economics.ucla.edu/wp-content/uploads/2018/02/Handbook.pdf
+I've downloaded the pdf and stored it in assets folder and load the pdf into chrome in setup, so create the following task
 
-Using the On-Screen Keyboard, find information on how to pay an electricity bill online and save the payment methods in a text file on the Desktop.
+open sticky keys, find the minimum pre-major GPA requirements for the UCLA Economics major.
 
-Download Bank Statement Guide
+open filter keys, Find the coursework submission information and record the maximum upload size in notepad and save it as file called maxSizeAssignement.txt
 
-Using the On-Screen Keyboard, find instructions for downloading a bank statement and save the webpage as a PDF.
+Find the identity documents accepted for opening a bank account and record three primary and three secondary documents.
+https://www.faypwc.com/managing-your-bill/
 
-Save Banking Support Contact Details
+World Happiness Report
 
-Using the On-Screen Keyboard, find customer support contact information for statement inquiries and save it in a document.
 
-Download Application Form
+enable on screen keyboard, in reddit webiste, 
+search "Passport Application Locations?" in the search bar and 
+confirm confirm can passport registration/Application
+can be done through post office or not by checking the comments.
+Type "Yes" if yes and 'No' if not in passportApplicaton.txt file.
 
-Using the On-Screen Keyboard, find an application form on a government website and save the PDF to the Desktop.
-
-Locate Passport Renewal Information
-
-Using the On-Screen Keyboard, search for passport renewal requirements and save them in a text file.
-
-Find Identity Verification Requirements
-
-Using the On-Screen Keyboard, locate information about identity verification requirements for opening a bank account and save the accepted documents list.

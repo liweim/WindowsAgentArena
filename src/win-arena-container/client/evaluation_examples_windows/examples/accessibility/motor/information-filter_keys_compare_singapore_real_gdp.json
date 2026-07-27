@@ -1,0 +1,108 @@
+{
+  "id": "information-filter_keys_compare_singapore_real_gdp",
+  "manually_evaluated": false,
+  "snapshot": "chrome",
+  "category": "information",
+  "difficulty": "medium",
+  "instruction": "Enable Windows Filter Keys as a motor accessibility aid and keep it enabled throughout the task. Two Economic Survey of Singapore PDF documents are already open in Chrome. In the 2024 document, find the Real GDP growth percentage for 2024. In the 2025 document, find the Real GDP growth percentage for 2025. Compare the two percentages and calculate the difference. Open Notepad and write only the difference percentage, without any additional words or explanation. Save the file as `differenceGDP.txt` on the Desktop.",
+  "source": [
+    "Local PDF: assets/FullReport_AES2024.pdf",
+    "Local PDF: assets/FullReport_AES2025.pdf"
+  ],
+  "gt_steps": [
+    "Open Windows Accessibility keyboard settings.",
+    "Navigate to the Filter Keys settings.",
+    "Enable Filter Keys and keep it enabled.",
+    "Return to Chrome.",
+    "Open or select the Economic Survey of Singapore 2024 PDF tab.",
+    "Find the Real GDP growth percentage for 2024.",
+    "Identify the 2024 Real GDP growth percentage as 4.4%.",
+    "Open or select the Economic Survey of Singapore 2025 PDF tab.",
+    "Find the Real GDP growth percentage for 2025.",
+    "Identify the 2025 Real GDP growth percentage as 5.0%.",
+    "Calculate the difference between 5.0% and 4.4% as 0.6 percentage points.",
+    "Open Notepad.",
+    "Write only `0.6%` in the file.",
+    "Save the file as `differenceGDP.txt` on the Desktop.",
+    "Leave the saved file on the Desktop.",
+    "Leave Filter Keys enabled."
+  ],
+  "config": [
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port=1337",
+          "--force-renderer-accessibility",
+          "file:///C:/Users/Docker/assets/FullReport_AES2024.pdf",
+          "file:///C:/Users/Docker/assets/FullReport_AES2025.pdf"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    },
+    {
+      "type": "activate_window",
+      "parameters": {
+        "window_name": "Google Chrome"
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "settings",
+    "chrome",
+    "notepad"
+  ],
+  "evaluator": {
+    "func": [
+      "check_include_exclude",
+      "exact_match"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "vm_command_line",
+        "command": "powershell -NoProfile -Command \"$path='HKCU:\\Control Panel\\Accessibility\\Keyboard Response'; try { $flags=(Get-ItemProperty -Path $path -Name Flags -ErrorAction Stop).Flags; $value=[int]$flags; if (($value -band 1) -eq 1) { Write-Output 'FILTER_KEYS_ENABLED' } else { Write-Output 'FILTER_KEYS_DISABLED' } } catch { Write-Output 'FILTER_KEYS_STATE_UNAVAILABLE' }\"",
+        "shell": true
+      },
+      {
+        "type": "is_file_saved_desktop",
+        "filename": "differenceGDP.txt",
+        "textcontent": "0.6%"
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "include": [
+            "FILTER_KEYS_ENABLED"
+          ],
+          "exclude": [
+            "FILTER_KEYS_DISABLED",
+            "FILTER_KEYS_STATE_UNAVAILABLE"
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "expected": "true"
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

@@ -1,0 +1,114 @@
+{
+  "id": "mobility-osk_nearest_accessible_beach",
+  "manually_evaluated": false,
+  "snapshot": "chrome",
+  "category": "mobility",
+  "difficulty": "hard",
+  "instruction": "Enable the Windows On-Screen Keyboard as a motor accessibility aid and keep it open throughout the task. I live in the Bondi, Australia area. From the provided Accessible Beaches NSW directory, use the map to find the nearest beach within 5 km of my area. Read more about the beach and save the beach name and all available accessibility features in a text file named `NearestBeach.txt` on the Desktop. Write the answer in 7 lines, with one item per line. Do not paraphrase the accessibility features.",
+  "source": "https://accessiblebeaches.com/beach-directory/category/NSW",
+  "gt_steps": [
+    "Enable the Windows On-Screen Keyboard and keep it open.",
+    "Review the Accessible Beaches NSW directory already open in Chrome.",
+    "Use the directory map to find the nearest listed beach within 5 km of Bondi.",
+    "Identify Bondi Beach as the nearest listed beach.",
+    "Open the Bondi Beach details page using Read More.",
+    "Find all available accessibility features.",
+    "Open Notepad.",
+    "Write `Bondi Beach` on the first line.",
+    "Write `Accessible Beach Matting` on the second line.",
+    "Write `Beach Wheelchair availability` on the third line.",
+    "Write `Accessible Bathroom` on the fourth line.",
+    "Write `Accessible Shower` on the fifth line.",
+    "Write `Accessible Parking` on the sixth line.",
+    "Write `Changing Places facility` on the seventh line.",
+    "Do not paraphrase any of the accessibility features.",
+    "Save the file as `NearestBeach.txt` on the Desktop.",
+    "Leave the saved file on the Desktop.",
+    "Leave the On-Screen Keyboard open."
+  ],
+  "config": [
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port=1337",
+          "--force-renderer-accessibility",
+          "https://accessiblebeaches.com/beach-directory/category/NSW"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    },
+    {
+      "type": "activate_window",
+      "parameters": {
+        "window_name": "Google Chrome"
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "on_screen_keyboard",
+    "chrome",
+    "notepad"
+  ],
+  "evaluator": {
+    "func": [
+      "check_include_exclude",
+      "multi_answer_file_saved_desktop"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "vm_command_line",
+        "command": "powershell -NoProfile -Command \"$osk = Get-Process -Name osk -ErrorAction SilentlyContinue | Where-Object { $_.MainWindowHandle -ne 0 }; if ($osk) { Write-Output 'OSK_OPEN' } else { Write-Output 'OSK_NOT_OPEN' }\"",
+        "shell": true
+      },
+      {
+        "type": "multi_answer_file_saved_desktop",
+        "filename": "NearestBeach.txt",
+        "answers": [
+          "Bondi Beach",
+          "Accessible Beach Matting",
+          "Beach Wheelchair availability",
+          "Accessible Bathroom",
+          "Accessible Shower",
+          "Accessible Parking",
+          "Changing Places facility"
+        ],
+        "case_sensitive": false
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "include": [
+            "OSK_OPEN"
+          ],
+          "exclude": [
+            "OSK_NOT_OPEN"
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "expected": 1.0
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "medium"
+}

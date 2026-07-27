@@ -1,0 +1,105 @@
+{
+  "id": "information-sticky_keys_ucla_economics_premajor_gpa",
+  "manually_evaluated": false,
+  "snapshot": "chrome",
+  "category": "information",
+  "difficulty": "easy",
+  "instruction": "Enable Windows Sticky Keys as a motor accessibility aid and keep it enabled throughout the task. In the UCLA Economics Undergraduate Handbook PDF already open in Chrome, find the minimum pre-major GPA requirement for the UCLA Economics major. Save the minimum pre-major GPA in a text file named `EconomicsGPA.txt` on the Desktop.",
+  "source": "Local PDF: assets/UCLA Handbook.pdf",
+  "gt_steps": [
+    "Open Windows Accessibility keyboard settings.",
+    "Enable Sticky Keys and keep it enabled.",
+    "Return to the UCLA Economics Undergraduate Handbook PDF already open in Chrome.",
+    "Find the UCLA Economics major requirements.",
+    "Find the minimum pre-major GPA requirement.",
+    "Identify the minimum pre-major GPA as 2.5.",
+    "Open Notepad.",
+    "Write the minimum pre-major GPA in the text file.",
+    "Save the file as `EconomicsGPA.txt` on the Desktop.",
+    "Leave the saved file on the Desktop.",
+    "Leave Sticky Keys enabled."
+  ],
+  "config": [
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port=1337",
+          "--force-renderer-accessibility",
+          "file:///C:/Users/Docker/assets/UCLA%20Handbook.pdf"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    },
+    {
+      "type": "activate_window",
+      "parameters": {
+        "window_name": "Google Chrome"
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "settings",
+    "chrome",
+    "notepad"
+  ],
+  "evaluator": {
+    "func": [
+      "check_include_exclude",
+      "check_include_exclude"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "vm_command_line",
+        "command": "powershell -NoProfile -Command \"$path='HKCU:\\Control Panel\\Accessibility\\StickyKeys'; try { $flags=(Get-ItemProperty -Path $path -Name Flags -ErrorAction Stop).Flags; $value=[int]$flags; if (($value -band 1) -eq 1) { Write-Output 'STICKY_KEYS_ENABLED' } else { Write-Output 'STICKY_KEYS_DISABLED' } } catch { Write-Output 'STICKY_KEYS_STATE_UNAVAILABLE' }\"",
+        "shell": true
+      },
+      {
+        "type": "vm_command_line",
+        "command": "powershell -NoProfile -Command \"$file='C:\\Users\\Docker\\Desktop\\EconomicsGPA.txt'; if (-not (Test-Path $file)) { Write-Output 'FILE_MISSING'; exit }; $c=Get-Content $file -Raw; if ($c -match '(?<![0-9])2[\\.,]5(?![0-9])') { Write-Output 'CORRECT_GPA_FOUND' } else { Write-Output 'INCORRECT_GPA' }\"",
+        "shell": true
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "include": [
+            "STICKY_KEYS_ENABLED"
+          ],
+          "exclude": [
+            "STICKY_KEYS_DISABLED",
+            "STICKY_KEYS_STATE_UNAVAILABLE"
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "include": [
+            "CORRECT_GPA_FOUND"
+          ],
+          "exclude": [
+            "FILE_MISSING",
+            "INCORRECT_GPA"
+          ]
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

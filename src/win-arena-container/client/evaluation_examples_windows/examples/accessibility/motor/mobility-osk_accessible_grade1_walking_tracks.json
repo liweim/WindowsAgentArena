@@ -1,0 +1,97 @@
+{
+  "id": "mobility-osk_accessible_grade1_walking_tracks",
+  "manually_evaluated": false,
+  "snapshot": "chrome",
+  "category": "mobility",
+  "difficulty": "medium",
+  "instruction": "Enable the Windows On-Screen Keyboard as a motor accessibility aid and keep it open throughout the task. From the provided NSW National Parks webpage, find all walk titles that are Grade 1 and have a maximum listed walking time of 45 minutes or less. Save the walk titles in a text file named `AccessibleTracks.txt` on the Desktop.",
+  "source": "https://www.nationalparks.nsw.gov.au/access-friendly/access-friendly-walking-tracks",
+  "gt_steps": [
+    "Enable the Windows On-Screen Keyboard and keep it open.",
+    "Review the NSW National Parks access-friendly walking tracks webpage already open in Chrome.",
+    "Check the listed time and grade information for the walking tracks.",
+    "Find the walk titles that are Grade 1 and have a maximum listed walking time of 45 minutes or less.",
+    "Identify Three Sisters walk as one of the matching tracks.",
+    "Open Notepad.",
+    "Write the identified walk titles in the text file.",
+    "Save the file as `AccessibleTracks.txt` on the Desktop.",
+    "Leave the saved file on the Desktop.",
+    "Leave the On-Screen Keyboard open."
+  ],
+  "config": [
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port=1337",
+          "--force-renderer-accessibility",
+          "https://www.nationalparks.nsw.gov.au/access-friendly/access-friendly-walking-tracks"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    },
+    {
+      "type": "activate_window",
+      "parameters": {
+        "window_name": "Google Chrome"
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "on_screen_keyboard",
+    "chrome",
+    "notepad"
+  ],
+  "evaluator": {
+    "func": [
+      "check_include_exclude",
+      "exact_match"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "vm_command_line",
+        "command": "powershell -NoProfile -Command \"$osk = Get-Process -Name osk -ErrorAction SilentlyContinue | Where-Object { $_.MainWindowHandle -ne 0 }; if ($osk) { Write-Output 'OSK_OPEN' } else { Write-Output 'OSK_NOT_OPEN' }\"",
+        "shell": true
+      },
+      {
+        "type": "is_file_saved_desktop",
+        "filename": "AccessibleTracks.txt",
+        "textcontent": "Three Sisters walk"
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "include": [
+            "OSK_OPEN"
+          ],
+          "exclude": [
+            "OSK_NOT_OPEN"
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "expected": "true"
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "medium"
+}

@@ -1,0 +1,119 @@
+{
+  "id": "service-mouse_keys_open_voting_links",
+  "manually_evaluated": false,
+  "snapshot": "chrome",
+  "category": "service",
+  "difficulty": "medium",
+  "instruction": "Enable Windows Mouse Keys as a motor accessibility aid and keep it enabled throughout the task. On the Reddit website, search for the post titled \"How do I vote?\". Read the comments and open every website link mentioned in the comments in separate new Chrome tabs. Leave both website tabs open and leave Mouse Keys enabled.",
+  "source": "WebArena Reddit website",
+  "gt_steps": [
+    "Open Windows Accessibility mouse settings.",
+    "Enable Mouse Keys.",
+    "Keep Mouse Keys enabled throughout the task.",
+    "Open the Reddit website in Chrome.",
+    "Use the Reddit search bar to search for `How do I vote?`.",
+    "Open the post titled `How do I vote?`.",
+    "Read the comments under the post.",
+    "Find the first link: `https://vote.sos.ri.gov/Home/UpdateVoterRecord?ActiveFlag=0`.",
+    "Open the first link in a new Chrome tab.",
+    "Find the second link: `https://vote.sos.ri.gov/`.",
+    "Open the second link in another new Chrome tab.",
+    "Leave both linked website tabs open.",
+    "Leave Mouse Keys enabled."
+  ],
+  "config": [
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port=1337",
+          "--force-renderer-accessibility"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    },
+    {
+      "type": "sleep",
+      "parameters": {
+        "seconds": 1
+      }
+    },
+    {
+      "type": "chrome_open_tabs",
+      "parameters": {
+        "urls_to_open": [
+          "http://host.docker.internal:9999"
+        ]
+      }
+    },
+    {
+      "type": "activate_window",
+      "parameters": {
+        "window_name": "Google Chrome"
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "settings",
+    "chrome"
+  ],
+  "evaluator": {
+    "func": [
+      "check_include_exclude",
+      "check_include_exclude"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "vm_command_line",
+        "command": "powershell -NoProfile -Command \"$flags=[int](Get-ItemPropertyValue -Path 'HKCU:\\Control Panel\\Accessibility\\MouseKeys' -Name 'Flags' -ErrorAction SilentlyContinue); if (($flags -band 1) -eq 1) { Write-Output 'MOUSE_KEYS_ENABLED' } else { Write-Output 'MOUSE_KEYS_DISABLED' }\"",
+        "shell": true
+      },
+      {
+        "type": "vm_command_line",
+        "command": "powershell -NoProfile -Command \"$tabs=Invoke-RestMethod -Uri 'http://localhost:9222/json'; $urls=$tabs | ForEach-Object { $_.url }; if ($urls -contains 'https://vote.sos.ri.gov/Home/UpdateVoterRecord?ActiveFlag=0') { Write-Output 'VOTER_RECORD_LINK_OPEN' } else { Write-Output 'VOTER_RECORD_LINK_MISSING' }; if (($urls -contains 'https://vote.sos.ri.gov/') -or ($urls -contains 'https://vote.sos.ri.gov')) { Write-Output 'VOTING_HOME_LINK_OPEN' } else { Write-Output 'VOTING_HOME_LINK_MISSING' }\"",
+        "shell": true
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "include": [
+            "MOUSE_KEYS_ENABLED"
+          ],
+          "exclude": [
+            "MOUSE_KEYS_DISABLED"
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "include": [
+            "VOTER_RECORD_LINK_OPEN",
+            "VOTING_HOME_LINK_OPEN"
+          ],
+          "exclude": [
+            "VOTER_RECORD_LINK_MISSING",
+            "VOTING_HOME_LINK_MISSING"
+          ]
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

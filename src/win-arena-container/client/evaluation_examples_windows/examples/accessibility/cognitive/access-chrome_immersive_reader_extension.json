@@ -1,0 +1,64 @@
+{
+  "id": "access-chrome_immersive_reader_extension",
+  "snapshot": "chrome",
+  "category": "access",
+  "difficulty": "medium",
+  "instruction": "Help me install the Immersive Reader extension from the Chrome Web Store.",
+  "source": "https://chromewebstore.google.com/search/Immersive%20Reader",
+  "gt_steps": [
+    "Open Google Chrome.",
+    "Go to the Chrome Web Store.",
+    "Search for Immersive Reader.",
+    "Open the Immersive Reader extension listing.",
+    "Add the extension to Chrome.",
+    "Confirm the installation prompt."
+  ],
+  "config": [
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "start",
+          "chrome"
+        ]
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "chrome"
+  ],
+  "evaluator": {
+    "postconfig": [
+      {
+        "type": "execute",
+        "parameters": {
+          "command": "taskkill /IM chrome.exe /F",
+          "shell": "true"
+        }
+      },
+      {
+        "type": "sleep",
+        "parameters": {
+          "seconds": 2
+        }
+      }
+    ],
+    "func": "is_expected_installed_extensions",
+    "result": {
+      "type": "find_installed_extension_name"
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "match": "substring",
+        "expected": [
+          "immersive reader"
+        ]
+      }
+    }
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "medium"
+}

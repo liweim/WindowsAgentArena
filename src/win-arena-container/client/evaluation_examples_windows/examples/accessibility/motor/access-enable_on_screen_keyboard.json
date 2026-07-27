@@ -1,0 +1,41 @@
+{
+  "id": "access-enable_on_screen_keyboard",
+  "manually_evaluated": false,
+  "_comment": "",
+  "snapshot": "windows",
+  "category": "access",
+  "difficulty": "easy",
+  "instruction": "Enable the Windows On-Screen Keyboard and keep it enabled.",
+  "source": "Settings > Accessibility > Keyboard > On-Screen Keyboard",
+  "gt_steps": [
+    "Open Windows settings.",
+    "Navigate to Keyboard accessibility settings.",
+    "Turn on the On-Screen Keyboard.",
+    "Keep the On-Screen Keyboard enabled."
+  ],
+  "config": [],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "on_screen_keyboard"
+  ],
+  "evaluator": {
+    "func": "check_include_exclude",
+    "result": {
+      "type": "vm_command_line",
+      "command": "powershell -Command \"if (Get-Process osk -ErrorAction SilentlyContinue) { Write-Output 'OSK_OPEN' }\"",
+      "shell": true
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "include": [
+          "OSK_OPEN"
+        ],
+        "exclude": []
+      }
+    }
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

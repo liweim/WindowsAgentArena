@@ -1,0 +1,105 @@
+{
+  "id": "health-mouse_keys_download_allied_health_form",
+  "manually_evaluated": false,
+  "_comment": "You need to download the file locally so that the evaluator can verify whether the local file and the file in the VM are exactly identical. The current evaluator is too weak.",
+  "snapshot": "windows",
+  "category": "health",
+  "difficulty": "medium",
+  "instruction": "Enable Mouse Keys as a motor accessibility aid and keep it enabled. Go to the SIRA website(https://www.sira.nsw.gov.au/), find the Allied Health Treatment Request form, download the PDF, and save it on the Desktop as `AlliedHeathTreatmentRequestForm.pdf`.",
+  "source": "https://www.sira.nsw.gov.au/",
+  "gt_steps": [
+    "Open Windows Settings.",
+    "Navigate to Accessibility.",
+    "Open Mouse accessibility settings.",
+    "Turn on Mouse Keys and keep it enabled.",
+    "Open Google Chrome.",
+    "Go to the SIRA website.",
+    "Navigate through the SIRA website to find the Allied Health Treatment Request form.",
+    "Open the Allied Health Treatment Request form.",
+    "Download the correct PDF form.",
+    "Save the PDF on the Desktop as `AlliedHeathTreatmentRequestForm.pdf`.",
+    "Leave Mouse Keys enabled."
+  ],
+  "config": [
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port=1337",
+          "--force-renderer-accessibility",
+          "https://www.sira.nsw.gov.au/"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    },
+    {
+      "type": "activate_window",
+      "parameters": {
+        "window_name": "Google Chrome"
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "settings",
+    "chrome"
+  ],
+  "evaluator": {
+    "func": [
+      "check_include_exclude",
+      "check_include_exclude"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "vm_command_line",
+        "command": "powershell -NoProfile -Command \"$flags = [int](Get-ItemPropertyValue -Path 'HKCU:\\Control Panel\\Accessibility\\MouseKeys' -Name 'Flags' -ErrorAction SilentlyContinue); if (($flags -band 1) -eq 1) { Write-Output 'MOUSE_KEYS_ENABLED' } else { Write-Output 'MOUSE_KEYS_DISABLED' }\"",
+        "shell": true
+      },
+      {
+        "type": "vm_command_line",
+        "command": "powershell -NoProfile -Command \"$file='C:\\Users\\Docker\\Desktop\\AlliedHeathTreatmentRequestForm.pdf'; if (-not (Test-Path $file)) { Write-Output 'FILE_MISSING'; exit }; Write-Output 'FILE_EXISTS'; $txt=Join-Path $env:TEMP 'allied_health_form.txt'; pdftotext $file $txt; $content=Get-Content $txt -Raw; if ($content -match '(?i)Allied\\s+Health\\s+Treatment') { Write-Output 'PDF_CONTENT_CORRECT' } else { Write-Output 'PDF_CONTENT_INCORRECT' }; Remove-Item $txt -ErrorAction SilentlyContinue\"",
+        "shell": true
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "include": [
+            "MOUSE_KEYS_ENABLED"
+          ],
+          "exclude": [
+            "MOUSE_KEYS_DISABLED"
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "include": [
+            "FILE_EXISTS",
+            "PDF_CONTENT_CORRECT"
+          ],
+          "exclude": [
+            "FILE_MISSING",
+            "PDF_CONTENT_INCORRECT"
+          ]
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "medium"
+}

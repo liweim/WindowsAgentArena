@@ -1,0 +1,47 @@
+{
+  "id": "access-enable_clicklock",
+  "manually_evaluated": false,
+  "_comment": "The `instruction` is too explicit and spells out all the operational steps. I suggest making it more high-level, for example: “Enable mouse ClickLock.",
+  "snapshot": "windows",
+  "category": "access",
+  "difficulty": "easy",
+  "instruction": "Open Mouse settings, open Additional mouse settings, enable ClickLock, apply the changes, and leave ClickLock turned on.",
+  "source": "Settings > Bluetooth & devices > Mouse > Additional mouse settings > Buttons > Turn on ClickLock",
+  "gt_steps": [
+    "Open Windows settings.",
+    "Navigate to Bluetooth & devices and then Mouse.",
+    "Select Additional mouse settings.",
+    "Open the Buttons tab.",
+    "Select Turn on ClickLock.",
+    "Click Apply and Click OK.",
+    "Leave ClickLock enabled."
+  ],
+  "config": [],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "settings",
+    "control_panel"
+  ],
+  "evaluator": {
+    "func": "check_include_exclude",
+    "result": {
+      "type": "vm_command_line",
+      "command": "powershell -NoProfile -Command \"Add-Type -TypeDefinition 'using System; using System.Runtime.InteropServices; public static class MouseSettings { [DllImport(\\\"user32.dll\\\", SetLastError=true)] [return: MarshalAs(UnmanagedType.Bool)] public static extern bool SystemParametersInfo(uint uiAction, uint uiParam, [MarshalAs(UnmanagedType.Bool)] out bool pvParam, uint fWinIni); }'; $enabled = $false; $success = [MouseSettings]::SystemParametersInfo(0x101E, 0, [ref]$enabled, 0); if ($success -and $enabled) { Write-Output 'CLICKLOCK_ENABLED' } else { Write-Output 'CLICKLOCK_DISABLED' }\"",
+      "shell": true
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "include": [
+          "CLICKLOCK_ENABLED"
+        ],
+        "exclude": [
+          "CLICKLOCK_DISABLED"
+        ]
+      }
+    }
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

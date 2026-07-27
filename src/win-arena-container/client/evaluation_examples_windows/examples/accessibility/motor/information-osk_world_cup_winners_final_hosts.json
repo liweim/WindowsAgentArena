@@ -1,0 +1,95 @@
+{
+  "id": "information-osk_world_cup_winners_final_hosts",
+  "manually_evaluated": false,
+  "snapshot": "chrome",
+  "category": "information",
+  "difficulty": "medium",
+  "instruction": "Enable the Windows On-Screen Keyboard as a motor accessibility aid and keep it open throughout the task. Using Chrome, find the FIFA World Cup winner and the country where the final match was hosted for the 2026, 2022, and 2018 tournaments. Open Notepad and write the answers in 6 lines, with one piece of information per line. Use the formats `Winner {Year}: {Winner}` and `Host Country {Year}: {Host Country}`. Save the file as `worldcup.txt` on the Desktop.",
+  "source": "Web research using Chrome",
+  "gt_steps": [
+    "Enable the Windows On-Screen Keyboard.",
+    "Keep the On-Screen Keyboard open throughout the task.",
+    "Open Google Chrome.",
+    "Find the winner of the 2026 FIFA World Cup.",
+    "Find the country that hosted the 2026 FIFA World Cup Final.",
+    "Find the winner of the 2022 FIFA World Cup.",
+    "Find the country that hosted the 2022 FIFA World Cup Final.",
+    "Find the winner of the 2018 FIFA World Cup.",
+    "Find the country that hosted the 2018 FIFA World Cup Final.",
+    "Open Notepad.",
+    "Write `Winner 2026: Spain` on the first line.",
+    "Write `Host Country 2026: United States` on the second line.",
+    "Write `Winner 2022: Argentina` on the third line.",
+    "Write `Host Country 2022: Qatar` on the fourth line.",
+    "Write `Winner 2018: France` on the fifth line.",
+    "Write `Host Country 2018: Russia` on the sixth line.",
+    "Save the file as `worldcup.txt` on the Desktop.",
+    "Leave the saved file on the Desktop.",
+    "Leave the On-Screen Keyboard open."
+  ],
+  "config": [
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome"
+        ]
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "on_screen_keyboard",
+    "chrome",
+    "notepad"
+  ],
+  "evaluator": {
+    "func": [
+      "check_include_exclude",
+      "multi_answer_file_saved_desktop"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "vm_command_line",
+        "command": "powershell -NoProfile -Command \"$osk = Get-Process -Name osk -ErrorAction SilentlyContinue | Where-Object { $_.MainWindowHandle -ne 0 }; if ($osk) { Write-Output 'OSK_OPEN' } else { Write-Output 'OSK_NOT_OPEN' }\"",
+        "shell": true
+      },
+      {
+        "type": "multi_answer_file_saved_desktop",
+        "filename": "worldcup.txt",
+        "answers": [
+          "Winner 2026: Spain",
+          "Host Country 2026: United States",
+          "Winner 2022: Argentina",
+          "Host Country 2022: Qatar",
+          "Winner 2018: France",
+          "Host Country 2018: Russia"
+        ],
+        "case_sensitive": false
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "include": [
+            "OSK_OPEN"
+          ],
+          "exclude": [
+            "OSK_NOT_OPEN"
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "expected": 1.0
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "medium"
+}

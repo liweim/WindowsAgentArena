@@ -1,7 +1,9 @@
 import json
 import logging
+import math
 import os
 import platform
+import re
 import sqlite3
 import time
 from urllib.parse import unquote
@@ -1477,7 +1479,66 @@ def get_find_installed_extension_name(env, config: Dict[str, str]):
         for id in all_extensions.keys():
             name = all_extensions[id]["manifest"]["name"]
             all_extensions_name.append(name)
-        return all_extensions_name
+        if os_type == 'Windows':
+            script = r"""
+import json
+import os
+import re
+
+extensions_dir = os.path.join(
+    os.getenv("LOCALAPPDATA"),
+    "Google",
+    "Chrome",
+    "User Data",
+    "Default",
+    "Extensions",
+)
+
+def resolve_message(root, manifest, value):
+    if not isinstance(value, str):
+        return value
+    match = re.fullmatch(r"__MSG_(.+)__", value)
+    if not match:
+        return value
+    locale = manifest.get("default_locale", "en")
+    messages_path = os.path.join(root, "_locales", locale, "messages.json")
+    if not os.path.exists(messages_path):
+        return value
+    try:
+        with open(messages_path, encoding="utf-8") as file:
+            messages = json.load(file)
+        return messages.get(match.group(1), {}).get("message", value)
+    except Exception:
+        return value
+
+names = []
+if os.path.isdir(extensions_dir):
+    for extension_id in os.listdir(extensions_dir):
+        extension_path = os.path.join(extensions_dir, extension_id)
+        if not os.path.isdir(extension_path):
+            continue
+        for version_dir in os.listdir(extension_path):
+            version_path = os.path.join(extension_path, version_dir)
+            manifest_path = os.path.join(version_path, "manifest.json")
+            if not os.path.isfile(manifest_path):
+                continue
+            try:
+                with open(manifest_path, encoding="utf-8") as file:
+                    manifest = json.load(file)
+                name = resolve_message(version_path, manifest, manifest.get("name"))
+                if name:
+                    names.append(name)
+            except Exception:
+                pass
+print(json.dumps(names))
+"""
+            response = env.controller.execute_python_command(script)
+            if response and response.get("output"):
+                try:
+                    all_extensions_name.extend(json.loads(response["output"].strip()))
+                except json.JSONDecodeError:
+                    logger.error("Error parsing installed Chrome extension names")
+        return list(dict.fromkeys(all_extensions_name))
     except Exception as e:
         logger.error(f"Error: {e}")
         return "Google"
@@ -1791,8 +1852,6 @@ def get_active_tab_info_simple(env, config):
     }
 
 
-
-
 def get_chrome_page_zoom_from_access_tree(env, config):
     """
     Estimate Chrome page zoom using the accessibility tree.
@@ -1807,4 +1866,75 @@ def get_chrome_page_zoom_from_access_tree(env, config):
         return str(tree)
     except Exception as e:
         print("Failed to get accessibility tree:", e)
+        return ""
+
+
+def get_chrome_page_zoom_from_preferences(env, config):
+    """Return Chrome's current page zoom as a percentage string.
+
+    Prefer Chrome's live UIA toolbar value. Preferences are only a fallback
+    because Ctrl+Plus changes can reach the browser UI before Chrome flushes
+    the corresponding per-host value to disk.
+    """
+    try:
+        accessibility_tree = env.controller.get_accessibility_tree(backend="uia")
+        zoom_match = re.search(
+            r'name="Zoom:\s*(\d+)%"', accessibility_tree or "", re.IGNORECASE
+        )
+        if zoom_match:
+            zoom_percent = int(zoom_match.group(1))
+            print("Chrome live UIA zoom percent:", zoom_percent)
+            return f"{zoom_percent}%"
+    except Exception as e:
+        logger.warning("Failed to read live Chrome zoom from UIA: %s", e)
+
+    os_type = env.vm_platform
+    if os_type == "Windows":
+        preference_file_path = env.controller.execute_python_command(
+            "import os; print(os.path.join(os.getenv('LOCALAPPDATA'), "
+            "'Google/Chrome/User Data/Default/Preferences'))"
+        )["output"].strip()
+    elif os_type == "Darwin":
+        preference_file_path = env.controller.execute_python_command(
+            "import os; print(os.path.join(os.getenv('HOME'), "
+            "'Library/Application Support/Google/Chrome/Default/Preferences'))"
+        )["output"].strip()
+    elif os_type == "Linux":
+        preference_file_path = env.controller.execute_python_command(
+            "import os; print(os.path.join(os.getenv('HOME'), "
+            "'.config/google-chrome/Default/Preferences'))"
+        )["output"].strip()
+    else:
+        logger.error("Unsupported platform for Chrome zoom: %s", os_type)
+        return ""
+
+    try:
+        preferences = json.loads(env.controller.get_file(preference_file_path))
+        partition = preferences.get("partition", {})
+        zoom_level = partition.get("default_zoom_level", {}).get("x", 0)
+
+        # A host-specific setting takes precedence over Chrome's default zoom.
+        active_url = get_active_url_from_accessTree(env, config)
+        parsed_url = urlparse(active_url) if active_url else None
+        hostname = parsed_url.hostname if parsed_url else None
+        host_levels = partition.get("per_host_zoom_levels", {}).get("x", {})
+        host_key = hostname
+        if parsed_url and parsed_url.scheme == "chrome" and hostname in {
+            "newtab", "new-tab-page"
+        }:
+            host_key = "new-tab-page"
+        if host_key and host_key in host_levels:
+            host_zoom = host_levels[host_key]
+            # Chrome 150 stores metadata alongside the numeric zoom level.
+            if isinstance(host_zoom, dict):
+                zoom_level = host_zoom.get("zoom_level", zoom_level)
+            else:
+                zoom_level = host_zoom
+
+        zoom_percent = round(100 * math.pow(1.2, float(zoom_level)))
+        print("Chrome zoom level:", zoom_level)
+        print("Chrome zoom percent:", zoom_percent)
+        return f"{zoom_percent}%"
+    except Exception as e:
+        logger.error("Failed to read Chrome page zoom: %s", e)
         return ""

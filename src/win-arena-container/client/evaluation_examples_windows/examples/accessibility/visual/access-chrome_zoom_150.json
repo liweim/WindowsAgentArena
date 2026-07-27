@@ -1,5 +1,6 @@
 {
-  "id": "access-zoom-150",
+  "id": "access-chrome_zoom_150",
+  "_comment": "The URL should be opened during initialization. The instruction can simply say, “Increase the page zoom level to 150%.” The evaluator can skip checking the URL, since opening it isn’t the main point of this task.",
   "snapshot": "chrome",
   "category": "access",
   "difficulty": "easy",
@@ -29,14 +30,35 @@
     "chrome"
   ],
   "evaluator": {
-    "func": "check_zoom_150_access_tree",
-    "result": {
-      "type": "chrome_page_zoom_from_access_tree"
-    },
-    "expected": {
-      "type": "rule",
-      "rules": {}
-    }
+    "func": [
+      "check_zoom_access_tree",
+      "is_expected_url_pattern_match"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "chrome_page_zoom_from_preferences"
+      },
+      {
+        "type": "active_tab_info_simple"
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "zoom": "150%"
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "expected": [
+            "https?://(www\\.)?digital\\.nsw\\.gov\\.au/delivery/accessibility-and-inclusivity-toolkit/?([?#].*)?$"
+          ]
+        }
+      }
+    ]
   },
   "proxy": false,
   "fixed_ip": false,

@@ -68,6 +68,15 @@ def is_expected_installed_extensions(installed_extensions, expected) -> float:
     print("installed_extensions: ")
     print(installed_extensions)
     expected_extensions = expected["expected"]
+    match_type = expected.get("match", "exact")
+
+    if match_type == "substring":
+        installed_extensions = [extension.lower() for extension in installed_extensions]
+        expected_extensions = [extension.lower() for extension in expected_extensions]
+        return 1. if all(
+            any(expected_extension in installed_extension for installed_extension in installed_extensions)
+            for expected_extension in expected_extensions
+        ) else 0.
 
     # whether the expected extensions are installed
     set_expected_extensions = set(expected_extensions)
@@ -704,35 +713,13 @@ def compare_text_content(result, rule):
     return 1.0 if actual == expected else 0.0
 
 
-
-def check_zoom_150_access_tree(result, rule):
+def check_zoom_access_tree(result, rule):
     """
     Checks for Chrome zoom level text shown in browser UI/accessibility tree.
-    Works when Chrome exposes '150%' in the toolbar/menu/accessibility tree.
     """
-    if not result:
-        return 0.0
 
-    result = str(result)
-    print("Checking accessibility tree for 150%")
+    print("Checking accessibility tree for zoom")
+    expected = rule.get("zoom", "").strip()
+    actual = str(result)
 
-    if "150%" in result or "150 %" in result:
-        return 1.0
-
-    return 0.0
-
-def check_zoom_200_access_tree(result, rule):
-    """
-    Checks for Chrome zoom level text shown in browser UI/accessibility tree.
-    Works when Chrome exposes '200%' in the toolbar/menu/accessibility tree.
-    """
-    if not result:
-        return 0.0
-
-    result = str(result)
-    print("Checking accessibility tree for 200%")
-
-    if "200%" in result or "200 %" in result:
-        return 1.0
-
-    return 0.0
+    return 1.0 if expected in actual else 0.0

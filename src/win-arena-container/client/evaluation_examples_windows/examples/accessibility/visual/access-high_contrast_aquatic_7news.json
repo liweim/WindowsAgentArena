@@ -1,0 +1,101 @@
+{
+  "id": "access-high_contrast_aquatic_7news",
+  "_comment": "High Contrast mode does not need to open url.",
+  "snapshot": "windows",
+  "category": "access",
+  "difficulty": "easy",
+  "instruction": "Enable High Contrast mode to Aquatic. Open Google Chrome and navigate to https://7news.com.au/. Leave the 7News homepage open with High Contrast mode enabled.",
+  "source": "human",
+  "gt_steps": [
+    "Open Windows Settings.",
+    "Navigate to Accessibility settings.",
+    "Open Contrast Themes settings.",
+    "Choose Aquatic as the contrast theme.",
+    "Apply the theme and wait for it to take effect.",
+    "Switch to Google Chrome.",
+    "Navigate to https://7news.com.au/.",
+    "Wait for the 7News homepage to load.",
+    "Leave the homepage open."
+  ],
+  "config": [
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port=1337",
+          "--force-renderer-accessibility"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    }
+  ],
+  "trajectory": "trajectories/",
+  "related_apps": [
+    "settings",
+    "chrome"
+  ],
+  "evaluator": {
+    "func": [
+      "check_include_exclude",
+      "check_include_exclude",
+      "is_expected_active_tab"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "vm_command_line",
+        "command": "reg query \"HKCU\\Control Panel\\Accessibility\\HighContrast\" /v Flags",
+        "shell": true
+        },
+      {
+        "type": "vm_command_line",
+        "command": "reg query \"HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\" /v CurrentTheme",
+        "shell": true
+      },
+      {
+        "type": "active_tab_info",
+        "goto_prefix": "https://"
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "include": [
+            "127"
+          ],
+          "exclude": []
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "include": [
+            "hcblack.theme"
+          ],
+          "exclude": []
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "type": "url",
+          "url": "https://7news.com.au/"
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

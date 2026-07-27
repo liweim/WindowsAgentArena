@@ -1,0 +1,34 @@
+{
+  "id": "access-windows_magnifier_200",
+  "_comment": "",
+  "snapshot": "chrome",
+  "category": "access",
+  "difficulty": "easy",
+  "instruction": "Open magnifier UI with Windows Key + Plus Sign (+). Make it 300% zoom.",
+  "source": "human",
+  "gt_steps": [
+    "Press Windows Key + Plus Sign (+).",
+    "Magnifier UI shows up.",
+    "Press the + button and increase to 300%."
+  ],
+  "config": [],
+  "trajectory": "trajectories/",
+  "related_apps": [
+    "chrome"
+  ],
+  "evaluator": {
+    "func": "check_zoom_access_tree",
+    "result": {
+      "type": "chrome_page_zoom_from_access_tree"
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "zoom": "300%"
+      }
+    }
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

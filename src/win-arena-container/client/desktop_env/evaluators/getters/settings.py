@@ -284,3 +284,27 @@ def get_selected_caption_style_name(env, config: Dict[str, str]):
     except Exception as exc:
         logger.exception("selected_caption_style_name: failed to resolve selected caption style: %s", exc)
         return None
+
+
+def get_access_tree_and_process(env, config):
+    try:
+        obs = env._get_obs()
+        tree = obs.get("accessibility_tree", "")
+        process = env.controller.execute_python_command(
+            "import subprocess; print(subprocess.getoutput('tasklist | findstr /i Magnify'))"
+        )
+        return process["output"], tree
+    except Exception as e:
+        print("Failed to get accessibility tree:", e)
+        return ""
+
+
+def get_narrator_status(env, config):
+    try:
+        result = env.controller.execute_shell_command("tasklist")
+        output = result.get("output", "")
+        return output
+
+    except Exception as e:
+        print("Error: ", e)
+        return ""

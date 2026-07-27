@@ -1,0 +1,96 @@
+{
+  "id": "information-image_to_text_invitation",
+  "_comment": "I suggest to use existing webpage with image.",
+  "snapshot": "libreoffice_writer",
+  "category": "information",
+  "difficulty": "hard",
+  "instruction": "The image in this file does not have alt text for voice over feature. The image is an invitation card. Add descriptive alt text for the image. The alt text must include detail information of the event. If there are date and time, use 'EEEE, MMMM d, yyyy HH:MM AM' format. Save the file after adding alt text, and if prompt shows up to choose between odt and word format, choose word format to save the file.",
+  "source": "https://www.acquia.com/blog/accessibility-issues-visual-impairmenthttps://www.acquia.com/blog/accessibility-issues-visual-impairment",
+  "gt_steps": [
+    "Close if the pop up window for Libre tour shows up.",
+    "Select the image (simply click the image to focus).",
+    "Go to Format > Alt Text in the tabs.",
+    "Fill out the alt text description as 'A digital invitation card for the grand opening of The Coastal Spoon restaurant on Thursday, July 16, 2026, at 11:00 AM. Event address is 123 Harbour View St., Sydney, 2000. Call +61-456-789-000 to RSVP.",
+    "Click 'OK' and save the file.",
+    "If prompt shows up to choose between odt and word format, choose word format to save the file."
+  ],
+  "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/information-image_to_text_invitation.docx",
+            "path": "C:\\Users\\Docker\\Desktop\\information-image_to_text_invitation.docx"
+          }
+        ]
+      }
+    },
+    {
+      "type": "open",
+      "parameters": {
+        "path": "C:\\Users\\Docker\\Desktop\\information-image_to_text_invitation.docx"
+      }
+    }
+  ],
+  "trajectory": "trajectories/",
+  "related_apps": [
+    "libreoffice_writer"
+  ],
+  "evaluator": {
+    "func": "check_docx_image_alt_text",
+    "result": {
+      "type": "vm_file",
+      "path": "C:\\Users\\Docker\\Desktop\\information-image_to_text_invitation.docx",
+      "dest": "information-image_to_text_invitation.docx"
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+          "ignore_case": true,
+          "points": [
+            [
+              "the costal spoon"
+            ],
+            [
+              "grand opening",
+              "grand opening restaurant",
+              "grand opening of the restaurant",
+              "grand opening of our restaurant"
+            ],
+            [
+              "July 16, 2026",
+              "July 16 2026",
+              "July 16, 2026,"
+            ],
+            [
+              "11:00 AM.",
+              "11:00 AM"
+            ],
+            [
+              "123 Harbour View ST.",
+              "123 Harbour View ST",
+              "123",
+              "Harbour View ST"
+            ],
+            [
+              "Sydney"
+            ],
+            [
+              "2000",
+              "2000."
+            ],
+            [
+              "+61-456-789-000",
+              "+61 456 789 000",
+              "+61 456789000",
+              "+61456789000"
+            ]
+          ]
+        }
+    }
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

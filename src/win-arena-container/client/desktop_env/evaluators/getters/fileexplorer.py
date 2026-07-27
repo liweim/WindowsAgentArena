@@ -204,3 +204,34 @@ def get_vm_library_folders(env, config) -> list:
     library_name = config["library_name"]
     logger.info(f"Library name: {library_name}")
     return env.controller.get_vm_library_folders(library_name)
+
+def get_multi_answer_file_saved_desktop(env, config) -> float:
+    desktop_path = env.controller.get_vm_desktop_path()
+    file_name = config["filename"]
+
+    file_content = env.controller.get_file_as_text(
+        desktop_path + "\\" + file_name
+    )
+
+    if file_content is None:
+        return 0.0
+
+    expected_answers = config["answers"]
+    case_sensitive = config.get("case_sensitive", True)
+
+    if not case_sensitive:
+        file_content = file_content.lower()
+        expected_answers = [answer.lower() for answer in expected_answers]
+
+    normalised_lines = {
+        line.strip()
+        for line in file_content.splitlines()
+        if line.strip()
+    }
+
+    correct_answers = sum(
+        1 for answer in expected_answers
+        if answer.strip() in normalised_lines
+    )
+
+    return correct_answers / len(expected_answers)

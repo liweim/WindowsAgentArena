@@ -1,0 +1,84 @@
+{
+  "id": "access-windows_color_filter_protanopia",
+  "_comment": "",
+  "snapshot": "base_setup",
+  "category": "access",
+  "difficulty": "easy",
+  "instruction": "In windows accessibility setting, change the color filter to Protanopia with intensity 80% and color boost 75%.",
+  "source": "human",
+  "gt_steps": [
+    "Open Windows Setting.",
+    "Navigate to Accessibility Setting.",
+    "Choose Color Filters tab.",
+    "Turn on color filters and choose Protanopia.",
+    "Adjust the intensity to 80%.",
+    "Adjust color boost to 75%"
+  ],
+  "config": [],
+  "trajectory": "trajectories/",
+  "related_apps": [],
+  "evaluator": {
+    "func": [
+      "check_include_exclude",
+      "check_include_exclude",
+      "check_include_exclude",
+      "check_include_exclude"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "vm_command_line",
+        "command": "reg query \"HKCU\\Software\\Microsoft\\ColorFiltering\" /v Active",
+        "shell": true
+      },
+      {
+        "type": "vm_command_line",
+        "command": "reg query \"HKCU\\Software\\Microsoft\\ColorFiltering\" /v FilterType",
+        "shell": true
+      },
+      {
+        "type": "vm_command_line",
+        "command": "reg query \"HKCU\\Software\\Microsoft\\ColorFiltering\" /v Intensity",
+        "shell": true
+      },
+      {
+        "type": "vm_command_line",
+        "command": "reg query \"HKCU\\Software\\Microsoft\\ColorFiltering\" /v Gain",
+        "shell": true
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "include": ["0x1"],
+          "exclude": []
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "include": ["0x4"],
+          "exclude": []
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "include": ["0x50"],
+          "exclude": []
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "include": ["0x4b"],
+          "exclude": []
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}
