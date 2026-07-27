@@ -1,0 +1,56 @@
+{
+  "id": "access-windows_color_filter_grayscale_inverted",
+  "_comment": "",
+  "snapshot": "base_setup",
+  "category": "access",
+  "difficulty": "easy",
+  "instruction": "In windows accessibility setting, change the color filter to Grayscale Inverted.",
+  "source": "human",
+  "gt_steps": [
+    "Open Windows Setting.",
+    "Navigate to Accessibility Setting.",
+    "Choose Color Filters tab.",
+    "Turn on color filters and choose Grayscale Inverted."
+  ],
+  "config": [],
+  "trajectory": "trajectories/",
+  "related_apps": [],
+  "evaluator": {
+    "func": [
+      "check_include_exclude",
+      "check_include_exclude"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "vm_command_line",
+        "command": "reg query \"HKCU\\Software\\Microsoft\\ColorFiltering\" /v Active",
+        "shell": true
+      },
+      {
+        "type": "vm_command_line",
+        "command": "reg query \"HKCU\\Software\\Microsoft\\ColorFiltering\" /v FilterType",
+        "shell": true
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "include": ["0x1"],
+          "exclude": []
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "include": ["0x2"],
+          "exclude": []
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

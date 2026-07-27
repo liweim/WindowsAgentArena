@@ -1,0 +1,106 @@
+{
+  "id": "information-filter_keys_psychology_coursework_max_upload_size",
+  "manually_evaluated": false,
+  "snapshot": "chrome",
+  "category": "information",
+  "difficulty": "medium",
+  "instruction": "Enable Windows Filter Keys as a motor accessibility aid and keep it enabled throughout the task. In the Department of Psychology Undergraduate Student Handbook PDF already open in Chrome, find the coursework submission information and identify the maximum file upload size. Record the maximum upload size in Notepad and save the file as `maxSizeAssignement.txt` on the Desktop.",
+  "source": "Local PDF: assets/department_of_psychology_ug.pdf",
+  "gt_steps": [
+    "Open Windows Accessibility keyboard settings.",
+    "Navigate to the Filter Keys settings.",
+    "Enable Filter Keys and keep it enabled.",
+    "Return to the Department of Psychology Undergraduate Student Handbook PDF already open in Chrome.",
+    "Find the section about submission of coursework.",
+    "Locate the maximum file upload size.",
+    "Identify the maximum file upload size as 50MB.",
+    "Open Notepad.",
+    "Write the maximum upload size in the text file.",
+    "Save the file as `maxSizeAssignement.txt` on the Desktop.",
+    "Leave the saved file on the Desktop.",
+    "Leave Filter Keys enabled."
+  ],
+  "config": [
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port=1337",
+          "--force-renderer-accessibility",
+          "file:///C:/Users/Docker/assets/department_of_psychology_ug.pdf"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    },
+    {
+      "type": "activate_window",
+      "parameters": {
+        "window_name": "Google Chrome"
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "settings",
+    "chrome",
+    "notepad"
+  ],
+  "evaluator": {
+    "func": [
+      "check_include_exclude",
+      "check_include_exclude"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "vm_command_line",
+        "command": "powershell -NoProfile -Command \"$path='HKCU:\\Control Panel\\Accessibility\\Keyboard Response'; try { $flags=(Get-ItemProperty -Path $path -Name Flags -ErrorAction Stop).Flags; $value=[int]$flags; if (($value -band 1) -eq 1) { Write-Output 'FILTER_KEYS_ENABLED' } else { Write-Output 'FILTER_KEYS_DISABLED' } } catch { Write-Output 'FILTER_KEYS_STATE_UNAVAILABLE' }\"",
+        "shell": true
+      },
+      {
+        "type": "vm_command_line",
+        "command": "powershell -NoProfile -Command \"$file='C:\\Users\\Docker\\Desktop\\maxSizeAssignement.txt'; if (-not (Test-Path $file)) { Write-Output 'FILE_MISSING'; exit }; $c=Get-Content $file -Raw; if ($c -match '(?i)(?<![0-9])50\\s*(MB|megabytes?)(?![A-Za-z0-9])') { Write-Output 'CORRECT_MAX_SIZE_FOUND' } else { Write-Output 'INCORRECT_MAX_SIZE' }\"",
+        "shell": true
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "include": [
+            "FILTER_KEYS_ENABLED"
+          ],
+          "exclude": [
+            "FILTER_KEYS_DISABLED",
+            "FILTER_KEYS_STATE_UNAVAILABLE"
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "include": [
+            "CORRECT_MAX_SIZE_FOUND"
+          ],
+          "exclude": [
+            "FILE_MISSING",
+            "INCORRECT_MAX_SIZE"
+          ]
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

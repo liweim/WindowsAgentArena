@@ -1,0 +1,143 @@
+{
+  "id": "health-sticky_keys_parkinsons_medication_reminders",
+  "manually_evaluated": false,
+  "_comment": "",
+  "snapshot": "windows",
+  "category": "health",
+  "difficulty": "hard",
+  "instruction": "Enable Sticky Keys as a motor accessibility aid and keep it enabled. I take my Parkinson's medication at 8:00 AM, 12:00 PM, and 4:00 PM each day to help manage my movement symptoms. In Thunderbird Calendar, create three daily medication reminders at these times. Set the title of each reminder to `Parkinson's medication` and make each reminder repeat daily.",
+  "source": "https://www.parkinsons.org.au/i-have-parkinsons/?utm_term=parkinson%27s%20australia&utm_campaign=GD+%7C+Parkinson%27s+Search+Campaign&utm_source=adwords&utm_medium=ppc&hsa_acc=5551006727&hsa_cam=21391943163&hsa_grp=171009508227&hsa_ad=714906645515&hsa_src=g&hsa_tgt=kwd-1098016929&hsa_kw=parkinson%27s%20australia&hsa_mt=b&hsa_net=adwords&hsa_ver=3&gad_source=1&gad_campaignid=21391943163&gbraid=0AAAAA95bhWomStfjYCr6l0hTkNSewGFQP&gclid=CjwKCAjwvNfSBhBiEiwAyaGMCX2KqU9452XhOdtpFtJHcnRlNrV7zkjSFVHArqsXNOWt8bCLJ5LT8hoCQOYQAvD_BwE",
+  "gt_steps": [
+    "Open Windows Settings.",
+    "Navigate to Accessibility.",
+    "Open Keyboard accessibility settings.",
+    "Turn on Sticky Keys and keep it enabled.",
+    "Open Thunderbird Calendar.",
+    "In the Calendars list, enable the Home calendar if it is disabled.",
+    "Create a calendar event at 8:00 AM.",
+    "Set the title to `Parkinson's medication`.",
+    "Set the 8:00 AM event to repeat daily.",
+    "Save the 8:00 AM event.",
+    "Create a calendar event at 12:00 PM.",
+    "Set the title to `Parkinson's medication`.",
+    "Set the 12:00 PM event to repeat daily.",
+    "Save the 12:00 PM event.",
+    "Create a calendar event at 4:00 PM.",
+    "Set the title to `Parkinson's medication`.",
+    "Set the 4:00 PM event to repeat daily.",
+    "Save the 4:00 PM event.",
+    "Leave Sticky Keys enabled."
+  ],
+  "config": [
+    {
+      "type": "download",
+      "parameters": {
+        "files": [
+          {
+            "url": "https://huggingface.co/datasets/xlangai/ubuntu_osworld_file_cache/resolve/main/thunderbird/dd84e895-72fd-4023-a336-97689ded257c/thunderbird-profile.tar.gz",
+            "path": "C:\\Users\\Docker\\Downloads\\thunderbird-profile.tar.gz"
+          }
+        ]
+      }
+    },
+    {
+      "type": "prepare_thunderbird_profile",
+      "parameters": {}
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "thunderbird.exe",
+          "-profile",
+          "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release"
+        ]
+      }
+    },
+    {
+      "type": "sleep",
+      "parameters": {
+        "seconds": 2
+      }
+    },
+    {
+      "type": "activate_window",
+      "parameters": {
+        "window_name": "Mozilla Thunderbird"
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "settings",
+    "thunderbird"
+  ],
+  "evaluator": {
+    "func": [
+      "check_include_exclude",
+      "check_thunderbird_calendar_event",
+      "check_thunderbird_calendar_event",
+      "check_thunderbird_calendar_event"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "vm_command_line",
+        "command": "powershell -NoProfile -Command \"$flags = [int](Get-ItemPropertyValue -Path 'HKCU:\\Control Panel\\Accessibility\\StickyKeys' -Name 'Flags' -ErrorAction SilentlyContinue); if (($flags -band 1) -eq 1) { Write-Output 'STICKY_KEYS_ENABLED' } else { Write-Output 'STICKY_KEYS_DISABLED' }\"",
+        "shell": true
+      },
+      {
+        "type": "thunderbird_calendar_events",
+        "profile_path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release"
+      },
+      {
+        "type": "thunderbird_calendar_events",
+        "profile_path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release"
+      },
+      {
+        "type": "thunderbird_calendar_events",
+        "profile_path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release"
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "include": [
+            "STICKY_KEYS_ENABLED"
+          ],
+          "exclude": [
+            "STICKY_KEYS_DISABLED"
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "hour": 8,
+          "minute": 0,
+          "title": "Parkinson's medication"
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "hour": 12,
+          "minute": 0,
+          "title": "Parkinson's medication"
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "hour": 16,
+          "minute": 0,
+          "title": "Parkinson's medication"
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

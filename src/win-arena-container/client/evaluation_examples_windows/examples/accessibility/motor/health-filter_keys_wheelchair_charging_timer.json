@@ -1,0 +1,111 @@
+{
+  "id": "health-filter_keys_wheelchair_charging_timer",
+  "manually_evaluated": false,
+  "snapshot": "windows",
+  "category": "health",
+  "difficulty": "medium",
+  "instruction": "Enable Filter Keys as a motor accessibility aid and keep it enabled. From the provided electric wheelchair user manual PDF, determine the minimum recommended battery charging time after daily use. Then use https://vclock.com to create a timer for that duration. Leave the running timer visible in the browser.",
+  "source": "assets/quantum-600e-manual.pdf",
+  "gt_steps": [
+    "Open Windows Settings.",
+    "Navigate to Accessibility.",
+    "Open the Keyboard accessibility settings.",
+    "Turn on Filter Keys and keep it enabled.",
+    "Return to the Quantum 600E manual PDF open in Google Chrome.",
+    "Navigate to the Batteries and Charging section.",
+    "Find the charging recommendation for daily use.",
+    "Determine that the recommended charging time is 8 to 14 hours after daily use.",
+    "Identify 8 hours as the minimum recommended charging time.",
+    "Open https://vclock.com in Chrome.",
+    "Open the Timer page.",
+    "Create and start an 8-hour timer.",
+    "Leave the running timer visible in the browser.",
+    "Leave Filter Keys enabled."
+  ],
+  "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/quantum-600e-manual.pdf",
+            "path": "C:\\Users\\Docker\\Downloads\\quantum-600e-manual.pdf"
+          }
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port=1337",
+          "--force-renderer-accessibility",
+          "file:///C:/Users/Docker/Downloads/quantum-600e-manual.pdf"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    },
+    {
+      "type": "activate_window",
+      "parameters": {
+        "window_name": "Google Chrome"
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "settings",
+    "chrome"
+  ],
+  "evaluator": {
+    "func": [
+      "check_include_exclude",
+      "is_expected_url_pattern_match"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "vm_command_line",
+        "command": "powershell -NoProfile -Command \"$flags = [int](Get-ItemPropertyValue -Path 'HKCU:\\Control Panel\\Accessibility\\Keyboard Response' -Name 'Flags' -ErrorAction SilentlyContinue); if (($flags -band 1) -eq 1) { Write-Output 'FILTER_KEYS_ENABLED' } else { Write-Output 'FILTER_KEYS_DISABLED' }\"",
+        "shell": true
+      },
+      {
+        "type": "active_tab_info_simple"
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "include": [
+            "FILTER_KEYS_ENABLED"
+          ],
+          "exclude": [
+            "FILTER_KEYS_DISABLED"
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "expected": [
+            "https?://(www\\.)?vclock\\.com/timer/#countdown=08:00:00(&|$)"
+          ]
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

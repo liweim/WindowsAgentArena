@@ -32,7 +32,8 @@ from .chrome import (
     get_find_installed_extension_name,
     get_info_from_website,
     get_active_tab_info_simple,
-    get_chrome_page_zoom_from_access_tree
+    get_chrome_page_zoom_from_access_tree,
+    get_chrome_page_zoom_from_preferences
     
 )
 from .file import get_cloud_file, get_vm_file, get_cache_file, get_content_from_vm_file, get_vm_file_exists_in_vm_folder, get_desktop_file_content
@@ -81,7 +82,9 @@ from .settings import (
     get_visual_audio_alerts,
     get_notification_duration,
     get_caption_style_names,
-    get_selected_caption_style_name
+    get_selected_caption_style_name,
+    get_access_tree_and_process,
+    get_narrator_status
 )
 from .msedge import (
     get_edge_home_page,

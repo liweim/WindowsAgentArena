@@ -3,7 +3,9 @@ from .basic_os import (
     is_utc_0,
     check_text_enlarged,
     check_moved_jpgs,
-    is_in_vm_clickboard
+    is_in_vm_clickboard,
+    check_magnifier_ui_open,
+    check_narrator_enabled
 )
 from .chrome import (
     is_expected_tabs,
@@ -28,8 +30,7 @@ from .chrome import (
     check_digital_accessibility_page,
     is_expected_bookmark_anywhere,
     compare_text_content,
-    check_zoom_150_access_tree,
-    check_zoom_200_access_tree
+    check_zoom_access_tree
 )
 from .docs import (
     compare_font_names,
@@ -109,7 +110,10 @@ from .gimp import (
     check_sharper,
     check_image_file_size
 )
-from .libreoffice import check_libre_locale
+from .libreoffice import (
+    check_libre_locale,
+    check_docx_image_alt_text
+)
 from .others import compare_epub, check_mp3_meta
 from .pdf import check_pdf_pages
 from .slides import (

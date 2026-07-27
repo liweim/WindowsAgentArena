@@ -1,0 +1,44 @@
+{
+  "id": "access-spotify_install",
+  "snapshot": "base_setup",
+  "category": "access",
+  "difficulty": "medium",
+  "instruction": "Install Spotify on this Windows computer so I can use it as my music player.",
+  "source": "Spotify installation verification",
+  "gt_steps": [
+    "Open a web browser or package installer.",
+    "Find the official Spotify app for Windows.",
+    "Download and run the Spotify installer, or install Spotify from a trusted Windows package source.",
+    "Complete the installation.",
+    "Verify that Spotify is installed by checking that the Spotify app or executable exists."
+  ],
+  "config": [],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "chrome",
+    "powershell",
+    "cmd"
+  ],
+  "evaluator": {
+    "func": "check_text_points",
+    "result": {
+      "type": "vm_command_line",
+      "command": "powershell -NoProfile -Command \"$paths=@(\\\"$env:APPDATA\\Spotify\\Spotify.exe\\\",\\\"$env:LOCALAPPDATA\\Microsoft\\WindowsApps\\Spotify.exe\\\"); foreach ($p in $paths) { if (Test-Path $p) { Write-Output 'SPOTIFY_FOUND'; exit 0 } }; $appx=Get-AppxPackage -Name SpotifyAB.SpotifyMusic -ErrorAction SilentlyContinue; if ($appx) { Write-Output 'SPOTIFY_FOUND'; exit 0 }; $uninstall=@('HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*','HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*','HKLM:\\Software\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*'); foreach ($key in $uninstall) { $hit=Get-ItemProperty $key -ErrorAction SilentlyContinue | Where-Object { $_.DisplayName -match 'Spotify' } | Select-Object -First 1; if ($hit) { Write-Output 'SPOTIFY_FOUND'; exit 0 } }; Write-Output 'SPOTIFY_NOT_FOUND'; exit 1\"",
+      "shell": true
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "ignore_case": true,
+        "points": [
+          [
+            "SPOTIFY_FOUND"
+          ]
+        ]
+      }
+    }
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "high"
+}

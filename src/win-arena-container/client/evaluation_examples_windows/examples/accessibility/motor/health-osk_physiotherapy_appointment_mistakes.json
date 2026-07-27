@@ -1,0 +1,148 @@
+{
+  "id": "health-osk_physiotherapy_appointment_mistakes",
+  "manually_evaluated": false,
+  "_comment": "You need to download the file locally so that the evaluator can verify whether the local file and the file in the VM are exactly identical. The current evaluator is too weak.",
+  "snapshot": "windows",
+  "category": "health",
+  "difficulty": "hard",
+  "instruction": "Enable the Windows On-Screen Keyboard as a motor accessibility aid and keep it open throughout the task. In Thunderbird Calendar, create a 1-hour appointment reminder for 10:00 AM tomorrow. Set the title to `Physiotherapy Appointment`. Open the provided website and find the `Common Mistakes to Avoid` section. In the event description, include all the listed common mistakes to avoid. Do not paraphrase.",
+  "source": "https://inclinehealth.com.au/how-to-prepare-for-first-appointment/",
+  "gt_steps": [
+    "Enable the Windows On-Screen Keyboard and keep it open.",
+    "Open the provided Incline Health webpage in Google Chrome.",
+    "Find the Common Mistakes to Avoid section.",
+    "Read all four listed common mistakes.",
+    "Open Thunderbird Calendar.",
+    "In the Calendars list, enable the Home calendar if it is disabled.",
+    "Determine tomorrow's date from the system date.",
+    "Create a 1-hour calendar event for tomorrow at 10:00 AM.",
+    "Set the title to `Physiotherapy Appointment`.",
+    "Copy all four common mistakes from the webpage into the event description without paraphrasing.",
+    "Save the calendar event.",
+    "Leave the On-Screen Keyboard open."
+  ],
+  "config": [
+    {
+      "type": "download",
+      "parameters": {
+        "files": [
+          {
+            "url": "https://huggingface.co/datasets/xlangai/ubuntu_osworld_file_cache/resolve/main/thunderbird/dd84e895-72fd-4023-a336-97689ded257c/thunderbird-profile.tar.gz",
+            "path": "C:\\Users\\Docker\\Downloads\\thunderbird-profile.tar.gz"
+          }
+        ]
+      }
+    },
+    {
+      "type": "prepare_thunderbird_profile",
+      "parameters": {}
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "thunderbird.exe",
+          "-profile",
+          "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release"
+        ]
+      }
+    },
+    {
+      "type": "sleep",
+      "parameters": {
+        "seconds": 2
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port=1337",
+          "--force-renderer-accessibility",
+          "https://inclinehealth.com.au/how-to-prepare-for-first-appointment/"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    },
+    {
+      "type": "activate_window",
+      "parameters": {
+        "window_name": "Google Chrome"
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "on_screen_keyboard",
+    "chrome",
+    "thunderbird"
+  ],
+  "evaluator": {
+    "func": [
+      "check_include_exclude",
+      "check_thunderbird_calendar_event"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "vm_command_line",
+        "command": "powershell -NoProfile -Command \"$osk = Get-Process -Name osk -ErrorAction SilentlyContinue | Where-Object { $_.MainWindowHandle -ne 0 }; if ($osk) { Write-Output 'OSK_OPEN' } else { Write-Output 'OSK_NOT_OPEN' }\"",
+        "shell": true
+      },
+      {
+        "type": "thunderbird_calendar_events",
+        "profile_path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release"
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "include": [
+            "OSK_OPEN"
+          ],
+          "exclude": [
+            "OSK_NOT_OPEN"
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "days_from_today": 1,
+          "hour": 10,
+          "minute": 0,
+          "duration_minutes": 60,
+          "title": "Physiotherapy Appointment",
+          "body_points": [
+            [
+              "wearing restrictive clothes that limit movement"
+            ],
+            [
+              "forgetting to bring referral letters or medical scans"
+            ],
+            [
+              "arriving late, rushed, or anxious — take a few minutes beforehand to relax"
+            ],
+            [
+              "holding back information about pain, medication, or past injuries"
+            ]
+          ]
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

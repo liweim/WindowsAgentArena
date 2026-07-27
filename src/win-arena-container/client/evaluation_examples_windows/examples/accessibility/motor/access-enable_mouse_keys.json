@@ -1,0 +1,43 @@
+{
+  "id": "access-enable_mouse_keys",
+  "manually_evaluated": false,
+  "_comment": "The `instruction` is too explicit and spells out all the operational steps. I suggest making it more high-level.",
+  "snapshot": "windows",
+  "category": "access",
+  "difficulty": "easy",
+  "instruction": "Open Accessibility settings, navigate to Mouse settings, enable Mouse Keys, and leave Mouse Keys turned on.",
+  "source": "Settings > Accessibility > Mouse > Mouse Keys",
+  "gt_steps": [
+    "Open Windows settings.",
+    "Navigate to Mouse accessibility settings.",
+    "Turn on the Mouse Keys.",
+    "Keep the Mouse Keys enabled."
+  ],
+  "config": [],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "settings"
+  ],
+  "evaluator": {
+    "func": "check_include_exclude",
+    "result": {
+      "type": "vm_command_line",
+      "command": "powershell -NoProfile -Command \"$flags = [int](Get-ItemPropertyValue -Path 'HKCU:\\Control Panel\\Accessibility\\MouseKeys' -Name 'Flags'); if (($flags -band 1) -eq 1) { Write-Output 'MOUSE_KEYS_ENABLED' } else { Write-Output 'MOUSE_KEYS_DISABLED' }\"",
+      "shell": true
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "include": [
+          "MOUSE_KEYS_ENABLED"
+        ],
+        "exclude": [
+          "MOUSE_KEYS_DISABLED"
+        ]
+      }
+    }
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

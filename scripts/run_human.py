@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
+import os
 import subprocess
 import sys
 import time
@@ -76,6 +77,13 @@ def run_command_capture(cmd: list[str], cwd: Path) -> subprocess.CompletedProces
     )
 
 
+def wait_before_cleanup() -> None:
+    if not sys.stdin.isatty():
+        return
+
+    input("human_run.py has finished. Press Enter to stop and remove the container...")
+
+
 def container_exists(container_name: str, cwd: Path) -> bool:
     result = run_command_capture(
         [
@@ -129,6 +137,29 @@ def start_vm(container_name: str, cwd: Path) -> None:
             "/bin/bash",
             "-lc",
             "/start_vm.sh >/tmp/start_vm.log 2>&1",
+        ],
+        cwd=cwd,
+    )
+
+
+def ensure_vm_storage_readable(repo_root: Path, cwd: Path) -> None:
+    storage_dir = repo_root / "src" / "win-arena-container" / "vm" / "storage"
+    tpm_file = storage_dir / "windows_secure.tpm"
+    if not tpm_file.exists() or os.access(tpm_file, os.R_OK):
+        return
+
+    run_command(
+        [
+            "docker",
+            "run",
+            "--rm",
+            "-v",
+            f"{storage_dir}:/storage",
+            "--entrypoint",
+            "/bin/bash",
+            "windowsarena/winarena-dev:latest",
+            "-lc",
+            "chmod a+r /storage/windows_secure.tpm",
         ],
         cwd=cwd,
     )
@@ -305,6 +336,7 @@ def main() -> int:
             stderr=subprocess.DEVNULL,
             check=False,
         )
+        ensure_vm_storage_readable(repo_root, script_dir)
 
         launcher = subprocess.Popen(
             [
@@ -348,7 +380,10 @@ def main() -> int:
             f'cd /client && python human_run.py --example "{container_example}"',
         ]
         exec_cmd = [part for part in exec_cmd if part]
-        run_command(exec_cmd, cwd=script_dir)
+        try:
+            run_command(exec_cmd, cwd=script_dir)
+        finally:
+            wait_before_cleanup()
     finally:
         if cleanup_needed:
             subprocess.run(

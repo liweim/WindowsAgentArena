@@ -1,0 +1,27 @@
+{
+  "id": "access-windows_narrator_open",
+  "_comment": "",
+  "snapshot": "basic_setup",
+  "category": "access",
+  "difficulty": "easy",
+  "instruction": "Turn on Window Narrator from Accessibility Setting.",
+  "source": "human",
+  "gt_steps": [
+    "Enable Window's Narrator."
+  ],
+  "config": [],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "basic_os"
+  ],
+  "evaluator": {
+    "func": "check_narrator_enabled",
+    "result": {
+      "type": "narrator_status"
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {}
+    }
+  }
+}

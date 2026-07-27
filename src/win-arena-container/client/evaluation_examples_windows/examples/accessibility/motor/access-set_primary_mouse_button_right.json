@@ -1,0 +1,44 @@
+{
+  "id": "access-set_primary_mouse_button_right",
+  "manually_evaluated": false,
+  "_comment": "The `instruction` is too explicit and spells out all the operational steps. I suggest making it more high-level.",
+  "snapshot": "windows",
+  "category": "access",
+  "difficulty": "easy",
+  "instruction": "Open Mouse settings, change the Primary mouse button to Right, and leave it set to Right.",
+  "source": "Settings > Bluetooth & devices > Mouse > Primary mouse button",
+  "gt_steps": [
+    "Open Windows Settings.",
+    "Open Bluetooth & devices.",
+    "Open Mouse.",
+    "Change Primary mouse button to Right.",
+    "Leave Right selected as the primary mouse button."
+  ],
+  "config": [],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "settings"
+  ],
+  "evaluator": {
+    "func": "check_include_exclude",
+    "result": {
+      "type": "vm_command_line",
+      "command": "powershell -NoProfile -Command \"Add-Type -TypeDefinition 'using System; using System.Runtime.InteropServices; public static class MouseState { [DllImport(\\\"user32.dll\\\")] public static extern int GetSystemMetrics(int nIndex); }'; $swapped = [MouseState]::GetSystemMetrics(23); if ($swapped -ne 0) { Write-Output 'PRIMARY_BUTTON_RIGHT' } else { Write-Output 'PRIMARY_BUTTON_LEFT' }\"",
+      "shell": true
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "include": [
+          "PRIMARY_BUTTON_RIGHT"
+        ],
+        "exclude": [
+          "PRIMARY_BUTTON_LEFT"
+        ]
+      }
+    }
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

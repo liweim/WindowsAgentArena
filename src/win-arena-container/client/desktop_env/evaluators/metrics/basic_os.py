@@ -66,3 +66,26 @@ def is_in_vm_clickboard(config, terminal_output):
         return 1 if expected_results in terminal_output else 0
     else:
         return 1 if all(result in terminal_output for result in expected_results) else 0
+
+
+def check_magnifier_ui_open(result, rule):
+    """
+    Checks if magnify.exe is open and checks for Windows magnifier in browser UI/accessibility tree.
+    """
+
+    process, tree = result
+    print("process: ", str(process))
+    print("tree: ", str(tree))
+
+    return (
+        "Magnify.exe" in str(process)
+        and
+        "Magnifier" in str(tree)
+    )
+
+
+def check_narrator_enabled(result, rule):
+    """
+    Checks whether Narrator is enabled.
+    """
+    return "narrator.exe" in str(result).lower()
