@@ -1,11 +1,10 @@
 {
   "id": "access-set_primary_mouse_button_right",
-  "manually_evaluated": false,
-  "_comment": "The `instruction` is too explicit and spells out all the operational steps. I suggest making it more high-level.",
+  "manually_evaluated": true,
   "snapshot": "windows",
   "category": "access",
   "difficulty": "easy",
-  "instruction": "Open Mouse settings, change the Primary mouse button to Right, and leave it set to Right.",
+  "instruction": "I'm left-handed and would like to use my mouse more comfortably. Please change the primary mouse button to Right and leave it set that way.",
   "source": "Settings > Bluetooth & devices > Mouse > Primary mouse button",
   "gt_steps": [
     "Open Windows Settings.",

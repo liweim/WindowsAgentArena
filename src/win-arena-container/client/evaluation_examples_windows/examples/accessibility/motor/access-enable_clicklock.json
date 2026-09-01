@@ -1,11 +1,10 @@
 {
   "id": "access-enable_clicklock",
-  "manually_evaluated": false,
-  "_comment": "The `instruction` is too explicit and spells out all the operational steps. I suggest making it more high-level, for example: “Enable mouse ClickLock.",
+  "manually_evaluated": true,
   "snapshot": "windows",
   "category": "access",
   "difficulty": "easy",
-  "instruction": "Open Mouse settings, open Additional mouse settings, enable ClickLock, apply the changes, and leave ClickLock turned on.",
+  "instruction": "I find it difficult to keep the mouse button pressed while dragging items. Please enable Mouse ClickLock for me.",
   "source": "Settings > Bluetooth & devices > Mouse > Additional mouse settings > Buttons > Turn on ClickLock",
   "gt_steps": [
     "Open Windows settings.",

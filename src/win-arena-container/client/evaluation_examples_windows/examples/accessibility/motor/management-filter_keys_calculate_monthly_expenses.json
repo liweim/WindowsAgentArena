@@ -1,0 +1,94 @@
+{
+  "id": "management-filter_keys_calculate_monthly_expenses",
+  "_comment": "You should put the answer to gt_steps",
+  "manually_evaluated": false,
+  "snapshot": "windows",
+  "category": "management",
+  "difficulty": "medium",
+  "instruction": "Enable Windows Filter Keys as a motor accessibility aid and keep it enabled throughout the task. Open the provided MonthlyBills.ods spreadsheet in LibreOffice Calc. Use a formula to calculate the total amount due for all bills with the status `Unpaid` and enter the result in cell B12. Save the spreadsheet.",
+  "source": "Local Spreadsheet: assets/MonthlyBills.ods",
+  "gt_steps": [
+    "Enable Windows Filter Keys.",
+    "Keep Filter Keys enabled throughout the task.",
+    "Open MonthlyBills.ods in LibreOffice Calc.",
+    "Review the Amount Due and Status columns.",
+    "Select cell B12.",
+    "Enter a formula that sums the amounts for all rows whose status is `Unpaid`.",
+    "Verify the calculated total.",
+    "Save the spreadsheet.",
+    "Keep Filter Keys enabled."
+  ],
+  "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/MonthlyBills.ods",
+            "path": "C:\\Users\\Docker\\Desktop\\MonthlyBills.ods"
+          }
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "libreoffice",
+          "C:\\Users\\Docker\\Desktop\\MonthlyBills.ods"
+        ]
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "settings",
+    "libreoffice_calc"
+  ],
+  "evaluator": {
+    "func": [
+      "check_include_exclude",
+      "check_ods_cell_values"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "vm_command_line",
+        "command": "powershell -NoProfile -Command \"$flags=[int](Get-ItemPropertyValue -Path 'HKCU:\\Control Panel\\Accessibility\\Keyboard Response' -Name 'Flags' -ErrorAction SilentlyContinue); if (($flags -band 1) -eq 1) { Write-Output 'FILTER_KEYS_ENABLED' } else { Write-Output 'FILTER_KEYS_DISABLED' }\"",
+        "shell": true
+      },
+      {
+        "type": "ods_file",
+        "path": "C:\\Users\\Docker\\Desktop\\MonthlyBills.ods"
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "include": [
+            "FILTER_KEYS_ENABLED"
+          ],
+          "exclude": [
+            "FILTER_KEYS_DISABLED"
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "sheet": "Monthly Bills",
+          "cells": {
+            "B12": 648.49
+          },
+          "formulas": {
+            "B12": true
+          }
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

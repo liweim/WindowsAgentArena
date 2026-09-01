@@ -723,3 +723,7 @@ def check_zoom_access_tree(result, rule):
     actual = str(result)
 
     return 1.0 if expected in actual else 0.0
+
+def exact_coupon_code(result, rules):
+    expected = rules["expected"]
+    return result == expected

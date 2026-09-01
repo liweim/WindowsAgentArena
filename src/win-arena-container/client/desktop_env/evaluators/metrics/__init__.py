@@ -30,7 +30,8 @@ from .chrome import (
     check_digital_accessibility_page,
     is_expected_bookmark_anywhere,
     compare_text_content,
-    check_zoom_access_tree
+    check_zoom_access_tree,
+    exact_coupon_code,
 )
 from .docs import (
     compare_font_names,

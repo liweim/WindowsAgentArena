@@ -1,5 +1,6 @@
 {
   "id": "service_osk_open_pdf_links",
+  "_comment": "Put the answer to the `gt_steps`.",
   "snapshot": "chrome",
   "category": "service",
   "difficulty": "easy",

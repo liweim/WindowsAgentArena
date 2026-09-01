@@ -1,11 +1,10 @@
 {
   "id": "access-enable_filter_keys",
-  "manually_evaluated": false,
-  "_comment": "The `instruction` is too explicit and spells out all the operational steps. I suggest making it more high-level.",
+  "manually_evaluated": true,
   "snapshot": "windows",
   "category": "access",
   "difficulty": "easy",
-  "instruction": "Open Accessibility settings, navigate to Keyboard settings, enable Filter Keys, and leave Filter Keys turned on.",
+  "instruction": "I have limited hand dexterity, which can result in accidental repeated keystrokes. Please enable Filter Keys and keep it enabled.",
   "source": "Settings > Accessibility > Keyboard > Filter Keys",
   "gt_steps": [
    "Open Windows settings.",

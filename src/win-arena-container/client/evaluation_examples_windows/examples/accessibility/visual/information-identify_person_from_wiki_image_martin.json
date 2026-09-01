@@ -1,0 +1,91 @@
+{
+  "id": "information-identify_person_from_wiki_image_martin",
+  "_comment": "",
+  "snapshot": "chrome",
+  "category": "information",
+  "difficulty": "medium",
+  "instruction": "Turn on a screen reader. Use the Wikipedia page already open in Chrome to identify the person shown in the first image. Open the Wikipedia page of the person shown in the image and leave that page open.",
+  "source": "synthetic",
+  "gt_steps": [
+    "Open the Wikipedia page about the I Have a Dream speech.",
+    "Turn on Windows Narrator.",
+    "Use the screen reader to navigate the page.",
+    "Find the first image description or caption.",
+    "Identify the person shown in the image as Martin Luther King Jr.",
+    "Open the Wikipedia page for Martin Luther King Jr.",
+    "Leave the Martin Luther King Jr. Wikipedia page open."
+  ],
+  "config": [
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port:1337",
+          "--force-renderer-accessibility"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    },
+    {
+      "type": "sleep",
+      "parameters": {
+        "seconds": 1
+      }
+    },
+    {
+      "type": "chrome_open_tabs",
+      "parameters": {
+        "urls_to_open": [
+          "http://host.docker.internal:8888/wikipedia_en_all_maxi_2022-05/A/I_Have_a_Dream"
+        ]
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "chrome",
+    "basic_os"
+  ],
+  "evaluator": {
+    "func": [
+      "check_narrator_enabled",
+      "is_expected_active_tab"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "narrator_status"
+      },
+      {
+        "type": "active_tab_info",
+        "goto_prefix": "http://"
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {}
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "type": "url",
+          "url": "http://host.docker.internal:8888/wikipedia_en_all_maxi_2022-05/A/Martin_Luther_King_Jr."
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

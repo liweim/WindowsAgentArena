@@ -1,0 +1,130 @@
+{
+  "id": "management-cardiology_appointment_reminder",
+  "_comment": "",
+  "manually_evaluated": false,
+  "snapshot": "windows",
+  "category": "management",
+  "difficulty": "medium",
+  "instruction": "Enable Windows Narrator as a visual accessibility aid and keep it enabled throughout the task. Open the provided AppointmentLetter.docx in Microsoft Word or LibreOffice Writer and review the densely formatted appointment information. Then open Thunderbird Calendar and create an event named `Cardiology Appointment` for the appointment date and time shown in the letter. Set the location to the full clinic location shown in the letter and configure a reminder for exactly one day before the appointment. Save the event.",
+  "source": "Local Document: assets/AppointmentLetter.docx. Adapted from the NHS England patient appointment confirmation template: https://www.england.nhs.uk/wp-content/uploads/2023/02/B2012iii-patient-letter-template-appointment-confirmation.docx",
+  "gt_steps": [
+    "Enable Windows Narrator.",
+    "Keep Narrator enabled throughout the task.",
+    "Open AppointmentLetter.docx.",
+    "Use Narrator to review the appointment letter.",
+    "Identify the appointment date as Tuesday, 20 October 2026.",
+    "Identify the appointment time as 10:30 AM.",
+    "Identify the location as Cardiology Clinic, Level 3, Riverside Medical Centre.",
+    "Open Thunderbird Calendar.",
+    "Create a new calendar event named Cardiology Appointment.",
+    "Set the event date to 20 October 2026.",
+    "Set the event start time to 10:30 AM.",
+    "Set the location to Cardiology Clinic, Level 3, Riverside Medical Centre.",
+    "Set a reminder for one day before the appointment.",
+    "Save the calendar event.",
+    "Keep Narrator enabled."
+  ],
+  "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/AppointmentLetter.docx",
+            "path": "C:\\Users\\Docker\\Desktop\\AppointmentLetter.docx"
+          }
+        ]
+      }
+    },
+    {
+      "type": "download",
+      "parameters": {
+        "files": [
+          {
+            "url": "https://huggingface.co/datasets/xlangai/ubuntu_osworld_file_cache/resolve/main/thunderbird/dd84e895-72fd-4023-a336-97689ded257c/thunderbird-profile.tar.gz",
+            "path": "C:\\Users\\Docker\\Downloads\\thunderbird-profile.tar.gz"
+          }
+        ]
+      }
+    },
+    {
+      "type": "prepare_thunderbird_profile",
+      "parameters": {}
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "libreoffice",
+          "C:\\Users\\Docker\\Desktop\\AppointmentLetter.docx"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "thunderbird.exe",
+          "-profile",
+          "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release"
+        ]
+      }
+    },
+    {
+      "type": "sleep",
+      "parameters": {
+        "seconds": 3
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "narrator",
+    "libreoffice_writer",
+    "thunderbird"
+  ],
+  "evaluator": {
+    "func": [
+      "check_include_exclude",
+      "check_thunderbird_calendar_event"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "vm_command_line",
+        "command": "powershell -NoProfile -Command \"if (Get-Process Narrator -ErrorAction SilentlyContinue) { Write-Output 'NARRATOR_OPEN' } else { Write-Output 'NARRATOR_CLOSED' }\"",
+        "shell": true
+      },
+      {
+        "type": "vm_file",
+        "path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release\\calendar-data\\local.sqlite",
+        "dest": "thunderbird-calendar.sqlite"
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "include": [
+            "NARRATOR_OPEN"
+          ],
+          "exclude": [
+            "NARRATOR_CLOSED"
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "title": "Cardiology Appointment",
+          "start": "2026-10-20 10:30",
+          "location": "Cardiology Clinic, Level 3, Riverside Medical Centre",
+          "reminder_minutes_before": 1440
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

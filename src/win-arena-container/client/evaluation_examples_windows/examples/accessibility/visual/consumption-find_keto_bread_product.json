@@ -1,0 +1,104 @@
+{
+  "id": "consumption-find_keto_bread_product",
+  "_comment": "",
+  "snapshot": "chrome",
+  "category": "consumption",
+  "difficulty": "easy",
+  "instruction": "Turn on a screen reader. Use it to read the provided shopping note in Chrome and identify the requested product. Find that product on the opened shopping website, open its product page, and leave the page open.",
+  "source": "synthetic",
+  "gt_steps": [
+    "Open the provided shopping note in Chrome.",
+    "Turn on Windows Narrator.",
+    "Use the screen reader to read the shopping note.",
+    "Identify the requested product as ThinSlim Foods Keto Bread, Plain, Pack of 2.",
+    "Open the shopping website.",
+    "Search for the requested product.",
+    "Open the correct ThinSlim Foods Keto Bread product page.",
+    "Leave the product page open in the active tab."
+  ],
+  "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/Consumption-keto_bread_shopping_note.html",
+            "path": "C:\\Users\\Docker\\Desktop\\Consumption-keto_bread_shopping_note.html"
+          }
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port=1337",
+          "--force-renderer-accessibility"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    },
+    {
+      "type": "sleep",
+      "parameters": {
+        "seconds": 1
+      }
+    },
+    {
+      "type": "chrome_open_tabs",
+      "parameters": {
+        "urls_to_open": [
+          "file:///C:/Users/Docker/Desktop/Consumption-keto_bread_shopping_note.html",
+          "http://host.docker.internal:7770"
+        ]
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "chrome",
+    "basic_os"
+  ],
+  "evaluator": {
+    "func": [
+      "check_narrator_enabled",
+      "is_expected_active_tab"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "narrator_status"
+      },
+      {
+        "type": "active_tab_info",
+        "goto_prefix": "http://"
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {}
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "type": "url",
+          "url": "http://host.docker.internal:7770/keto-bread-low-carb-bread-zero-net-carbs-soy-free-taste-guaranteed-plain-pack-of-2-keto-breads-thinslim-foods.html"
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

@@ -1,5 +1,5 @@
 {
-  "id": "consumption-SwingSet_price_filter",
+  "id": "consumption-swingset_price_filter",
   "_comment": "Use the self-hosted shopping service, since the data is more stable.",
   "snapshot": "chrome",
   "category": "consumption",

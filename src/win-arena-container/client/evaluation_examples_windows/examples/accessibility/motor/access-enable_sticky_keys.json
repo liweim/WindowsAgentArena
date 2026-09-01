@@ -1,11 +1,10 @@
 {
   "id": "access-enable_sticky_keys",
-  "manually_evaluated": false,
-  "_comment": "The `instruction` is too explicit and spells out all the operational steps. I suggest making it more high-level.",
+  "manually_evaluated": true,
   "snapshot": "windows",
   "category": "access",
   "difficulty": "easy",
-  "instruction": "Open Accessibility settings, navigate to Keyboard settings, enable Sticky Keys, and leave Sticky Keys turned on.",
+  "instruction": "I find it difficult to press multiple keys at the same time. Please enable Sticky Keys and leave it turned on.",
   "source": "Settings > Accessibility > Keyboard > Sticky Keys",
   "gt_steps": [
     "Open Windows settings.",

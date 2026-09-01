@@ -1,0 +1,143 @@
+{
+  "id": "management-filter_keys_shopping_list_cart",
+  "_comment": "",
+  "snapshot": "windows",
+  "category": "management",
+  "difficulty": "hard",
+  "instruction": "Enable Windows Filter Keys as a motor accessibility aid and keep it enabled throughout the task. Open the provided ShoppingList.ods spreadsheet in LibreOffice Calc. Use the product names and quantities listed in the spreadsheet to find the products on the self-hosted OneStopMarket website and add the specified quantity of each product to the shopping cart. Do not add any products that are not listed in the spreadsheet.",
+  "source": "Local Spreadsheet: assets/ShoppingList.ods and self-hosted OneStopMarket website",
+  "gt_steps": [
+    "Enable Windows Filter Keys.",
+    "Keep Filter Keys enabled throughout the task.",
+    "Open ShoppingList.ods in LibreOffice Calc.",
+    "Review the product names and required quantities in the Shopping List sheet.",
+    "Open the self-hosted OneStopMarket website in Google Chrome.",
+    "Search for `Mexican Cola Soda 4 Pack 500ml Glass Bottles Coca-Cola`.",
+    "Add 1 unit of the Mexican Cola Soda product to the shopping cart.",
+    "Search for `Chippies Banana Chips (Pack of 4)`.",
+    "Add 3 units of the Chippies Banana Chips product to the shopping cart.",
+    "Search for `Dove Intense Nourishment Body Lotion 250ml`.",
+    "Add 1 unit of the Dove body lotion product to the shopping cart.",
+    "Search for `Nature Republic California Aloe Vera Cleansing Tissue 1 Pack (80 Sheets)`.",
+    "Add 2 units of the Nature Republic cleansing tissue product to the shopping cart.",
+    "Search for `PAM Spray Pump Olive Oil Cooking Spray, Keto Friendly, 7 oz.`.",
+    "Add 1 unit of the PAM olive oil cooking spray to the shopping cart.",
+    "Open the shopping cart.",
+    "Verify that the cart contains only the five listed products.",
+    "Verify that each product has the required quantity.",
+    "Keep Filter Keys enabled."
+  ],
+  "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/ShoppingList.ods",
+            "path": "C:\\Users\\Docker\\Desktop\\ShoppingList.ods"
+          }
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "libreoffice",
+          "C:\\Users\\Docker\\Desktop\\ShoppingList.ods"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port=1337",
+          "--force-renderer-accessibility",
+          "http://host.docker.internal:7770/"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "TCP-LISTEN:9222,fork,reuseaddr",
+          "TCP:localhost:1337"
+        ]
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "settings",
+    "libreoffice_calc",
+    "google_chrome",
+    "onestopmarket"
+  ],
+  "evaluator": {
+    "func": [
+      "check_include_exclude",
+      "is_page_contains_items"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "vm_command_line",
+        "command": "powershell -NoProfile -Command \"$flags=[int](Get-ItemPropertyValue -Path 'HKCU:\\Control Panel\\Accessibility\\Keyboard Response' -Name 'Flags' -ErrorAction SilentlyContinue); if (($flags -band 1) -eq 1) { Write-Output 'FILTER_KEYS_ENABLED' } else { Write-Output 'FILTER_KEYS_DISABLED' }\"",
+        "shell": true
+      },
+      {
+        "type": "page_info",
+        "url": "http://host.docker.internal:7770/checkout/cart/",
+        "load_state": "networkidle"
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "include": [
+            "FILTER_KEYS_ENABLED"
+          ],
+          "exclude": [
+            "FILTER_KEYS_DISABLED"
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "items": [
+            {
+              "name": "Mexican Cola Soda 4 Pack 500ml Glass Bottles Coca-Cola",
+              "quantity": 1
+            },
+            {
+              "name": "Chippies Banana Chips (Pack of 4)",
+              "quantity": 3
+            },
+            {
+              "name": "Dove Intense Nourishment Body Lotion 250ml",
+              "quantity": 1
+            },
+            {
+              "name": "Nature Republic California Aloe Vera Cleansing Tissue 1 Pack (80 Sheets)",
+              "quantity": 2
+            },
+            {
+              "name": "PAM Spray Pump Olive Oil Cooking Spray, Keto Friendly, 7 oz.",
+              "quantity": 1
+            }
+          ],
+          "exact_match": true
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

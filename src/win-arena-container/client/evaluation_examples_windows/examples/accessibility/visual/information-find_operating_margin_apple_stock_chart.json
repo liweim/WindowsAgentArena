@@ -1,0 +1,104 @@
+{
+  "id": "information-find_operating_margin_apple_stock_chart",
+  "_comment": "",
+  "snapshot": "chrome",
+  "category": "information",
+  "difficulty": "hard",
+  "instruction": "Turn on a screen reader. Use the opened Apple financial report PDF. Use the screen reader to locate the Margin and Efficiency Analysis chart and find the Q3 2025 Operating Margin value. Open Notepad and write the operating margin percentage value. Save it in answer.txt on Desktop and leave everything open.",
+  "source": "synthetic",
+  "gt_steps": [
+    "Turn on Windows Narrator.",
+    "Navigate through the PDF.",
+    "Find the Margin and Efficiency Analysis chart.",
+    "Locate the Q3 2025 Operating Margin value from the chart.",
+    "Open Notepad.",
+    "Write '31.30%' in Notepad.",
+    "Save it in answer.txt and leave everything open."
+  ],
+  "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/Apple-Inc.-Full-Year-2025-Report-Summary.pdf",
+            "path": "C:\\Users\\Docker\\Desktop\\Apple-Inc.-Full-Year-2025-Report-Summary.pdf"
+          }
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port=1337",
+          "--force-renderer-accessibility"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    },
+    {
+      "type": "sleep",
+      "parameters": {
+        "seconds": 1
+      }
+    },
+    {
+      "type": "chrome_open_tabs",
+      "parameters": {
+        "urls_to_open": [
+          "file:///C:/Users/Docker/Desktop/Apple-Inc.-Full-Year-2025-Report-Summary.pdf"
+        ]
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "chrome",
+    "basic_os"
+  ],
+  "evaluator": {
+    "func": [
+      "check_narrator_enabled",
+      "check_include_exclude"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "narrator_status"
+      },
+      {
+        "type": "vm_file",
+        "path": "C:\\Users\\Docker\\Desktop\\answer.txt",
+        "dest": "answer.txt"
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {}
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "include": [
+            "31.3"
+          ]
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

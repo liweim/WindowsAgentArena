@@ -1,0 +1,120 @@
+{
+  "id": "consumption-pdf_search_add_to_cart_marshmallow_bunnies",
+  "_comment": "",
+  "snapshot": "chrome",
+  "category": "consumption",
+  "difficulty": "medium",
+  "instruction": "Turn on a screen reader. Use it to read the opened shopping reminder PDF in Chrome and identify the requested product. Search for that product on the opened shopping website, add exactly one unit to the shopping cart, and leave the shopping cart page open.",
+  "source": "synthetic",
+  "gt_steps": [
+    "Open the shopping reminder PDF in Chrome.",
+    "Turn on Windows Narrator.",
+    "Use the screen reader to read the shopping reminder PDF.",
+    "Identify the requested product as Melster Candies Chocolatey Covered Chocolate Flavored Marshmallow Bunnies, 5-piece box, 1.87 oz.",
+    "Switch to the shopping website.",
+    "Search for the requested product.",
+    "Open the correct product page.",
+    "Add exactly one unit to the shopping cart.",
+    "Open the shopping cart.",
+    "Leave the shopping cart page open."
+  ],
+  "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/Consumption-marshmallow_bunnies_reminder.pdf",
+            "path": "C:\\Users\\Docker\\Desktop\\Consumption-marshmallow_bunnies_reminder.pdf"
+          }
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port=1337",
+          "--force-renderer-accessibility"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    },
+    {
+      "type": "sleep",
+      "parameters": {
+        "seconds": 1
+      }
+    },
+    {
+      "type": "chrome_open_tabs",
+      "parameters": {
+        "urls_to_open": [
+          "file:///C:/Users/Docker/Desktop/Consumption-marshmallow_bunnies_reminder.pdf",
+          "http://host.docker.internal:7770"
+        ]
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "chrome",
+    "basic_os"
+  ],
+  "evaluator": {
+    "func": [
+      "check_narrator_enabled",
+      "is_page_contains_items",
+      "is_expected_active_tab"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "narrator_status"
+      },
+      {
+        "type": "page_info",
+        "url": "http://host.docker.internal:7770/checkout/cart/",
+        "load_state": "networkidle"
+      },
+      {
+        "type": "active_tab_info",
+        "goto_prefix": "http://"
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {}
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "items": [
+            "Melster Candies Chocolatey Covered Chocolate Flavored Marshmallow Bunnies"
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "type": "url",
+          "url": "http://host.docker.internal:7770/checkout/cart/"
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

@@ -1,11 +1,10 @@
 {
   "id": "access-enable_on_screen_keyboard",
-  "manually_evaluated": false,
-  "_comment": "",
+  "manually_evaluated": true,
   "snapshot": "windows",
   "category": "access",
   "difficulty": "easy",
-  "instruction": "Enable the Windows On-Screen Keyboard and keep it enabled.",
+  "instruction": "Because of my limited hand mobility, using a physical keyboard is difficult. Please enable the Windows On-Screen Keyboard and keep it enabled.",
   "source": "Settings > Accessibility > Keyboard > On-Screen Keyboard",
   "gt_steps": [
     "Open Windows settings.",
@@ -31,7 +30,9 @@
         "include": [
           "OSK_OPEN"
         ],
-        "exclude": []
+        "exclude": [
+          "OSK_CLOSED"
+        ]
       }
     }
   },

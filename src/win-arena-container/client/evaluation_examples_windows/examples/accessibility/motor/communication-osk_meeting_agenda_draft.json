@@ -1,0 +1,165 @@
+{
+  "id": "communication-osk_meeting_agenda_draft",
+  "_comment": "",
+  "manually_evaluated": false,
+  "snapshot": "windows",
+  "category": "communication",
+  "difficulty": "medium",
+  "instruction": "Enable the Windows On-Screen Keyboard as a motor accessibility aid and keep it enabled throughout the task. Open the provided MeetingAgenda.odt document in LibreOffice Writer and review the meeting details. Then compose a new email in Thunderbird to alice@example.com with the subject `Meeting Agenda`. In the email body, include the meeting date, time, location, all four agenda items, and the preparation requirement from the document. Save the email as a draft and do not send it.",
+  "source": "Local Document: assets/MeetingAgenda.odt",
+  "gt_steps": [
+    "Enable the Windows On-Screen Keyboard.",
+    "Keep the On-Screen Keyboard enabled throughout the task.",
+    "Open MeetingAgenda.odt in LibreOffice Writer.",
+    "Identify the meeting date as 20 October 2026.",
+    "Identify the meeting time as 10:00 AM to 11:00 AM.",
+    "Identify the location as Conference Room B.",
+    "Identify the four agenda items.",
+    "Identify the preparation requirement to bring the latest testing notes and an updated task list.",
+    "Open Thunderbird and compose a new email.",
+    "Set the recipient to alice@example.com.",
+    "Set the subject to `Meeting Agenda`.",
+    "Include the meeting date, time, location, agenda items, and preparation requirement in the email body.",
+    "Save the email as a draft.",
+    "Do not send the email.",
+    "Keep the On-Screen Keyboard enabled."
+  ],
+  "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/MeetingAgenda.odt",
+            "path": "C:\\Users\\Docker\\Desktop\\MeetingAgenda.odt"
+          }
+        ]
+      }
+    },
+    {
+      "type": "download",
+      "parameters": {
+        "files": [
+          {
+            "url": "https://huggingface.co/datasets/xlangai/ubuntu_osworld_file_cache/resolve/main/thunderbird/dd84e895-72fd-4023-a336-97689ded257c/thunderbird-profile.tar.gz",
+            "path": "C:\\Users\\Docker\\Downloads\\thunderbird-profile.tar.gz"
+          }
+        ]
+      }
+    },
+    {
+      "type": "prepare_thunderbird_profile",
+      "parameters": {}
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "libreoffice",
+          "C:\\Users\\Docker\\Desktop\\MeetingAgenda.odt"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "thunderbird.exe",
+          "-profile",
+          "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release"
+        ]
+      }
+    },
+    {
+      "type": "sleep",
+      "parameters": {
+        "seconds": 3
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "on_screen_keyboard",
+    "libreoffice_writer",
+    "thunderbird"
+  ],
+  "evaluator": {
+    "func": [
+      "check_include_exclude",
+      "check_thunderbird_email_composition"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "vm_command_line",
+        "command": "powershell -NoProfile -Command \"if (Get-Process osk -ErrorAction SilentlyContinue) { Write-Output 'OSK_OPEN' } else { Write-Output 'OSK_CLOSED' }\"",
+        "shell": true
+      },
+      {
+        "type": "vm_file",
+        "path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release\\Mail\\Local Folders\\Drafts",
+        "dest": "thunderbird-drafts.mbox"
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "include": [
+            "OSK_OPEN"
+          ],
+          "exclude": [
+            "OSK_CLOSED"
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "to": "alice@example.com",
+          "subject": "Meeting Agenda",
+          "body_points": [
+            [
+              "20 October 2026",
+              "October 20, 2026",
+              "20/10/2026",
+              "2026-10-20"
+            ],
+            [
+              "10:00 AM",
+              "10:00 am"
+            ],
+            [
+              "11:00 AM",
+              "11:00 am"
+            ],
+            [
+              "Conference Room B"
+            ],
+            [
+              "Review progress on the client dashboard"
+            ],
+            [
+              "Discuss unresolved testing issues"
+            ],
+            [
+              "Confirm responsibilities for the final presentation"
+            ],
+            [
+              "Agree on the next project milestone and deadline"
+            ],
+            [
+              "latest testing notes"
+            ],
+            [
+              "updated task list"
+            ]
+          ]
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

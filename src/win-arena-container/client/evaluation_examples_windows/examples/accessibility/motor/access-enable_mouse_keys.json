@@ -1,11 +1,10 @@
 {
   "id": "access-enable_mouse_keys",
-  "manually_evaluated": false,
-  "_comment": "The `instruction` is too explicit and spells out all the operational steps. I suggest making it more high-level.",
+  "manually_evaluated": true,
   "snapshot": "windows",
   "category": "access",
   "difficulty": "easy",
-  "instruction": "Open Accessibility settings, navigate to Mouse settings, enable Mouse Keys, and leave Mouse Keys turned on.",
+  "instruction": "I have difficulty using a mouse precisely. Please enable Mouse Keys and keep it enabled.",
   "source": "Settings > Accessibility > Mouse > Mouse Keys",
   "gt_steps": [
     "Open Windows settings.",

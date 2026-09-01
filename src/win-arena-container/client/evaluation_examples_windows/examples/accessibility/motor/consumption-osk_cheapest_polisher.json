@@ -1,0 +1,113 @@
+{
+  "id": "consumption-osk_cheapest_polisher",
+  "_comment": "You need to specify how to connect the name and price; in other words, use \n to separate them.",
+  "manually_evaluated": false,
+  "snapshot": "chrome",
+  "category": "consumption",
+  "difficulty": "easy",
+  "instruction": "Enable the Windows On-Screen Keyboard as a motor accessibility aid and keep it enabled throughout the task. The provided Harbor Freight catalog PDF is already open in Chrome. Find the cheapest polisher in the catalog. Write the full name of the polisher exactly as shown in the PDF, followed by its price, in a text file named `cheapPolisher.txt` on the Desktop.",
+  "source": "assets/Nov2020Catalog_Full.pdf",
+  "gt_steps": [
+    "Enable the Windows On-Screen Keyboard.",
+    "Keep the On-Screen Keyboard enabled throughout the task.",
+    "Read the Harbor Freight catalog PDF already open in Chrome.",
+    "Locate the polishing products section.",
+    "Identify the cheapest polisher in the catalog.",
+    "Find the product name `6\" PALM POLISHER`.",
+    "Find its price `$19.99`.",
+    "Open Notepad.",
+    "Write the following exactly:",
+    "6\" PALM POLISHER",
+    "$19.99",
+    "Save the file as `cheapPolisher.txt` on the Desktop.",
+    "Leave the saved file on the Desktop.",
+    "Leave the On-Screen Keyboard enabled."
+  ],
+  "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/Nov2020Catalog_Full.pdf",
+            "path": "C:\\Users\\Docker\\Downloads\\Nov2020Catalog_Full.pdf"
+          }
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port=1337",
+          "--force-renderer-accessibility",
+          "file:///C:/Users/Docker/Downloads/Nov2020Catalog_Full.pdf"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    },
+    {
+      "type": "activate_window",
+      "parameters": {
+        "window_name": "Google Chrome"
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "settings",
+    "chrome",
+    "notepad"
+  ],
+  "evaluator": {
+    "func": [
+      "check_include_exclude",
+      "exact_match"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "vm_command_line",
+        "command": "powershell -Command \"if (Get-Process osk -ErrorAction SilentlyContinue) { Write-Output 'OSK_OPEN' } else { Write-Output 'OSK_CLOSED' }\"",
+        "shell": true
+      },
+      {
+        "type": "is_file_saved_desktop",
+        "filename": "cheapPolisher.txt",
+        "textcontent": "6\" PALM POLISHER\n$19.99"
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "include": [
+            "OSK_OPEN"
+          ],
+          "exclude": [
+            "OSK_CLOSED"
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "expected": "true"
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

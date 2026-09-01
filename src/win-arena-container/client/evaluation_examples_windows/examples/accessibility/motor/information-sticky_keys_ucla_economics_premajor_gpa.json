@@ -1,5 +1,6 @@
 {
   "id": "information-sticky_keys_ucla_economics_premajor_gpa",
+  "_comment": "The tasks are becoming too homogeneous. Avoid always extracting information from PDFs, and introduce more variety and novel task designs.",
   "manually_evaluated": false,
   "snapshot": "chrome",
   "category": "information",

@@ -1,22 +1,27 @@
 {
-  "id": "service-sticky_keys_maximum_investigation_period",
-  "_comment": "",
+  "id": "consumption-sticky_keys_half_price_body_wash",
+  "_comment": "You need to specify how to connect the products; in other words, use `\n` to separate them.",
   "manually_evaluated": false,
   "snapshot": "chrome",
-  "category": "health",
+  "category": "consumption",
   "difficulty": "medium",
-  "instruction": "Enable Windows Sticky Keys as a motor accessibility aid and keep it enabled throughout the task. The provided bank statement PDF is already open in Chrome. Find the maximum investigation period mentioned for a complaint or question, then save only the investigation period in a text file named `investigationPeriod.txt` on the Desktop.",
-  "source": "https://www.carsonbank.com/",
+  "instruction": "Enable Windows Sticky Keys as a motor accessibility aid and keep it enabled throughout the task. The provided Coles catalogue PDF is already open in Chrome. Find every product with `Body Wash` in its full product name that costs less than $9. Write each full product name exactly as shown in the PDF, without paraphrasing, in a text file named `halfPriceBodyWash.txt` on the Desktop.",
+  "source": "assets/COLNSWMETRO_220726_AQCAZRS1.pdf",
   "gt_steps": [
     "Enable Windows Sticky Keys.",
     "Keep Sticky Keys enabled throughout the task.",
-    "Read the bank statement PDF already open in Chrome.",
-    "Locate the section describing complaints or questions about electronic transfers.",
-    "Find the maximum investigation period.",
-    "Identify the maximum investigation period as 90 days.",
+    "Read the Coles catalogue PDF already open in Chrome.",
+    "Find the body wash products and compare their advertised prices.",
+    "Identify every product with `Body Wash` in its full product name that costs less than $9.",
+    "Identify `Palmolive Naturals Body Wash 1 Litre` priced at $6.50.",
+    "Identify `Dove Serum Body Wash 300mL` priced at $7.50.",
+    "Identify `Sukin Botanical Body Wash 1 Litre` priced at $8.97.",
+    "Identify `Thankyou Body Wash 1 Litre` priced at $8.97.",
+    "Identify `Nivea Shower Body Wash 1 Litre` priced at $8.50.",
     "Open Notepad.",
-    "Write `90 days` in the file.",
-    "Save the file as `investigationPeriod.txt` on the Desktop.",
+    "Write each full product name exactly as shown in the PDF, with one product per line.",
+    "Do not include prices, products costing exactly $9, or products costing more than $9.",
+    "Save the file as `halfPriceBodyWash.txt` on the Desktop.",
     "Leave the saved file on the Desktop.",
     "Leave Sticky Keys enabled."
   ],
@@ -26,8 +31,8 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/Sample-Statement.pdf",
-            "path": "C:\\Users\\Docker\\Downloads\\Sample-Statement.pdf"
+            "local_path": "assets/COLNSWMETRO_220726_AQCAZRS1.pdf",
+            "path": "C:\\Users\\Docker\\Downloads\\COLNSWMETRO_220726_AQCAZRS1.pdf"
           }
         ]
       }
@@ -39,7 +44,7 @@
           "google-chrome",
           "--remote-debugging-port=1337",
           "--force-renderer-accessibility",
-          "file:///C:/Users/Docker/Downloads/Sample-Statement.pdf"
+          "file:///C:/Users/Docker/Downloads/COLNSWMETRO_220726_AQCAZRS1.pdf"
         ]
       }
     },
@@ -80,8 +85,8 @@
       },
       {
         "type": "is_file_saved_desktop",
-        "filename": "investigationPeriod.txt",
-        "textcontent": "90 days"
+        "filename": "halfPriceBodyWash.txt",
+        "textcontent": "Palmolive Naturals Body Wash 1 Litre\nDove Serum Body Wash 300mL\nSukin Botanical Body Wash 1 Litre\nThankyou Body Wash 1 Litre\nNivea Shower Body Wash 1 Litre"
       }
     ],
     "expected": [

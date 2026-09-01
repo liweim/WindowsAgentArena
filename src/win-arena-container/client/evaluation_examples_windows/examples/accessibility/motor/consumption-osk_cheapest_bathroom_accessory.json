@@ -1,0 +1,108 @@
+{
+  "id": "consumption-osk_cheapest_bathroom_accessory",
+  "_comment": "The evaluator needs to verify the number of units added. Alternatively, you can simply remove the phrase “one unit.”",
+  "manually_evaluated": false,
+  "snapshot": "chrome",
+  "category": "consumption",
+  "difficulty": "medium",
+  "instruction": "Enable the Windows On-Screen Keyboard as a motor accessibility aid and keep it enabled throughout the task. On the OneStopShop website, open the `Home & Kitchen` category, navigate to `Bathroom Accessories`, find the cheapest item in that category, and add one unit of the item to the shopping cart.",
+  "source": "OneStopShop (self-hosted)",
+  "gt_steps": [
+    "Enable the Windows On-Screen Keyboard.",
+    "Keep the On-Screen Keyboard enabled throughout the task.",
+    "Open the OneStopShop website already available in Chrome.",
+    "Open the `Home & Kitchen` category.",
+    "Navigate to the `Bathroom Accessories` subcategory.",
+    "Sort the products by price from low to high, or compare the displayed prices.",
+    "Identify the cheapest item in the category.",
+    "Open the cheapest product.",
+    "Confirm that its SKU is `B07QRRDZJ5`.",
+    "Leave the quantity as 1.",
+    "Add the product to the shopping cart."
+  ],
+  "config": [
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port=1337",
+          "--force-renderer-accessibility"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    },
+    {
+      "type": "sleep",
+      "parameters": {
+        "seconds": 1
+      }
+    },
+    {
+      "type": "chrome_open_tabs",
+      "parameters": {
+        "urls_to_open": [
+          "http://host.docker.internal:7770"
+        ]
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "settings",
+    "chrome",
+    "on_screen_keyboard"
+  ],
+  "evaluator": {
+    "func": [
+      "check_include_exclude",
+      "is_page_contains_items"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "vm_command_line",
+        "command": "powershell -NoProfile -Command \"if (Get-Process osk -ErrorAction SilentlyContinue) { Write-Output 'OSK_OPEN' } else { Write-Output 'OSK_CLOSED' }\"",
+        "shell": true
+      },
+      {
+        "type": "page_info",
+        "url": "http://host.docker.internal:7770/checkout/cart/",
+        "load_state": "networkidle"
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "include": [
+            "OSK_OPEN"
+          ],
+          "exclude": [
+            "OSK_CLOSED"
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "items": [
+            "B07QRRDZJ5"
+          ]
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

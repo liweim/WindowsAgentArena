@@ -1,6 +1,6 @@
 {
   "id": "service-mouse_keys_open_voting_links",
-  "manually_evaluated": false,
+  "_comment": "",
   "snapshot": "chrome",
   "category": "service",
   "difficulty": "medium",
