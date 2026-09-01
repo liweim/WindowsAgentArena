@@ -1,5 +1,4 @@
-$scriptFolder = "\\host.lan\Data"
-$pythonScriptFile = "$scriptFolder\server\main.py"
+$pythonScriptFile = "C:\Users\Docker\AppData\Local\Programs\Python\Python310\python.exe"
 $pythonServerPort = 5000
 
 # Start the Caddy reverse proxy in a non-blocking manner

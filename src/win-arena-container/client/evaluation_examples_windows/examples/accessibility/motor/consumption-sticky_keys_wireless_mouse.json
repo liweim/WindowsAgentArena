@@ -1,0 +1,104 @@
+{
+  "id": "consumption-sticky_keys_wireless_mouse",
+  "_comment": "The evaluator needs to verify the number of units added. Alternatively, you can simply remove the phrase “one unit.”",
+  "manually_evaluated": false,
+  "snapshot": "chrome",
+  "category": "consumption",
+  "difficulty": "easy",
+  "instruction": "Enable Windows Sticky Keys as a motor accessibility aid and keep it enabled throughout the task. On the OneStopShop website, search for `wireless mouse`. Open the first search result and add one unit of the product to the shopping cart.",
+  "source": "OneStopShop (self-hosted)",
+  "gt_steps": [
+    "Enable Windows Sticky Keys.",
+    "Keep Sticky Keys enabled throughout the task.",
+    "Open the OneStopShop website already available in Chrome.",
+    "Search for `wireless mouse`.",
+    "Open the first product in the search results.",
+    "Verify that the first result is `LED Wireless Mouse,Wireless Mouse for MacBook Air/Wireless Mouse for MacBook Pro/Mac/Laptop/MacBook/iPad,Bluetooth Mouse for MacBook Air/Pro/Mac/ipad/ipad pro (Rose Gold)`.",
+    "Leave the quantity as 1.",
+    "Add the product to the shopping cart."
+  ],
+  "config": [
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port=1337",
+          "--force-renderer-accessibility"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    },
+    {
+      "type": "sleep",
+      "parameters": {
+        "seconds": 1
+      }
+    },
+    {
+      "type": "chrome_open_tabs",
+      "parameters": {
+        "urls_to_open": [
+          "http://host.docker.internal:7770"
+        ]
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "settings",
+    "chrome"
+  ],
+  "evaluator": {
+    "func": [
+      "check_include_exclude",
+      "is_page_contains_items"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "vm_command_line",
+        "command": "powershell -NoProfile -Command \"$flags=[int](Get-ItemPropertyValue -Path 'HKCU:\\Control Panel\\Accessibility\\StickyKeys' -Name 'Flags' -ErrorAction SilentlyContinue); if (($flags -band 1) -eq 1) { Write-Output 'STICKY_KEYS_ENABLED' } else { Write-Output 'STICKY_KEYS_DISABLED' }\"",
+        "shell": true
+      },
+      {
+        "type": "page_info",
+        "url": "http://host.docker.internal:7770/checkout/cart/",
+        "load_state": "networkidle"
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "include": [
+            "STICKY_KEYS_ENABLED"
+          ],
+          "exclude": [
+            "STICKY_KEYS_DISABLED"
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "items": [
+            "B08FMSC383"
+          ]
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

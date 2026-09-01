@@ -1,5 +1,6 @@
 {
   "id": "information-filter_keys_psychology_coursework_max_upload_size",
+  "_comment": "Put the correct answer to `gt_steps`.",
   "manually_evaluated": false,
   "snapshot": "chrome",
   "category": "information",

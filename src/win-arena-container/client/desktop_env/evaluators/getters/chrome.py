@@ -1938,3 +1938,11 @@ def get_chrome_page_zoom_from_preferences(env, config):
     except Exception as e:
         logger.error("Failed to read Chrome page zoom: %s", e)
         return ""
+
+def get_coupon_code_value(env, config, page):
+    selector = config.get("selector", "#coupon_code")
+
+    try:
+        return page.locator(selector).input_value().strip()
+    except Exception:
+        return ""

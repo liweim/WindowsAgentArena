@@ -1,0 +1,124 @@
+{
+  "id": "management-narrator_utility_bill_summary",
+  "_comment": "You need to specify how the data should be organized in the table. Ideally, the provider names should be used as column headers, and the row names should be provided so that the results can be entered in the corresponding fields.",
+  "manually_evaluated": false,
+  "snapshot": "windows",
+  "category": "management",
+  "difficulty": "hard",
+  "instruction": "Enable Windows Narrator and keep it enabled throughout the task. Open the three provided utility bill PDF documents. For each bill, identify the provider, due date, and total amount due. Enter the information into the provided BillSummary.ods spreadsheet and save the spreadsheet.",
+  "source": "Local Documents: assets/BluePeak_Electricity_Bill.pdf, assets/ClearFlow_Water_Bill.pdf, assets/GreenFlame_Gas_Bill.pdf, assets/BillSummary.ods",
+  "gt_steps": [
+    "Enable Windows Narrator.",
+    "Open BluePeak_Electricity_Bill.pdf.",
+    "Identify the provider as BluePeak Utilities.",
+    "Identify the due date as 18 August 2026.",
+    "Identify the total amount due as $184.65.",
+    "Open ClearFlow_Water_Bill.pdf.",
+    "Identify the provider as ClearFlow Water Services.",
+    "Identify the due date as 2 September 2026.",
+    "Identify the total amount due as $96.40.",
+    "Open GreenFlame_Gas_Bill.pdf.",
+    "Identify the provider as GreenFlame Energy.",
+    "Identify the due date as 7 September 2026.",
+    "Identify the total amount due as $128.75.",
+    "Open BillSummary.ods.",
+    "Enter all three bills into the spreadsheet.",
+    "Save BillSummary.ods.",
+    "Keep Narrator enabled."
+  ],
+  "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/BluePeak_Electricity_Bill.pdf",
+            "path": "C:\\Users\\Docker\\Desktop\\BluePeak_Electricity_Bill.pdf"
+          },
+          {
+            "local_path": "assets/ClearFlow_Water_Bill.pdf",
+            "path": "C:\\Users\\Docker\\Desktop\\ClearFlow_Water_Bill.pdf"
+          },
+          {
+            "local_path": "assets/GreenFlame_Gas_Bill.pdf",
+            "path": "C:\\Users\\Docker\\Desktop\\GreenFlame_Gas_Bill.pdf"
+          },
+          {
+            "local_path": "assets/BillSummary.ods",
+            "path": "C:\\Users\\Docker\\Desktop\\BillSummary.ods"
+          }
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "libreoffice",
+          "C:\\Users\\Docker\\Desktop\\BillSummary.ods"
+        ]
+      }
+    },
+    {
+      "type": "sleep",
+      "parameters": {
+        "seconds": 3
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "narrator",
+    "libreoffice_calc",
+    "pdf_viewer"  ],
+  "evaluator": {
+    "func": [
+      "check_include_exclude",
+      "check_sheet"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "vm_command_line",
+        "command": "powershell -Command \"if (Get-Process Narrator -ErrorAction SilentlyContinue){'NARRATOR_OPEN'}else{'NARRATOR_CLOSED'}\"",
+        "shell": true
+      },
+      {
+        "type": "vm_file",
+        "path": "C:\\Users\\Docker\\Desktop\\BillSummary.ods",
+        "dest": "BillSummary.ods"
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "include": [
+            "NARRATOR_OPEN"
+          ],
+          "exclude": [
+            "NARRATOR_CLOSED"
+          ]
+        }
+      },
+      {
+        "type": "spreadsheet",
+        "sheet_name": "Bill Summary",
+        "cells": {
+          "B4": "BluePeak Utilities",
+          "C4": "18 August 2026",
+          "D4": "$184.65",
+          "B5": "ClearFlow Water Services",
+          "C5": "2 September 2026",
+          "D5": "$96.40",
+          "B6": "GreenFlame Energy",
+          "C6": "7 September 2026",
+          "D6": "$128.75"
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

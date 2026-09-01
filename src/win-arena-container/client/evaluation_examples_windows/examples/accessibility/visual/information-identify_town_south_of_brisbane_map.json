@@ -1,0 +1,101 @@
+{
+  "id": "information-identify_town_south_of_brisbane_map",
+  "snapshot": "chrome",
+  "category": "information",
+  "difficulty": "hard",
+  "instruction": "Turn on a screen reader. Read the Australia map PDF already open in Chrome and identify the town immediately south east of Brisbane. Open Notepad and write the town's name.",
+  "source": "synthetic",
+  "gt_steps": [
+    "Turn on Windows Narrator.",
+    "Use the screen reader to navigate the Australia map PDF already open in Chrome.",
+    "Locate Brisbane on the map.",
+    "Identify the town immediately south east of Brisbane.",
+    "Open Notepad.",
+    "Write 'Gold Coast' in Notepad."
+  ],
+  "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/Australia_Map.pdf",
+            "path": "C:\\Users\\Docker\\Desktop\\Australia_Map.pdf"
+          }
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port=1337",
+          "--force-renderer-accessibility"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    },
+    {
+      "type": "sleep",
+      "parameters": {
+        "seconds": 1
+      }
+    },
+    {
+      "type": "chrome_open_tabs",
+      "parameters": {
+        "urls_to_open": [
+          "file:///C:/Users/Docker/Desktop/Australia_Map.pdf"
+        ]
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "chrome",
+    "basic_os"
+  ],
+  "evaluator": {
+    "func": [
+      "check_narrator_enabled",
+      "check_include_exclude"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "narrator_status"
+      },
+      {
+        "type": "file",
+        "path": "C:\\Users\\Docker\\Desktop\\answer.txt"
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {}
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "include": [
+            "Gold Coast"
+          ]
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

@@ -33,8 +33,8 @@ from .chrome import (
     get_info_from_website,
     get_active_tab_info_simple,
     get_chrome_page_zoom_from_access_tree,
-    get_chrome_page_zoom_from_preferences
-    
+    get_chrome_page_zoom_from_preferences,
+    get_coupon_code_value,
 )
 from .file import get_cloud_file, get_vm_file, get_cache_file, get_content_from_vm_file, get_vm_file_exists_in_vm_folder, get_desktop_file_content
 from .fileexplorer import (

@@ -1,0 +1,132 @@
+{
+  "id": "management-hunderbird_calendar_delivery_calendar",
+  "_comment": "Don't put your answer to the instruction",
+  "manually_evaluated": false,
+  "snapshot": "windows",
+  "category": "management",
+  "difficulty": "medium",
+  "instruction": "Enable Windows Narrator as a visual accessibility aid and keep it enabled throughout the task. Open the provided DeliveryConfirmation.jpg image and use Narrator to review the delivery information. Identify the tracking number and expected delivery date. Then open Thunderbird Calendar and create an all-day event named `Package Delivery - HXAU-4827-1936` on the expected delivery date. Add the tracking number `HXAU-4827-1936` to the event description and save the event.",
+  "source": "Local Image: assets/DeliveryConfirmation.jpg",
+  "gt_steps": [
+    "Enable Windows Narrator.",
+    "Keep Narrator enabled throughout the task.",
+    "Open DeliveryConfirmation.jpg.",
+    "Review the delivery confirmation image.",
+    "Identify the tracking number as HXAU-4827-1936.",
+    "Identify the expected delivery date as Thursday, 5 November 2026.",
+    "Open Thunderbird Calendar.",
+    "Create a new all-day calendar event.",
+    "Set the event title to Package Delivery - HXAU-4827-1936.",
+    "Set the event date to 5 November 2026.",
+    "Add HXAU-4827-1936 to the event description.",
+    "Save the calendar event.",
+    "Keep Narrator enabled."
+  ],
+  "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/DeliveryConfirmation.jpg",
+            "path": "C:\\Users\\Docker\\Desktop\\DeliveryConfirmation.jpg"
+          }
+        ]
+      }
+    },
+    {
+      "type": "download",
+      "parameters": {
+        "files": [
+          {
+            "url": "https://huggingface.co/datasets/xlangai/ubuntu_osworld_file_cache/resolve/main/thunderbird/dd84e895-72fd-4023-a336-97689ded257c/thunderbird-profile.tar.gz",
+            "path": "C:\\Users\\Docker\\Downloads\\thunderbird-profile.tar.gz"
+          }
+        ]
+      }
+    },
+    {
+      "type": "prepare_thunderbird_profile",
+      "parameters": {}
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "C:\\Windows\\System32\\mspaint.exe",
+          "C:\\Users\\Docker\\Desktop\\DeliveryConfirmation.jpg"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "thunderbird.exe",
+          "-profile",
+          "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release"
+        ]
+      }
+    },
+    {
+      "type": "sleep",
+      "parameters": {
+        "seconds": 3
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "narrator",
+    "paint",
+    "thunderbird"
+  ],
+  "evaluator": {
+    "func": [
+      "check_include_exclude",
+      "check_thunderbird_calendar_event"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "vm_command_line",
+        "command": "powershell -NoProfile -Command \"if (Get-Process Narrator -ErrorAction SilentlyContinue) { Write-Output 'NARRATOR_OPEN' } else { Write-Output 'NARRATOR_CLOSED' }\"",
+        "shell": true
+      },
+      {
+        "type": "vm_file",
+        "path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release\\calendar-data\\local.sqlite",
+        "dest": "thunderbird-calendar.sqlite"
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "include": [
+            "NARRATOR_OPEN"
+          ],
+          "exclude": [
+            "NARRATOR_CLOSED"
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "title": "Package Delivery - HXAU-4827-1936",
+          "date": "2026-11-05",
+          "all_day": true,
+          "description_points": [
+            [
+              "HXAU-4827-1936"
+            ]
+          ]
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

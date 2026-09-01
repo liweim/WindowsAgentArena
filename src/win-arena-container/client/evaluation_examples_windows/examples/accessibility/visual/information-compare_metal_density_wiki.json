@@ -1,0 +1,101 @@
+{
+  "id": "information-compare_metal_density_wiki",
+  "_comment": "",
+  "snapshot": "chrome",
+  "category": "information",
+  "difficulty": "medium",
+  "instruction": "Turn on a screen reader. Compare the densities of gold and aluminium using the two Wikipedia pages already open in Chrome. Determine which metal is denser, then open Notepad and write the name of the denser metal on the first line and its density on the second line.",
+  "source": "synthetic",
+  "gt_steps": [
+    "Open the Gold Wikipedia page and Aluminium Wikipedia page in Chrome.",
+    "Turn on Windows Narrator.",
+    "Use the screen reader to find the density information on the Gold page.",
+    "Use the screen reader to find the density information on the Aluminium page.",
+    "Compare the density values.",
+    "Determine that gold is denser than aluminium.",
+    "Open Notepad.",
+    "Write 'Gold' on the first line.",
+    "Write '19.3' on the second line."
+  ],
+  "config": [
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port=1337",
+          "--force-renderer-accessibility"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    },
+    {
+      "type": "sleep",
+      "parameters": {
+        "seconds": 1
+      }
+    },
+    {
+      "type": "chrome_open_tabs",
+      "parameters": {
+        "urls_to_open": [
+          "http://host.docker.internal:8888/wiki/Gold",
+          "http://host.docker.internal:8888/wiki/Aluminium"
+        ]
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "chrome",
+    "basic_os"
+  ],
+  "evaluator": {
+    "func": [
+      "check_narrator_enabled",
+      "check_include_exclude"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "narrator_status"
+      },
+      {
+        "type": "file",
+        "path": "C:\\Users\\Docker\\Desktop\\answer.txt"
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {}
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "include": [
+            "Gold",
+            "19.3"
+          ],
+          "exclude": [
+            "Aluminium",
+            "Aluminum",
+            "2.70"
+          ]
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

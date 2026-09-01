@@ -1,0 +1,110 @@
+{
+  "id": "consumption-osk_clean_touchpad_instructions",
+  "_comment": "You need to put the answer in the `gt_steps`. You also need to specify how multiple lines should be connected; in other words, use \n to separate them.",
+  "manually_evaluated": false,
+  "snapshot": "chrome",
+  "category": "service",
+  "difficulty": "medium",
+  "instruction": "Enable the Windows On-Screen Keyboard as a motor accessibility aid and keep it enabled throughout the task. The provided Dell User's Guide PDF is already open in Chrome. Find the instructions for cleaning the touchpad, copy the instructions exactly as written without paraphrasing, and save them in a text file named `cleanTouchpad.txt` on the Desktop.",
+  "source": "assets/desk_laptop_ug_en-us.pdf",
+  "gt_steps": [
+    "Enable the Windows On-Screen Keyboard.",
+    "Keep the On-Screen Keyboard enabled throughout the task.",
+    "Read the Dell User's Guide PDF already open in Chrome.",
+    "Navigate to the 'Cleaning Your Computer' section.",
+    "Locate the 'Touchpad' subsection.",
+    "Copy the touchpad cleaning instructions exactly as written without paraphrasing.",
+    "Open Notepad.",
+    "Paste or type the instructions exactly as written.",
+    "Save the file as `cleanTouchpad.txt` on the Desktop.",
+    "Leave the saved file on the Desktop.",
+    "Leave the On-Screen Keyboard enabled."
+  ],
+  "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/desk_laptop_ug_en-us.pdf",
+            "path": "C:\\Users\\Docker\\Downloads\\desk_laptop_ug_en-us.pdf"
+          }
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port=1337",
+          "--force-renderer-accessibility",
+          "file:///C:/Users/Docker/Downloads/desk_laptop_ug_en-us.pdf"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    },
+    {
+      "type": "activate_window",
+      "parameters": {
+        "window_name": "Google Chrome"
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "settings",
+    "chrome",
+    "notepad"
+  ],
+  "evaluator": {
+    "func": [
+      "check_include_exclude",
+      "exact_match"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "vm_command_line",
+        "command": "powershell -Command \"if (Get-Process osk -ErrorAction SilentlyContinue) { Write-Output 'OSK_OPEN' } else { Write-Output 'OSK_CLOSED' }\"",
+        "shell": true
+      },
+      {
+        "type": "is_file_saved_desktop",
+        "filename": "cleanTouchpad.txt",
+        "textcontent": "1. Turn the computer off.\n2. Disconnect the computer from the electrical outlet, and disconnect all the devices from the computer.\n3. Remove the battery.\n4. Moisten a soft, lint-free cloth with water, and wipe it gently across the surface of the touch pad. Do not allow water from the cloth to seep between the touchpad and the surrounding palmrest."
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "include": [
+            "OSK_OPEN"
+          ],
+          "exclude": [
+            "OSK_CLOSED"
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "expected": "true"
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

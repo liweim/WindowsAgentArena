@@ -1,0 +1,124 @@
+{
+  "id": "consumption-catalog_compare_toothbrush_prices",
+  "_comment": "",
+  "snapshot": "chrome",
+  "category": "consumption",
+  "difficulty": "hard",
+  "instruction": "Turn on a screen reader. Use it to read the opened oral-care catalogue in Chrome and compare the listed prices of the two six-count toothbrush products. Find the cheaper product on the opened shopping website, add exactly one unit to the shopping cart, and leave the shopping cart page open.",
+  "source": "synthetic",
+  "gt_steps": [
+    "Open the oral-care catalogue in Chrome.",
+    "Turn on Windows Narrator.",
+    "Use the screen reader to navigate the catalogue.",
+    "Find the Oral-B Complete Deep Clean Toothbrush, Medium, 6 Count.",
+    "Identify its catalogue price as $18.99.",
+    "Find the Colgate SlimSoft Floss-Tip Charcoal Toothbrush, Pack of 6.",
+    "Identify its catalogue price as $14.49.",
+    "Compare the two prices and determine that the Colgate SlimSoft toothbrush is cheaper.",
+    "Switch to the opened shopping website.",
+    "Search for the Colgate SlimSoft Floss-Tip Charcoal Toothbrush, Pack of 6.",
+    "Open the correct product page.",
+    "Add exactly one unit to the shopping cart.",
+    "Open the shopping cart.",
+    "Leave the shopping cart page open."
+  ],
+  "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/Consumption-toothbrush_price_catalog.html",
+            "path": "C:\\Users\\Docker\\Desktop\\Consumption-toothbrush_price_catalog.html"
+          }
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port=1337",
+          "--force-renderer-accessibility"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    },
+    {
+      "type": "sleep",
+      "parameters": {
+        "seconds": 1
+      }
+    },
+    {
+      "type": "chrome_open_tabs",
+      "parameters": {
+        "urls_to_open": [
+          "file:///C:/Users/Docker/Desktop/Consumption-toothbrush_price_catalog.html",
+          "http://host.docker.internal:7770"
+        ]
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "chrome",
+    "basic_os"
+  ],
+  "evaluator": {
+    "func": [
+      "check_narrator_enabled",
+      "is_page_contains_items",
+      "is_expected_active_tab"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "narrator_status"
+      },
+      {
+        "type": "page_info",
+        "url": "http://host.docker.internal:7770/checkout/cart/",
+        "load_state": "networkidle"
+      },
+      {
+        "type": "active_tab_info",
+        "goto_prefix": "http://"
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {}
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "items": [
+            "Colgate Slimsoft Floss-Tip Charcoal Toothbrush (Pack of 6)"
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "type": "url",
+          "url": "http://host.docker.internal:7770/checkout/cart/"
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

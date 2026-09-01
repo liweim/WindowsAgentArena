@@ -1,5 +1,6 @@
 {
   "id": "information-filter_keys_compare_singapore_real_gdp",
+  "_comment": "The instruction is too explicit; it essentially spells out all the steps. Your evaluator is too strict; it should only require the response to fully contain the correct answer. The same applies to other similar tasks.",
   "manually_evaluated": false,
   "snapshot": "chrome",
   "category": "information",

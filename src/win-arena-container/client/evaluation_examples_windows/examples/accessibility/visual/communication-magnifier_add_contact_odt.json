@@ -1,0 +1,72 @@
+{
+  "id": "communication-magnifier_add_contact_odt",
+  "_comment": "",
+  "manually_evaluated": false,
+  "snapshot": "windows",
+  "category": "communication",
+  "difficulty": "easy",
+  "instruction": "Enable Windows Magnifier as a visual accessibility aid and keep it enabled throughout the task. Open the provided Contacts.odt document in LibreOffice Writer. Add a new contact with the name `Olivia Bennett` and the email address `olivia.bennett@example.com` to the existing contact list. Save the updated document as `Contacts.odt` on the Desktop.",
+  "source": "Local Document: assets/Contacts_clean.odt",
+  "gt_steps": [
+    "Enable Windows Magnifier.",
+    "Keep Magnifier enabled throughout the task.",
+    "Open Contacts.odt in LibreOffice Writer.",
+    "Review the existing contact list.",
+    "Add a new contact entry.",
+    "Enter the name Olivia Bennett.",
+    "Enter the email address olivia.bennett@example.com.",
+    "Save the updated document as Contacts.odt on the Desktop.",
+    "Keep Magnifier enabled."  ],
+  "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/Contacts_clean.odt",
+            "path": "C:\\Users\\Docker\\Desktop\\Contacts.odt"          }
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "libreoffice",
+          "C:\\Users\\Docker\\Desktop\\Contacts.odt"        ]
+      }
+    },
+    {
+      "type": "sleep",
+      "parameters": {
+        "seconds": 3      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "magnifier",
+    "libreoffice_writer"  ],
+  "evaluator": {
+    "func": "check_include_exclude",
+    "result": {
+      "type": "vm_command_line",
+      "command": "powershell -NoProfile -Command \"$file='C:\\Users\\Docker\\Desktop\\Contacts.odt'; $mag=Get-Process Magnify -ErrorAction SilentlyContinue; if ($mag) { Write-Output 'MAGNIFIER_ENABLED' } else { Write-Output 'MAGNIFIER_DISABLED' }; if (Test-Path $file) { $tmp=Join-Path $env:TEMP ('contacts_eval_' + [guid]::NewGuid().ToString()); New-Item -ItemType Directory -Path $tmp | Out-Null; $zip=Join-Path $tmp 'Contacts.zip'; Copy-Item $file $zip; Expand-Archive -Path $zip -DestinationPath $tmp -Force; $xml=Get-Content (Join-Path $tmp 'content.xml') -Raw; if (($xml -match 'Olivia Bennett') -and ($xml -match 'olivia.bennett@example.com')) { Write-Output 'CONTACT_ADDED' } else { Write-Output 'CONTACT_MISSING' }; Remove-Item $tmp -Recurse -Force } else { Write-Output 'FILE_MISSING' }\"",
+      "shell": true    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "include": [
+          "MAGNIFIER_ENABLED",
+          "CONTACT_ADDED"        ],
+        "exclude": [
+          "MAGNIFIER_DISABLED",
+          "CONTACT_MISSING",
+          "FILE_MISSING"        ]
+      }
+    }
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}
+ 

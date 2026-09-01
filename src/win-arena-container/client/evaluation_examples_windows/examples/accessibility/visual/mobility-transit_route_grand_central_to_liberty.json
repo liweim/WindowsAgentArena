@@ -1,0 +1,103 @@
+{
+  "id": "mobility-transit_route_grand_central_to_liberty",
+  "_comment": "",
+  "manually_evaluated": false,
+  "snapshot": "chrome",
+  "category": "mobility",
+  "difficulty": "medium",
+  "instruction": "Turn on a screen reader. Use it to navigate Google Maps and find public transit directions from Grand Central Terminal to the Statue of Liberty Ferry Terminal. Leave the public transit directions open.",
+  "source": "synthetic",
+  "gt_steps": [
+    "Open Google Maps in Chrome.",
+    "Turn on Windows Narrator.",
+    "Use the screen reader to navigate Google Maps.",
+    "Open the directions interface.",
+    "Set `Grand Central Terminal` as the starting location.",
+    "Set `Statue of Liberty Ferry Terminal` as the destination.",
+    "Select public transit as the travel mode.",
+    "Leave the public transit directions open."
+  ],
+  "config": [
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port=1337",
+          "--force-renderer-accessibility"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    },
+    {
+      "type": "sleep",
+      "parameters": {
+        "seconds": 1
+      }
+    },
+    {
+      "type": "chrome_open_tabs",
+      "parameters": {
+        "urls_to_open": [
+          "https://www.google.com/maps"
+        ]
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "chrome",
+    "basic_os"
+  ],
+  "evaluator": {
+    "func": [
+      "check_narrator_enabled",
+      "exact_match"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "narrator_status"
+      },
+      {
+        "type": "google_maps_state",
+        "mode": "directions_transit",
+        "required_text": [
+          [
+            "Grand Central Terminal",
+            "Grand Central"
+          ],
+          [
+            "Statue of Liberty Ferry Terminal",
+            "Statue City Cruises",
+            "Battery Park"
+          ]
+        ]
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {}
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "expected": "true"
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

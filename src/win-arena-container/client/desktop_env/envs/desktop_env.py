@@ -413,8 +413,8 @@ class DesktopEnv(gym.Env):
 
     def close(self):
         logger.info("Stopping emulator...")
-        if self.remote_vm:
-            # TODO: Implement this
-            logger.error("Not implemented! Stopping emulator is not supported for remote VMs!")
+        # if self.remote_vm:
+        #     # TODO: Implement this
+        #     logger.error("Not implemented! Stopping emulator is not supported for remote VMs!")
         # else:
         #     _execute_command(["vmrun", "stop", self.path_to_vm])

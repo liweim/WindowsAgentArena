@@ -3,8 +3,8 @@
   "snapshot": "chrome",
   "category": "communication",
   "difficulty": "medium",
-  "instruction": "Your supervisor sent a meeting recording about forbidden operations for the new cloud cluster. Play the audio and use Chrome Live Caption to watch the real-time captions. Record the 3 core operational warnings mentioned aloud in the video in a sticky note. If Sticky Notes asks you to sign in after it opens, click the close button in the upper-right corner to continue without signing in.",
   "source": "synthetic",
+  "instruction": "Your supervisor sent a meeting recording about forbidden operations for the new cloud cluster. Play the audio and use Chrome Live Caption to watch the real-time captions. Record the 3 core operational warnings mentioned aloud in the video in a sticky note. If Sticky Notes asks you to sign in after it opens, click the close button in the upper-right corner to continue without signing in.",
   "transcript": "Alright team, thanks for joining the sync. Regarding the new deployment workflow on the cloud cluster, there are three absolute deal-breakers you need to remember. First, under no circumstances should you manually delete the cluster cache—this will crash the live gateway. Second, please, never bypass the pre-check script before pushing your updates to staging. Um, and the last one, let's see... ah, yes, do not hardcode any API tokens in the configuration files, use the environment vault instead. Make sure to log these down so the rest of the team doesn't mess up.",
   "gt_steps": [
     "Open the meeting audio file in Chrome.",

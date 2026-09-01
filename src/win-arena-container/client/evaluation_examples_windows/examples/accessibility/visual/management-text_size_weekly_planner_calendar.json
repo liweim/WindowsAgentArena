@@ -1,0 +1,164 @@
+{
+  "id": "management-text_size_weekly_planner_calendar",
+  "_comment": "",
+  "manually_evaluated": false,
+  "snapshot": "windows",
+  "category": "management",
+  "difficulty": "hard",
+  "instruction": "Increase the Windows text size to 150% as a visual accessibility setting and keep it at 150% throughout the task. Open the provided WeeklyPlanner.odt document in LibreOffice Writer. The document uses unusually small text, so review it carefully. Open Thunderbird Calendar and create a separate calendar event for every appointment listed in the planner. Use each appointment name as the event title and copy its date, start time, duration, and location exactly. Save all events.",
+  "source": "Local Document: assets/WeeklyPlanner.odt",
+  "gt_steps": [
+    "Open Windows Accessibility text size settings.",
+    "Set Windows text size to 150%.",
+    "Keep text size at 150% throughout the task.",
+    "Open WeeklyPlanner.odt in LibreOffice Writer.",
+    "Identify all six appointments in the weekly planner.",
+    "Open Thunderbird Calendar.",
+    "Create Dental Check-up on 9 November 2026 at 9:00 AM for 30 minutes at Bright Smile Dental, Suite 4.",
+    "Create Honours Supervisor Meeting on 10 November 2026 at 2:30 PM for 45 minutes at UNSW Library, Room 215.",
+    "Create Physiotherapy Session on 11 November 2026 at 11:15 AM for 30 minutes at Harbour Health Clinic.",
+    "Create Project Team Review on 12 November 2026 at 4:00 PM for 60 minutes at Online – Teams.",
+    "Create Career Adviser Appointment on 13 November 2026 at 10:30 AM for 30 minutes at UNSW Careers Office.",
+    "Create Car Service Booking on 14 November 2026 at 1:00 PM for 45 minutes at City Toyota Service Centre.",
+    "Save all six calendar events.",
+    "Keep Windows text size at 150%."  ],
+  "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/WeeklyPlanner.odt",
+            "path": "C:\\Users\\Docker\\Desktop\\WeeklyPlanner.odt"
+          }
+        ]
+      }
+    },
+    {
+      "type": "download",
+      "parameters": {
+        "files": [
+          {
+            "url": "https://huggingface.co/datasets/xlangai/ubuntu_osworld_file_cache/resolve/main/thunderbird/dd84e895-72fd-4023-a336-97689ded257c/thunderbird-profile.tar.gz",
+            "path": "C:\\Users\\Docker\\Downloads\\thunderbird-profile.tar.gz"
+          }
+        ]
+      }
+    },
+    {
+      "type": "prepare_thunderbird_profile",
+      "parameters": {}
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "libreoffice",
+          "C:\\Users\\Docker\\Desktop\\WeeklyPlanner.odt"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "thunderbird.exe",
+          "-profile",
+          "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release"
+        ]
+      }
+    },
+    {
+      "type": "sleep",
+      "parameters": {
+        "seconds": 3
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "windows_settings",
+    "libreoffice_writer",
+    "thunderbird"  ],
+  "evaluator": {
+    "func": [
+      "check_include_exclude",
+      "check_thunderbird_calendar_events"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "vm_command_line",
+        "command": "powershell -NoProfile -Command \"$v=(Get-ItemProperty -Path 'HKCU:\\Software\\Microsoft\\Accessibility' -Name TextScaleFactor -ErrorAction SilentlyContinue).TextScaleFactor; if ($v -eq 150) { Write-Output 'TEXT_SIZE_150' } else { Write-Output ('TEXT_SIZE_' + $v) }\"",
+        "shell": true
+      },
+      {
+        "type": "vm_file",
+        "path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release\\calendar-data\\local.sqlite",
+        "dest": "thunderbird-calendar.sqlite"
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "include": [
+            "TEXT_SIZE_150"
+          ],
+          "exclude": [
+            "TEXT_SIZE_100",
+            "TEXT_SIZE_125",
+            "TEXT_SIZE_175",
+            "TEXT_SIZE_200"
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "events": [
+            {
+              "title": "Dental Check-up",
+              "start": "2026-11-09 09:00",
+              "duration_minutes": 30,
+              "location": "Bright Smile Dental, Suite 4"
+            },
+            {
+              "title": "Honours Supervisor Meeting",
+              "start": "2026-11-10 14:30",
+              "duration_minutes": 45,
+              "location": "UNSW Library, Room 215"
+            },
+            {
+              "title": "Physiotherapy Session",
+              "start": "2026-11-11 11:15",
+              "duration_minutes": 30,
+              "location": "Harbour Health Clinic"
+            },
+            {
+              "title": "Project Team Review",
+              "start": "2026-11-12 16:00",
+              "duration_minutes": 60,
+              "location": "Online – Teams"
+            },
+            {
+              "title": "Career Adviser Appointment",
+              "start": "2026-11-13 10:30",
+              "duration_minutes": 30,
+              "location": "UNSW Careers Office"
+            },
+            {
+              "title": "Car Service Booking",
+              "start": "2026-11-14 13:00",
+              "duration_minutes": 45,
+              "location": "City Toyota Service Centre"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

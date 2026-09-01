@@ -1,6 +1,7 @@
 {
-  "id": "service-on_screen_keyboard-passport_application_post_office",
-  "manually_evaluated": false,
+  "id": "service-osk-passport_application_post_office",
+  "_comment": "",
+  "manually_evaluated": true,
   "snapshot": "chrome",
   "category": "service",
   "difficulty": "medium",

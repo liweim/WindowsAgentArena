@@ -1,15 +1,15 @@
 {
-  "id": "information-sticky_keys_skill_building_hobbies",
-  "manually_evaluated": false,
+  "id": "information-osk_skill_building_hobbies",
+  "_comment": "",
+  "manually_evaluated": true,
   "snapshot": "chrome",
   "category": "information",
   "difficulty": "medium",
-  "instruction": "Enable Windows Sticky Keys as a motor accessibility aid and keep it enabled throughout the task. On the Covey webpage already open in Chrome, find the 11 examples listed under \"11 Examples of Skill-Building Hobbies for Adults with Disabilities\". Open Notepad and write only the 11 hobby topics exactly as written on the webpage, one topic per line. Do not include numbers, bullet symbols, or descriptions, and do not paraphrase. Write every topic in lowercase. Save the file as `hobbies.txt` on the Desktop.",
+  "instruction": "Enable the Windows On-Screen Keyboard as a motor accessibility aid and keep it enabled throughout the task. On the Covey webpage already open in Chrome, find the 11 examples listed under \"11 Examples of Skill-Building Hobbies for Adults with Disabilities\". Open Notepad and write only the 11 hobby topics exactly as written on the webpage, one topic per line. Do not include numbers, bullet symbols, or descriptions, and do not paraphrase. Write every topic in lowercase. Save the file as `hobbies.txt` on the Desktop.",
   "source": "https://covey.org/11-skill-building-hobbies-for-adults-with-disabilities/",
   "gt_steps": [
     "Open Windows Accessibility keyboard settings.",
-    "Navigate to the Sticky Keys settings.",
-    "Enable Sticky Keys and keep it enabled.",
+    "Enable the On-Screen Keyboard and keep it enabled.",
     "Return to the Covey webpage already open in Chrome.",
     "Find the section titled `11 Examples of Skill-Building Hobbies for Adults with Disabilities`.",
     "Identify the 11 hobby topics.",
@@ -27,7 +27,7 @@
     "Write `volunteering` on its own line.",
     "Save the file as `hobbies.txt` on the Desktop.",
     "Leave the saved file on the Desktop.",
-    "Leave Sticky Keys enabled."
+    "Leave the On-Screen Keyboard enabled."
   ],
   "config": [
     {
@@ -62,37 +62,25 @@
   "related_apps": [
     "settings",
     "chrome",
-    "notepad"
+    "notepad",
+    "on_screen_keyboard"
   ],
   "evaluator": {
     "func": [
       "check_include_exclude",
-      "multi_answer_file_saved_desktop"
+      "check_include_exclude"
     ],
     "conj": "and",
     "result": [
       {
         "type": "vm_command_line",
-        "command": "powershell -NoProfile -Command \"$path='HKCU:\\Control Panel\\Accessibility\\StickyKeys'; try { $flags=(Get-ItemProperty -Path $path -Name Flags -ErrorAction Stop).Flags; $value=[int]$flags; if (($value -band 1) -eq 1) { Write-Output 'STICKY_KEYS_ENABLED' } else { Write-Output 'STICKY_KEYS_DISABLED' } } catch { Write-Output 'STICKY_KEYS_STATE_UNAVAILABLE' }\"",
+        "command": "powershell -NoProfile -Command \"if (Get-Process osk -ErrorAction SilentlyContinue) { Write-Output 'OSK_OPEN' } else { Write-Output 'OSK_CLOSED' }\"",
         "shell": true
       },
       {
-        "type": "multi_answer_file_saved_desktop",
-        "filename": "hobbies.txt",
-        "answers": [
-          "biking",
-          "book club",
-          "art",
-          "swimming",
-          "gardening",
-          "cooking or baking",
-          "adaptive sports",
-          "dancing",
-          "photography",
-          "music",
-          "volunteering"
-        ],
-        "case_sensitive": true
+        "type": "vm_command_line",
+        "command": "powershell -NoProfile -Command \"$path=Join-Path ([Environment]::GetFolderPath('Desktop')) 'hobbies.txt'; if (Test-Path $path) { Get-Content -Raw $path } else { Write-Output 'FILE_NOT_FOUND' }\"",
+        "shell": true
       }
     ],
     "expected": [
@@ -100,18 +88,32 @@
         "type": "rule",
         "rules": {
           "include": [
-            "STICKY_KEYS_ENABLED"
+            "OSK_OPEN"
           ],
           "exclude": [
-            "STICKY_KEYS_DISABLED",
-            "STICKY_KEYS_STATE_UNAVAILABLE"
+            "OSK_CLOSED"
           ]
         }
       },
       {
         "type": "rule",
         "rules": {
-          "expected": 1.0
+          "include": [
+            "biking",
+            "book club",
+            "art",
+            "swimming",
+            "gardening",
+            "cooking or baking",
+            "adaptive sports",
+            "dancing",
+            "photography",
+            "music",
+            "volunteering"
+          ],
+          "exclude": [
+            "FILE_NOT_FOUND"
+          ]
         }
       }
     ]

@@ -1,0 +1,90 @@
+{
+  "id": "information-find_link_and_open_goldrush_wiki",
+  "_comment": "",
+  "snapshot": "chrome",
+  "category": "information",
+  "difficulty": "medium",
+  "instruction": "Turn on a screen reader. Use it to read the opened Gold rush Wikipedia page on chrome, and find information about the second gold rush in history. Open the link for that gold rush and leave the page open.",
+  "source": "synthetic",
+  "gt_steps": [
+    "Open the Gold rush Wikipedia page in Chrome.",
+    "Turn on Windows Narrator.",
+    "Use the screen reader to navigate the Gold rush article.",
+    "Find the information about the second gold rush in history.",
+    "Open the linked Wikipedia page for the second gold rush.",
+    "Leave that page open."
+  ],
+  "config": [
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port=1337",
+          "--force-renderer-accessibility"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    },
+    {
+      "type": "sleep",
+      "parameters": {
+        "seconds": 1
+      }
+    },
+    {
+      "type": "chrome_open_tabs",
+      "parameters": {
+        "urls_to_open": [
+          "http://host.docker.internal:8888/wikipedia_en_all_maxi_2022-05/A/Gold_rush"
+        ]
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "chrome",
+    "basic_os"
+  ],
+  "evaluator": {
+    "func": [
+      "check_narrator_enabled",
+      "is_expected_active_tab"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "narrator_status"
+      },
+      {
+        "type": "active_tab_info",
+        "goto_prefix": "http://"
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {}
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "type": "url",
+          "url": "http://host.docker.internal:8888/wikipedia_en_all_maxi_2022-05/A/Carolina_Gold_Rush"
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}
