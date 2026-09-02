@@ -35,6 +35,10 @@ RUN if [ "${DEPLOY_MODE}" = "azure" ]; then \
 # Copy client application
 COPY src/win-arena-container/client /client
 
+RUN python3 -m pip install --no-cache-dir -r /client/requirements.txt && \
+    python3 -m pip check && \
+    { python3 --version; python3 -m pip freeze; } > /client-environment.txt
+
 COPY src/win-arena-container/entry_setup.sh /entry_setup.sh
 COPY src/win-arena-container/start_client.sh /start_client.sh
 COPY src/win-arena-container/start_vm.sh /start_vm.sh
@@ -46,8 +50,7 @@ RUN find / -maxdepth 3 -type f -name "*.sh" -exec dos2unix {} \; && chmod +x /*.
 RUN apt-get update && apt-get install -y \
     fuse \
     default-mysql-client \
-    && rm -rf /var/lib/apt/lists/* \
-    && pip install borb==2.1.22 rapidfuzz==3.13.0
+    && rm -rf /var/lib/apt/lists/*
 
 ENV YRES="900"
 ENV XRES="1440"

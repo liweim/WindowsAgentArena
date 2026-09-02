@@ -1,7 +1,9 @@
 *.out
+*.pid
 assets
 tmp
 *.bak
+results
 
 # a few testing images
 *.proposed_region_screenbert_test.png
@@ -215,6 +217,7 @@ compute-config.yml
 **/storage_local/*
 **/storage_*/*
 **/storage_azure_gold/*
+**/task-storage*
 
 # add results folder
 **/client/results/

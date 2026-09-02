@@ -23,9 +23,7 @@ def is_expected_active_tab(active_tab_info: Dict[str, str], rule: Dict[str, Any]
         return 0.
 
     match_type = rule['type']
-    print('not start')
     if match_type == "url":
-        print("start")
         expected_url = rule['url']
         if isinstance(active_tab_info, Dict):
             actual_url = active_tab_info.get('url', None)
@@ -194,11 +192,17 @@ def compare_pdfs(pdf1_path: Union[str, List[str]], pdf2_path: Union[str, List[st
 
 import fitz
 from PIL import Image
+import typing
+
+# borb 3.x imports typing.TypeAlias even on Python 3.9. Keep mounted clients
+# usable with the image's Python 3.9; image builds pin a compatible 2.x borb.
+if not hasattr(typing, "TypeAlias"):
+    typing.TypeAlias = typing.Any
+
 from borb.pdf import Document
 from borb.pdf import PDF
 
 from pathlib import Path
-import typing
 
 
 def compare_pdf_images(pdf1_path: str, pdf2_path: str, **kwargs) -> float:

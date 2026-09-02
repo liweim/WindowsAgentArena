@@ -25,6 +25,7 @@ from desktop_env.evaluators.metrics.utils import compare_urls
 logger = logging.getLogger("desktopenv.setup")
 
 FILE_PATH = os.path.dirname(os.path.abspath(__file__))
+HTTP_REQUEST_TIMEOUT = 20
 
 
 class SetupController:
@@ -171,7 +172,7 @@ class SetupController:
                 e = None
                 for i in range(max_retries):
                     try:
-                        response = requests.get(url, stream=True)
+                        response = requests.get(url, stream=True, timeout=HTTP_REQUEST_TIMEOUT)
                         response.raise_for_status()
 
                         with open(cache_path, 'wb') as f:
@@ -198,7 +199,7 @@ class SetupController:
             # send request to server to upload file
             try:
                 logger.debug("REQUEST ADDRESS: %s", self.http_server + "/setup" + "/upload")
-                response = requests.post(self.http_server + "/setup" + "/upload", headers=headers, data=form)
+                response = requests.post(self.http_server + "/setup" + "/upload", headers=headers, data=form, timeout=HTTP_REQUEST_TIMEOUT)
                 if response.status_code == 200:
                     logger.info("Command executed successfully: %s", response.text)
                 else:
@@ -233,7 +234,7 @@ class SetupController:
             # send request to server to upload file
             try:
                 logger.debug("REQUEST ADDRESS: %s", self.http_server + "/setup" + "/upload")
-                response = requests.post(self.http_server + "/setup" + "/upload", headers=headers, data=form)
+                response = requests.post(self.http_server + "/setup" + "/upload", headers=headers, data=form, timeout=HTTP_REQUEST_TIMEOUT)
                 if response.status_code == 200:
                     logger.info("Command executed successfully: %s", response.text)
                 else:
@@ -258,7 +259,7 @@ class SetupController:
 
         # send request to server to change wallpaper
         try:
-            response = requests.post(self.http_server + "/setup" + "/change_wallpaper", headers=headers, data=payload)
+            response = requests.post(self.http_server + "/setup" + "/change_wallpaper", headers=headers, data=payload, timeout=HTTP_REQUEST_TIMEOUT)
             if response.status_code == 200:
                 logger.info("Command executed successfully: %s", response.text)
             else:
@@ -278,33 +279,42 @@ class SetupController:
         if not path:
             raise Exception(f"Setup Open - Invalid path ({path}).")
 
-        lower_path = path.lower()
-        if lower_path.endswith((".xlsx", ".xls", ".ods")):
+        extension = os.path.splitext(path)[1].lower()
+        office_apps = {
+            ".xlsx": "scalc.exe", ".xls": "scalc.exe", ".ods": "scalc.exe",
+            ".docx": "swriter.exe", ".doc": "swriter.exe", ".odt": "swriter.exe",
+            ".pptx": "simpress.exe", ".ppt": "simpress.exe", ".odp": "simpress.exe",
+        }
+        if extension in office_apps:
+            executable = rf"C:\Program Files\LibreOffice\program\{office_apps[extension]}"
             self._execute_setup(
-                r'taskkill /IM soffice.bin /F 2>NUL & taskkill /IM soffice.exe /F 2>NUL & taskkill /IM scalc.exe /F 2>NUL & '
-                r'rmdir /S /Q "C:\Temp\winarena-libreoffice-profile" 2>NUL & mkdir "C:\Temp\winarena-libreoffice-profile"',
+                rf'taskkill /IM soffice.bin /F 2>NUL & taskkill /IM soffice.exe /F 2>NUL & '
+                rf'taskkill /IM {office_apps[extension]} /F 2>NUL & '
+                r'rmdir /S /Q "C:\Temp\winarena-libreoffice-profile" 2>NUL & '
+                r'mkdir "C:\Temp\winarena-libreoffice-profile"',
                 shell=True,
             )
             self._launch_setup([
-                r"C:\Program Files\LibreOffice\program\scalc.exe",
+                executable,
                 "--norestore",
                 "--nolockcheck",
+                "--nofirststartwizard",
                 "-env:UserInstallation=file:///C:/Temp/winarena-libreoffice-profile",
                 path,
             ])
             time.sleep(2)
             return
-        if lower_path.endswith((".docx", ".doc", ".odt")):
-            self._execute_setup(
-                r'taskkill /IM soffice.bin /F 2>NUL & taskkill /IM soffice.exe /F 2>NUL & taskkill /IM swriter.exe /F 2>NUL & '
-                r'rmdir /S /Q "C:\Temp\winarena-libreoffice-profile" 2>NUL & mkdir "C:\Temp\winarena-libreoffice-profile"',
-                shell=True,
-            )
+
+        media_extensions = {
+            ".aac", ".avi", ".flac", ".m4a", ".mkv", ".mov", ".mp3",
+            ".mp4", ".mpeg", ".mpg", ".ogg", ".wav", ".webm", ".wmv",
+        }
+        if extension in media_extensions:
             self._launch_setup([
-                r"C:\Program Files\LibreOffice\program\swriter.exe",
-                "--norestore",
-                "--nolockcheck",
-                "-env:UserInstallation=file:///C:/Temp/winarena-libreoffice-profile",
+                r"C:\Program Files\VideoLAN\VLC\vlc.exe",
+                "--intf=qt",
+                "--no-qt-privacy-ask",
+                "--no-qt-updates-notif",
                 path,
             ])
             time.sleep(2)
@@ -317,7 +327,7 @@ class SetupController:
 
         # send request to server to open file
         try:
-            response = requests.post(self.http_server + "/setup" + "/open_file", headers=headers, data=payload)
+            response = requests.post(self.http_server + "/setup" + "/open_file", headers=headers, data=payload, timeout=HTTP_REQUEST_TIMEOUT)
             if response.status_code == 200:
                 logger.info("Command executed successfully: %s", response.text)
                 time.sleep(2)
@@ -334,21 +344,46 @@ class SetupController:
             logger.warning("Command should be a list of strings. Now it is a string. Will split it by space.")
             command = command.split()
 
-        if isinstance(command, list) and any(arg in ("google-chrome", "chrome") for arg in command):
-            has_remote_debugging = any(str(arg).startswith("--remote-debugging-port=") for arg in command)
-            has_user_data_dir = any(str(arg).startswith("--user-data-dir=") for arg in command)
-            is_accessibility_chrome = "--force-renderer-accessibility" in command
-            if has_remote_debugging and is_accessibility_chrome and not has_user_data_dir:
-                command.append(r"--user-data-dir=C:\Temp\winarena-chrome-debug")
-            for flag in ("--no-first-run", "--no-default-browser-check"):
-                if has_remote_debugging and is_accessibility_chrome and flag not in command:
+        if isinstance(command, list) and command and command[0].lower() == "vlc":
+            command[0] = r"C:\Program Files\VideoLAN\VLC\vlc.exe"
+            if not any(arg.startswith("--intf") for arg in command[1:]):
+                command[1:1] = [
+                    "--intf=qt",
+                    "--no-qt-privacy-ask",
+                    "--no-qt-updates-notif",
+                ]
+
+        if isinstance(command, list) and any(
+                str(arg).lower() in ("google-chrome", "chrome") for arg in command):
+            has_remote_debugging = any(
+                arg.startswith("--remote-debugging-port=") for arg in command
+            )
+            has_user_data_dir = any(
+                arg.startswith("--user-data-dir=") for arg in command
+            )
+            if has_remote_debugging and not has_user_data_dir:
+                cdp_user_data = r"C:\Temp\winarena-chrome-user-data"
+                prep_command = (
+                    r'if not exist "C:\Temp" mkdir "C:\Temp" & '
+                    r'if not exist "C:\Temp\winarena-chrome-user-data" '
+                    r'mklink /J "C:\Temp\winarena-chrome-user-data" '
+                    r'"%LOCALAPPDATA%\Google\Chrome\User Data"'
+                )
+                self._execute_setup(prep_command, shell=True)
+                command = [*command, f"--user-data-dir={cdp_user_data}"]
+            for flag in (
+                "--no-first-run",
+                "--no-default-browser-check",
+                "--disable-session-crashed-bubble",
+            ):
+                if flag not in command:
                     command.append(flag)
 
         payload = json.dumps({"command": command, "shell": shell})
         headers = {"Content-Type": "application/json"}
 
         try:
-            response = requests.post(self.http_server + "/setup" + "/launch", headers=headers, data=payload)
+            response = requests.post(self.http_server + "/setup" + "/launch", headers=headers, data=payload, timeout=HTTP_REQUEST_TIMEOUT)
             logger.info(f"launch_setup(), response: {payload}")
             logger.info(f"launch_setup(), response: {response}")
             if response.status_code == 200:
@@ -378,7 +413,7 @@ class SetupController:
 
         while not terminates:
             try:
-                response = requests.post(self.http_server + "/setup" + "/execute", headers=headers, data=payload)
+                response = requests.post(self.http_server + "/setup" + "/execute", headers=headers, data=payload, timeout=HTTP_REQUEST_TIMEOUT)
                 if response.status_code == 200:
                     results: Dict[str, str] = response.json()
                     if stdout:
@@ -472,7 +507,7 @@ class SetupController:
 
         # send request to server to open file
         try:
-            response = requests.post(self.http_server + "/setup" + "/activate_window", headers=headers, data=payload)
+            response = requests.post(self.http_server + "/setup" + "/activate_window", headers=headers, data=payload, timeout=HTTP_REQUEST_TIMEOUT)
             logger.info(f"activate window setup RESPONSE: {response}, {response.text}")
             if response.status_code == 200:
                 logger.info("Command executed successfully: %s", response.text)
@@ -489,7 +524,7 @@ class SetupController:
 
         # send request to server to open file
         try:
-            response = requests.post(self.http_server + "/setup" + "/close_all", headers=headers, data=payload)
+            response = requests.post(self.http_server + "/setup" + "/close_all", headers=headers, data=payload, timeout=HTTP_REQUEST_TIMEOUT)
             if response.status_code == 200:
                 logger.info("Command executed successfully: %s", response.text)
             else:
@@ -505,7 +540,7 @@ class SetupController:
 
         # send request to server to open file
         try:
-            response = requests.post(self.http_server + "/setup" + "/clear_task_files", headers=headers, data=payload)
+            response = requests.post(self.http_server + "/setup" + "/clear_task_files", headers=headers, data=payload, timeout=HTTP_REQUEST_TIMEOUT)
             if response.status_code == 200:
                 logger.info("Command executed successfully: %s", response.text)
             else:
@@ -525,7 +560,7 @@ class SetupController:
 
         # send request to server to open file
         try:
-            response = requests.post(self.http_server + "/setup" + "/close_window", headers=headers, data=payload)
+            response = requests.post(self.http_server + "/setup" + "/close_window", headers=headers, data=payload, timeout=HTTP_REQUEST_TIMEOUT)
             if response.status_code == 200:
                 logger.info("Command executed successfully: %s", response.text)
             else:
@@ -545,7 +580,7 @@ class SetupController:
 
         # send request to server to create folder
         try:
-            response = requests.post(self.http_server + "/setup" + "/create_folder", headers=headers, data=payload)
+            response = requests.post(self.http_server + "/setup" + "/create_folder", headers=headers, data=payload, timeout=HTTP_REQUEST_TIMEOUT)
             if response.status_code == 200:
                 logger.info("Command executed successfully: %s", response.text)
             else:
@@ -564,7 +599,7 @@ class SetupController:
 
         # send request to server to create text file
         try:
-            response = requests.post(self.http_server + "/setup" + "/create_file", headers=headers, data=payload)
+            response = requests.post(self.http_server + "/setup" + "/create_file", headers=headers, data=payload, timeout=HTTP_REQUEST_TIMEOUT)
             if response.status_code == 200:
                 logger.info("Command executed successfully: %s", response.text)
             else:
@@ -582,7 +617,7 @@ class SetupController:
             'Content-Type': 'application/json'
         }
         try:
-            response = requests.post(self.http_server + "/setup" + "/recycle", headers=headers, data=payload)
+            response = requests.post(self.http_server + "/setup" + "/recycle", headers=headers, data=payload, timeout=HTTP_REQUEST_TIMEOUT)
             if response.status_code == 200:
                 logger.info("Command executed successfully: %s", response.text)
             else:
@@ -963,7 +998,7 @@ class SetupController:
                 params = config['args'][oid]
                 url = params['url']
                 with tempfile.NamedTemporaryFile(mode='wb', delete=False) as tmpf:
-                    response = requests.get(url, stream=True)
+                    response = requests.get(url, stream=True, timeout=HTTP_REQUEST_TIMEOUT)
                     response.raise_for_status()
                     for chunk in response.iter_content(chunk_size=8192):
                         if chunk:
@@ -1097,7 +1132,7 @@ class SetupController:
         # send request to server to upload file
         try:
             logger.debug("REQUEST ADDRESS: %s", self.http_server + "/setup" + "/upload")
-            response = requests.post(self.http_server + "/setup" + "/upload", headers=headers, data=form)
+            response = requests.post(self.http_server + "/setup" + "/upload", headers=headers, data=form, timeout=HTTP_REQUEST_TIMEOUT)
             if response.status_code == 200:
                 logger.info("Command executed successfully: %s", response.text)
             else:
@@ -1175,7 +1210,7 @@ class SetupController:
         # send request to server to upload file
         try:
             logger.debug("REQUEST ADDRESS: %s", self.http_server + "/setup" + "/upload")
-            response = requests.post(self.http_server + "/setup" + "/upload", headers=headers, data=form)
+            response = requests.post(self.http_server + "/setup" + "/upload", headers=headers, data=form, timeout=HTTP_REQUEST_TIMEOUT)
             if response.status_code == 200:
                 logger.info("Command executed successfully: %s", response.text)
             else:

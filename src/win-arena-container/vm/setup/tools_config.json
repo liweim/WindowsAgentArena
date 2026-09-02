@@ -3,6 +3,7 @@
         "mirrors": [
             "https://www.python.org/ftp/python/3.10.0/python-3.10.0-amd64.exe"
         ],
+        "version": "3.10.0",
         "alias": "python"
     },
     "git": {
@@ -22,15 +23,18 @@
     },
     "Google Chrome": {
         "mirrors": [
-            "https://dl.google.com/chrome/install/latest/chrome_installer.exe"
+            "https://storage.googleapis.com/chrome-for-testing-public/131.0.6778.85/win64/chrome-win64.zip"
         ],
+        "version": "131.0.6778.85",
+        "packageType": "zip",
         "alias": "google-chrome"
     },
     "LibreOffice": {
         "mirrors": [
-            "https://mirror.yandex.ru/libreoffice/libreoffice/stable/25.8.6/win/x86_64/LibreOffice_25.8.6_Win_x86-64.msi",
-            "https://es.libreoffice.org/apoyo/dl/win-x86_64/25.8.6/tl/LibreOffice_25.8.6_Win_x86-64.msi"
-        ]
+            "https://downloadarchive.documentfoundation.org/libreoffice/old/24.8.2.1/win/x86_64/LibreOffice_24.8.2.1_Win_x86-64.msi"
+        ],
+        "version": "24.8.2.1",
+        "sha256": "8c4670cb43b5385bed7d97e1ccde55bf1fc3cf83ac15c41da8d87fd09a2f377a"
     },
     "VLC": {
         "mirrors": [
@@ -38,6 +42,8 @@
             "https://mirror.fcix.net/videolan-ftp/vlc/3.0.21/win64/vlc-3.0.21-win64.exe",
             "https://mirror.raiolanetworks.com/videolan/vlc/3.0.21/win64/vlc-3.0.21-win64.exe"
         ],
+        "version": "3.0.21",
+        "sha256": "9742689a50e96ddc04d80ceff046b28da2beefd617be18166f8c5e715ec60c59",
         "alias": "vlc"
     },
     "GIMP": {

@@ -261,8 +261,11 @@ class DesktopEnv(gym.Env):
         if self.remote_vm:
             # TODO: Implement this
             # self.controller.revert_to_snapshot(self.snapshot_name)
-            
-            logger.warning("Not implemented! Reverting to snapshot is not supported for remote VMs! Closing all applications instead")
+            logger.warning(
+                "Not implemented! Reverting to snapshot is not supported for remote VMs! "
+                "Task isolation is provided by copying the VM disk; closing all applications "
+                "before starting the next task."
+            )
             self.setup_controller._close_all_setup()
 
         time.sleep(5)
@@ -332,12 +335,15 @@ class DesktopEnv(gym.Env):
 
         return observation, reward, done, info
 
+    def _filter_windows_postconfig(self, postconfig: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        return list(postconfig or [])
+
     def evaluate(self):
         """
         Evaluate whether the task is successfully completed.
         """
 
-        self.setup_controller.setup(self.evaluator.get("postconfig", []))
+        self.setup_controller.setup(self._filter_windows_postconfig(self.evaluator.get("postconfig", [])))
 
         # logger.info(f"ACTION HISTORY: {self.action_history}")
 
