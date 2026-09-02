@@ -1,13 +1,16 @@
 python3-xlib==0.15
 PyAutoGUI==0.9.54
 Pillow==10.3.0
-# git+https://github.com/moses-palmer/pynput.git@refs/pull/541/head # to make sure that it works on Apple Silicon
-requests
-flask
-numpy
-lxml
-pygame
-screeninfo
-pygetwindow
-send2trash
-openpyxl
+requests==2.32.3
+Flask==3.0.3
+numpy==1.26.4
+lxml==5.3.0
+pygame==2.6.1
+screeninfo==0.8.1
+PyGetWindow==0.0.9
+Send2Trash==1.8.3
+openpyxl==3.1.5
+pywin32==308
+pywinauto==0.6.8
+comtypes==1.4.8
+six==1.16.0

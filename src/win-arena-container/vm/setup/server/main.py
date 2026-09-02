@@ -267,8 +267,8 @@ def launch_app():
     # log the request data 
     logger.info('/setup/launch')
     logger.info(data)
-    shell = data.get("shell", False)
-    shell = True
+    shell_value = data.get("shell", False)
+    shell = shell_value.lower() == "true" if isinstance(shell_value, str) else bool(shell_value)
 
     command: List[str] = data.get("command", "" if shell else [])
 
@@ -282,6 +282,17 @@ def launch_app():
 
     try:
         user_platform = platform.system()
+        # `start` is a cmd.exe built-in. Other list-based launches are more
+        # reliable when spawned directly instead of through an intermediate
+        # shell whose window can steal focus.
+        if user_platform == 'Windows' and command:
+            launcher = str(command[0]).lower()
+            if launcher == 'socat':
+                # on-logon.ps1 already keeps Caddy forwarding 9222 -> 1337.
+                # The upstream Linux-only socat setup entry is redundant here.
+                return "Caddy CDP proxy is already running"
+            if launcher in {'start', 'code'}:
+                shell = True
         if 'google-chrome' in command and user_platform == 'Windows':
             index = command.index('google-chrome')
             command[index] = 'chrome'
@@ -289,9 +300,24 @@ def launch_app():
         if user_platform == 'Windows' and ('chrome' in command or 'google-chrome' in command):
             has_remote_debugging = any(str(arg).startswith('--remote-debugging-port=') for arg in command)
             has_user_data_dir = any(str(arg).startswith('--user-data-dir=') for arg in command)
-            is_accessibility_chrome = '--force-renderer-accessibility' in command
-            if has_remote_debugging and is_accessibility_chrome and not has_user_data_dir:
-                command.append(r'--user-data-dir=C:\Temp\winarena-chrome-debug')
+            if has_remote_debugging and not has_user_data_dir:
+                command.append(r'--user-data-dir=C:\Temp\winarena-chrome-user-data')
+            for flag in (
+                '--no-first-run',
+                '--no-default-browser-check',
+                '--disable-session-crashed-bubble',
+            ):
+                if flag not in command:
+                    command.append(flag)
+
+        if user_platform == 'Windows' and command and str(command[0]).lower() == 'vlc':
+            command[0] = r'C:\Program Files\VideoLAN\VLC\vlc.exe'
+            if not any(str(arg).startswith('--intf') for arg in command[1:]):
+                command[1:1] = [
+                    '--intf=qt',
+                    '--no-qt-privacy-ask',
+                    '--no-qt-updates-notif',
+                ]
 
         if 'google-chrome' in command and _get_machine_architecture() == 'arm':
             index = command.index('google-chrome')
@@ -1287,7 +1313,35 @@ def open_file():
 
     try:
         if platform.system() == "Windows":
-            os.startfile(path)
+            extension = path.suffix.lower()
+            office_handlers = {
+                ".xlsx": "scalc.exe", ".xls": "scalc.exe", ".ods": "scalc.exe",
+                ".docx": "swriter.exe", ".doc": "swriter.exe", ".odt": "swriter.exe",
+                ".pptx": "simpress.exe", ".ppt": "simpress.exe", ".odp": "simpress.exe",
+            }
+            media_extensions = {
+                ".aac", ".avi", ".flac", ".m4a", ".mkv", ".mov", ".mp3",
+                ".mp4", ".mpeg", ".mpg", ".ogg", ".wav", ".webm", ".wmv",
+            }
+            if extension in office_handlers:
+                executable = Path(r"C:\Program Files\LibreOffice\program") / office_handlers[extension]
+                subprocess.Popen([
+                    str(executable),
+                    "--norestore",
+                    "--nolockcheck",
+                    "--nofirststartwizard",
+                    str(path),
+                ])
+            elif extension in media_extensions:
+                subprocess.Popen([
+                    r"C:\Program Files\VideoLAN\VLC\vlc.exe",
+                    "--intf=qt",
+                    "--no-qt-privacy-ask",
+                    "--no-qt-updates-notif",
+                    str(path),
+                ])
+            else:
+                os.startfile(path)
             time.sleep(5)
         else:
             open_cmd: str = "open" if platform.system() == "Darwin" else "xdg-open"
@@ -1454,7 +1508,7 @@ def close_all_windows():
 
         for window in gw.getAllWindows():
             if window.title != "Program Manager" and window.title != "" and \
-                window.title != "Administrator: C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe":
+                "powershell" not in window.title.lower():
                 window.close()
             
         # for window in gw.getAllWindows():

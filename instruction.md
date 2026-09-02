@@ -10,7 +10,7 @@
 ```bash
 conda activate winarena
 cd /home/weimingli/projects/WindowsAgentArena/scripts
-python run_human.py --example ../src/win-arena-container/client/evaluation_examples_windows/examples/accessibility/hearing/Access-chrome_live_caption.json
+python run_human.py --example ../src/win-arena-container/client/evaluation_examples_windows/examples/cognitive/access-chrome_immersive_reader_extension.json
 ```
 
 # Client side

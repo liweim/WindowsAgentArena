@@ -7,6 +7,7 @@ source ./shared.sh
 
 mode=azure
 build_base_image=false
+image_tag=""
 
 # Parse the command line arguments
 while [[ $# -gt 0 ]]; do
@@ -19,11 +20,16 @@ while [[ $# -gt 0 ]]; do
             build_base_image=$2
             shift 2
             ;;
+        --image-tag)
+            image_tag="$2"
+            shift 2
+            ;;
         --help)
             echo "Usage: $0 [options]"
             echo "Options:"
             echo "  --mode <dev/azure> : Mode (default: azure)"
             echo "  --build-base-image <true/false> : Whether to build the winarena-base image (default: false)"
+            echo "  --image-tag <tag> : Tag for the WinArena image (default: env WINARENA_IMAGE_TAG or latest)"
             exit 0
             ;;
         *)
@@ -32,6 +38,10 @@ while [[ $# -gt 0 ]]; do
             ;;
     esac
 done
+
+if [ -z "$image_tag" ]; then
+  image_tag="${WINARENA_IMAGE_TAG:-latest}"
+fi
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
@@ -52,5 +62,7 @@ else
 fi
 
 docker build --build-arg DEPLOY_MODE=$mode -f $SCRIPT_DIR/../src/win-arena-container/Dockerfile-WinArena -t $winarena_image_name:latest $SCRIPT_DIR/../
+docker tag $winarena_image_name:latest $winarena_image_name:$image_tag
 
 docker tag $winarena_image_name:latest windowsarena/$winarena_image_name:latest
+docker tag $winarena_image_name:latest windowsarena/$winarena_image_name:$image_tag

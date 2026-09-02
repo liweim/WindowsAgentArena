@@ -1,21 +1,32 @@
 """Script to run end-to-end evaluation on the benchmark.
 Utils and basic architecture credit to https://github.com/web-arena-x/webarena/blob/main/run.py.
 """
-import argparse
 import datetime
 import json
 import logging
 import os
-import random
 import sys
 import shutil
+import subprocess
 import traceback
+try:
+    from zoneinfo import ZoneInfo
+except ImportError:
+    ZoneInfo = None
 # import wandb
 
 from tqdm import tqdm
 
 import lib_run_single
 from desktop_env.envs.desktop_env import DesktopEnv
+from mm_agents.compat import (
+    FRAMEWORK_AGENT_NAMES,
+    STEP_AGENT_NAMES,
+    build_step_agent,
+    run_framework_example,
+    run_step_agent_example,
+)
+from mm_agents.cli import parse_agent_args
 from mm_agents.navi.agent import NaviAgent
 import requests
 import time
@@ -23,16 +34,43 @@ import time
 from threading import Event
 import signal
 
-
 print("Waiting for the server to start...")
 
 #  Logger Configs {{{ #
+def _resolve_log_timezone():
+    tz_name = os.environ.get("LOCALLSTC_LOG_TZ") or os.environ.get("TZ") or "Australia/Sydney"
+    if ZoneInfo is not None:
+        try:
+            return ZoneInfo(tz_name)
+        except Exception:
+            pass
+    return datetime.datetime.now().astimezone().tzinfo
+
+
+LOG_TZ = _resolve_log_timezone()
+
+
+def _log_now() -> datetime.datetime:
+    return datetime.datetime.now(LOG_TZ)
+
+
+class LocalTimezoneFormatter(logging.Formatter):
+    def formatTime(self, record, datefmt=None):
+        dt = datetime.datetime.fromtimestamp(record.created, LOG_TZ)
+        if datefmt:
+            return dt.strftime(datefmt)
+        return dt.strftime("%Y-%m-%d %H:%M:%S,%f")[:-3]
+
+
 root_logger = logging.getLogger()
 root_logger.setLevel(logging.DEBUG)
 root_logger.propagate = True
-datetime_str: str = datetime.datetime.now().strftime("%Y%m%d@%H%M%S")
-formatter = logging.Formatter(
+datetime_str: str = _log_now().strftime("%Y%m%d@%H%M%S")
+formatter = LocalTimezoneFormatter(
     fmt="\x1b[1;33m[%(asctime)s \x1b[31m%(levelname)s \x1b[32m%(module)s/%(lineno)d-%(processName)s\x1b[1;33m] \x1b[0m%(message)s")
+for noisy_logger_name in ("openai", "openai._base_client", "httpx", "httpcore"):
+    logging.getLogger(noisy_logger_name).setLevel(logging.WARNING)
+
 def setup_logging(args):
     logging_dir: str = os.path.join(
         args.result_dir, 
@@ -66,70 +104,30 @@ def setup_logging(args):
 #  }}} Logger Configs # 
 
 logger = logging.getLogger("desktopenv.experiment")
+CONTAINER_RESTART_EXIT_CODE = 75
 
-def config() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(
-        description="Run end-to-end evaluation on the benchmark"
-    )
+def config():
+    """Delegate the untouched process command line to the selected method."""
+    return parse_agent_args()
 
-    # environment config
-    parser.add_argument(
-        "--headless", action="store_true", help="Run in headless machine"
-    )
-    parser.add_argument("--action_space", type=str, default="pyautogui", help="Action type")
-    parser.add_argument(
-        "--observation_type",
-        choices=[
-            "screenshot",
-            "a11y_tree",
-            "screenshot_a11y_tree",
-            "som"
-        ],
-        default="a11y_tree",
-        help="Observation type",
-    )
-    parser.add_argument("--screen_width", type=int, default=1920)
-    parser.add_argument("--screen_height", type=int, default=1200)
-    parser.add_argument("--sleep_after_execution", type=float, default=3)
-    parser.add_argument("--max_steps", type=int, default=15)
-    parser.add_argument("--a11y_backend", type=str, default="uia") # "uia" or "win32"
 
-    # agent config
-    parser.add_argument("--agent_name", type=str, default="navi")
-    parser.add_argument("--som_origin", type=str, default="oss") # options: 'oss', 'a11y', 'mixed-oss'
-    parser.add_argument("--max_trajectory_length", type=int, default=3)
-    parser.add_argument("--test_config_base_dir", type=str, default="evaluation_examples_windows")
-
-    # lm config
-    parser.add_argument("--model", type=str, default="gpt-4-vision-preview") #gpt-4o-mini or gpt-4-vision-preview or gpt-4o or gpt-4-1106-vision-preview
-    parser.add_argument("--temperature", type=float, default=1.0)
-    parser.add_argument("--top_p", type=float, default=0.9)
-    parser.add_argument("--max_tokens", type=int, default=1500)
-    parser.add_argument("--stop_token", type=str, default=None)
-
-    # example config
-    parser.add_argument("--domain", type=str, default="all")
-    parser.add_argument("--emulator_ip", type=str, default="20.20.20.21")
-
-    parser.add_argument("--test_all_meta_path", type=str, default="evaluation_examples_windows/test_all.json") # or test_custom.json for a single task
-
-    # logging related
-    parser.add_argument("--result_dir", type=str, default="./results")
-    parser.add_argument("--trial_id", type=str, default="0")
-
-    # multi-worker related
-    parser.add_argument("--worker_id", type=int, default=0, help="ID of the worker")  
-    parser.add_argument("--num_workers", type=int,  default=1, help="Total number of workers") 
-
-    # benchmark difficulty level
-    parser.add_argument("--diff_lvl", type=str, default="normal", help="Difficulty level of the benchmark")  
-
-    args, unknownargs = parser.parse_known_args()
-
-    return args
+def clean_result_directory(result_dir):
+    """Clear one explicit result directory after method-level validation."""
+    target = os.path.realpath(os.path.abspath(result_dir))
+    current = os.path.realpath(os.getcwd())
+    protected = {os.path.realpath(os.sep), os.path.realpath("/client")}
+    if target in protected or current == target or current.startswith(target + os.sep):
+        raise ValueError("Refusing to clean protected result directory: {}".format(target))
+    os.makedirs(target, exist_ok=True)
+    for name in os.listdir(target):
+        path = os.path.join(target, name)
+        if os.path.isdir(path) and not os.path.islink(path):
+            shutil.rmtree(path)
+        else:
+            os.unlink(path)
 
 def test(
-        args: argparse.Namespace,
+        args,
         test_all_meta: dict
 ) -> None:
     scores = []
@@ -153,7 +151,9 @@ def test(
         "som_origin": args.som_origin,
         "model": args.model,
         "temperature": args.temperature,
+        "seed": args.seed,
         "top_p": args.top_p,
+        "top_k": args.top_k,
         "max_tokens": args.max_tokens,
         "stop_token": args.stop_token,
         "result_dir": args.result_dir,
@@ -162,7 +162,9 @@ def test(
         "num_workers": args.num_workers,
     }
 
-    if cfg_args["agent_name"] == "navi":
+    if cfg_args["agent_name"] in FRAMEWORK_AGENT_NAMES | STEP_AGENT_NAMES:
+        agent = None
+    elif cfg_args["agent_name"] == "navi":
         if cfg_args["som_origin"] in ["a11y", "omni", "mixed-omni"]:
             som_config = None
         elif cfg_args["som_origin"] in ["oss", "mixed-oss"]:
@@ -193,17 +195,23 @@ def test(
         raise ValueError(f"Unknown agent name: {cfg_args['agent_name']}")
     
     env = DesktopEnv(
-        action_space=agent.action_space,
+        action_space=(agent.action_space if agent is not None else args.action_space),
         screen_size=(args.screen_width, args.screen_height),
         headless=args.headless,
         require_a11y_tree=args.observation_type in ["a11y_tree", "screenshot_a11y_tree", "som"],
         emulator_ip=args.emulator_ip, #for OS running on docker
         a11y_backend=args.a11y_backend
     )
+    if cfg_args["agent_name"] in STEP_AGENT_NAMES:
+        agent = build_step_agent(args, env)
 
     for domain in tqdm(test_all_meta, desc="Domain"):
         for example_id in tqdm(test_all_meta[domain], desc="Example", leave=False):
-            
+            if not ensure_server_ready_or_restart(args.emulator_ip):
+                logger.error("VM server is unavailable and automatic restart failed; stopping remaining tasks.")
+                env.close()
+                raise SystemExit(CONTAINER_RESTART_EXIT_CODE)
+
             if args.diff_lvl == "normal":
                 logger.info(f"Windows Agent Arena: Starting on NORMAL difficulty")
                 config_file = os.path.join(args.test_config_base_dir, f"examples/{domain}/{example_id}.json")
@@ -221,6 +229,7 @@ def test(
             with open(config_file, "r", encoding="utf-8") as f:
                 example = json.load(f)
             example["__task_config_path"] = os.path.abspath(config_file)
+            example["domain"] = domain
 
             logger.info(f"[Domain]: {domain}")
             logger.info(f"[Example ID]: {example_id}")
@@ -230,15 +239,11 @@ def test(
             logger.info(f"[Instruction]: {instruction}")
             # wandb each example config settings
             cfg_args["instruction"] = instruction
-            cfg_args["start_time"] = datetime.datetime.now().strftime("%Y:%m:%d-%H:%M:%S")
+            cfg_args["start_time"] = _log_now().strftime("%Y:%m:%d-%H:%M:%S")
             # run.config.update(cfg_args)
 
             example_result_dir = os.path.join(
                 args.result_dir,
-                args.action_space,
-                args.observation_type,
-                args.model,
-                args.trial_id,
                 domain,
                 example_id
             )
@@ -254,8 +259,26 @@ def test(
             
             # example start running
             try:
-                lib_run_single.run_single_example(agent, env, example, max_steps, instruction, args, example_result_dir,
-                                                  scores)
+                if cfg_args["agent_name"] in FRAMEWORK_AGENT_NAMES:
+                    score = run_framework_example(
+                        env, example, args, example_result_dir, scores
+                    )
+                elif cfg_args["agent_name"] in STEP_AGENT_NAMES:
+                    score = run_step_agent_example(
+                        agent, env, example, args, example_result_dir, scores
+                    )
+                else:
+                    lib_run_single.run_single_example(
+                        agent,
+                        env,
+                        example,
+                        max_steps,
+                        instruction,
+                        args,
+                        example_result_dir,
+                        scores,
+                    )
+                    score = scores[-1] if scores else 0.0
             except Exception as e:
                 logger.error(f"Exception in {domain}/{example_id}: {e}")
                 error_traceback = traceback.format_exc()
@@ -278,7 +301,7 @@ def test(
                     f.write(error_traceback)
                     f.write("</pre>")
             else:
-                logger.info(f"Finished {domain}/{example_id}")
+                logger.info(f"Finished {domain}/{example_id} score={score}")
             finally:
                 # Cleanup task log handler
                 root_logger.removeHandler(task_log_handler)
@@ -293,45 +316,58 @@ def test(
         logger.info(f"Average score: {sum(scores) / len(scores)}")
 
 
-def get_unfinished(action_space, use_model, observation_type, result_dir, trial_id, total_file_json):
-    target_dir = os.path.join(result_dir, action_space, observation_type, use_model, trial_id)
+def _clear_task_result_dir(example_path):
+    if not os.path.isdir(example_path):
+        return
+    for file in os.listdir(example_path):
+        out_path = os.path.join(example_path, file)
+        if os.path.isdir(out_path):
+            shutil.rmtree(out_path)
+        else:
+            os.remove(out_path)
 
-    if not os.path.exists(target_dir):
+
+def get_unfinished(action_space, use_model, observation_type, result_dir, trial_id, total_file_json, rerun=False, rerun_fail=False):
+    if not os.path.exists(result_dir):
         return total_file_json
 
-    finished = {}
-    for domain in os.listdir(target_dir):
-        finished[domain] = []
-        domain_path = os.path.join(target_dir, domain)
-        if os.path.isdir(domain_path):
-            for example_id in os.listdir(domain_path):
-                if example_id == "onboard":
-                    continue
-                example_path = os.path.join(domain_path, example_id)
-                if os.path.isdir(example_path):
-                    if "result.txt" not in os.listdir(example_path):
-                        # empty all files and dirs under example_id
-                        for file in os.listdir(example_path):
-                            out_path = os.path.join(example_path, file)
-                            if os.path.isdir(out_path):
-                                shutil.rmtree(out_path)
-                            else:
-                                os.remove(out_path)
-                    else:
-                        finished[domain].append(example_id)
+    tasks_to_run = {}
+    for domain, example_ids in total_file_json.items():
+        tasks_to_run[domain] = []
+        for example_id in example_ids:
+            example_path = os.path.join(result_dir, domain, example_id)
+            result_path = os.path.join(example_path, "result.txt")
+            err_reason_path = os.path.join(example_path, "err_reason.txt")
+            has_error = os.path.exists(err_reason_path)
+            if rerun and os.path.exists(result_path):
+                os.remove(result_path)
 
-    if not finished:
-        return total_file_json
+            if os.path.isdir(example_path) and (has_error or not os.path.exists(result_path)):
+                if has_error:
+                    logger.info("Rerunning %s/%s because err_reason.txt exists", domain, example_id)
+                _clear_task_result_dir(example_path)
+                result_path = os.path.join(example_path, "result.txt")
+                err_reason_path = os.path.join(example_path, "err_reason.txt")
 
-    for domain, examples in finished.items():
-        if domain in total_file_json:
-            total_file_json[domain] = [x for x in total_file_json[domain] if x not in examples]
+            should_skip = False
+            if not rerun and os.path.exists(result_path) and not os.path.exists(err_reason_path):
+                try:
+                    result = float(open(result_path, "r").read().strip())
+                    if result <= 0.0 and rerun_fail:
+                        os.remove(result_path)
+                    if result > 0.0 or not rerun_fail:
+                        should_skip = True
+                except (ValueError, IOError) as e:
+                    logger.warning("Failed to read result for %s/%s: %s", domain, example_id, e)
 
-    return total_file_json
+            if not should_skip:
+                tasks_to_run[domain].append(example_id)
+
+    return tasks_to_run
 
 
 def get_result(action_space, use_model, observation_type, result_dir, trial_id, total_file_json):
-    target_dir = os.path.join(result_dir, action_space, observation_type, use_model, trial_id)
+    target_dir = result_dir
     if not os.path.exists(target_dir):
         print("New experiment, no result yet.")
         return None
@@ -366,16 +402,90 @@ def quit(signo, _frame):
     exit(0)
 
     
+def probe_server(ip, port=5000, timeout=7):
+    try:
+        response = requests.get("http://" + ip + ":" + str(port) + "/probe", timeout=timeout)
+        if response.status_code == 200:
+            return True
+        logger.warning("VM probe returned status %s", response.status_code)
+    except Exception as e:
+        logger.warning("VM probe failed: %s", e)
+    return False
+
+
 def wait_for_server(ip, port=5000):
     while not exit_event.is_set():
-        try:
-            response = requests.get("http://"+ip+":"+str(port)+"/probe", timeout=7)
-            print("Response from server:", response.json())
-            break  # If the request is successful, break the loop
-        except Exception as e:
-            print("Failed to get hello:", e)
-            print("Retrying...")
-            exit_event.wait(5)  # Wait for 5 seconds before retrying
+        if probe_server(ip, port):
+            print("Server is ready")
+            return True
+        print("Retrying...")
+        exit_event.wait(5)
+    return False
+
+
+def _log_command_output(label, command, timeout=10):
+    try:
+        result = subprocess.run(
+            command,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            timeout=timeout,
+            check=False,
+        )
+        output = result.stdout.strip()
+        logger.error("%s rc=%s\n%s", label, result.returncode, output or "<empty>")
+    except Exception as e:
+        logger.error("%s failed: %s", label, e)
+
+
+def _log_file_tail(label, path, lines=120):
+    if not os.path.exists(path):
+        logger.error("%s missing: %s", label, path)
+        return
+    _log_command_output(label, ["tail", "-n", str(lines), path])
+
+
+def log_vm_diagnostics(restart_log_path):
+    logger.error("Collecting WinArena VM diagnostics after server recovery failure")
+    _log_command_output("qemu processes", ["pgrep", "-af", "qemu-system"])
+    _log_command_output("qemu pid file", ["bash", "-lc", "ls -l /run/shm/qemu.* 2>&1 || true"])
+    _log_file_tail("qemu log", "/run/shm/qemu.log")
+    _log_file_tail("qemu stdout", "/run/shm/qemu.out")
+    _log_file_tail("qemu terminal", "/run/shm/qemu.pty")
+    _log_file_tail("entry setup restart log", restart_log_path)
+    _log_file_tail("windows power config log", "/shared/power_config_log.txt")
+
+
+def restart_vm_server(ip, port=5000, timeout=300):
+    logger.warning("VM server %s:%s is not reachable; restarting the WinArena VM", ip, port)
+    restart_log_path = "/tmp/winarena-entry-setup-restart.log"
+    # Do not use `pkill -f qemu-system` from a shell whose command line also
+    # contains that pattern: pkill can kill the restart shell itself before it
+    # reaches entry_setup.sh. Anchor the match at the start of QEMU's command
+    # line so it cannot match this Python process, then launch the setup script
+    # as a separate process.
+    subprocess.run(["pkill", "-f", "^qemu-system-x86_64( |$)"], check=False)
+    time.sleep(3)
+    with open(restart_log_path, "ab") as restart_log:
+        subprocess.Popen(["/entry_setup.sh"], stdout=restart_log, stderr=subprocess.STDOUT)
+
+    deadline = time.time() + timeout
+    while time.time() < deadline and not exit_event.is_set():
+        if probe_server(ip, port):
+            logger.warning("VM server recovered after restart")
+            return True
+        time.sleep(5)
+
+    logger.error("VM server did not recover within %s seconds; restart log: %s", timeout, restart_log_path)
+    log_vm_diagnostics(restart_log_path)
+    return False
+
+
+def ensure_server_ready_or_restart(ip, port=5000):
+    if probe_server(ip, port):
+        return True
+    return restart_vm_server(ip, port)
 
 # Handling keyboard interrupts
 for sig in ('TERM', 'HUP', 'INT'):
@@ -385,7 +495,19 @@ if __name__ == '__main__':
     ####### The complete version of the list of examples #######
     os.environ["TOKENIZERS_PARALLELISM"] = "false"
     args = config()
+    if args.clean_results and not getattr(args, "get_score", False):
+        clean_result_directory(args.result_dir)
     setup_logging(args)
+
+    if getattr(args, "get_score", False):
+        get_result(
+            args.action_space,
+            args.model,
+            args.observation_type,
+            args.result_dir,
+            args.trial_id,
+        )
+        raise SystemExit(0)
 
     wait_for_server(args.emulator_ip)
 
@@ -404,7 +526,9 @@ if __name__ == '__main__':
             args.observation_type,
             args.result_dir,
             args.trial_id,
-            test_all_meta
+            test_all_meta,
+            args.rerun,
+            args.rerun_fail
         )
     else:
         # if we have more than one worker (Azure runs) then we distribute the tasks equally

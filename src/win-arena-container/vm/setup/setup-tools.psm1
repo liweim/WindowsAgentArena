@@ -89,6 +89,21 @@ function Invoke-DownloadFile {
     return $true
 }
 
+function Assert-FileSha256 {
+    param (
+        [parameter(Mandatory = $true)]
+        [string]$Path,
+        [parameter(Mandatory = $true)]
+        [string]$ExpectedHash
+    )
+
+    $actualHash = (Get-FileHash -Path $Path -Algorithm SHA256).Hash.ToLowerInvariant()
+    if ($actualHash -ne $ExpectedHash.ToLowerInvariant()) {
+        throw "SHA256 mismatch for $Path. Expected $ExpectedHash, got $actualHash."
+    }
+    Write-Host "Verified SHA256 for $Path"
+}
+
 function Add-ToEnvPath {
     param (
         [string]$NewPath
@@ -173,15 +188,16 @@ function Install-PythonPackages {
     param (
         [string]$Package = "",
         [string]$Arguments = "",
-        [string]$RequirementsPath = ""
+        [string]$RequirementsPath = "",
+        [string]$PythonExecutable = "python"
     )
     $RetryCount = 3
     $currentAttempt = 0
     while ($currentAttempt -lt $RetryCount) {
         if (-not [string]::IsNullOrWhiteSpace($RequirementsPath)) {
-            & python -m pip install --no-cache-dir -r $RequirementsPath $Arguments
+            & $PythonExecutable -m pip install --no-cache-dir -r $RequirementsPath $Arguments
         } else {
-            & python -m pip install --no-cache-dir $Package $Arguments
+            & $PythonExecutable -m pip install --no-cache-dir $Package $Arguments
         }
         if ($LASTEXITCODE -eq 0) {
             Write-Host "Installation successful."

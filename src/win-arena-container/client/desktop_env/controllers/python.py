@@ -1,6 +1,7 @@
 import json
 import logging
 import random
+import uuid
 from typing import Any, Dict, Optional
 
 import requests
@@ -205,6 +206,78 @@ class PythonController:
             return response.json()
         except requests.exceptions.RequestException as e:
             logger.error("An error occurred while trying to execute the command: %s", e)
+
+
+    def run_python_script(self, script: str) -> Optional[Dict[str, Any]]:
+        """Run Python source through a guest-side temporary script file.
+
+        Sending large handlers through ``python -c`` hits Windows' command-line
+        length limit.  Upload the source through the existing file endpoint and
+        invoke Python with only the temporary file path as an argument.
+        """
+        script_path = (
+            r"C:\Users\Docker\AppData\Local\Temp\locallstc_task_"
+            + uuid.uuid4().hex
+            + ".py"
+        )
+        response: Dict[str, Any] = {}
+        try:
+            upload_response = requests.post(
+                self.http_server + "/setup/upload",
+                data={"file_path": script_path},
+                files={
+                    "file_data": (
+                        "locallstc_task.py",
+                        script.encode("utf-8"),
+                        "text/x-python",
+                    )
+                },
+                timeout=(10, 90),
+            )
+            if upload_response.status_code != 200:
+                raise RuntimeError(
+                    "Failed to upload Python script: "
+                    f"status={upload_response.status_code}, response={upload_response.text}"
+                )
+
+            http_response = requests.post(
+                self.http_server + "/execute",
+                json={"command": ["python", script_path], "shell": False},
+                timeout=(10, 150),
+            )
+            try:
+                response = http_response.json()
+            except ValueError:
+                response = {
+                    "status": "error",
+                    "message": http_response.text,
+                }
+            if http_response.status_code != 200:
+                logger.error(
+                    "Failed to run Python script. Status code: %d, response: %s",
+                    http_response.status_code,
+                    response,
+                )
+        except (requests.exceptions.RequestException, RuntimeError) as exc:
+            logger.error("An error occurred while trying to run Python script: %s", exc)
+            response = {"status": "error", "message": str(exc)}
+        finally:
+            cleanup_code = (
+                "import os; p=" + repr(script_path) + "; "
+                "os.remove(p) if os.path.exists(p) else None"
+            )
+            try:
+                requests.post(
+                    self.http_server + "/execute",
+                    json={"command": ["python", "-c", cleanup_code], "shell": False},
+                    timeout=(10, 30),
+                )
+            except requests.exceptions.RequestException:
+                logger.warning("Failed to remove guest temporary script: %s", script_path)
+
+        if "return_code" not in response and "returncode" in response:
+            response["return_code"] = response.get("returncode")
+        return response
 
     def execute_action(self, action: Dict[str, Any]):
         """

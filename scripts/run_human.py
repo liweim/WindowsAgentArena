@@ -22,7 +22,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--container-name",
         type=str,
-        default="winarena",
+        default="a11yarena",
         help="Temporary container name.",
     )
     parser.add_argument("--browser-port", type=str, default="9006")

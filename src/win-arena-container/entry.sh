@@ -9,6 +9,10 @@ prepare_image=false
 start_client=true
 agent="navi"
 model="gpt-4-vision-preview"
+temperature=0
+seed=42
+top_p=0.95
+top_k=20
 som_origin="oss"
 a11y_backend="uia"
 clean_results=true
@@ -16,78 +20,29 @@ worker_id="0"
 num_workers="1"
 result_dir="./results"
 json_name="evaluation_examples_windows/test_all.json" 
+diff_lvl="normal"
+client_extra_args=()
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
-        --prepare-image)
-            prepare_image=$2
-            shift 2
-            ;;
-        --start-client)
-            start_client=$2
-            shift 2
-            ;;
-        --agent)
-            agent=$2
-            shift 2
-            ;;
-        --model)
-            model=$2
-            shift 2
-            ;;
-        --som-origin)
-            som_origin=$2
-            shift 2
-            ;;
-        --a11y-backend)
-            a11y_backend=$2
-            shift 2
-            ;;
-        --clean-results)
-            clean_results=$2
-            shift 2
-            ;;
-        --worker-id)
-            worker_id=$2
-            shift 2
-            ;;
-        --num-workers)
-            num_workers=$2
-            shift 2
-            ;;
-        --result-dir)
-            result_dir=$2
-            shift 2
-            ;;
-        --json-name)
-            json_name=$2
-            shift 2
-            ;;
-        --diff-lvl)
-            diff_lvl=$2
-            shift 2
-            ;;
-        --help)
-            echo "Usage: $0 [options]"
-            echo "Options:"
-            echo "  --prepare-image <true/false>    Prepare an arena image (default: false)"
-            echo "  --start-client <true/false>     Start the arena client process (default: true)"
-            echo "  --agent <agent>                 The agent to use (default: navi)"
-            echo "  --model <model>                 The model to use (default: gpt-4-vision-preview, available options are: gpt-4o-mini, gpt-4-vision-preview, gpt-4o, gpt-4-1106-vision-preview)"
-            echo "  --som-origin <som_origin>       The SoM (Set-of-Mark) origin to use (default: oss, available options are: oss, a11y, mixed-oss)"
-            echo "  --a11y-backend <a11y_backend>   The a11y accessibility backend to use (default: uia, available options are: uia, win32)"
-            echo "  --clean-results <bool>          Clean the results directory before running the client (default: true)"
-            echo "  --worker-id <id>                The worker ID"
-            echo "  --num-workers <num>             The number of workers"
-            echo "  --result-dir <dir>              The directory to store the results (default: ./results)"
-            echo "  --json-name <name>              The name of the JSON file to use (default: test_all.json)"
-            echo "  --diff-lvl <level>              Benchmark difficulty level passed to the client (default: normal)"
-            exit 0
-            ;;
-        *)
-            echo "Unknown option: $1"
-            exit 1
-            ;;
+        --prepare-image) prepare_image=$2; shift 2 ;;
+        --start-client) start_client=$2; shift 2 ;;
+        --agent) agent=$2; shift 2 ;;
+        --model) model=$2; shift 2 ;;
+        --temperature) temperature=$2; shift 2 ;;
+        --seed) seed=$2; shift 2 ;;
+        --top-p|--top_p) top_p=$2; shift 2 ;;
+        --top-k|--top_k) top_k=$2; shift 2 ;;
+        --som-origin) som_origin=$2; shift 2 ;;
+        --a11y-backend) a11y_backend=$2; shift 2 ;;
+        --clean-results) clean_results=$2; shift 2 ;;
+        --worker-id) worker_id=$2; shift 2 ;;
+        --num-workers) num_workers=$2; shift 2 ;;
+        --result-dir) result_dir=$2; shift 2 ;;
+        --json-name) json_name=$2; shift 2 ;;
+        --diff-lvl) diff_lvl=$2; shift 2 ;;
+        --help) echo "Usage: $0 [options]"; exit 0 ;;
+        *) client_extra_args+=("$1"); shift ;;
     esac
 done
 
@@ -111,7 +66,10 @@ else
     # Start the client script
     if [ "$start_client" = "true" ]; then
         echo "Starting client..."
-        ./start_client.sh --agent $agent --model $model --som-origin $som_origin --a11y-backend $a11y_backend --clean-results $clean_results --worker-id $worker_id --num-workers $num_workers --result-dir $result_dir --json-name $json_name
+        ./start_client.sh --agent "$agent" --model "$model" --temperature "$temperature" --seed "$seed" --top-p "$top_p" --top-k "$top_k" --som-origin "$som_origin" --a11y-backend "$a11y_backend" --clean-results "$clean_results" --worker-id "$worker_id" --num-workers "$num_workers" --result-dir "$result_dir" --json-name "$json_name" --diff-lvl "$diff_lvl" "${client_extra_args[@]}"
+        client_status=$?
+        echo "Client exited with status $client_status"
+        exit "$client_status"
     else
         echo "Keeping container alive"
         while true; do
