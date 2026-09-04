@@ -340,13 +340,26 @@ def should_run(domain, example_id):
 
 with open(source_path, "r", encoding="utf-8") as source_file:
     tasks = json.load(source_file)
+total_task_count = sum(len(example_ids) for example_ids in tasks.values())
+scheduled_task_count = 0
+removed_result_count = 0
 with open(manifest_path, "w", encoding="utf-8") as manifest_file:
     for domain, example_ids in tasks.items():
         for example_id in example_ids:
             if "\t" in domain or "\t" in example_id or "\n" in domain or "\n" in example_id:
                 raise ValueError("Task domain and ID cannot contain tabs or newlines")
             if should_run(domain, example_id):
+                scheduled_task_count += 1
+                if result_dir:
+                    result_path = os.path.join(result_dir, domain, example_id, "result.txt")
+                    if os.path.exists(result_path):
+                        os.remove(result_path)
+                        removed_result_count += 1
                 manifest_file.write(f"{domain}\t{example_id}\n")
+print(
+    f"Task plan: total={total_task_count}, scheduled={scheduled_task_count}, "
+    f"removed_result_files={removed_result_count}"
+)
 PY
     mapfile -t task_entries < "$manifest_path"
     if [ "${#task_entries[@]}" -eq 0 ]; then

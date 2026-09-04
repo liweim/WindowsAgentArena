@@ -208,12 +208,18 @@ class PythonController:
             logger.error("An error occurred while trying to execute the command: %s", e)
 
 
-    def run_python_script(self, script: str) -> Optional[Dict[str, Any]]:
+    def run_python_script(
+        self,
+        script: str,
+        python_executable: str = "python",
+    ) -> Optional[Dict[str, Any]]:
         """Run Python source through a guest-side temporary script file.
 
         Sending large handlers through ``python -c`` hits Windows' command-line
         length limit.  Upload the source through the existing file endpoint and
-        invoke Python with only the temporary file path as an argument.
+        invoke Python with only the temporary file path as an argument. Callers
+        may select an application-bundled interpreter when binary extension
+        modules (for example LibreOffice PyUNO) require a matching Python ABI.
         """
         script_path = (
             r"C:\Users\Docker\AppData\Local\Temp\locallstc_task_"
@@ -242,7 +248,7 @@ class PythonController:
 
             http_response = requests.post(
                 self.http_server + "/execute",
-                json={"command": ["python", script_path], "shell": False},
+                json={"command": [python_executable, script_path], "shell": False},
                 timeout=(10, 150),
             )
             try:

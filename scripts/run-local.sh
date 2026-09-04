@@ -200,11 +200,45 @@ resolve_result_host_dir() {
 result_host_dir="$(resolve_result_host_dir || true)"
 if [ -n "$result_host_dir" ]; then
     mkdir -p "$result_host_dir"
-    if command -v setfacl >/dev/null 2>&1; then
-        setfacl -R -m "u:$(id -u):rwX" "$result_host_dir"
-        setfacl -R -d -m "u:$(id -u):rwX" "$result_host_dir"
-    fi
 fi
+
+repair_result_ownership() {
+    local host_uid host_gid mismatched_owner_path
+
+    [ -n "$result_host_dir" ] || return 0
+    host_uid="$(id -u)"
+    host_gid="$(id -g)"
+    mismatched_owner_path="$({
+        find "$result_host_dir" ! -uid "$host_uid" -print -quit
+    } 2>/dev/null || true)"
+    [ -n "$mismatched_owner_path" ] || return 0
+
+    if ! docker image inspect "${image_repository}:${image_tag}" >/dev/null 2>&1; then
+        echo "Warning: cannot repair result ownership before image ${image_repository}:${image_tag} is built."
+        return 0
+    fi
+
+    echo "Repairing result ownership left by an interrupted container run."
+    docker run --rm --user 0 \
+        --volume "${result_host_dir}:/results" \
+        --entrypoint /bin/chown \
+        "${image_repository}:${image_tag}" \
+        -R "${host_uid}:${host_gid}" /results
+}
+
+apply_result_acl() {
+    local host_uid
+
+    [ -n "$result_host_dir" ] || return 0
+    command -v setfacl >/dev/null 2>&1 || return 0
+    host_uid="$(id -u)"
+    if ! setfacl -R -m "u:${host_uid}:rwX" "$result_host_dir"; then
+        echo "Warning: could not update access ACLs under $result_host_dir."
+    fi
+    if ! setfacl -R -d -m "u:${host_uid}:rwX" "$result_host_dir"; then
+        echo "Warning: could not update default ACLs on $result_host_dir."
+    fi
+}
 
 if [ "$connect" != true ] && [ "$start_client" = true ] && [ "$isolate_tasks" = true ]; then
     if [[ "$json_name" = /* ]]; then
@@ -256,13 +290,14 @@ if ! docker info >/dev/null 2>&1; then
     log_error_exit "Docker daemon is not running or is not accessible."
 fi
 
+if [ "$mode" = "dev" ]; then
+    image_repository="windowsarena/winarena-dev"
+else
+    image_repository="windowsarena/winarena"
+fi
+image_tag="${WINARENA_IMAGE_TAG:-latest}"
+
 if [ "$connect" != true ] && [ "$skip_build" = true ]; then
-    if [ "$mode" = "dev" ]; then
-        image_repository="windowsarena/winarena-dev"
-    else
-        image_repository="windowsarena/winarena"
-    fi
-    image_tag="${WINARENA_IMAGE_TAG:-latest}"
     if ! docker image inspect "${image_repository}:${image_tag}" >/dev/null 2>&1; then
         log_error_exit "Docker image does not exist: ${image_repository}:${image_tag}"
     fi
@@ -279,7 +314,9 @@ if [ "$connect" != true ]; then
         docker rm -f "$container_name" >/dev/null
     fi
     cleanup_stale_task_storage
+    repair_result_ownership
 fi
+apply_result_acl
 
 config_file_path="${ROOT_DIR}/config.json"
 echo "Using configuration file: $config_file_path"
