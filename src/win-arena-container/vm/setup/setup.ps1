@@ -38,6 +38,11 @@ Set-ItemProperty -Path $windowsUpdatePolicy -Name "NoAutoUpdate" -Type DWord -Va
 Stop-Service -Name wuauserv -Force -ErrorAction SilentlyContinue
 Set-Service -Name wuauserv -StartupType Disabled -ErrorAction SilentlyContinue
 
+# Prevent Microsoft Store applications from changing version in a saved image.
+$windowsStorePolicy = "HKLM:\SOFTWARE\Policies\Microsoft\WindowsStore"
+New-Item -Path $windowsStorePolicy -Force | Out-Null
+Set-ItemProperty -Path $windowsStorePolicy -Name "AutoDownload" -Type DWord -Value 2
+
 # Load the tools config json listing mirrors and aliases used for installing tools
 $toolsConfigJsonPath = Join-Path $scriptFolder -ChildPath "tools_config.json"
 $toolsConfigJson = Get-Content -Path $toolsConfigJsonPath -Raw
@@ -155,6 +160,16 @@ if (Get-Command ffmpeg -ErrorAction SilentlyContinue) {
 
 # Disable Edge Auto Updates
 Stop-Process -Name "MicrosoftEdgeUpdate" -Force -ErrorAction SilentlyContinue
+$edgeUpdatePolicy = "HKLM:\SOFTWARE\Policies\Microsoft\EdgeUpdate"
+New-Item -Path $edgeUpdatePolicy -Force | Out-Null
+Set-ItemProperty -Path $edgeUpdatePolicy -Name "UpdateDefault" -Type DWord -Value 0
+Set-ItemProperty -Path $edgeUpdatePolicy -Name "AutoUpdateCheckPeriodMinutes" -Type DWord -Value 0
+Stop-Service -Name edgeupdate, edgeupdatem -Force -ErrorAction SilentlyContinue
+Set-Service -Name edgeupdate -StartupType Disabled -ErrorAction SilentlyContinue
+Set-Service -Name edgeupdatem -StartupType Disabled -ErrorAction SilentlyContinue
+Get-ScheduledTask -ErrorAction SilentlyContinue |
+    Where-Object { $_.TaskName -like "MicrosoftEdgeUpdateTaskMachine*" } |
+    Disable-ScheduledTask -ErrorAction SilentlyContinue | Out-Null
 $edgeUpdatePath = "${env:ProgramFiles(x86)}\Microsoft\EdgeUpdate"
 Remove-Item -Path $edgeUpdatePath -Recurse -Force -ErrorAction SilentlyContinue
 Write-Host "Edge Update processes terminated and directory removed."
@@ -260,6 +275,35 @@ if (-not (Test-Path $sofficeExecutablePath)) {
 }
 Add-ToEnvPath -NewPath "C:\Program Files\LibreOffice\program"
 
+# LibreOffice registers UpdateCheck on its first visible window. Disable the
+# check in the installation registry before initializing the user profile so
+# every isolated task keeps the pinned benchmark version instead of upgrading.
+$libreOfficeOnlineUpdateConfigPath = "C:\Program Files\LibreOffice\share\registry\onlineupdate.xcd"
+if (-not (Test-Path $libreOfficeOnlineUpdateConfigPath)) {
+    throw "LibreOffice online update config was not found: $libreOfficeOnlineUpdateConfigPath"
+}
+$libreOfficeOnlineUpdateConfig = Get-Content -Path $libreOfficeOnlineUpdateConfigPath -Raw
+$autoCheckEnabledRegex = [regex]'(<prop oor:name="AutoCheckEnabled"[^>]*>\s*<value>\s*)(true|false)(\s*</value>)'
+if (-not $autoCheckEnabledRegex.IsMatch($libreOfficeOnlineUpdateConfig)) {
+    throw "LibreOffice AutoCheckEnabled setting was not found in $libreOfficeOnlineUpdateConfigPath"
+}
+$libreOfficeOnlineUpdateConfigDisabled = $autoCheckEnabledRegex.Replace(
+    $libreOfficeOnlineUpdateConfig,
+    '${1}false${3}',
+    1
+)
+if ($libreOfficeOnlineUpdateConfigDisabled -ne $libreOfficeOnlineUpdateConfig) {
+    [System.IO.File]::WriteAllText(
+        $libreOfficeOnlineUpdateConfigPath,
+        $libreOfficeOnlineUpdateConfigDisabled
+    )
+    Write-Host "Disabled LibreOffice automatic update checks."
+} else {
+    Write-Host "LibreOffice automatic update checks are already disabled."
+}
+Stop-Service -Name LibreOfficeMaintenance -Force -ErrorAction SilentlyContinue
+Set-Service -Name LibreOfficeMaintenance -StartupType Disabled -ErrorAction SilentlyContinue
+
 # Create the normal user profile once in the golden image. Per-task code must
 # reuse this profile instead of deleting it and re-triggering first-run dialogs.
 Start-Process -FilePath $sofficeExecutablePath -ArgumentList "--headless", "--nofirststartwizard", "--norestore", "--terminate_after_init" -Wait
@@ -343,6 +387,23 @@ if (Test-Path $gimpExecutablePath) {
     }
 }
 
+# GIMP 2.10 only checks for releases, but even its update prompt changes the
+# benchmark UI. Persist the documented gimprc switch for the Docker user.
+$gimpProfilePath = Join-Path $env:APPDATA "GIMP\2.10"
+$gimpConfigPath = Join-Path $gimpProfilePath "gimprc"
+New-Item -ItemType Directory -Path $gimpProfilePath -Force | Out-Null
+if (Test-Path $gimpConfigPath) {
+    $gimpConfig = Get-Content -Path $gimpConfigPath -Raw
+    if ($gimpConfig -match '(?m)^\s*\(check-updates\s+(?:yes|no)\)\s*$') {
+        $gimpConfig = $gimpConfig -replace '(?m)^\s*\(check-updates\s+(?:yes|no)\)\s*$', '(check-updates no)'
+        [System.IO.File]::WriteAllText($gimpConfigPath, $gimpConfig)
+    } else {
+        Add-Content -Path $gimpConfigPath -Value "`n(check-updates no)"
+    }
+} else {
+    Set-Content -Path $gimpConfigPath -Value "(check-updates no)" -Encoding ASCII
+}
+
 # - VS Code
 $vsCodeToolName = "VS Code"
 $vsCodeToolDetails = Get-ToolDetails -toolsList $toolsList -toolName $vsCodeToolName
@@ -373,26 +434,26 @@ if (Test-Path $vsCodeExecutablePath) {
         # Add VS Code to the system PATH environment variable
         Add-ToEnvPath -NewPath "C:\Users\$env:USERNAME\AppData\Local\Programs\Microsoft VS Code\bin"
 
-        # Disable Visual Studio Code Auto Updates
-        $vsCodeSettingsPath = "${env:APPDATA}\Code\User\settings.json"
-        if (-not (Test-Path $vsCodeSettingsPath)) {
-            # Create the directory if it doesn't exist
-            $dirPath = Split-Path -Path $vsCodeSettingsPath -Parent
-            if (-not (Test-Path $dirPath)) {
-                New-Item -ItemType Directory -Path $dirPath -Force
-            }
-            # Initialize an empty hashtable to act as the JSON object
-            $settingsObj = @{}
-            $settingsObj["update.mode"] = "none"  # Set update mode to none
-            $settingsObj | ConvertTo-Json | Set-Content $vsCodeSettingsPath
-        } else {
-            # If the file exists, modify it
-            $settingsObj = Get-Content $vsCodeSettingsPath | ConvertFrom-Json
-            $settingsObj["update.mode"] = "none"
-            $settingsObj | ConvertTo-Json | Set-Content $vsCodeSettingsPath
-        }
     }
 }
+
+# Enforce VS Code update policy even when setup.ps1 is rerun on an image where
+# Code is already installed. Extension updates are disabled for the same reason.
+$vsCodeSettingsPath = "${env:APPDATA}\Code\User\settings.json"
+$vsCodeSettingsDir = Split-Path -Path $vsCodeSettingsPath -Parent
+New-Item -ItemType Directory -Path $vsCodeSettingsDir -Force | Out-Null
+if (Test-Path $vsCodeSettingsPath) {
+    $settingsObj = Get-Content $vsCodeSettingsPath -Raw | ConvertFrom-Json
+} else {
+    $settingsObj = [pscustomobject]@{}
+}
+if ($null -eq $settingsObj) {
+    $settingsObj = [pscustomobject]@{}
+}
+$settingsObj | Add-Member -NotePropertyName "update.mode" -NotePropertyValue "none" -Force
+$settingsObj | Add-Member -NotePropertyName "extensions.autoUpdate" -NotePropertyValue $false -Force
+$settingsObj | Add-Member -NotePropertyName "extensions.autoCheckUpdates" -NotePropertyValue $false -Force
+$settingsObj | ConvertTo-Json -Depth 10 | Set-Content $vsCodeSettingsPath -Encoding UTF8
 
 # - Thunderbird
 $thunderbirdToolName = "Thunderbird"
@@ -425,6 +486,23 @@ if (Test-Path $thunderbirdExecutablePath) {
         Add-ToEnvPath -NewPath "C:\Program Files\Mozilla Thunderbird"
     }
 }
+
+# Thunderbird normally updates itself independently of Windows Update. Lock it
+# to the benchmark version through Mozilla enterprise policy and its service.
+$thunderbirdDistributionPath = "C:\Program Files\Mozilla Thunderbird\distribution"
+New-Item -ItemType Directory -Path $thunderbirdDistributionPath -Force | Out-Null
+$thunderbirdPolicies = @{
+    policies = @{
+        DisableAppUpdate = $true
+        AppAutoUpdate = $false
+        BackgroundAppUpdate = $false
+    }
+}
+$thunderbirdPolicies |
+    ConvertTo-Json -Depth 4 |
+    Set-Content -Path (Join-Path $thunderbirdDistributionPath "policies.json") -Encoding UTF8
+Stop-Service -Name MozillaMaintenance -Force -ErrorAction SilentlyContinue
+Set-Service -Name MozillaMaintenance -StartupType Disabled -ErrorAction SilentlyContinue
 
 # - Caddy Proxy
 $caddyProxyToolName = "Caddy Proxy"

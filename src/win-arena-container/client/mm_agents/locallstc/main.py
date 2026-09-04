@@ -47,23 +47,6 @@ for noisy_logger_name in ("openai", "openai._base_client", "httpx", "httpcore"):
     logging.getLogger(noisy_logger_name).setLevel(logging.WARNING)
 
 API_TOOL = "api"
-GUI_SKILL_MODE = "gui"
-BASH_SKILL_MODE = "bash"
-GUI_FIRST_DOMAINS = {
-    "chrome",
-    "gimp",
-    "libreoffice_impress",
-    "thunderbird",
-    "vlc",
-}
-BASH_FIRST_DOMAINS = {
-    "excel",
-    "jupyter",
-    "libreoffice_calc",
-    "libreoffice_writer",
-    "os",
-    "vs_code",
-}
 GUI_ACTION_TOOLS = {
     "gui_action",
     "click",
@@ -244,7 +227,6 @@ class LocalLSTC:
         self.wait_poll_interval = 1.0
         self.screenshot_wait_timeout = 6.0
         self.evaluation_wait_timeout = 25.0
-        self.current_skill_mode = GUI_SKILL_MODE
         self.current_foreground_window_id = ""
         self.current_foreground_window_title = ""
         self.current_foreground_app = ""
@@ -342,7 +324,6 @@ class LocalLSTC:
         self.last_recovery_feedback = None
         self.last_error_feedback = None
         self.current_step_id = 0
-        self.current_skill_mode = GUI_SKILL_MODE
         self.current_foreground_window_id = ""
         self.current_foreground_window_title = ""
         self.current_foreground_app = ""
@@ -686,34 +667,6 @@ print(output)
         app_domains = self._get_effective_app_domains()
         return f"{app_domains[0]}.md" if app_domains else ""
 
-    def _task_prefers_gui_skill(self) -> bool:
-        task_text = getattr(self, "task_instruction", "").lower()
-        app_domains = set(self._get_effective_app_domains())
-
-        strong_gui_hints = [
-            "browser", "chrome", "tab", "menu", "button", "dropdown", "dialog",
-            "window", "settings", "preferences", "address bar", "toolbar",
-            "click", "double-click", "right-click", "drag", "scroll", "hover",
-            "open the app", "navigate to", "select from the menu", "toggle",
-            "pivot table", "pivot chart",
-        ]
-        gui_domains = {
-            "chrome", "thunderbird", "vlc", "gimp",
-        }
-        return any(token in task_text for token in strong_gui_hints) or bool(app_domains & gui_domains)
-
-    def _task_requires_bash_skill(self) -> bool:
-        task_text = getattr(self, "task_instruction", "").lower()
-        if "pivot table" in task_text or "pivot chart" in task_text:
-            return False
-        bash_hints = [
-            "file", "code", "python", "bash", "terminal", "script",
-            "excel", "calc", "spreadsheet", "csv", "json", "yaml",
-            "docx", "xlsx", "tsv", "modify", "edit", "replace", "update",
-            "writer", "document", "paragraph", "cell", "column", "row",
-        ]
-        return any(token in task_text for token in bash_hints)
-
     def _count_recent_nonprogress_steps(self, tool_type: Optional[str] = None, window: int = 3) -> int:
         count = 0
         for log in reversed(self.action_logs[-max(1, int(window)):]):
@@ -723,62 +676,6 @@ print(output)
                 continue
             count += 1
         return count
-
-    def _choose_skill_mode(self, reason: str = "initial") -> str:
-        if self.guest_platform == "android":
-            return GUI_SKILL_MODE
-        app_domains = set(self._get_effective_app_domains())
-        prefers_gui = self._task_prefers_gui_skill()
-        requires_bash = self._task_requires_bash_skill()
-        current_mode = getattr(self, "current_skill_mode", GUI_SKILL_MODE) or GUI_SKILL_MODE
-
-        if reason == "initial":
-            if prefers_gui and not requires_bash:
-                return GUI_SKILL_MODE
-            if requires_bash and not prefers_gui:
-                return BASH_SKILL_MODE
-            if app_domains & BASH_FIRST_DOMAINS:
-                return BASH_SKILL_MODE
-            if app_domains & GUI_FIRST_DOMAINS:
-                return GUI_SKILL_MODE
-            return GUI_SKILL_MODE if prefers_gui else BASH_SKILL_MODE
-
-        return current_mode
-
-    def _set_skill_mode(self, selected_mode: str, reason: str = "manual") -> str:
-        normalized_mode = selected_mode if selected_mode in {GUI_SKILL_MODE, BASH_SKILL_MODE} else GUI_SKILL_MODE
-        previous_mode = getattr(self, "current_skill_mode", "")
-        self.current_skill_mode = normalized_mode
-        if previous_mode != normalized_mode:
-            self.logger.info("[planner_skill_mode] %s -> %s (reason=%s)", previous_mode or "unset", normalized_mode, reason)
-        else:
-            self.logger.info("[planner_skill_mode] %s (reason=%s)", normalized_mode, reason)
-        return normalized_mode
-
-    def _refresh_skill_mode(self, reason: str = "initial") -> str:
-        selected_mode = self._choose_skill_mode(reason=reason)
-        return self._set_skill_mode(selected_mode, reason=reason)
-
-    def _required_mode_for_tool(self, tool: str) -> str:
-        normalized = str(tool or "").strip().lower()
-        if normalized in {API_TOOL, "gui_action"}:
-            return GUI_SKILL_MODE
-        if normalized == "bash_execution":
-            return BASH_SKILL_MODE
-        return ""
-
-    def _sync_skill_mode_with_decision(self, actions: List[str]) -> None:
-        current_mode = getattr(self, "current_skill_mode", GUI_SKILL_MODE) or GUI_SKILL_MODE
-        selected_mode = ""
-        selected_tool = ""
-        for action in actions:
-            tool = self._infer_tool_from_action(action)
-            required_mode = self._required_mode_for_tool(tool)
-            if required_mode:
-                selected_mode = required_mode
-                selected_tool = tool
-        if selected_mode and selected_mode != current_mode:
-            self._set_skill_mode(selected_mode, reason="planner_selected_tool")
 
     def _should_use_recovery_feedback_skill(self) -> bool:
         if not self._state_routing_enabled() or self.wo_sls:
@@ -817,55 +714,45 @@ print(output)
             return NO_AL_PLANNER_RESPONSE_FORMAT_PROMPT
         return PLANNER_RESPONSE_FORMAT_PROMPT if self.api_enabled else NO_API_PLANNER_RESPONSE_FORMAT_PROMPT
 
-    def _get_no_screenshot_planner_note(self) -> str:
-        return (
-            "No screenshot is attached because the latest meaningful step was bash_execution "
-            "and the current planning mode remains execution-side automation. Prioritize file-level evidence from "
-            "command output and verification logs."
-        )
-
-    def _build_mode_planner_sections(self) -> List[str]:
+    def _build_action_channel_planner_sections(self) -> List[str]:
         if self.guest_platform == "android":
             return []
-        active_mode = getattr(self, "current_skill_mode", GUI_SKILL_MODE) or GUI_SKILL_MODE
         sections: List[str] = []
         single_action_schema = not self._actions_list_enabled()
         single_action_suffix = "no_l2s" if not self._planner_subgoal_enabled() else "no_al"
-        no_long_schema = not self._planner_subgoal_enabled() and not single_action_schema
-        if active_mode == GUI_SKILL_MODE:
-            shared_skill_names = [f"gui_{single_action_suffix}.md" if single_action_schema else "gui.md"]
-            if self.api_enabled:
-                if single_action_schema:
-                    api_skill_name = f"api_{single_action_suffix}.md"
-                elif no_long_schema:
-                    api_skill_name = "api_no_long.md"
-                else:
-                    api_skill_name = "api.md"
-                shared_skill_names.insert(0, api_skill_name)
-            for shared_skill_name in shared_skill_names:
-                if self._skill_file_exists(shared_skill_name):
-                    sections.append(self._load_skill_text(shared_skill_name))
-            if self.api_enabled:
-                api_prompt = self.api_registry.render_prompt(
-                    self._get_effective_app_domains(),
-                    single_action_schema=single_action_schema,
-                )
-                if api_prompt:
-                    sections.append(api_prompt)
-            return sections
+
+        shared_skill_names: List[str] = []
+        if self.api_enabled:
+            api_skill_name = (
+                f"api_{single_action_suffix}.md" if single_action_schema else "api.md"
+            )
+            shared_skill_names.append(api_skill_name)
+        shared_skill_names.append(
+            f"gui_{single_action_suffix}.md" if single_action_schema else "gui.md"
+        )
 
         if self.guest_platform.startswith("win"):
             bash_skill_base = "windows"
         else:
             bash_skill_base = "bash"
-        if single_action_schema:
-            bash_skill = f"{bash_skill_base}_{single_action_suffix}.md"
-        elif no_long_schema and bash_skill_base == "bash":
-            bash_skill = f"{bash_skill_base}_no_long.md"
-        else:
-            bash_skill = f"{bash_skill_base}.md"
-        if self._skill_file_exists(bash_skill):
-            sections.append(self._load_skill_text(bash_skill))
+        bash_skill = (
+            f"{bash_skill_base}_{single_action_suffix}.md"
+            if single_action_schema
+            else f"{bash_skill_base}.md"
+        )
+        shared_skill_names.append(bash_skill)
+
+        for shared_skill_name in shared_skill_names:
+            if self._skill_file_exists(shared_skill_name):
+                sections.append(self._load_skill_text(shared_skill_name))
+
+        if self.api_enabled:
+            api_prompt = self.api_registry.render_prompt(
+                self._get_effective_app_domains(),
+                single_action_schema=single_action_schema,
+            )
+            if api_prompt:
+                sections.append(api_prompt)
         return sections
 
     def _get_domain_skill_names_for_prompt(self) -> List[str]:
@@ -895,7 +782,7 @@ print(output)
     def _build_planner_system_prompt(self) -> str:
         sections = []
         sections.extend(self._build_base_planner_sections())
-        sections.extend(self._build_mode_planner_sections())
+        sections.extend(self._build_action_channel_planner_sections())
         sections.extend(self._build_domain_planner_sections())
         sections.extend(self._build_recovery_planner_sections())
         return "\n\n".join(section.strip() for section in sections if section)
@@ -1103,9 +990,6 @@ print(output)
         if not sections:
             return None
         return {"role": "user", "content": "\n\n".join(sections)}
-
-    def _should_attach_planner_screenshot(self) -> bool:
-        return True
 
     def _is_gui_tool(self, tool: str) -> bool:
         return str(tool or "").strip().lower() in GUI_ACTION_TOOLS
@@ -1655,6 +1539,7 @@ print(output)
         evaluation_screenshot = self._wait_for_stable_screenshot(timeout_seconds=30.0)
         if evaluation_screenshot is None:
             self.logger.warning("Failed to capture any screenshot before evaluation; continuing anyway.")
+        self._force_save_office_document()
         while True:
             attempt += 1
             try:
@@ -1670,6 +1555,35 @@ print(output)
                     f"Evaluation attempt {attempt} failed: {eval_error}. Retrying in {wait_time:.1f} seconds..."
                 )
                 time.sleep(wait_time)
+
+    def _force_save_office_document(self) -> None:
+        """Synchronously persist an open LibreOffice document before evaluation."""
+        office_domains = {
+            "libreoffice_calc": "CalcTools.save",
+            "libreoffice_writer": "WriterTools.save",
+            "libreoffice_impress": "ImpressTools.save",
+        }
+        active_domains = set(self._get_effective_app_domains())
+        selected = [
+            (domain, call_name)
+            for domain, call_name in office_domains.items()
+            if domain in active_domains
+        ]
+        if not selected:
+            return
+
+        domain, call_name = selected[0]
+        self.logger.info("Force-saving LibreOffice document via %s before evaluation...", call_name)
+        execution = self.api_registry.invoke(domain, call_name, [], {}, self.env)
+        raw_result = execution.get("raw_result")
+        payload = execution.get("payload") or {}
+        status = str(payload.get("status", "") or "success")
+        if status != "success" or raw_result is not True:
+            raise RuntimeError(
+                f"Forced LibreOffice save failed: call={call_name}, "
+                f"status={status}, result={raw_result}, payload={payload}"
+            )
+        self.logger.info("Forced LibreOffice save completed via %s.", call_name)
 
     def _get_usage_snapshot(self) -> Dict:
         """Get current token usage snapshot from all LLMs."""
@@ -1940,7 +1854,6 @@ print(output)
             or "unknown"
         )
         self._init_prompt_dump_file()
-        self._refresh_skill_mode(reason="initial")
         # Main execution loop
         is_infeasible = False
         infeasible_reason = ""
@@ -2269,14 +2182,10 @@ print(output)
             response = ""
             json_str = ""
             try:
-                attach_screenshot = self._should_attach_planner_screenshot()
-                screenshot = None
-                screenshot_b64 = ""
-                if attach_screenshot:
-                    screenshot = self._wait_until_screenshot_available()
-                    if screenshot is None:
-                        raise RuntimeError("Failed to capture screenshot for planning after retries.")
-                    screenshot_b64 = base64.b64encode(screenshot).decode("utf-8")
+                screenshot = self._wait_until_screenshot_available()
+                if screenshot is None:
+                    raise RuntimeError("Failed to capture screenshot for planning after retries.")
+                screenshot_b64 = base64.b64encode(screenshot).decode("utf-8")
                 self._refresh_foreground_app_context()
 
                 planner_system_prompt = self._build_planner_system_prompt()
@@ -2289,9 +2198,6 @@ print(output)
                 condensed_history = self._build_condensed_history_items(include_summary=False)
                 messages = [{"role": "system", "content": planner_system_prompt}]
                 prompt_text = "Based on the execution history and current screenshot, decide the next action. Prefer the shortest reliable path and avoid repeating failed actions."
-                if not attach_screenshot:
-                    prompt_text = prompt_text.replace(" and current screenshot", "")
-                    prompt_text += "\n" + self._get_no_screenshot_planner_note()
                 if active_recovery_feedback:
                     prompt_text += "\nPlease use the recovery feedback above to correct the next step."
                 context_message = self._build_planner_context_message(
@@ -2303,14 +2209,13 @@ print(output)
                 if context_message:
                     messages.append(context_message)
 
-                if attach_screenshot:
-                    messages.append({
-                        "role": "user",
-                        "content": [
-                            {"type": "input_text", "text": "Current screenshot:"},
-                            {"type": "input_image", "image_url": f"data:image/png;base64,{screenshot_b64}"}
-                        ]
-                    })
+                messages.append({
+                    "role": "user",
+                    "content": [
+                        {"type": "input_text", "text": "Current screenshot:"},
+                        {"type": "input_image", "image_url": f"data:image/png;base64,{screenshot_b64}"}
+                    ]
+                })
 
                 if attempt > 0:
                     self.logger.warning(f"Retry attempt {attempt}/{self.max_parse_retries}")
@@ -2449,8 +2354,6 @@ print(output)
                         self._infer_tool_from_action(normalized_actions[-1]),
                     )
                 decision.pop("execution_status", None)
-                self._sync_skill_mode_with_decision(normalized_actions)
-
                 self.logger.info("[decision]: %s", response)
 
                 # Clear stale recovery feedback after a successful re-plan.

@@ -15,6 +15,13 @@ from pydrive.drive import GoogleDrive
 class APIRegistry:
     """Lightweight software-level API registry backed by copied domain schemas/handlers."""
 
+    LIBREOFFICE_DOMAINS = {
+        "libreoffice_calc",
+        "libreoffice_writer",
+        "libreoffice_impress",
+    }
+    LIBREOFFICE_PYTHON = r"C:\Program Files\LibreOffice\program\python.exe"
+
     DOMAIN_ALIASES = {
         "chrome": "google_chrome",
         "google_chrome": "google_chrome",
@@ -708,7 +715,18 @@ class APIRegistry:
             "    print(json.dumps({'ok': False, 'error': str(exc), 'traceback': traceback.format_exc()}, ensure_ascii=False, default=str))\n"
         )
 
-        output = env.controller.run_python_script(wrapper) or {}
+        guest_platform = str(getattr(env, "vm_platform", "") or "").strip().lower()
+        use_windows_libreoffice_python = (
+            normalized_domain in self.LIBREOFFICE_DOMAINS
+            and guest_platform.startswith("win")
+        )
+        if use_windows_libreoffice_python:
+            output = env.controller.run_python_script(
+                wrapper,
+                python_executable=self.LIBREOFFICE_PYTHON,
+            ) or {}
+        else:
+            output = env.controller.run_python_script(wrapper) or {}
         status = str(output.get("status", "") or "")
         raw_stdout = str(output.get("output", "") or output.get("message", "") or "").strip()
         if status == "error" and output.get("error"):
