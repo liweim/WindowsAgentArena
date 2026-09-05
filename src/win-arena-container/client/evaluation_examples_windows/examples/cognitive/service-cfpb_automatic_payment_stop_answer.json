@@ -3,15 +3,18 @@
   "snapshot": "msedge",
   "category": "service",
   "difficulty": "medium",
-  "instruction": "You need to stop automatic payments from your bank account and want fewer distractions while reading the service guidance. Use Microsoft Edge Immersive Reader on the CFPB page. Create `answer.txt` on the Desktop and write the service steps the page says to take. Copy the original wording from the page.",
+  "instruction": "Write the CFPB's steps for stopping automatic payments from a bank account in `answer.txt` on the Desktop, using the page's original wording and Immersive Reader to read the guidance.",
   "source": "https://www.consumerfinance.gov/ask-cfpb/how-do-i-stop-automatic-payments-from-my-bank-account-en-2023/",
   "gt_steps": [
     "Open the CFPB page about stopping automatic payments from a bank account in Microsoft Edge.",
-    "Use Immersive Reader to simplify the page and reduce distraction.",
-    "Find the section that lists how to stop automatic debits from an account.",
-    "Identify the service steps: call and write the company, call and write your bank or credit union, and monitor your accounts.",
+    "Activate Immersive Reader.",
+    "Locate the section about stopping automatic debits.",
     "Open Notepad.",
-    "Create `answer.txt` on the Desktop containing the original page wording: `Call and write the company`, `Call and write your bank or credit union`, and `Monitor your accounts`."
+    "Create `answer.txt` on the Desktop.",
+    "Enter `Call and write the company` in the file.",
+    "Add `Call and write your bank or credit union` to the file.",
+    "Add `Monitor your accounts` to the file.",
+    "Save `answer.txt`."
   ],
   "config": [
     {
@@ -57,8 +60,7 @@
               "Call and write the company"
             ],
             [
-              "Call and write your bank or credit union",
-              "bank or credit union"
+              "Call and write your bank or credit union"
             ],
             [
               "Monitor your accounts"

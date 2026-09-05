@@ -3,16 +3,31 @@
   "snapshot": "chrome",
   "category": "service",
   "difficulty": "medium",
-  "instruction": "Your store manager asked you to verify one product before a catalog update, but the CMS has many menus and fields. Open the CMS admin site in Google Chrome, sign in with username `admin` and password `admin1234`, find the product record for `Joust Duffle Bag`, and fill in the Value column in the `cms_product_record.xlsx` spreadsheet on the Desktop.",
+  "instruction": "Update the Value column in `cms_product_record.xlsx` on the Desktop with the current CMS details for `Joust Duffle Bag`. Use username `admin` and password `admin1234` to access the CMS admin site.",
   "source": "WebArena self-hosted e-commerce CMS service",
   "gt_steps": [
     "Open the self-hosted CMS admin site in Google Chrome.",
-    "Sign in with username `admin` and password `admin1234`.",
-    "Navigate to the catalog or products area without changing any product data.",
+    "Enter the username `admin`.",
+    "Enter the password `admin1234`.",
+    "Sign in to the CMS admin site.",
+    "Open the product catalog without editing any product data.",
     "Find the product `Joust Duffle Bag`.",
-    "Open `cms_product_record.xlsx` on the Desktop.",
-    "Fill the Value column for the prepared keys: ID, Thumbnail, Name, Type, Attribute Set, SKU, Price, Quantity, Salable Quantity, Visibility, Status, Websites, Last Updated At, and Action.",
-    "Record the product values, including Name `Joust Duffle Bag`, Type `Simple Product`, SKU `24-MB01`, Price `$34.00`, Quantity `100.0000`."
+    "Open `cms_product_record.xlsx` from the Desktop in LibreOffice Calc.",
+    "Enter the displayed CMS value for `ID` in the spreadsheet Value column.",
+    "Enter the displayed CMS value for `Thumbnail` in the spreadsheet Value column.",
+    "Enter the standard value `Joust Duffle Bag` for `Name`.",
+    "Enter the standard value `Simple Product` for `Type`.",
+    "Enter the displayed CMS value for `Attribute Set` in the spreadsheet Value column.",
+    "Enter the standard value `24-MB01` for `SKU`.",
+    "Enter the standard value `$34.00` for `Price`.",
+    "Enter the standard value `100.0000` for `Quantity`.",
+    "Enter the displayed CMS value for `Salable Quantity` in the spreadsheet Value column.",
+    "Enter the displayed CMS value for `Visibility` in the spreadsheet Value column.",
+    "Enter the displayed CMS value for `Status` in the spreadsheet Value column.",
+    "Enter the displayed CMS value for `Websites` in the spreadsheet Value column.",
+    "Enter the displayed CMS value for `Last Updated At` in the spreadsheet Value column.",
+    "Enter the displayed CMS value for `Action` in the spreadsheet Value column.",
+    "Save `cms_product_record.xlsx`."
   ],
   "config": [
     {
@@ -52,7 +67,7 @@
     "func": "check_text_points",
     "result": {
       "type": "vm_command_line",
-      "command": "python -c \"from openpyxl import load_workbook; from pathlib import Path; p=Path.home()/'Desktop'/'cms_product_record.xlsx'; wb=load_workbook(p, data_only=True); ws=wb.active; print('\\n'.join(f'{ws.cell(r,1).value}: {ws.cell(r,2).value}' for r in range(2, ws.max_row+1)))\"",
+      "command": "python -c \"from openpyxl import load_workbook; from pathlib import Path; p=Path.home()/'Desktop'/'cms_product_record.xlsx'; wb=load_workbook(p, data_only=True); ws=wb.active; print('\\n'.join(f'{ws.cell(r,1).value}: {ws.cell(r,2).value}' for r in range(2, ws.max_row+1) if ws.cell(r,2).value is not None and str(ws.cell(r,2).value).strip() != ''))\"",
       "shell": true
     },
     "expected": {
@@ -60,6 +75,33 @@
       "rules": {
         "ignore_case": true,
         "points": [
+          [
+            "ID:"
+          ],
+          [
+            "Thumbnail:"
+          ],
+          [
+            "Attribute Set:"
+          ],
+          [
+            "Salable Quantity:"
+          ],
+          [
+            "Visibility:"
+          ],
+          [
+            "Status:"
+          ],
+          [
+            "Websites:"
+          ],
+          [
+            "Last Updated At:"
+          ],
+          [
+            "Action:"
+          ],
           [
             "Name: Joust Duffle Bag"
           ],

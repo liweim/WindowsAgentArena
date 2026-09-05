@@ -3,7 +3,7 @@
   "snapshot": "libreoffice_writer",
   "category": "information",
   "difficulty": "medium",
-  "instruction": "I am writing a paper in LibreOffice Writer and need to define the term accessibility. Use Google Chrome to find the definition in the local Wikipedia site, then add the definition to the open paper where it says `[add definition here]` and save the document.",
+  "instruction": "Find the definition of `accessibility` on the local Wikipedia site, replace `[add definition here]` in the open LibreOffice Writer document with that definition, and save the paper.",
   "source": "WebArena self-hosted Wikipedia/Kiwix service: http://host.docker.internal:8888",
   "gt_steps": [
     "Open the paper draft `accessibility_definition_paper.docx` in LibreOffice Writer.",

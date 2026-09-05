@@ -3,13 +3,14 @@
   "snapshot": "chrome",
   "category": "consumption",
   "difficulty": "medium",
-  "instruction": "You want to cook tomato-and-egg stir-fry at home. You already have the seasonings and pantry staples, so open the shopping website and add only the core ingredients you still need to the cart.",
+  "instruction": "Add only the core ingredients needed for tomato-and-egg stir-fry to the shopping cart, assuming the seasonings and pantry staples are already available.",
   "source": "WebArena self-hosted OneStopShop service",
   "gt_steps": [
     "Open the self-hosted shopping website.",
-    "Search or browse for products that satisfy the tomato-and-egg stir-fry goal.",
-    "Add an ordinary chicken egg product to the shopping cart.",
-    "Add a plain tomato product suitable as the tomato base of tomato-and-egg stir-fry to the shopping cart."
+    "Find an ordinary chicken egg product.",
+    "Add the egg product to the shopping cart.",
+    "Find a plain tomato product suitable for tomato-and-egg stir-fry.",
+    "Add the tomato product to the shopping cart."
   ],
   "config": [
     {

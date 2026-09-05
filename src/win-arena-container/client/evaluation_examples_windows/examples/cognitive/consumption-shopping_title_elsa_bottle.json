@@ -3,7 +3,7 @@
   "snapshot": "chrome",
   "category": "consumption",
   "difficulty": "easy",
-  "instruction": "You are packing a lunch bag for a child and need an Elsa water bottle. Open the shopping website, find the product whose title matches that request, and add it to the cart.",
+  "instruction": "Find the matching Elsa water bottle on the shopping site and add it to the cart.",
   "source": "WebArena self-hosted OneStopShop service",
   "gt_steps": [
     "Open the self-hosted shopping website.",

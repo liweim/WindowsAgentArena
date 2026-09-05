@@ -3,14 +3,16 @@
   "snapshot": "msedge",
   "category": "service",
   "difficulty": "medium",
-  "instruction": "You received a suspicious text message and want a simple reminder of what to do. Use Microsoft Edge Immersive Reader on the FTC scam text guidance page. In Sticky Notes, write the two action headings about what to do with the message. Copy the headings exactly.",
+  "instruction": "Create a Sticky Note containing the two relevant action headings from the FTC scam guidance exactly as written, using Immersive Reader to read the page.",
   "source": "https://consumer.ftc.gov/articles/how-recognize-and-report-spam-text-messages",
   "gt_steps": [
     "Open the FTC spam text message guidance page in Microsoft Edge.",
-    "Use Immersive Reader to simplify the page.",
-    "Find the section about what to do with spam text messages.",
+    "Activate Immersive Reader.",
+    "Locate the section about what to do with spam text messages.",
     "Open Sticky Notes.",
-    "Write the two headings exactly: `Don't respond to unwanted texts` and `Report unwanted texts`."
+    "Create a new note.",
+    "Enter exactly `Don't respond to unwanted texts` in the note.",
+    "Add exactly `Report unwanted texts` to the note."
   ],
   "config": [
     {

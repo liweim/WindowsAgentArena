@@ -3,17 +3,22 @@
   "snapshot": "msedge",
   "category": "communication",
   "difficulty": "hard",
-  "instruction": "Your parent says they got a message claiming to be from the government and demanding payment with a gift card. The FTC page is long, so use Microsoft Edge Immersive Reader to read it with fewer distractions. Then compose a new email in Thunderbird. Address it to `parent@example.com`, set the subject to `Gift card payment warning`, and include the page's exact sentence or phrase for whether the message is legitimate, what to do with the gift card company, and where to report the scam to the FTC. Do not paraphrase. Save it but do not send it",
+  "instruction": "Draft a warning email in Thunderbird to `parent@example.com` with the subject `Gift card payment warning`, based on the FTC gift card scam guidance viewed in Microsoft Edge with Immersive Reader. Use the FTC's exact wording to state whether a government payment demand by gift card is legitimate, what to do with the gift card company, and where to report the scam. Save the draft without sending it.",
   "source": "https://consumer.ftc.gov/articles/avoiding-and-reporting-gift-card-scams",
   "gt_steps": [
-    "Open the FTC gift card scams page in Microsoft Edge.",
-    "Use Immersive Reader to simplify the page.",
-    "Read the sections about how gift card scams work and what to do after giving a card to a scammer.",
-    "Open Thunderbird and compose a new email.",
+    "Open the FTC gift card scam guidance page in Microsoft Edge.",
+    "Activate Immersive Reader.",
+    "Locate the guidance about government gift card payment demands.",
+    "Locate the guidance about reporting a gift card scam to the gift card company.",
+    "Locate the FTC scam reporting destination.",
+    "Open Thunderbird.",
+    "Start a new email draft.",
     "Set the recipient to `parent@example.com`.",
     "Set the subject to `Gift card payment warning`.",
-    "Include these exact page phrases in the body: `No real business or government agency will ever tell you to buy a gift card to pay them`, `report the gift card scam to the gift card company right away`, and `ReportFraud.ftc.gov`.",
-    "Save the draft without sending it."
+    "Enter a body containing the exact phrase `No real business or government agency will ever tell you to buy a gift card to pay them`.",
+    "Add the exact phrase `report the gift card scam to the gift card company right away` to the body.",
+    "Add `ReportFraud.ftc.gov` to the body.",
+    "Save the email as a draft."
   ],
   "config": [
     {
@@ -58,30 +63,48 @@
     "thunderbird"
   ],
   "evaluator": {
-    "func": "check_thunderbird_email_composition",
-    "result": {
-      "type": "vm_file",
-      "path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release\\Mail\\Local Folders\\Drafts",
-      "dest": "thunderbird-drafts.mbox"
-    },
-    "expected": {
-      "type": "rule",
-      "rules": {
-        "to": "parent@example.com",
-        "subject": "Gift card payment warning",
-        "body_points": [
-          [
-            "No real business or government agency will ever tell you to buy a gift card to pay them"
-          ],
-          [
-            "report the gift card scam to the gift card company right away"
-          ],
-          [
-            "ReportFraud.ftc.gov"
-          ]
-        ]
+    "func": [
+      "check_thunderbird_email_composition",
+      "check_edge_immersive_reader_state"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "vm_file",
+        "path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release\\Mail\\Local Folders\\Drafts",
+        "dest": "thunderbird-drafts.mbox"
+      },
+      {
+        "type": "edge_immersive_reader_state",
+        "activate_edge": true
       }
-    }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "to": "parent@example.com",
+          "subject": "Gift card payment warning",
+          "body_points": [
+            [
+              "No real business or government agency will ever tell you to buy a gift card to pay them"
+            ],
+            [
+              "report the gift card scam to the gift card company right away"
+            ],
+            [
+              "ReportFraud.ftc.gov"
+            ]
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "reader_mode_open": true
+        }
+      }
+    ]
   },
   "proxy": false,
   "fixed_ip": false,

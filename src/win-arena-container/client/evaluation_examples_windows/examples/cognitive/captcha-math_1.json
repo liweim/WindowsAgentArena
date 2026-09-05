@@ -3,7 +3,7 @@
   "snapshot": "chrome",
   "category": "captcha",
   "difficulty": "easy",
-  "instruction": "Complete the math CAPTCHA verification in Google Chrome.",
+  "instruction": "Complete the math CAPTCHA open in Chrome.",
   "source": "local CAPTCHA service using deterministic arithmetic expressions",
   "gt_steps": [
     "Solve the arithmetic expression and enter the result."

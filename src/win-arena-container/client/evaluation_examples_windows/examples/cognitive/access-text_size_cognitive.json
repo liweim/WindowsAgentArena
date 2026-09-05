@@ -3,14 +3,14 @@
   "snapshot": "chrome",
   "category": "access",
   "difficulty": "easy",
-  "instruction": "Small web text makes it hard to stay focused while reading. In Google Chrome settings, set the default font size to Large.",
+  "instruction": "Set Chrome's default font size to Large.",
   "source": "Google Chrome Settings > Appearance > Customize fonts > Font size",
   "gt_steps": [
     "Open Google Chrome.",
     "Open Chrome Settings.",
-    "Go to Appearance.",
-    "Open Customize fonts.",
-    "Set the font size to Large."
+    "Open `Appearance`.",
+    "Open `Customize fonts`.",
+    "Set `Font size` to `Large`."
   ],
   "config": [
     {

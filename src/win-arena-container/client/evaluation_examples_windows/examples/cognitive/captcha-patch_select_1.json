@@ -3,7 +3,7 @@
   "snapshot": "chrome",
   "category": "captcha",
   "difficulty": "medium",
-  "instruction": "Complete the patch-select CAPTCHA verification in Google Chrome.",
+  "instruction": "Complete the patch-selection CAPTCHA open in Chrome.",
   "source": "local CAPTCHA service using OpenCaptchaWorld patch_select data",
   "gt_steps": [
     "Select all grid squares containing the requested object, then continue."

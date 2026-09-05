@@ -3,7 +3,7 @@
   "snapshot": "base_setup",
   "category": "access",
   "difficulty": "medium",
-  "instruction": "Install Spotify on this Windows computer so I can use it as my music player.",
+  "instruction": "Install Spotify on this Windows PC and leave it ready to use.",
   "source": "Spotify installation verification",
   "gt_steps": [
     "Open a web browser or package installer.",

@@ -3,7 +3,7 @@
   "snapshot": "chrome",
   "category": "captcha",
   "difficulty": "easy",
-  "instruction": "Complete the image-recognition CAPTCHA verification in Google Chrome.",
+  "instruction": "Complete the image-recognition CAPTCHA open in Chrome.",
   "source": "local CAPTCHA service using OpenCaptchaWorld image_recognition data",
   "gt_steps": [
     "Select every image matching the prompt, then continue."

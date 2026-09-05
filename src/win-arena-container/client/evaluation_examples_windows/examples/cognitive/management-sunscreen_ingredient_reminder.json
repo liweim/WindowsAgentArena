@@ -3,18 +3,19 @@
   "snapshot": "msedge",
   "category": "management",
   "difficulty": "medium",
-  "instruction": "Use Immersive Reader to focus on the sunscreen ingredient news. A child in the family was born on January 15, 2026. Based on the article's age guidance for the newly approved sunscreen ingredient, determine the first date the child is old enough for that ingredient. In Thunderbird Calendar, create an all-day event on that date. Set the title to `Sunscreen ingredient reminder`.",
+  "instruction": "Determine the first date a child born on January 15, 2026 is old enough to use the newly approved sunscreen ingredient, using Immersive Reader to read the article's age guidance. Create an all-day Thunderbird Calendar event titled `Sunscreen ingredient reminder` for that date.",
   "source": "https://apnews.com/article/9b9c7e04b418b3c9c1fbaa7ddabade25",
   "gt_steps": [
-    "Start from the already-open AP News article about the FDA approving a new sunscreen ingredient in Microsoft Edge.",
-    "Use Immersive Reader to simplify the article.",
-    "Find the age guidance for the newly approved sunscreen ingredient.",
-    "Use the guidance that the ingredient is safe for adults and children 6 months and older.",
-    "Because the child was born on January 15, 2026, calculate the first date they are 6 months old as July 15, 2026.",
+    "Open the AP News sunscreen ingredient article in Microsoft Edge.",
+    "Activate Immersive Reader.",
+    "Locate the age guidance for the newly approved sunscreen ingredient.",
+    "Read the standard age guidance `6 months and older`.",
+    "Calculate the target date `July 15, 2026` from the birth date `January 15, 2026`.",
     "Open Thunderbird Calendar.",
-    "In the Calendars list, enable the Home calendar if it is disabled.",
-    "Create an all-day calendar event for July 15, 2026.",
-    "Set the title to `Sunscreen ingredient reminder`."
+    "Enable the `Home` calendar if it is disabled.",
+    "Create a new all-day event on `July 15, 2026`.",
+    "Set the event title to `Sunscreen ingredient reminder`.",
+    "Save the calendar event."
   ],
   "config": [
     {
@@ -84,11 +85,11 @@
       {
         "type": "rule",
         "rules": {
-          "days_from_today": 13,
           "hour": 0,
           "minute": 0,
           "duration_minutes": 1440,
-          "title": "Sunscreen ingredient reminder"
+          "title": "Sunscreen ingredient reminder",
+          "date": "2026-07-15"
         }
       },
       {

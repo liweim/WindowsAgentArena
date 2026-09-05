@@ -3,15 +3,16 @@
   "snapshot": "base_setup",
   "category": "management",
   "difficulty": "medium",
-  "instruction": "You need help remembering a pharmacy deadline. Open the pharmacy message on the Desktop and create an all-day Thunderbird Calendar event on the refill-by date. Set the title to `Refill medication`.",
+  "instruction": "Create an all-day Thunderbird Calendar reminder titled `Refill medication` for the refill deadline in the pharmacy message on the Desktop.",
   "source": "Local pharmacy message prepared for the task",
   "gt_steps": [
     "Open `pharmacy_message.txt` on the Desktop.",
-    "Read that the medication should be refilled by July 20, 2026.",
+    "Read the refill deadline `July 20, 2026`.",
     "Open Thunderbird Calendar.",
-    "In the Calendars list, enable the Home calendar if it is disabled.",
-    "Create an all-day calendar event for July 20, 2026.",
-    "Set the title to `Refill medication`."
+    "Enable the `Home` calendar if it is disabled.",
+    "Create a new all-day event on `July 20, 2026`.",
+    "Set the event title to `Refill medication`.",
+    "Save the calendar event."
   ],
   "config": [
     {
@@ -61,11 +62,11 @@
     "expected": {
       "type": "rule",
       "rules": {
-        "days_from_today": 17,
         "hour": 0,
         "minute": 0,
         "duration_minutes": 1440,
-        "title": "Refill medication"
+        "title": "Refill medication",
+        "date": "2026-07-20"
       }
     }
   },
