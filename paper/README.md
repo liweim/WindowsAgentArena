@@ -39,14 +39,15 @@ Use one of the following exact lowercase category labels:
 | `consumption` | Product search, price comparison, add-to-cart, orders, after-sales service, and coupon use |
 | `service` | Bill payment, statement inquiry, form submission, government services, and identity verification |
 | `health` | Medical appointments, health records, prescriptions, hospital information, and emergency contacts |
-| `access` | Enabling or configuring accessibility tools such as screen readers, captions, magnification, reading mode, keyboard assistance, or mouse assistance |
+| `access` | Installing, enabling, or configuring accessibility tools such as screen readers, captions, magnification, reading mode, keyboard assistance, or mouse assistance |
+| `setup` | Installing or setting up ordinary software or system components when setup itself is the primary user goal |
 | `captcha` | Focused stress-test tasks for CAPTCHA-style verification barriers |
 
 #### CAPTCHA Stress-Test Slice
 
 The `captcha` category is analyzed separately from standard daily-life workflow categories. It measures whether GUI agents can handle verification barriers that may otherwise block end-to-end assistance.
 
-Choose the category from the task's **primary user goal or workflow**, not merely from the source website, the output application, or the disability group. If changing a task's category, rename the JSON file so the lowercase category prefix changes with it, and update `id` to exactly match the new filename without `.json`.
+Choose the category from the task's **primary user goal or workflow**, not merely from the source website, the output application, or the disability group. Use `access` when the installed or configured target is itself an accessibility tool; use `setup` for ordinary software installation or setup workflows. If changing a task's category, rename the JSON file so the lowercase category prefix changes with it, and update `id` to exactly match the new filename without `.json`.
 
 The local Windows CAPTCHA service currently supports:
 
@@ -73,8 +74,8 @@ OpenCaptchaWorld-derived types use copied local image assets and ground-truth me
 Each task should include:
 
 1. A realistic app, browser, media, document, or system-settings scenario.
-2. A clearly grounded accessibility need, support strategy, or accessibility-related interaction requirement.
-3. A concrete user goal whose completion depends on accessible information, controls, feedback, or meaningful cognitive support.
+2. A clearly grounded accessibility need, support strategy, or disability-relevant interaction challenge.
+3. A concrete user goal whose completion depends on accessible information, controls, feedback, or meaningful cognitive demands such as planning, sequencing, working memory, attention, decision-making, or maintaining task context.
 4. An initial state that prepares the relevant app, page, file, media, message, or setting without completing the task.
 5. A measurable final output or system state.
 6. A deterministic evaluator that checks the result and, when applicable, the required accessibility tool or support state.
@@ -210,13 +211,16 @@ Cognitive-access tasks on Windows are not limited to Microsoft Edge Immersive Re
 
 Appropriate scenarios include older adults with memory, attention, processing-speed, or planning difficulties; users with dyslexia or reading difficulties; users with ADHD or distractibility; and users who need help turning dense information into short actionable output.
 
-Age, task length, or the number of GUI steps alone is not sufficient. The task should make at least one of the following central to the scenario:
+Age alone is not sufficient to classify a task as cognitive. However, ordinary multi-step digital workflows can qualify when they place meaningful demands on planning, sequencing, working memory, attention, information processing, decision-making, maintaining task context, or recognizing successful completion. Software installation and setup tasks are valid examples when the user must independently manage those demands; they do not need to use a dedicated accessibility feature.
 
-- memory support;
+A cognitive task should make at least one of the following central to the scenario:
+
+- memory or maintaining task context;
 - attention or distraction management;
 - information processing or comprehension;
-- planning or decision-making;
+- planning, sequencing, or decision-making;
 - step tracking or prospective memory;
+- recognizing successful completion;
 - simplified interaction or reduced time pressure.
 
 For cognitive reading and information-extraction tasks:

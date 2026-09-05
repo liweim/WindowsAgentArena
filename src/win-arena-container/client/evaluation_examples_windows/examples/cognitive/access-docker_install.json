@@ -3,30 +3,33 @@
   "snapshot": "base_setup",
   "category": "access",
   "difficulty": "medium",
-  "instruction": "Install Docker on this Windows PC without restarting the computer, even if the installer offers to.",
-  "source": "Docker installation verification",
+  "instruction": "Install Docker Desktop on this Windows PC without restarting Windows.",
+  "source": "https://docs.docker.com/desktop/setup/install/windows-install/",
   "gt_steps": [
-    "Download or open the Docker installer for Windows.",
-    "On the Docker Desktop configuration screen, choose the all-users installation option.",
-    "Keep `Use WSL 2 instead of Hyper-V` enabled.",
-    "Leave `Allow Windows Containers` disabled.",
-    "Install Docker Desktop or another Docker engine setup that provides the `docker` command.",
-    "If the installer asks to restart Windows, do not restart the computer.",
-    "Open Command Prompt or PowerShell.",
-    "Verify that Docker is installed by checking that the Docker command-line executable exists."
+    "Open Google Chrome.",
+    "Open the official Docker page `Install Docker Desktop on Windows`.",
+    "Download the Docker Desktop installer for Windows x86_64.",
+    "Run `Docker Desktop Installer.exe`.",
+    "Choose the `Per-user` installation mode if the installer asks for an installation mode.",
+    "Keep the WSL 2 backend selected if the installer asks for a backend.",
+    "Complete the Docker Desktop installation.",
+    "Close the installer when installation succeeds.",
+    "Decline any request to restart Windows.",
+    "Open Command Prompt.",
+    "Run `docker --version`.",
+    "Confirm that the command prints a Docker version."
   ],
   "config": [],
   "trajectory": "trajectories\\",
   "related_apps": [
-    "powershell",
-    "cmd",
-    "chrome"
+    "chrome",
+    "cmd"
   ],
   "evaluator": {
     "func": "check_text_points",
     "result": {
       "type": "vm_command_line",
-      "command": "powershell -NoProfile -Command \"$docker='C:\\Program Files\\Docker\\Docker\\resources\\bin\\docker.exe'; if (Test-Path $docker) { Write-Output 'DOCKER_CLI_FOUND'; exit 0 }; $cmd=Get-Command docker -ErrorAction SilentlyContinue; if ($cmd -and (Test-Path $cmd.Source)) { Write-Output 'DOCKER_CLI_FOUND'; exit 0 }; Write-Output 'DOCKER_CLI_NOT_FOUND'; exit 1\"",
+      "command": "powershell -NoProfile -Command \"$candidates=@((Join-Path $env:LOCALAPPDATA 'Programs\\DockerDesktop\\resources\\bin\\docker.exe'),'C:\\Program Files\\Docker\\Docker\\resources\\bin\\docker.exe'); $docker=$candidates | Where-Object { Test-Path $_ } | Select-Object -First 1; if (-not $docker) { $cmd=Get-Command docker -ErrorAction SilentlyContinue; if ($cmd) { $docker=$cmd.Source } }; if (-not $docker) { Write-Output 'DOCKER_CLI_NOT_FOUND'; exit 1 }; $out=& $docker --version 2>&1; if ($LASTEXITCODE -eq 0 -and (($out | Out-String) -match 'Docker version')) { Write-Output 'DOCKER_CLI_WORKS'; exit 0 }; Write-Output 'DOCKER_CLI_NOT_WORKING'; exit 1\"",
       "shell": true
     },
     "expected": {
@@ -35,7 +38,7 @@
         "ignore_case": true,
         "points": [
           [
-            "DOCKER_CLI_FOUND"
+            "DOCKER_CLI_WORKS"
           ]
         ]
       }

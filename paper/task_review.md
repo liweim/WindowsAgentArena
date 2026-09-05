@@ -25,9 +25,11 @@
   - `service`
   - `health`
   - `access`
+  - `setup`
   - `captcha`
 - 根据任务的**主要用户目标或工作流**确定 category，不要只根据来源网站、输出应用或 disability group 分类。
-- `access` 只用于启用、配置或使用 accessibility / access-support 功能本身作为主要目标的任务。
+- `access` 用于安装、启用或配置 accessibility / access-support 功能本身作为主要目标的任务。
+- `setup` 用于安装或设置普通软件/系统组件；普通软件安装不要为了 disability group 而归到 `access`。
 - `captcha` 作为独立 stress-test slice。
 - category 改动时必须同步：
   1. 修改 JSON `category`；
@@ -44,6 +46,7 @@
 - [ ] filename prefix 与 `category` 完全一致。
 - [ ] 没有重复 `id`。
 - [ ] 没有仅大小写不同的重复文件。
+- [ ] 改名后旧文件加入 `DELETED_FILES.txt`，不能只新增新文件而保留旧文件。
 
 ### 3. `related_apps`
 
@@ -97,18 +100,17 @@
 
 ## Cognitive 已处理状态，下一轮不要重复
 
-- 33 个 cognitive JSON 已检查 category 与 `related_apps`。
+- cognitive JSON 已完成 category 与 `related_apps` 复核；普通软件安装现使用 `setup` category。
 - `mobility-outdoor_running_supplies_note.json` 已改为 `information-outdoor_running_supplies_note.json`：
   - category `mobility` → `information`
   - id / filename 同步更新
   - `related_apps` 保持 `msedge`, `sticky_notes`
 - 其余 cognitive task 的 category / `related_apps` 当前保持不变。
-- 以下任务仍需要先改任务本身，再重新检查 category / `related_apps` / gt_steps：
-  - `access-docker_install.json`
-  - `access-spotify_install.json`
-  - `consumption-shopping_title_elsa_bottle.json`
-  - `information-wikipedia_accessibility_definition.json`
-- 其中 Docker / Spotify 的 `access` category 与多路径 `related_apps` 需要在重构时重点重新判断。
+- Docker / Spotify 已确认可作为 cognitive 的多步骤软件安装任务保留，并分别改为 `setup-docker_install` / `setup-spotify_install`。
+- 6 个 `consumption-*` task 已按本 checklist 全量复核：category / id / filename / related_apps / instruction / gt_steps / evaluator 均已闭环。多条件购物、review 比较、价格比较、约束记忆和食材规划本身可构成 cognitive load，不要求额外加入 reminder 或 accessibility feature。
+- `consumption-shopping_title_elsa_bottle.json` 已改为同时匹配 Elsa、24 oz、Tritan 的多条件商品识别任务。
+- `information-wikipedia_accessibility_definition.json` 已改为从文章中识别设计概念定义句并定点替换 Writer 占位符的任务。
+- 当前 cognitive 没有仍标记为“必须先改任务本身”的条目；仅 `service-cms_product_record.json` 还有可选的 live-state evaluator 工程增强。
 
 ## 下一轮建议执行顺序
 
@@ -121,11 +123,13 @@
 7. 检查 evaluator 与 instruction 一致性。
 8. 全量 JSON 重新解析，并检查重复 id / 大小写重复文件。
 9. 不修改 difficulty。
+10. 最终 ZIP **只包含当前这一轮实际修改的文件**；不要累计打包以前已经交付过的改动。只有当前这一轮发生删除或改名时才附 `DELETED_FILES.txt`。
 
 ## 输出要求
 
 下一轮完成后应提供：
 
 - 一个修改后的 checklist，列出每个 task 的结论和实际修改；
-- 一个仅包含相对最初项目 changed files 的 ZIP；
+- 一个仅包含**当前这一轮实际修改文件**的 ZIP；
+- `DELETED_FILES.txt`，记录需要从原项目删除的旧文件；
 - 简短校验汇总：JSON parse errors、id/filename mismatch、duplicate id、category mismatch、related_apps 明显问题数量。

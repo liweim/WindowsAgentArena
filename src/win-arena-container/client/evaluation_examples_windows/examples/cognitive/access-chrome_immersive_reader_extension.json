@@ -4,12 +4,10 @@
   "category": "access",
   "difficulty": "medium",
   "instruction": "Install the Immersive Reader extension in Chrome.",
-  "source": "https://chromewebstore.google.com/search/Immersive%20Reader",
+  "source": "https://chromewebstore.google.com/detail/immersive-reader/cccnhdbjafjobcppogeaaabofifbpdho",
   "gt_steps": [
     "Open Google Chrome.",
-    "Open the Chrome Web Store.",
-    "Search the Chrome Web Store for `Immersive Reader`.",
-    "Open the `Immersive Reader` extension listing.",
+    "Open the Chrome Web Store listing `Immersive Reader` with extension ID `cccnhdbjafjobcppogeaaabofifbpdho`.",
     "Select `Add to Chrome`.",
     "Confirm the extension installation."
   ],
@@ -44,16 +42,20 @@
         }
       }
     ],
-    "func": "is_expected_installed_extensions",
+    "func": "check_text_points",
     "result": {
-      "type": "find_installed_extension_name"
+      "type": "vm_command_line",
+      "command": "powershell -NoProfile -Command \"$id='cccnhdbjafjobcppogeaaabofifbpdho'; $root=Join-Path $env:LOCALAPPDATA 'Google\\Chrome\\User Data'; $found=Get-ChildItem $root -Directory -ErrorAction SilentlyContinue | ForEach-Object { Join-Path $_.FullName ('Extensions\\' + $id) } | Where-Object { Test-Path $_ } | Select-Object -First 1; if ($found) { Write-Output 'IMMERSIVE_READER_EXTENSION_FOUND'; exit 0 }; Write-Output 'IMMERSIVE_READER_EXTENSION_NOT_FOUND'; exit 1\"",
+      "shell": true
     },
     "expected": {
       "type": "rule",
       "rules": {
-        "match": "substring",
-        "expected": [
-          "immersive reader"
+        "ignore_case": true,
+        "points": [
+          [
+            "IMMERSIVE_READER_EXTENSION_FOUND"
+          ]
         ]
       }
     }

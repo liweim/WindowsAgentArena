@@ -26,7 +26,7 @@ def parse_args() -> argparse.Namespace:
         help="Temporary container name.",
     )
     parser.add_argument("--browser-port", type=str, default="9006")
-    parser.add_argument("--rdp-port", type=str, default="3390")
+    parser.add_argument("--rdp-port", type=str, default="3380")
     parser.add_argument(
         "--captcha-port",
         type=str,

@@ -3,14 +3,15 @@
   "snapshot": "libreoffice_writer",
   "category": "information",
   "difficulty": "medium",
-  "instruction": "Find the definition of `accessibility` on the local Wikipedia site, replace `[add definition here]` in the open LibreOffice Writer document with that definition, and save the paper.",
+  "instruction": "Find the sentence in the local Wikipedia `Accessibility` article that defines accessibility as a design concept, replace `[add definition here]` in the open LibreOffice Writer document with that sentence only, and save the document.",
   "source": "WebArena self-hosted Wikipedia/Kiwix service: http://host.docker.internal:8888",
   "gt_steps": [
-    "Open the paper draft `accessibility_definition_paper.docx` in LibreOffice Writer.",
     "Open the local Kiwix Wikipedia site in Google Chrome.",
     "Search for the `Accessibility` article.",
-    "Find the first sentence that defines accessibility.",
-    "Replace `[add definition here]` in the paper draft with `accessibility is the design of products, devices, services, vehicles, or environments so as to be usable by people with disabilities`.",
+    "Locate the sentence that defines accessibility as a design concept.",
+    "Use `accessibility is the design of products, devices, services, vehicles, or environments so as to be usable by people with disabilities` as the standard answer.",
+    "Switch to the open `accessibility_definition_paper.docx` document in LibreOffice Writer.",
+    "Replace `[add definition here]` with the standard answer only.",
     "Save `accessibility_definition_paper.docx`."
   ],
   "config": [

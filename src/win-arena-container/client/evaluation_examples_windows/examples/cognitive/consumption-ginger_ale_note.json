@@ -3,16 +3,14 @@
   "snapshot": "chrome",
   "category": "consumption",
   "difficulty": "medium",
-  "instruction": "Use the OneStopShop customer reviews to decide whether this ginger ale fits these preferences: less sweet, noticeable ginger flavor, and good on its own rather than only as a mixer. Write only `yes` or `no` in `onestopshop_note.txt` on the Desktop.",
+  "instruction": "I'm looking for a ginger ale that's less sweet, has a noticeable ginger flavor, and tastes good on its own rather than just as a mixer. Check the OneStopShop reviews and tell me if this one fits. Write only `yes` or `no` in `onestopshop_note.txt` on the Desktop.",
   "source": "WebArena self-hosted OneStopShop service",
   "gt_steps": [
-    "Open the Q Mixers Premium Ginger Ale product page on the self-hosted shopping site.",
-    "Read the customer reviews.",
-    "Determine that the product matches the stated preferences with the standard answer `yes`.",
+    "Review the customer reviews on the already-open Q Mixers Premium Ginger Ale product page.",
+    "Determine that the standard answer is `yes` because the reviews support the stated preferences.",
     "Open Notepad.",
-    "Create `onestopshop_note.txt` on the Desktop.",
-    "Enter only `yes` in the file.",
-    "Save `onestopshop_note.txt`."
+    "Enter only `yes`.",
+    "Save the file as `onestopshop_note.txt` on the Desktop."
   ],
   "config": [
     {
@@ -42,16 +40,16 @@
     "func": "check_text_points",
     "result": {
       "type": "vm_command_line",
-      "command": "powershell -NoProfile -Command \"$p=Join-Path $env:USERPROFILE 'Desktop\\onestopshop_note.txt'; if(Test-Path $p){Get-Content $p -Raw}\"",
+      "command": "powershell -NoProfile -Command \"$p=Join-Path $env:USERPROFILE 'Desktop\\onestopshop_note.txt'; if(Test-Path $p){$v=(Get-Content $p -Raw).Trim(); if($v -ieq 'yes'){Write-Output 'EXACT_YES'}}\"",
       "shell": true
     },
     "expected": {
       "type": "rule",
       "rules": {
-        "ignore_case": true,
+        "ignore_case": false,
         "points": [
           [
-            "yes"
+            "EXACT_YES"
           ]
         ]
       }

@@ -3,12 +3,14 @@
   "snapshot": "chrome",
   "category": "consumption",
   "difficulty": "easy",
-  "instruction": "Find the matching Elsa water bottle on the shopping site and add it to the cart.",
+  "instruction": "I'm looking for a Disney Frozen 2 Elsa water bottle. Find the matching product on the shopping site and add it to the cart.",
   "source": "WebArena self-hosted OneStopShop service",
   "gt_steps": [
     "Open the self-hosted shopping website.",
-    "Find the Elsa water bottle product.",
-    "Add `Disney Frozen 2 Elsa 24 oz. Tritan Water Bottle` to the shopping cart."
+    "Search for an Elsa water bottle.",
+    "Identify `Disney Frozen 2 Elsa 24 oz. Tritan Water Bottle` as the product that matches the requirements.",
+    "Open `Disney Frozen 2 Elsa 24 oz. Tritan Water Bottle`.",
+    "Add the product to the shopping cart."
   ],
   "config": [
     {
