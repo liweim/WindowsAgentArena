@@ -3,14 +3,14 @@
   "snapshot": "chrome",
   "category": "consumption",
   "difficulty": "hard",
-  "instruction": "Use the customer reviews on the shopping site to choose the best kids sunscreen for a child who dislikes products that sting or feel sticky, and add it to the cart.",
+  "instruction": "I'm looking for a kids sunscreen that doesn't sting and doesn't feel sticky. Check the OneStopShop customer reviews and add the matching product to the cart.",
   "source": "WebArena self-hosted OneStopShop service",
   "gt_steps": [
     "Open the self-hosted shopping website.",
     "Search for kids sunscreen products.",
-    "Compare the customer reviews for sting and sticky-feel feedback.",
-    "Open `Banana Boat Kids Vanishing Color, Amazing Apple and Berry Blast Reef Frienfly Broad Spectrum Mineral Sunscreen Foam Twin Pack (Apple & Berry), SPF 50, 4oz. Each` as the standard answer.",
-    "Select the cheapest available option combination if the product requires options.",
+    "Compare the customer reviews for stinging and sticky-feel feedback.",
+    "Identify `Banana Boat Kids Vanishing Color, Amazing Apple and Berry Blast Reef Frienfly Broad Spectrum Mineral Sunscreen Foam Twin Pack (Apple & Berry), SPF 50, 4oz. Each` as the standard answer.",
+    "Open the standard-answer product.",
     "Add the product to the shopping cart."
   ],
   "config": [

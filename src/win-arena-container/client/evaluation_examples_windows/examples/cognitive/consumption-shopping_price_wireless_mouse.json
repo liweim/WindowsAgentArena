@@ -8,8 +8,9 @@
   "gt_steps": [
     "Open the self-hosted shopping website.",
     "Search for wireless mouse products.",
-    "Compare the prices of standalone wireless mouse products.",
-    "Open `Wireless Mouse, 3 Adjustable DPI Innovative Stylish Portable Gaming Mouse, Suitable for Notebook, PC, Computer Office Home Work` as the standard lowest-priced match.",
+    "Compare prices among standalone wireless mouse products that offer a `White` color option.",
+    "Identify `Wireless Mouse, 3 Adjustable DPI Innovative Stylish Portable Gaming Mouse, Suitable for Notebook, PC, Computer Office Home Work` as the standard lowest-priced match.",
+    "Open the standard-answer product.",
     "Select the `White` color option.",
     "Add the product to the shopping cart."
   ],
