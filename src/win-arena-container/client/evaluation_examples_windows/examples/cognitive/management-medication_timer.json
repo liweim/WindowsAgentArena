@@ -3,15 +3,16 @@
   "snapshot": "base_setup",
   "category": "management",
   "difficulty": "easy",
-  "instruction": "You have trouble remembering short waiting periods. Open the caregiver note on the Desktop, then use https://vclock.com to create and start a timer for the eye-drop waiting interval in the note. Leave the timer running and visible in the browser.",
+  "instruction": "Read the waiting interval between the eye drops from the caregiver note on the Desktop, start a timer for that amount of time on vclock.com, and leave it running where it can be seen.",
   "source": "Local caregiver note prepared for the task",
   "gt_steps": [
     "Open `caregiver_note.txt` on the Desktop.",
-    "Read that the next eye drop should be given after 5 minutes.",
-    "Open https://vclock.com in a browser.",
-    "Click the Timer page.",
-    "Create and start a 5 minute timer.",
-    "Leave the timer running and visible in the browser."
+    "Read the waiting interval `5 minutes`.",
+    "Open `https://vclock.com` in a browser.",
+    "Open the Timer page.",
+    "Set the timer duration to `5 minutes`.",
+    "Start the timer.",
+    "Leave the running timer visible."
   ],
   "config": [
     {

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kitchen Warehouse Catalogue</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at top left, #fff4c7, transparent 35%),
+        linear-gradient(135deg, #f8f8f8, #e6e6e6);
+      color: #222;
+    }
+
+    .top-banner {
+      padding: 18px;
+      text-align: center;
+      background: repeating-linear-gradient(
+        45deg,
+        #8a1111,
+        #8a1111 15px,
+        #b51d1d 15px,
+        #b51d1d 30px
+      );
+      color: white;
+    }
+
+    .top-banner p {
+      margin: 5px;
+      font-size: 18px;
+    }
+
+    .catalogue {
+      width: min(1200px, 94%);
+      margin: 25px auto;
+    }
+
+    .catalogue-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.7fr 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .card {
+      padding: 18px;
+      border: 3px solid #333;
+      border-radius: 12px;
+      background: white;
+      box-shadow: 7px 7px 0 rgba(0, 0, 0, 0.18);
+      transform: rotate(-1deg);
+    }
+
+    .card:nth-child(even) {
+      transform: rotate(1deg);
+    }
+
+    .sale-label {
+      display: inline-block;
+      padding: 6px 12px;
+      background: #ffd500;
+      border: 2px dashed #222;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    .featured {
+      border: 6px double #8a1111;
+      background:
+        linear-gradient(rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.92)),
+        repeating-linear-gradient(
+          90deg,
+          #fff4c7,
+          #fff4c7 20px,
+          #ffffff 20px,
+          #ffffff 40px
+        );
+    }
+
+    .product-name {
+      font-size: 30px;
+      margin-bottom: 5px;
+      text-transform: uppercase;
+    }
+
+    .capacity {
+      display: block;
+      margin: 15px 0;
+      padding: 10px;
+      font-size: 24px;
+      font-weight: bold;
+      text-align: center;
+      border: 3px dotted #8a1111;
+      background: #fff2aa;
+    }
+
+    .price {
+      font-size: 32px;
+      font-weight: bold;
+      text-align: right;
+    }
+
+    .fine-print {
+      font-size: 11px;
+      line-height: 1.2;
+    }
+
+    footer {
+      margin-top: 30px;
+      padding: 20px;
+      text-align: center;
+      background: #222;
+      color: white;
+    }
+  </style>
+</head>
+
+<body>
+  <header class="top-banner">
+    <h1>Kitchen Warehouse Annual Catalogue</h1>
+    <p>Professional cookware, serving equipment and kitchen essentials</p>
+    <p>Catalogue specials are available for a limited time.</p>
+  </header>
+
+  <main class="catalogue">
+    <section aria-labelledby="weekly-offers-heading">
+      <h2 id="weekly-offers-heading">This Week's Kitchen Offers</h2>
+
+      <div class="catalogue-grid">
+        <article class="card">
+          <span class="sale-label">Clearance</span>
+          <h3>Commercial Mixing Bowl</h3>
+          <p>Stainless-steel preparation bowl for commercial kitchens.</p>
+          <p><strong>Capacity:</strong> 5 quarts</p>
+          <p class="price">$18.95</p>
+        </article>
+
+        <article class="card featured">
+          <span class="sale-label">Featured Cookware</span>
+
+          <h3 class="product-name">Thunder Group Sauté Pan</h3>
+
+          <p>
+            A professional sauté pan suitable for restaurant and home-kitchen
+            cooking.
+          </p>
+
+          <p>
+            The pan has a durable commercial-style construction and is
+            designed for sautéing, browning and preparing larger meals.
+          </p>
+
+          <span class="capacity">Capacity: 7 quarts</span>
+
+          <p>
+            When searching the online shop, match both the
+            <strong>Thunder Group</strong> brand and the
+            <strong>7-quart</strong> capacity.
+          </p>
+
+          <p class="price">Catalogue pick</p>
+        </article>
+
+        <article class="card">
+          <span class="sale-label">Popular</span>
+          <h3>Non-stick Frying Pan</h3>
+          <p>A lightweight pan for eggs, pancakes and small meals.</p>
+          <p><strong>Diameter:</strong> 10 inches</p>
+          <p class="price">$24.50</p>
+        </article>
+
+        <article class="card">
+          <span class="sale-label">Bundle</span>
+          <h3>Kitchen Utensil Set</h3>
+          <p>Includes a spatula, ladle, spoon and pasta server.</p>
+          <p><strong>Package:</strong> 4 pieces</p>
+          <p class="price">$15.00</p>
+        </article>
+
+        <article class="card">
+          <span class="sale-label">Chef's Choice</span>
+          <h3>Aluminium Stock Pot</h3>
+          <p>Large stock pot for soup, pasta and broth.</p>
+          <p><strong>Capacity:</strong> 12 quarts</p>
+          <p class="price">$46.75</p>
+        </article>
+
+        <article class="card">
+          <span class="sale-label">New</span>
+          <h3>Stainless Saucepan</h3>
+          <p>Compact saucepan with a matching lid.</p>
+          <p><strong>Capacity:</strong> 3 quarts</p>
+          <p class="price">$31.20</p>
+        </article>
+      </div>
+    </section>
+
+    <section aria-labelledby="catalogue-notes-heading">
+      <h2 id="catalogue-notes-heading">Catalogue Notes</h2>
+
+      <p class="fine-print">
+        Product availability may vary. Decorative catalogue prices and labels
+        do not necessarily represent the final online shop price. Match the
+        product brand, product type and capacity before purchasing.
+      </p>
+    </section>
+  </main>
+
+  <footer>
+    Kitchen Warehouse Catalogue — Cookware and restaurant supplies
+  </footer>
+</body>
+</html>

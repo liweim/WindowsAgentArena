@@ -1,0 +1,4 @@
+# Delete these paths from the original project when applying this change set.
+src/win-arena-container/client/evaluation_examples_windows/examples/cognitive/mobility-outdoor_running_supplies_note.json
+src/win-arena-container/client/evaluation_examples_windows/examples/hearing/Access-windows_audio_flash_window.json
+src/win-arena-container/client/evaluation_examples_windows/examples/visual/information-identify_town_south_of_brisbane_map copy.json

@@ -3,7 +3,7 @@
   "snapshot": "chrome",
   "category": "captcha",
   "difficulty": "easy",
-  "instruction": "Complete the audio CAPTCHA verification in Google Chrome.",
+  "instruction": "Complete the audio CAPTCHA open in Chrome.",
   "source": "local CAPTCHA service using the Python `captcha` package audio generator",
   "gt_steps": [
     "Listen to the audio CAPTCHA and type the five-digit verification code."

@@ -3,7 +3,7 @@
   "snapshot": "base_setup",
   "category": "access",
   "difficulty": "medium",
-  "instruction": "Install Docker on this Windows computer. If the installer asks to restart, do not restart the computer.",
+  "instruction": "Install Docker on this Windows PC without restarting the computer, even if the installer offers to.",
   "source": "Docker installation verification",
   "gt_steps": [
     "Download or open the Docker installer for Windows.",

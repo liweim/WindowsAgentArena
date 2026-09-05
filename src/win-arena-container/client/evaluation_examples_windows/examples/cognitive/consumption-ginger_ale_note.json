@@ -3,12 +3,16 @@
   "snapshot": "chrome",
   "category": "consumption",
   "difficulty": "medium",
-  "instruction": "You are choosing a ginger ale for a cookout and need help deciding whether this product fits your preferences. You want a less-sweet ginger ale with a noticeable ginger flavor that can be served on its own, not just as a mixer. Open the OneStopShop product page in Google Chrome, read the customer reviews, and create `onestopshop_note.txt` on the Desktop. Write only `yes` if the reviews suggest it fits your preferences, or only `no` if they do not.",
+  "instruction": "Use the OneStopShop customer reviews to decide whether this ginger ale fits these preferences: less sweet, noticeable ginger flavor, and good on its own rather than only as a mixer. Write only `yes` or `no` in `onestopshop_note.txt` on the Desktop.",
   "source": "WebArena self-hosted OneStopShop service",
   "gt_steps": [
-    "Open the Q Mixers Premium Ginger Ale product page on the self-hosted OneStopShop service.",
+    "Open the Q Mixers Premium Ginger Ale product page on the self-hosted shopping site.",
     "Read the customer reviews.",
-    "Create `onestopshop_note.txt` on the Desktop and write the answer `yes`."
+    "Determine that the product matches the stated preferences with the standard answer `yes`.",
+    "Open Notepad.",
+    "Create `onestopshop_note.txt` on the Desktop.",
+    "Enter only `yes` in the file.",
+    "Save `onestopshop_note.txt`."
   ],
   "config": [
     {

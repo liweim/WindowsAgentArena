@@ -3,14 +3,15 @@
   "snapshot": "chrome",
   "category": "consumption",
   "difficulty": "medium",
-  "instruction": "You are setting up a spare home-office desk and need a basic white wireless mouse. Open the shopping website, compare wireless mouse results, choose the lowest-priced standalone wireless mouse, and add it to the cart.",
+  "instruction": "Find the lowest-priced standalone white wireless mouse on the shopping site and add it to the cart.",
   "source": "WebArena self-hosted OneStopShop service",
   "gt_steps": [
     "Open the self-hosted shopping website.",
-    "Search or browse for wireless mouse products.",
-    "Choose the lowest-priced standalone wireless mouse.",
-    "Select white.",
-    "Add `Wireless Mouse, 3 Adjustable DPI Innovative Stylish Portable Gaming Mouse, Suitable for Notebook, PC, Computer Office Home Work` to the shopping cart."
+    "Search for wireless mouse products.",
+    "Compare the prices of standalone wireless mouse products.",
+    "Open `Wireless Mouse, 3 Adjustable DPI Innovative Stylish Portable Gaming Mouse, Suitable for Notebook, PC, Computer Office Home Work` as the standard lowest-priced match.",
+    "Select the `White` color option.",
+    "Add the product to the shopping cart."
   ],
   "config": [
     {

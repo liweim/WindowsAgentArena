@@ -3,18 +3,24 @@
   "snapshot": "msedge",
   "category": "health",
   "difficulty": "hard",
-  "instruction": "Use Immersive Reader to focus on the appointment-preparation advice. In Thunderbird Calendar, create a 2-hour appointment reminder for 9:00 AM tomorrow. Set the title to `Doctor appointment`. In the event description, include the items the article says to bring or prepare before a doctor's appointment. Do not paraphrase.",
+  "instruction": "Create a 2-hour Thunderbird Calendar event titled `Doctor appointment` for tomorrow at 9:00 AM. Use Immersive Reader to read the appointment-preparation article, and include the article's exact wording for the items to bring or prepare in the event description.",
   "source": "https://apnews.com/article/3fcde5b5c927734429818bd0ed1c6680",
   "gt_steps": [
-    "Start from the already-open AP News article about getting the most out of a doctor's appointment in Microsoft Edge.",
-    "Use Immersive Reader to simplify the article.",
-    "Find the advice about preparing before the appointment.",
+    "Open the appointment-preparation AP News article in Microsoft Edge.",
+    "Activate Immersive Reader.",
+    "Locate the advice about preparing for a doctor appointment.",
     "Open Thunderbird Calendar.",
-    "In the Calendars list, enable the Home calendar if it is disabled.",
-    "Determine tomorrow's date from the system date.",
-    "Create a 2-hour calendar event for tomorrow at 9:00 AM.",
-    "Set the title to `Doctor appointment`.",
-    "Include these points in the event description: bring a list of symptoms and questions; update personal and family medical histories; include all medications and supplements; fill out paperwork ahead of time."
+    "Enable the `Home` calendar if it is disabled.",
+    "Determine tomorrow's date from the Windows system date.",
+    "Create a new calendar event for tomorrow at `9:00 AM`.",
+    "Set the event duration to `2 hours`.",
+    "Set the event title to `Doctor appointment`.",
+    "Enter `Bring a list of symptoms and questions` in the event description.",
+    "Add `personal medical history` to the event description.",
+    "Add `family medical history is critical` to the event description.",
+    "Add `Include both prescription and over-the-counter medicines, pills or creams - and don't forget vitamins and supplements` to the event description.",
+    "Add `Fill out your paperwork ahead of the visit` to the event description.",
+    "Save the calendar event."
   ],
   "config": [
     {
@@ -65,35 +71,56 @@
     "thunderbird"
   ],
   "evaluator": {
-    "func": "check_thunderbird_calendar_event",
-    "result": {
-      "type": "thunderbird_calendar_events",
-      "profile_path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release"
-    },
-    "expected": {
-      "type": "rule",
-      "rules": {
-        "days_from_today": 1,
-        "hour": 9,
-        "minute": 0,
-        "duration_minutes": 120,
-        "title": "Doctor appointment",
-        "body_points": [
-          [
-            "bring a list of symptoms and questions"
-          ],
-          [
-            "personal and family medical histories"
-          ],
-          [
-            "medications and supplements"
-          ],
-          [
-            "fill out paperwork ahead of time"
-          ]
-        ]
+    "func": [
+      "check_thunderbird_calendar_event",
+      "check_edge_immersive_reader_state"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "thunderbird_calendar_events",
+        "profile_path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release"
+      },
+      {
+        "type": "edge_immersive_reader_state",
+        "activate_edge": true
       }
-    }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "days_from_today": 1,
+          "hour": 9,
+          "minute": 0,
+          "duration_minutes": 120,
+          "title": "Doctor appointment",
+          "body_points": [
+            [
+              "Bring a list of symptoms and questions"
+            ],
+            [
+              "personal medical history"
+            ],
+            [
+              "family medical history is critical"
+            ],
+            [
+              "Include both prescription and over-the-counter medicines, pills or creams - and don't forget vitamins and supplements"
+            ],
+            [
+              "Fill out your paperwork ahead of the visit"
+            ]
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "reader_mode_open": true
+        }
+      }
+    ]
   },
   "proxy": false,
   "fixed_ip": false,

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Oral Care Catalogue</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      color: #17202a;
+      background:
+        radial-gradient(circle at 10% 10%, #d9f4ff, transparent 25%),
+        radial-gradient(circle at 90% 20%, #e8ddff, transparent 28%),
+        #f4f7f8;
+    }
+
+    .header {
+      padding: 24px;
+      text-align: center;
+      color: white;
+      background:
+        repeating-linear-gradient(
+          45deg,
+          #075985,
+          #075985 18px,
+          #0369a1 18px,
+          #0369a1 36px
+        );
+      border-bottom: 7px double #facc15;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 40px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .header p {
+      margin: 8px 0 0;
+      font-size: 18px;
+    }
+
+    main {
+      width: min(1100px, 94%);
+      margin: 25px auto;
+    }
+
+    .offer-banner {
+      margin-bottom: 22px;
+      padding: 13px;
+      border: 3px dashed #075985;
+      background: #fff8c5;
+      text-align: center;
+      font-weight: bold;
+      transform: rotate(-0.4deg);
+    }
+
+    .catalogue-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px;
+      align-items: stretch;
+    }
+
+    .product-card {
+      position: relative;
+      padding: 22px;
+      border: 4px solid #17202a;
+      background: white;
+      box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.16);
+    }
+
+    .product-card:first-child {
+      transform: rotate(-0.7deg);
+    }
+
+    .product-card:last-child {
+      transform: rotate(0.7deg);
+    }
+
+    .brand-label {
+      display: inline-block;
+      padding: 6px 11px;
+      border: 2px solid #17202a;
+      background: #facc15;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    .product-card h3 {
+      min-height: 85px;
+      margin: 15px 0 8px;
+      font-size: 27px;
+      line-height: 1.15;
+    }
+
+    .details {
+      padding: 12px;
+      border-left: 6px solid #0284c7;
+      background: #eef9ff;
+    }
+
+    .price-area {
+      margin-top: 18px;
+      padding: 15px;
+      border: 4px dotted #9f1239;
+      background: #fff1f2;
+      text-align: center;
+    }
+
+    .price-label {
+      display: block;
+      font-size: 14px;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    .price {
+      display: block;
+      margin-top: 4px;
+      font-size: 38px;
+      font-weight: bold;
+    }
+
+    .comparison-note {
+      margin-top: 28px;
+      padding: 18px;
+      border: 3px solid #075985;
+      background: white;
+    }
+
+    .fine-print {
+      font-size: 11px;
+      line-height: 1.3;
+    }
+
+    footer {
+      margin-top: 30px;
+      padding: 18px;
+      text-align: center;
+      color: white;
+      background: #17202a;
+    }
+  </style>
+</head>
+
+<body>
+  <header class="header">
+    <h1>Oral Care Catalogue</h1>
+    <p>Six-count toothbrush comparison</p>
+  </header>
+
+  <main>
+    <div class="offer-banner">
+      Compare both catalogue prices before choosing a product.
+    </div>
+
+    <section aria-labelledby="toothbrush-comparison-heading">
+      <h2 id="toothbrush-comparison-heading">
+        Medium and Slim-Tip Toothbrush Offers
+      </h2>
+
+      <div class="catalogue-grid">
+        <article class="product-card">
+          <span class="brand-label">Oral-B</span>
+
+          <h3>Complete Deep Clean Toothbrush</h3>
+
+          <div class="details">
+            <p><strong>Firmness:</strong> Medium</p>
+            <p><strong>Package quantity:</strong> 6 toothbrushes</p>
+            <p>
+              Deep-clean toothbrushes designed to reach around and between
+              teeth.
+            </p>
+          </div>
+
+          <div class="price-area">
+            <span class="price-label">Catalogue price</span>
+            <span class="price">$18.99</span>
+          </div>
+        </article>
+
+        <article class="product-card">
+          <span class="brand-label">Colgate</span>
+
+          <h3>SlimSoft Floss-Tip Charcoal Toothbrush</h3>
+
+          <div class="details">
+            <p><strong>Style:</strong> Floss-tip charcoal bristles</p>
+            <p><strong>Package quantity:</strong> Pack of 6</p>
+            <p>
+              Toothbrushes with slim-tip bristles designed for cleaning along
+              the gum line.
+            </p>
+          </div>
+
+          <div class="price-area">
+            <span class="price-label">Catalogue price</span>
+            <span class="price">$14.49</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section
+      class="comparison-note"
+      aria-labelledby="shopping-instruction-heading"
+    >
+      <h2 id="shopping-instruction-heading">Shopping Instruction</h2>
+
+      <p>
+        Compare the catalogue prices of the two six-count products. Purchase
+        one unit of the product with the lower listed price.
+      </p>
+
+      <p class="fine-print">
+        Compare the prices shown in this catalogue rather than prices displayed
+        elsewhere. Match the brand, complete product name and package quantity
+        when searching the online shop.
+      </p>
+    </section>
+  </main>
+
+  <footer>
+    Oral Care Catalogue — Toothbrush multipack comparison
+  </footer>
+</body>
+</html>

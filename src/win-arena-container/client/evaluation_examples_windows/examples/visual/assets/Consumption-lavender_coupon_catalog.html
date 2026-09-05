@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spring Garden Catalogue</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      color: #262626;
+      background:
+        radial-gradient(circle at 20% 10%, rgba(126, 87, 194, 0.18), transparent 28%),
+        radial-gradient(circle at 90% 30%, rgba(76, 175, 80, 0.14), transparent 30%),
+        #f7f3e9;
+    }
+
+    .masthead {
+      padding: 22px;
+      text-align: center;
+      color: white;
+      background:
+        repeating-linear-gradient(
+          135deg,
+          #4b2e83,
+          #4b2e83 18px,
+          #6845a6 18px,
+          #6845a6 36px
+        );
+      border-bottom: 8px double #f3d56b;
+    }
+
+    .masthead h1 {
+      margin: 0;
+      font-size: 42px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    .masthead p {
+      margin: 7px 0 0;
+      font-size: 17px;
+    }
+
+    .page {
+      width: min(1200px, 95%);
+      margin: 24px auto;
+    }
+
+    .promo-strip {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 22px;
+    }
+
+    .promo-strip span {
+      padding: 8px 14px;
+      border: 2px dashed #4b2e83;
+      background: #fff5bd;
+      font-family: Arial, sans-serif;
+      font-weight: bold;
+      transform: rotate(-1deg);
+    }
+
+    .catalog-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.55fr 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .card {
+      padding: 17px;
+      background: rgba(255,255,255,0.94);
+      border: 3px solid #3d5a40;
+      box-shadow: 7px 7px 0 rgba(0,0,0,0.14);
+      transform: rotate(-0.7deg);
+    }
+
+    .card:nth-child(even) {
+      transform: rotate(0.8deg);
+    }
+
+    .card h3 {
+      margin-top: 8px;
+      font-size: 24px;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 5px 10px;
+      background: #f3d56b;
+      border: 2px solid #262626;
+      font-family: Arial, sans-serif;
+      font-size: 13px;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    .featured {
+      border: 7px double #4b2e83;
+      background:
+        linear-gradient(rgba(255,255,255,0.92), rgba(255,255,255,0.92)),
+        repeating-linear-gradient(
+          90deg,
+          #eee6ff,
+          #eee6ff 22px,
+          #ffffff 22px,
+          #ffffff 44px
+        );
+    }
+
+    .featured h3 {
+      font-size: 31px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .spec {
+      margin: 14px 0;
+      padding: 10px;
+      border: 3px dotted #4b2e83;
+      background: #f8f2ff;
+      font-family: Arial, sans-serif;
+      font-size: 19px;
+      font-weight: bold;
+    }
+
+    .coupon-box {
+      margin-top: 18px;
+      padding: 17px;
+      border: 5px dashed #a0003a;
+      background: #fff0f4;
+      text-align: center;
+      font-family: Arial, sans-serif;
+    }
+
+    .coupon-box strong {
+      display: block;
+      margin-top: 8px;
+      font-size: 30px;
+      letter-spacing: 4px;
+    }
+
+    .fine-print {
+      font-size: 11px;
+      line-height: 1.25;
+    }
+
+    footer {
+      margin-top: 28px;
+      padding: 18px;
+      color: white;
+      background: #253b2a;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <header class="masthead">
+    <h1>Spring Garden Catalogue</h1>
+    <p>Seasonal plants, flowers and garden favourites</p>
+  </header>
+
+  <main class="page">
+    <div class="promo-strip" aria-label="Catalogue promotions">
+      <span>Spring planting week</span>
+      <span>Limited catalogue offers</span>
+      <span>Selected live plants</span>
+    </div>
+
+    <section aria-labelledby="featured-products-heading">
+      <h2 id="featured-products-heading">Featured Products</h2>
+
+      <div class="catalog-grid">
+        <article class="card">
+          <span class="tag">Popular</span>
+          <h3>English Rosemary</h3>
+          <p>A fragrant culinary herb for sunny garden beds and patio pots.</p>
+          <p><strong>Container size:</strong> 1 gallon</p>
+          <p><strong>Plant type:</strong> Live herb plant</p>
+        </article>
+
+        <article class="card featured">
+          <span class="tag">Catalogue Feature</span>
+          <h3>French Provence Lavender</h3>
+
+          <p>
+            A very fragrant live lavender plant with blue flowers, suitable for
+            borders, containers and pollinator-friendly gardens.
+          </p>
+
+          <div class="spec">Product size: 2.5-quart pot</div>
+          <div class="spec">Quantity: 1 live plant</div>
+
+          <p>
+            Match the product type, French Provence variety, blue flowers,
+            2.5-quart pot size and single live-plant quantity when searching
+            the online shop.
+          </p>
+
+          <div class="coupon-box" aria-labelledby="lavender-coupon-heading">
+            <span id="lavender-coupon-heading">Lavender catalogue coupon</span>
+            <strong>LAVENDER20</strong>
+            <p>Enter this code in the shopping cart coupon field.</p>
+          </div>
+        </article>
+
+        <article class="card">
+          <span class="tag">New</span>
+          <h3>Spanish Lavender</h3>
+          <p>A compact lavender variety with purple flower bracts.</p>
+          <p><strong>Container size:</strong> 1-quart pot</p>
+          <p><strong>Quantity:</strong> 1 live plant</p>
+        </article>
+
+        <article class="card">
+          <span class="tag">Garden Basic</span>
+          <h3>Blue Salvia</h3>
+          <p>Flowering perennial with upright blue-purple blooms.</p>
+          <p><strong>Container size:</strong> 2-quart pot</p>
+        </article>
+
+        <article class="card">
+          <span class="tag">Fragrant</span>
+          <h3>Lavender Seed Pack</h3>
+          <p>Seeds for growing lavender plants at home.</p>
+          <p><strong>Package:</strong> 300 seeds</p>
+        </article>
+
+        <article class="card">
+          <span class="tag">Patio Pick</span>
+          <h3>French Thyme</h3>
+          <p>Aromatic culinary thyme for pots and herb gardens.</p>
+          <p><strong>Container size:</strong> 4-inch pot</p>
+        </article>
+      </div>
+    </section>
+
+    <section aria-labelledby="catalogue-notes-heading">
+      <h2 id="catalogue-notes-heading">Catalogue Notes</h2>
+      <p class="fine-print">
+        Catalogue descriptions may include similar plant names, colours,
+        container sizes and quantities. Confirm all identifying details before
+        adding a product to the shopping cart. The catalogue coupon should be
+        entered exactly as printed.
+      </p>
+    </section>
+  </main>
+
+  <footer>Spring Garden Catalogue — Seasonal plant offers</footer>
+</body>
+</html>

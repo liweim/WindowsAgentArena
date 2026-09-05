@@ -4,13 +4,13 @@
   "snapshot": "base_setup",
   "category": "access",
   "difficulty": "easy",
-  "instruction": "Notifications disappear before you can finish reading them. Open Windows Accessibility settings and set notifications to stay visible for 5 minutes.",
+  "instruction": "Set Windows notifications to stay on screen for 5 minutes.",
   "source": "Settings > Accessibility > Visual effects > Dismiss notifications after this amount of time",
   "gt_steps": [
     "Open Windows Settings.",
-    "Go to Accessibility > Visual effects.",
-    "Find Dismiss notifications after this amount of time.",
-    "Set it to 5 minutes."
+    "Open `Accessibility`.",
+    "Open `Visual effects`.",
+    "Set `Dismiss notifications after this amount of time` to `5 minutes`."
   ],
   "config": [],
   "trajectory": "trajectories\\",

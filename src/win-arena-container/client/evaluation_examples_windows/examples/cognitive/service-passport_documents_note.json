@@ -3,13 +3,16 @@
   "snapshot": "chrome",
   "category": "service",
   "difficulty": "medium",
-  "instruction": "Government service pages can be overwhelming. Open the State Department passport renewal page and use Sticky Notes to list the three ways the page says you can renew. Copy the option names exactly.",
+  "instruction": "Create a Sticky Note containing the three passport renewal option names exactly as written on the State Department renewal page.",
   "source": "https://travel.state.gov/content/travel/en/passports/have-passport/renew.html",
   "gt_steps": [
     "Open the State Department passport renewal page in Google Chrome.",
-    "Find the section that lists renewal options.",
+    "Locate the section that lists renewal options.",
     "Open Sticky Notes.",
-    "Write the three option names exactly: `Renew Online`, `Renew by Mail`, and `Renew in Person`."
+    "Create a new note.",
+    "Enter exactly `Renew Online` in the note.",
+    "Add exactly `Renew by Mail` to the note.",
+    "Add exactly `Renew in Person` to the note."
   ],
   "config": [
     {

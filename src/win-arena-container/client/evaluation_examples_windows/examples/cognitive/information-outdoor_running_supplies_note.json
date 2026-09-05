@@ -1,16 +1,17 @@
 {
-  "id": "mobility-outdoor_running_supplies_note",
+  "id": "information-outdoor_running_supplies_note",
   "snapshot": "msedge",
-  "category": "mobility",
+  "category": "information",
   "difficulty": "medium",
-  "instruction": "Use Immersive Reader to focus on the outdoor running hydration advice. In Sticky Notes, copy only the short-distance water-intake line exactly as it appears in the article.",
+  "instruction": "Copy the article's short-distance water-intake advice exactly into Sticky Notes, using Immersive Reader to read the article.",
   "source": "https://www.self.com/gallery/best-hydration-packs",
   "gt_steps": [
-    "Start from the already-open SELF article about hydration packs and vests in Microsoft Edge.",
-    "Use Immersive Reader to simplify the article.",
-    "Find the outdoor adventure water intake guidance for short-distance runs.",
+    "Open the SELF hydration article in Microsoft Edge.",
+    "Activate Immersive Reader.",
+    "Locate the short-distance outdoor running water-intake guidance.",
     "Open Sticky Notes.",
-    "Copy only this line exactly: Short distance (2 to 5 miles): 12 to 20 ounces via a handheld or belt."
+    "Create a new note.",
+    "Enter exactly `Short distance (2 to 5 miles): 12 to 20 ounces via a handheld or belt.` in the note."
   ],
   "config": [
     {

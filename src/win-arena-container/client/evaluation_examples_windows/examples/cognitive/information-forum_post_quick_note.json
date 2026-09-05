@@ -3,15 +3,17 @@
   "snapshot": "chrome",
   "category": "information",
   "difficulty": "medium",
-  "instruction": "I would like to know how food manufacturers know the exact calories in each package. Use the forum to find the answer, then create `forum_post_note.txt` on the Desktop with the short answer.",
+  "instruction": "Find out from the forum how food manufacturers know the exact calories in each package, and write a short answer in `forum_post_note.txt` on the Desktop.",
   "source": "WebArena self-hosted Reddit-style forum service: http://host.docker.internal:9999/f/explainlikeimfive",
   "gt_steps": [
-    "Open the local forum Explain Like I'm Five community page in Google Chrome.",
-    "Search or browse within the community for posts about calories in food packages.",
-    "Open the post titled `ELI5: How do food manufacturers know for sure how many exact calories are in each package?`.",
-    "Read the comments to find the short answer.",
-    "Create `forum_post_note.txt` on the Desktop as an external memory aid.",
-    "Write `They don't know exactly.`"
+    "Open the local Explain Like I'm Five forum in Google Chrome.",
+    "Search for the post about how food manufacturers know the calories in each package.",
+    "Open `ELI5: How do food manufacturers know for sure how many exact calories are in each package?`.",
+    "Read the comments for the short answer.",
+    "Open Notepad.",
+    "Create `forum_post_note.txt` on the Desktop.",
+    "Enter the standard answer `They don't know exactly.` in the file.",
+    "Save `forum_post_note.txt`."
   ],
   "config": [
     {
@@ -50,7 +52,8 @@
         "ignore_case": true,
         "points": [
           [
-            "don't know", "do not know"
+            "don't know",
+            "do not know"
           ]
         ]
       }

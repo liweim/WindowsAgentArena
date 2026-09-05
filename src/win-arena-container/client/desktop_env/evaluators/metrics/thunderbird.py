@@ -417,7 +417,8 @@ def check_thunderbird_calendar_event(result: Dict[str, Any], rules: Dict[str, An
     Score a Thunderbird calendar event.
 
     Rules:
-      - days_from_today: integer offset for expected event date
+      - date: absolute expected event date in YYYY-MM-DD format
+      - days_from_today: integer offset for expected event date (used when date is absent)
       - hour: expected local start hour
       - minute: expected local start minute, default 0
       - duration_minutes: expected event duration
@@ -427,11 +428,18 @@ def check_thunderbird_calendar_event(result: Dict[str, Any], rules: Dict[str, An
     if not result:
         return 0.
 
-    try:
-        today = datetime.date.fromisoformat(result["today"])
-    except Exception:
-        today = datetime.date.today()
-    expected_date = today + datetime.timedelta(days=int(rules.get("days_from_today", 1)))
+    absolute_date = rules.get("date")
+    if absolute_date is not None:
+        try:
+            expected_date = datetime.date.fromisoformat(str(absolute_date))
+        except (TypeError, ValueError):
+            return 0.
+    else:
+        try:
+            today = datetime.date.fromisoformat(result["today"])
+        except Exception:
+            today = datetime.date.today()
+        expected_date = today + datetime.timedelta(days=int(rules.get("days_from_today", 1)))
     expected_hour = int(rules.get("hour", 9))
     expected_minute = int(rules.get("minute", 0))
     expected_duration = rules.get("duration_minutes")

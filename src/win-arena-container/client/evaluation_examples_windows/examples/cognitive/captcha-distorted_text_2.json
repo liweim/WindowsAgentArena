@@ -3,7 +3,7 @@
   "snapshot": "chrome",
   "category": "captcha",
   "difficulty": "easy",
-  "instruction": "Complete the CAPTCHA verification in Google Chrome.",
+  "instruction": "Complete the distorted-text CAPTCHA open in Chrome.",
   "source": "local CAPTCHA service using the Python `captcha` package",
   "gt_steps": [
     "Complete the CAPTCHA verification."

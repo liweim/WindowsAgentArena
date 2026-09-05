@@ -1,6 +1,5 @@
 *.out
 *.pid
-assets
 tmp
 *.bak
 results
