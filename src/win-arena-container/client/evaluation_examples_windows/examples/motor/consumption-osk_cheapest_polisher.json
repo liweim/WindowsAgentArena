@@ -5,11 +5,11 @@
   "snapshot": "chrome",
   "category": "consumption",
   "difficulty": "easy",
-  "instruction": "Enable the Windows On-Screen Keyboard as a motor accessibility aid and keep it enabled throughout the task. The provided Harbor Freight catalog PDF is already open in Chrome. Find the cheapest polisher in the catalog. Write the full name of the polisher exactly as shown in the PDF, followed by its price, in a text file named `cheapPolisher.txt` on the Desktop.",
+  "instruction": "Enable the Windows On-Screen Keyboard as a motor accessibility aid and keep it open throughout the task. The provided Harbor Freight catalog PDF is already open in Chrome. Find the cheapest polisher in the catalog. In `cheapPolisher.txt` on the Desktop, write the full product name exactly as shown in the PDF on the first line and its price on the second line.",
   "source": "assets/Nov2020Catalog_Full.pdf",
   "gt_steps": [
     "Enable the Windows On-Screen Keyboard.",
-    "Keep the On-Screen Keyboard enabled throughout the task.",
+    "Keep the On-Screen Keyboard open throughout the task.",
     "Read the Harbor Freight catalog PDF already open in Chrome.",
     "Locate the polishing products section.",
     "Identify the cheapest polisher in the catalog.",
@@ -21,7 +21,7 @@
     "$19.99",
     "Save the file as `cheapPolisher.txt` on the Desktop.",
     "Leave the saved file on the Desktop.",
-    "Leave the On-Screen Keyboard enabled."
+    "Leave the On-Screen Keyboard open."
   ],
   "config": [
     {
@@ -66,6 +66,7 @@
   "trajectory": "trajectories\\",
   "related_apps": [
     "settings",
+    "on_screen_keyboard",
     "chrome",
     "notepad"
   ],
@@ -84,7 +85,8 @@
       {
         "type": "is_file_saved_desktop",
         "filename": "cheapPolisher.txt",
-        "textcontent": "6\" PALM POLISHER\n$19.99"
+        "textcontent": "6\" PALM POLISHER\n$19.99",
+        "exact": true
       }
     ],
     "expected": [

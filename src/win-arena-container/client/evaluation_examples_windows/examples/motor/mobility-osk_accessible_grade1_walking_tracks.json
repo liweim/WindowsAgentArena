@@ -5,16 +5,25 @@
   "snapshot": "chrome",
   "category": "mobility",
   "difficulty": "medium",
-  "instruction": "Enable the Windows On-Screen Keyboard as a motor accessibility aid and keep it open throughout the task. From the provided NSW National Parks webpage, find all walk titles that are Grade 1 and have a maximum listed walking time of 45 minutes or less. Save the walk titles in a text file named `AccessibleTracks.txt` on the Desktop.",
+  "instruction": "Enable the Windows On-Screen Keyboard as a motor accessibility aid and keep it open throughout the task. From the provided NSW National Parks webpage, find all walk titles that are Grade 1 and have a maximum listed walking time of 45 minutes or less. Save the titles in webpage order, one title per line, in `AccessibleTracks.txt` on the Desktop.",
   "source": "https://www.nationalparks.nsw.gov.au/access-friendly/access-friendly-walking-tracks",
   "gt_steps": [
     "Enable the Windows On-Screen Keyboard and keep it open.",
     "Review the NSW National Parks access-friendly walking tracks webpage already open in Chrome.",
     "Check the listed time and grade information for the walking tracks.",
-    "Find the walk titles that are Grade 1 and have a maximum listed walking time of 45 minutes or less.",
-    "Identify Three Sisters walk as one of the matching tracks.",
+    "Find every walk that is Grade 1 and has a maximum listed walking time of 45 minutes or less.",
+    "Identify `Fairfax Heritage walking track` as a matching track.",
+    "Identify `Jennifer Street boardwalk` as a matching track.",
+    "Identify `Three Sisters walk` as a matching track.",
+    "Identify `Bungoona lookout and path` as a matching track.",
+    "Identify `Palm Valley Currenbah walking track` as a matching track.",
+    "Identify `Victoria Park boardwalk` as a matching track.",
+    "Identify `Devils Hole lookout walk and picnic area` as a matching track.",
+    "Identify `Point lookout walking track` as a matching track.",
+    "Identify `Rainforest walking track` as a matching track.",
+    "Identify `Whitegum lookout walking track` as a matching track.",
     "Open Notepad.",
-    "Write the identified walk titles in the text file.",
+    "Write the 10 matching titles in webpage order, one title per line.",
     "Save the file as `AccessibleTracks.txt` on the Desktop.",
     "Leave the saved file on the Desktop.",
     "Leave the On-Screen Keyboard open."
@@ -69,7 +78,8 @@
       {
         "type": "is_file_saved_desktop",
         "filename": "AccessibleTracks.txt",
-        "textcontent": "Three Sisters walk"
+        "textcontent": "Fairfax Heritage walking track\nJennifer Street boardwalk\nThree Sisters walk\nBungoona lookout and path\nPalm Valley Currenbah walking track\nVictoria Park boardwalk\nDevils Hole lookout walk and picnic area\nPoint lookout walking track\nRainforest walking track\nWhitegum lookout walking track",
+        "exact": true
       }
     ],
     "expected": [

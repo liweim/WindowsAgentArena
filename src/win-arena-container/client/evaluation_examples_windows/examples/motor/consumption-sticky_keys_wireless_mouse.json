@@ -92,7 +92,10 @@
         "type": "rule",
         "rules": {
           "items": [
-            "B08FMSC383"
+            {
+              "sku": "B08FMSC383",
+              "quantity": 1
+            }
           ]
         }
       }

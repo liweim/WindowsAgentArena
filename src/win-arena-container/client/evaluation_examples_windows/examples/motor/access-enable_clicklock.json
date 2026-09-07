@@ -4,7 +4,7 @@
   "snapshot": "windows",
   "category": "access",
   "difficulty": "easy",
-  "instruction": "I find it difficult to keep the mouse button pressed while dragging items. Please enable Mouse ClickLock for me.",
+  "instruction": "Enable Mouse ClickLock and leave it enabled.",
   "source": "Settings > Bluetooth & devices > Mouse > Additional mouse settings > Buttons > Turn on ClickLock",
   "gt_steps": [
     "Open Windows settings.",
@@ -18,8 +18,7 @@
   "config": [],
   "trajectory": "trajectories\\",
   "related_apps": [
-    "settings",
-    "control_panel"
+    "settings"
   ],
   "evaluator": {
     "func": "check_include_exclude",

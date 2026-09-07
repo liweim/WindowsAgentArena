@@ -500,9 +500,9 @@ def _score_shopping_cart_db(rule):
     items = rule.get("items", [])
     item_groups = rule.get("item_groups", [])
     sql = (
-        "SELECT qi.item_id, qi.product_id, qi.sku, qi.name "
+        "SELECT qi.item_id, qi.product_id, qi.sku, qi.name, qi.qty "
         "FROM quote q JOIN quote_item qi ON qi.quote_id=q.entity_id "
-        "WHERE q.items_count > 0 AND q.is_active=1 "
+        "WHERE q.items_count > 0 AND q.is_active=1 AND qi.parent_item_id IS NULL "
         "ORDER BY q.updated_at DESC, qi.item_id;"
     )
     command = [
@@ -531,34 +531,59 @@ def _score_shopping_cart_db(rule):
     cart_item_ids = []
     for line in result.stdout.splitlines():
         fields = line.split("\t")
-        if len(fields) >= 4:
-            cart_item_ids.append(fields[0])
-            cart_items.append(" ".join(fields[1:]).lower())
+        if len(fields) >= 5:
+            item_id, product_id, sku, name, qty = fields[:5]
+            cart_item_ids.append(item_id)
+            try:
+                quantity = float(qty)
+            except (TypeError, ValueError):
+                quantity = None
+            cart_items.append({
+                "item_id": item_id,
+                "product_id": product_id,
+                "sku": sku,
+                "name": name,
+                "quantity": quantity,
+                "text": " ".join([product_id, sku, name]).lower(),
+            })
 
     if not cart_items:
         return 0.
 
-    matched = sum(1 for item in items if any(str(item).lower() in cart_item for cart_item in cart_items))
+    def item_matches(expected, actual):
+        if isinstance(expected, dict):
+            checks = []
+            for key in ("sku", "name", "product_id"):
+                if key in expected:
+                    checks.append(str(expected[key]).lower() in str(actual.get(key, "")).lower())
+            if not checks:
+                return False
+            if not all(checks):
+                return False
+            if "quantity" in expected:
+                try:
+                    if actual.get("quantity") is None or abs(float(actual["quantity"]) - float(expected["quantity"])) > 1e-6:
+                        return False
+                except (TypeError, ValueError):
+                    return False
+            return True
+        return str(expected).lower() in actual["text"]
+
+    matched = sum(1 for item in items if any(item_matches(item, cart_item) for cart_item in cart_items))
     matched += sum(
         1 for group in item_groups
-        if any(
-            str(item).lower() in cart_item
-            for item in group
-            for cart_item in cart_items
-        )
+        if any(item_matches(item, cart_item) for item in group for cart_item in cart_items)
     )
     cart_item_count = len(cart_items)
     if matched and not _shopping_cart_options_match(rule, cart_item_ids):
         return 0.
 
     expected_count = len(items) + len(item_groups)
-
     if expected_count == 1:
         return 1. if matched == 1 and cart_item_count == 1 else 0.
 
     denominator = max(expected_count, cart_item_count)
     return matched / denominator if denominator else 0.
-
 
 def _shopping_cart_options_match(rule, cart_item_ids):
     expected_options = rule.get("options", {})

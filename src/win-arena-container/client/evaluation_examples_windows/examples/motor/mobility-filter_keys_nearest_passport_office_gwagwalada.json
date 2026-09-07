@@ -1,8 +1,8 @@
 {
-  "id": "service-filter_keys_nearest_passport_office_gwagwalada",
+  "id": "mobility-filter_keys_nearest_passport_office_gwagwalada",
   "_comment": "The category should be mobility?",
   "snapshot": "windows",
-  "category": "service",
+  "category": "mobility",
   "difficulty": "hard",
   "instruction": "Enable Filter Keys as a motor accessibility aid and keep it enabled throughout the task. I’m at El Rufai Park Bus Stop, Gwagwalada 902101, Federal Capital Territory, Nigeria. The Nigeria Immigration Service passport office directory PDF is already open in Chrome. Determine the nearest passport office listed in the PDF, then open Google Maps, find the driving route from my current location to that office, and leave the driving directions visible.",
   "source": "https://immigration.gov.ng/",

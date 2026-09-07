@@ -1,8 +1,8 @@
 {
-  "id": "management-filter_keys_shopping_list_cart",
+  "id": "consumption-filter_keys_shopping_list_cart",
   "_comment": "",
   "snapshot": "windows",
-  "category": "management",
+  "category": "consumption",
   "difficulty": "hard",
   "instruction": "Enable Windows Filter Keys as a motor accessibility aid and keep it enabled throughout the task. Open the provided ShoppingList.ods spreadsheet in LibreOffice Calc. Use the product names and quantities listed in the spreadsheet to find the products on the self-hosted OneStopMarket website and add the specified quantity of each product to the shopping cart. Do not add any products that are not listed in the spreadsheet.",
   "source": "Local Spreadsheet: assets/ShoppingList.ods and self-hosted OneStopMarket website",
@@ -74,8 +74,7 @@
   "related_apps": [
     "settings",
     "libreoffice_calc",
-    "google_chrome",
-    "onestopmarket"
+    "chrome"
   ],
   "evaluator": {
     "func": [

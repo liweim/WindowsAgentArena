@@ -4,7 +4,7 @@
   "snapshot": "windows",
   "category": "access",
   "difficulty": "easy",
-  "instruction": "I find it difficult to press multiple keys at the same time. Please enable Sticky Keys and leave it turned on.",
+  "instruction": "Enable Sticky Keys and leave it enabled.",
   "source": "Settings > Accessibility > Keyboard > Sticky Keys",
   "gt_steps": [
     "Open Windows settings.",

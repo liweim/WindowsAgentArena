@@ -4,17 +4,18 @@
   "snapshot": "windows",
   "category": "access",
   "difficulty": "easy",
-  "instruction": "Because of my limited hand mobility, using a physical keyboard is difficult. Please enable the Windows On-Screen Keyboard and keep it enabled.",
+  "instruction": "Enable the Windows On-Screen Keyboard and keep it open.",
   "source": "Settings > Accessibility > Keyboard > On-Screen Keyboard",
   "gt_steps": [
     "Open Windows settings.",
     "Navigate to Keyboard accessibility settings.",
     "Turn on the On-Screen Keyboard.",
-    "Keep the On-Screen Keyboard enabled."
+    "Keep the On-Screen Keyboard open."
   ],
   "config": [],
   "trajectory": "trajectories\\",
   "related_apps": [
+    "settings",
     "on_screen_keyboard"
   ],
   "evaluator": {

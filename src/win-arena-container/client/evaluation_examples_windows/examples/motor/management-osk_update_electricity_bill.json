@@ -5,17 +5,17 @@
   "snapshot": "windows",
   "category": "management",
   "difficulty": "easy",
-  "instruction": "Enable the Windows On-Screen Keyboard as a motor accessibility aid and keep it enabled throughout the task. Open the provided Bills.ods spreadsheet in LibreOffice Calc. Update the Electricity bill status from `Unpaid` to `Paid` and enter the payment date as `15/10/2026`. Save the spreadsheet.",
+  "instruction": "Enable the Windows On-Screen Keyboard as a motor accessibility aid and keep it open throughout the task. Open the provided Bills.ods spreadsheet in LibreOffice Calc. Update the Electricity bill status from `Unpaid` to `Paid` and enter the payment date as `15/10/2026`. Save the spreadsheet.",
   "source": "Local Spreadsheet: assets/Bills.ods",
   "gt_steps": [
     "Enable the Windows On-Screen Keyboard.",
-    "Keep the On-Screen Keyboard enabled throughout the task.",
+    "Keep the On-Screen Keyboard open throughout the task.",
     "Open Bills.ods in LibreOffice Calc.",
     "Locate the Electricity bill row.",
     "Change the Status from `Unpaid` to `Paid`.",
     "Enter `15/10/2026` in the Payment Date column.",
     "Save the spreadsheet.",
-    "Keep the On-Screen Keyboard enabled."
+    "Keep the On-Screen Keyboard open."
   ],
   "config": [
     {
@@ -57,8 +57,9 @@
         "shell": true
       },
       {
-        "type": "ods_file",
-        "path": "C:\\Users\\Docker\\Desktop\\Bills.ods"
+        "type": "vm_file",
+        "path": "C:\\Users\\Docker\\Desktop\\Bills.ods",
+        "dest": "Bills.ods"
       }
     ],
     "expected": [

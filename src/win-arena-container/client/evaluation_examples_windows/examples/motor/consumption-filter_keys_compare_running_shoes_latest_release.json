@@ -5,7 +5,7 @@
   "snapshot": "chrome",
   "category": "consumption",
   "difficulty": "hard",
-  "instruction": "Enable Windows Filter Keys as a motor accessibility aid and keep it enabled throughout the task. Search for `Salomon Men's Predict Soc2 Running`. Add the product to Compare. Then search for `Nike Men's Stroke Running Shoe, 6.5 us` and add it to Compare. Compare the release dates of the two products, determine which shoe has the more recent release date, select the Black colour and size 12 for that shoe, and add the shopping cart.",
+  "instruction": "Enable Windows Filter Keys as a motor accessibility aid and keep it enabled throughout the task. Search for `Salomon Men's Predict Soc2 Running`. Add the product to Compare. Then search for `Nike Men's Stroke Running Shoe, 6.5 us` and add it to Compare. Compare the release dates of the two products, determine which shoe has the more recent release date, select the Black colour and size 12 for that shoe, and add one unit of that shoe to the shopping cart.",
   "source": "OneStopShop (self-hosted)",
   "gt_steps": [
     "Enable Windows Filter Keys.",
@@ -19,7 +19,7 @@
     "Click `Add to Compare`.",
     "Open the comparison page.",
     "Compare the release dates of the two shoes.",
-    "Determine which shoe has the more recent release date.",
+    "Determine that `Salomon Men's Predict Soc2 Running` (SKU `B08Y2SN6Y4`) is the shoe with the more recent release date.",
     "Open the latest-release shoe if necessary.",
     "Select the Black colour.",
     "Select size 12.",
@@ -101,8 +101,17 @@
         "type": "rule",
         "rules": {
           "items": [
-            "B08Y2SN6Y4"
-          ]
+            {
+              "sku": "B08Y2SN6Y4",
+              "quantity": 1
+            }
+          ],
+          "options": {
+            "B08Y2SN6Y4": {
+              "Color": "Black",
+              "Size": "12"
+            }
+          }
         }
       }
     ]

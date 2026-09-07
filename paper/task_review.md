@@ -1,135 +1,145 @@
-# WindowsAgentArena 下一轮任务修改 Checklist
+# WindowsAgentArena Task Modification Checklist
 
-用途：下一次对话处理 `examples/` 下除 `cognitive/` 之外的任务时，按同一套规范检查和修改，避免重复讨论口径。
-
-## 处理范围
-
-下一轮优先检查：
-
-- `src/win-arena-container/client/evaluation_examples_windows/examples/hearing/`
-- `src/win-arena-container/client/evaluation_examples_windows/examples/motor/`
-- `src/win-arena-container/client/evaluation_examples_windows/examples/visual/`
-
-`cognitive/` 已完成本轮 category / `related_apps` 核对；除明确列出的待重构项外，不重复批量修改。
-
-## 本轮已经确定的统一规则
+## Rules
 
 ### 1. Category
 
-- category label 一律使用 README 中规定的**小写**值：
-  - `communication`
-  - `information`
-  - `management`
-  - `mobility`
-  - `consumption`
-  - `service`
-  - `health`
-  - `access`
-  - `setup`
-  - `captcha`
-- 根据任务的**主要用户目标或工作流**确定 category，不要只根据来源网站、输出应用或 disability group 分类。
-- `access` 用于安装、启用或配置 accessibility / access-support 功能本身作为主要目标的任务。
-- `setup` 用于安装或设置普通软件/系统组件；普通软件安装不要为了 disability group 而归到 `access`。
-- `captcha` 作为独立 stress-test slice。
-- category 改动时必须同步：
-  1. 修改 JSON `category`；
-  2. 修改 filename prefix；
-  3. 修改 `id`；
-  4. 确认 `id == filename 去掉 .json`；
-  5. 搜索项目内是否存在旧 id / filename 引用。
+* Category labels must always use the **lowercase** values defined in the README:
 
-### 2. `id` 与 filename
+  * `communication`
 
-对每个任务检查：
+  * `information`
 
-- [ ] `id` 与 JSON filename 去掉 `.json` 后完全一致。
-- [ ] filename prefix 与 `category` 完全一致。
-- [ ] 没有重复 `id`。
-- [ ] 没有仅大小写不同的重复文件。
-- [ ] 改名后旧文件加入 `DELETED_FILES.txt`，不能只新增新文件而保留旧文件。
+  * `management`
+
+  * `mobility`
+
+  * `consumption`
+
+  * `service`
+
+  * `health`
+
+  * `access`
+
+  * `setup`
+
+  * `captcha`
+
+* Determine the category based on the task's **primary user goal or workflow**, rather than categorizing it solely by the source website, output application, or disability group.
+
+* Use `access` when the primary goal of the task is to install, enable, or configure an accessibility or access-support feature itself.
+
+* Treat `captcha` as a separate stress-test slice.
+
+* When changing a category, you must update all of the following:
+
+  1. Update the JSON `category`;
+
+  2. Update the filename prefix;
+
+  3. Update the `id`;
+
+  4. Confirm that `id == filename without .json`;
+
+  5. Search the repository for any references to the old id or filename.
+
+### 2. `id` and Filename
+
+Check the following for every task:
+
+* [ ] `id` exactly matches the JSON filename without `.json`.
+
+* [ ] The filename prefix exactly matches the `category`.
+
+* [ ] There are no duplicate `id` values.
+
+* [ ] There are no duplicate files that differ only by letter case.
+
+* [ ] After renaming a file, add the old file to `DELETED_FILES.txt`. Do not simply add the new file while keeping the old one.
 
 ### 3. `related_apps`
 
-- 只列 Agent 在完成任务过程中**实际需要交互**的应用。
-- 使用仓库现有 canonical app identifier，例如 `chrome`, `msedge`, `settings`, `thunderbird`, `notepad`, `sticky_notes`, `libreoffice_writer`, `libreoffice_calc` 等。
-- 不写 setup-only 组件、后台服务或与实际执行路径无关的 app。
-- 如果多个 app 只是互斥的可选路径，不要因为“可能用到”就全部列入；优先和预期成功轨迹对齐。
-- 如果任务尚待重构，先记录 `related_apps` 风险，等任务目标稳定后与 instruction / gt_steps 一起调整。
+* Only include applications that the Agent **actually needs to interact with** while completing the task.
 
-检查项：
+* Use existing canonical app identifiers from the repository, such as `chrome`, `msedge`, `settings`, `thunderbird`, `notepad`, `sticky_notes`, `libreoffice_writer`, `libreoffice_calc`, etc.
 
-- [ ] instruction 中明确要求的 app 都在 `related_apps` 中。
-- [ ] `gt_steps` 中实际操作的 app 都在 `related_apps` 中。
-- [ ] config 中仅用于环境准备、但 Agent 不操作的组件没有误列。
-- [ ] evaluator 依赖的目标 app 与 `related_apps` 不冲突。
-- [ ] 没有重复 app label 或同一 app 的不同别名。
+* Do not include setup-only components, background services, or apps unrelated to the actual execution path.
+
+* If multiple apps represent mutually exclusive optional paths, do not include all of them simply because they "might be used." Prefer alignment with the expected successful trajectory.
+
+* If the task still needs to be reworked, first record the `related_apps` risk, and update it together with the instruction and `gt_steps` once the task objective is stable.
+
+Checklist:
+
+* [ ] All apps explicitly required by the instruction are included in `related_apps`.
+
+* [ ] All apps actually used in `gt_steps` are included in `related_apps`.
+
+* [ ] Components used only for environment setup in the config, but not operated by the Agent, are not incorrectly included.
+
+* [ ] The target app required by the evaluator does not conflict with `related_apps`.
+
+* [ ] There are no duplicate app labels or multiple aliases for the same app.
 
 ### 4. Instruction
 
-统一为**简洁、直接的命令式表达**。
+Use a consistent style with **concise, direct imperative phrasing**.
 
-- 用 `Install`, `Set`, `Create`, `Find`, `Add`, `Write`, `Update`, `Copy`, `Complete` 等直接动词开头。
-- 不使用 `Could you...`, `Can you...`, `Please...`, `I need you to...`, `I'd like you to...` 等客套铺垫。
-- 不写成操作手册；菜单路径、按钮顺序、窗口切换等常规步骤让 Agent 自己推理。
-- 保留无法安全推断的约束，例如精确文件名、标题、日期、收件人、目标值、不得发送/重启等。
-- 某个 accessibility feature 只有在它本身属于任务要求或 evaluator 会检查时才明确要求。
+* Start with direct verbs such as `Install`, `Set`, `Create`, `Find`, `Add`, `Write`, `Update`, `Copy`, or `Complete`.
+
+* Do not use polite lead-ins such as `Could you...`, `Can you...`, `Please...`, `I need you to...`, or `I'd like you to...`.
+
+* Do not write the instruction like an operations manual. Let the Agent reason about routine steps such as menu paths, button sequences, and window switching.
+
+* Preserve constraints that cannot be safely inferred, such as exact filenames, titles, dates, recipients, target values, or restrictions such as not sending a message or not restarting the system.
+
+* Explicitly require an accessibility feature only when the feature itself is part of the task requirement or when the evaluator checks it.
 
 ### 5. `gt_steps`
 
-- 面向标注人员，原则是按步骤能够复现成功轨迹。
-- 对需要复现指导的任务，一步只完成一个主要动作。
-- 有唯一标准答案时直接给出标准答案、日期、标题、文本、商品或设置值。
-- 不把 `config` 的环境准备重复写入 `gt_steps`。
-- CAPTCHA 任务不需要展开详细步骤或固定 seed 答案，保持简短即可。
-- 对“任务本身需要重构”的任务，先不要规范旧 `gt_steps`；等新任务定义确定后一起重写。
+* `gt_steps` are intended for annotators, and should allow them to reproduce the successful trajectory by following the steps.
+
+* For tasks that require reproduction guidance, each step should contain only one major action.
+
+* When there is a unique correct answer, provide the exact answer, date, title, text, product, or setting value directly.
+
+* Do not duplicate environment-preparation steps from `config` in `gt_steps`.
+
+* CAPTCHA tasks do not need detailed steps or fixed seed answers. Keep them concise.
+
+* For tasks that themselves require restructuring, do not normalize the old `gt_steps` yet. Rewrite them together once the new task definition is finalized.
 
 ### 6. Evaluator
 
-- evaluator 必须覆盖 instruction 中明确要求且可验证的最终成功条件。
-- instruction 明确要求某个 accessibility tool state 时，如果已有 evaluator 能检查，应加入检查。
-- 固定绝对日期不要用依赖 VM today 的相对日期 evaluator。
-- instruction 要求 exact wording 时，不要用过短的关键词替代完整原文要求。
-- 多个独立成功条件需要全部满足时使用合适的 conjunction。
-- evaluator 不应只检查任务要求字段的一小部分而允许明显不完整结果通过。
+* The evaluator must cover all explicitly required and verifiable final success conditions in the instruction.
 
-### 7. Difficulty
+* If the instruction explicitly requires a particular accessibility tool state and an existing evaluator can check it, include that check.
 
-**暂不处理。**
+* For fixed absolute dates, do not use evaluators based on relative dates that depend on the VM's current date.
 
-下一轮 category / related_apps / instruction / gt_steps / evaluator 审核时，不顺手修改 `difficulty`。难度需要等全部任务统一后，再基于整个任务集用 `easy / medium / hard` 三档重新评定。
+* If the instruction requires exact wording, do not replace the full-text requirement with a check for only a short keyword.
 
-## Cognitive 已处理状态，下一轮不要重复
+* When multiple independent success conditions must all be satisfied, use the appropriate conjunction.
 
-- cognitive JSON 已完成 category 与 `related_apps` 复核；普通软件安装现使用 `setup` category。
-- `mobility-outdoor_running_supplies_note.json` 已改为 `information-outdoor_running_supplies_note.json`：
-  - category `mobility` → `information`
-  - id / filename 同步更新
-  - `related_apps` 保持 `msedge`, `sticky_notes`
-- 其余 cognitive task 的 category / `related_apps` 当前保持不变。
-- Docker / Spotify 已确认可作为 cognitive 的多步骤软件安装任务保留，并分别改为 `setup-docker_install` / `setup-spotify_install`。
-- 6 个 `consumption-*` task 已按本 checklist 全量复核：category / id / filename / related_apps / instruction / gt_steps / evaluator 均已闭环。多条件购物、review 比较、价格比较、约束记忆和食材规划本身可构成 cognitive load，不要求额外加入 reminder 或 accessibility feature。
-- `consumption-shopping_title_elsa_bottle.json` 已改为同时匹配 Elsa、24 oz、Tritan 的多条件商品识别任务。
-- `information-wikipedia_accessibility_definition.json` 已改为从文章中识别设计概念定义句并定点替换 Writer 占位符的任务。
-- 当前 cognitive 没有仍标记为“必须先改任务本身”的条目；仅 `service-cms_product_record.json` 还有可选的 live-state evaluator 工程增强。
+* The evaluator should not check only a small subset of the required fields in a way that allows obviously incomplete results to pass.
 
-## 下一轮建议执行顺序
+## Recommended Execution Order for the Next Round
 
-1. 先严格解析目标目录全部 JSON。
-2. 生成每个任务的 `filename / id / category / related_apps / instruction / evaluator` 汇总表。
-3. 先检查 category、filename、id 三者一致性。
-4. 再检查 `related_apps` 是否和 instruction / gt_steps / evaluator 的实际应用一致。
-5. 再检查 instruction 风格。
-6. 对非 CAPTCHA、非待重构任务检查 `gt_steps` 原子性和标准答案。
-7. 检查 evaluator 与 instruction 一致性。
-8. 全量 JSON 重新解析，并检查重复 id / 大小写重复文件。
-9. 不修改 difficulty。
-10. 最终 ZIP **只包含当前这一轮实际修改的文件**；不要累计打包以前已经交付过的改动。只有当前这一轮发生删除或改名时才附 `DELETED_FILES.txt`。
+1. Strictly parse all JSON files in the target directory first.
 
-## 输出要求
+2. Generate a summary table for every task containing `filename / id / category / related_apps / instruction / evaluator`.
 
-下一轮完成后应提供：
+3. First check consistency among category, filename, and id.
 
-- 一个修改后的 checklist，列出每个 task 的结论和实际修改；
-- 一个仅包含**当前这一轮实际修改文件**的 ZIP；
-- `DELETED_FILES.txt`，记录需要从原项目删除的旧文件；
-- 简短校验汇总：JSON parse errors、id/filename mismatch、duplicate id、category mismatch、related_apps 明显问题数量。
+4. Then check whether `related_apps` matches the applications actually used by the instruction / gt_steps / evaluator.
+
+5. Then check instruction style.
+
+6. For tasks that are neither CAPTCHA tasks nor pending restructuring, check the atomicity of `gt_steps` and verify any canonical answers.
+
+7. Check evaluator consistency with the instruction.
+
+8. Re-parse all JSON files and check for duplicate ids and case-only duplicate filenames.
+
+9. The final ZIP must **contain only the files actually modified in the current round**. Do not accumulate and repackage changes that were already delivered in previous rounds. Include `DELETED_FILES.txt` only when files were deleted or renamed in the current round.
