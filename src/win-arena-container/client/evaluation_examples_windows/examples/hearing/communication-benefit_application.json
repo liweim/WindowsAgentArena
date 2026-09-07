@@ -4,11 +4,10 @@
   "snapshot": "chrome",
   "category": "communication",
   "difficulty": "medium",
-  "instruction": "HR sent an audio notice about the new work-from-home equipment reimbursement policy. Play the audio and enable Live Caption to capture the key information. Identify the application deadline and the two required document names mentioned in the recording. Then compose a new email in Thunderbird, but do not send it. Set the recipient to hr@company.com, set the subject to 'Equipment Reimbursement Request', and in the email body clearly state the two required document names and the deadline while requesting your reimbursement allowance.",
+  "instruction": "Use Chrome Live Caption to identify the application deadline and the two required documents in the reimbursement audio, then compose a new Thunderbird email to hr@company.com with subject `Equipment Reimbursement Request` and include those three details in the body. Do not send it.",
   "source": "synthetic",
   "transcript": "Hello everyone, this is HR with a quick update on the WFH hardware reimbursement policy for this quarter. To claim your 500-dollar allowance for home office setups, you must submit your formal request via email. There are two required documents you need to attach. First is the original merchant receipt, and the second one is your home internet bill from the same month. Please note, the strict deadline for this quarter's application is October 15th, 2026. Any submissions after October 15th will be automatically rejected. Thank you.",
   "gt_steps": [
-    "Open the HR reimbursement audio file in Chrome.",
     "Turn on Chrome Live Caption.",
     "Use the captions to identify the required documents and deadline.",
     "In Thunderbird, compose a new email.",

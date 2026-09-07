@@ -3,11 +3,11 @@
   "snapshot": "chrome",
   "category": "mobility",
   "difficulty": "easy",
-  "instruction": "I really like the island shown in the video. Turn on Chrome Live Caption, find out where it is, then open Google Maps and check its location.",
+  "instruction": "Turn on captions in the opened YouTube video, identify the island shown there, then open its location in Google Maps.",
   "source": "https://www.youtube.com/watch?v=Js4BR1Qz0Hs",
   "gt_steps": [
-    "Enable Chrome Live Caption.",
-    "Watch the YouTube video and identify `Rottnest Island` from the captions.",
+    "Turn on captions in the YouTube player.",
+    "Watch the YouTube video and identify `Rottnest Island` from the YouTube captions.",
     "Open Google Maps.",
     "Search for `Rottnest Island`."
   ],

@@ -3,14 +3,14 @@
   "snapshot": "chrome",
   "category": "consumption",
   "difficulty": "medium",
-  "instruction": "Your roommate sent an audio shopping reminder. Open the audio in Chrome, enable Live Caption, listen for the exact item to buy, then find that item on the shopping website and add it to the shopping cart.",
+  "instruction": "Use Chrome Live Caption to identify the exact item in the audio shopping reminder, then find it on the shopping website and add it to the cart.",
   "source": "synthetic",
   "transcript": "Nina, I found the missing charger, but the Dyson Corrale is still rolling around loose in my suitcase. Could you order a travel case for it from the shopping site? It is the black multifunction box that fits the straightener, the cord, and the heat mat. Please add that one to the cart before I forget again.",
   "gt_steps": [
-    "Open the Dyson shopping reminder audio file in Chrome.",
+    "Switch to the audio shopping reminder tab.",
     "Turn on Chrome Live Caption.",
     "Play the audio and use the captions to identify the item to buy: Hounyoln Case for Dyson Corrale Hair Straightener Travel Bag.",
-    "Use the already-open shopping website.",
+    "Switch back to the shopping website tab.",
     "Find the Hounyoln Dyson Corrale hair straightener travel bag product on the website.",
     "Add the product to the shopping cart."
   ],

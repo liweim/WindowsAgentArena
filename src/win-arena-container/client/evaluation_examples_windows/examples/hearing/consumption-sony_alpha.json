@@ -3,14 +3,14 @@
   "snapshot": "chrome",
   "category": "consumption",
   "difficulty": "medium",
-  "instruction": "Your roommate sent an audio shopping reminder. Open the audio in Chrome, enable Live Caption, listen for the exact item to buy, then find that item on the shopping website and add it to the shopping cart.",
+  "instruction": "Use Chrome Live Caption to identify the exact item in the audio shopping reminder, then find it on the shopping website and add it to the cart.",
   "source": "synthetic",
   "transcript": "Avery, the gallery asked for higher resolution photos of the ceramics collection, so I am finally upgrading the camera kit. Please order the Sony Alpha a7R IV from the shopping site. I need the bundle with the 24-70 GM lens, not the body-only listing.",
   "gt_steps": [
-    "Open the Sony Alpha shopping reminder audio file in Chrome.",
+    "Switch to the audio shopping reminder tab.",
     "Turn on Chrome Live Caption.",
     "Play the audio and use the captions to identify the item to buy: Sony Alpha a7R IV Mirrorless Digital Camera (V2) with FE 24-70mm f/2.8 GM Lens Bundle with Backpack.",
-    "Use the already-open shopping website.",
+    "Switch back to the shopping website tab.",
     "Find the Sony Alpha a7R IV V2 camera bundle product on the website.",
     "Add the product to the shopping cart."
   ],

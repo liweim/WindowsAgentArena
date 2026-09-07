@@ -3,14 +3,14 @@
   "snapshot": "chrome",
   "category": "consumption",
   "difficulty": "medium",
-  "instruction": "Your roommate sent an audio shopping reminder. Open the audio in Chrome, enable Live Caption, listen for the exact item to buy, then find that item on the shopping website and add it to the shopping cart.",
+  "instruction": "Use Chrome Live Caption to identify the exact item in the audio shopping reminder, then find it on the shopping website and add it to the cart.",
   "source": "synthetic",
   "transcript": "Hey Mary, could you do me one grocery favor before the cookout tonight? I already grabbed the limes, mint, and snacks, but I forgot the mixer for the mocktails. Please order Q Mixers ginger ale from the online store, and make sure it is the twenty-four bottle pack. Thanks, that is the one everyone liked last time.",
   "gt_steps": [
-    "Open the ginger ale shopping reminder audio file in Chrome.",
+    "Switch to the audio shopping reminder tab.",
     "Turn on Chrome Live Caption.",
     "Play the audio and use the captions to identify the item to buy: Q Mixers Premium Ginger Ale, 6.7 fl oz, 24 bottles.",
-    "Use the already-open shopping website.",
+    "Switch back to the shopping website tab.",
     "Find the Q Mixers ginger ale product on the website.",
     "Add the product to the shopping cart."
   ],

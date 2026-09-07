@@ -3,14 +3,14 @@
   "snapshot": "chrome",
   "category": "health",
   "difficulty": "medium",
-  "instruction": "I am taking cholesterol-lowering medicine and need to know what I should not eat or drink. Turn on captions in the opened YouTube video, then watch it and save the answer in `answer.txt` on the Desktop.",
+  "instruction": "Turn on captions in the opened YouTube video, identify what should not be eaten or drunk while taking cholesterol-lowering medicine, then save the answer in `answer.txt` on the Desktop.",
   "source": "https://www.youtube.com/watch?v=Jy6ShnLDBWg",
   "gt_steps": [
     "Turn on captions in the YouTube player.",
     "Play the video and use the YouTube captions to identify what should not be eaten or drunk while taking cholesterol-lowering medicine.",
-    "Create answer.txt on the Desktop.",
-    "Write `grapefruit` in answer.txt.",
-    "Save and close answer.txt."
+    "Open Notepad.",
+    "Write `grapefruit`.",
+    "Save the file as `answer.txt` on the Desktop."
   ],
   "config": [
     {
@@ -49,7 +49,8 @@
   ],
   "trajectory": "trajectories\\",
   "related_apps": [
-    "chrome"
+    "chrome",
+    "notepad"
   ],
   "evaluator": {
     "func": [

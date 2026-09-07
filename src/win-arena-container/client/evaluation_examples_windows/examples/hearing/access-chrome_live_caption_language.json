@@ -9,8 +9,8 @@
   "gt_steps": [
     "Open chrome://settings/accessibility.",
     "Turn on Live Caption.",
-    "Open Manage languages under Supported caption languages and add Spanish.",
-    "Keep Live Caption enabled."
+    "Open Manage languages under Supported caption languages.",
+    "Add Spanish."
   ],
   "config": [
     {

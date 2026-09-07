@@ -3,13 +3,12 @@
   "snapshot": "chrome",
   "category": "information",
   "difficulty": "hard",
-  "instruction": "Enable Chrome Live Caption, watch the video, and write the hand-washing steps mentioned in the video in a sticky note. Each answer should contain the complete phrase exactly as it appears in the captions.",
+  "instruction": "Turn on captions in the opened YouTube video, identify the hand-washing steps mentioned there, then record them in a Sticky Note.",
   "source": "https://www.youtube.com/watch?v=UitUdTjhZz8",
   "gt_steps": [
-    "Open the hand-washing video in Chrome.",
-    "Turn on Chrome Live Caption.",
-    "Play the video and use Live Caption to identify the hand-washing steps.",
-    "Open Sticky Notes.",
+    "Turn on captions in the YouTube player.",
+    "Play the video and use the YouTube captions to identify the hand-washing steps.",
+    "Switch to Sticky Notes.",
     "Write the phrases in a sticky note: `warm water`, `soap`, `front and back`, `between your fingers`, `rinse and dry`."
   ],
   "config": [
@@ -66,32 +65,50 @@
     "sticky_notes"
   ],
   "evaluator": {
-    "func": "check_text_points",
-    "result": {
-      "type": "sticky_notes_content"
-    },
-    "expected": {
-      "type": "rule",
-      "rules": {
-        "ignore_case": true,
-        "points": [
-          [
-            "warm water"
-          ],
-          [
-            "soap"
-          ],
-          [
-            "front and back"
-          ],
-          [
-            "between your fingers"
-          ],
-          [
-            "rinse and dry"
-          ]
-        ]
+    "func": [
+      "check_text_points",
+      "exact_match"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "sticky_notes_content"
+      },
+      {
+        "type": "youtube_captions_enabled",
+        "url": "https://www.youtube.com/watch?v=UitUdTjhZz8"
       }
-    }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "ignore_case": true,
+          "points": [
+            [
+              "warm water"
+            ],
+            [
+              "soap"
+            ],
+            [
+              "front and back"
+            ],
+            [
+              "between your fingers"
+            ],
+            [
+              "rinse and dry"
+            ]
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "expected": "true"
+        }
+      }
+    ]
   }
 }

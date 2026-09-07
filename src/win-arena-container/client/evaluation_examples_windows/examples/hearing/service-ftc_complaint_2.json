@@ -3,12 +3,12 @@
   "snapshot": "chrome",
   "category": "service",
   "difficulty": "easy",
-  "instruction": "Turn on captions in the opened YouTube video, then open the website the video says to use for reporting identity theft in a new Chrome tab.",
+  "instruction": "Turn on captions in the opened YouTube video, then open the website the video says to use for reporting identity theft in Chrome.",
   "source": "https://www.youtube.com/watch?v=0GGDKL7TVPo",
   "gt_steps": [
     "Turn on captions in the YouTube player.",
     "Play the video and use the YouTube captions to identify the website used for reporting identity theft.",
-    "Open https://www.identitytheft.gov/ in a new Chrome tab."
+    "Open https://www.identitytheft.gov/ in Chrome."
   ],
   "config": [
     {

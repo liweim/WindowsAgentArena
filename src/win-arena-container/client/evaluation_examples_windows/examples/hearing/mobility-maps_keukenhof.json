@@ -3,11 +3,11 @@
   "snapshot": "chrome",
   "category": "mobility",
   "difficulty": "easy",
-  "instruction": "I really like the garden shown in the video. Turn on Chrome Live Caption, find out where it is, then open Google Maps and check its location.",
+  "instruction": "Turn on captions in the opened YouTube video, identify the garden shown there, then open its location in Google Maps.",
   "source": "https://www.youtube.com/watch?v=EnnurXLooZw",
   "gt_steps": [
-    "Enable Chrome Live Caption.",
-    "Watch the YouTube video and identify `Keukenhof` from the captions.",
+    "Turn on captions in the YouTube player.",
+    "Watch the YouTube video and identify `Keukenhof` from the YouTube captions.",
     "Open Google Maps.",
     "Search for `Keukenhof`."
   ],

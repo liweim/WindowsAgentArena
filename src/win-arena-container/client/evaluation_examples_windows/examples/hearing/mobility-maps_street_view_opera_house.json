@@ -3,11 +3,11 @@
   "snapshot": "chrome",
   "category": "mobility",
   "difficulty": "easy",
-  "instruction": "The scenic spot in the video looks beautiful. Turn on Chrome Live Caption, find out what it is, then open Google Maps and look around it in Street View.",
+  "instruction": "Turn on captions in the opened YouTube video, identify the scenic place shown there, then open Street View for it in Google Maps.",
   "source": "https://www.youtube.com/watch?v=KAYLcWhyWj4",
   "gt_steps": [
-    "Enable Chrome Live Caption.",
-    "Watch the YouTube video and identify `Sydney Opera House` from the captions.",
+    "Turn on captions in the YouTube player.",
+    "Watch the YouTube video and identify `Sydney Opera House` from the YouTube captions.",
     "Open Google Maps.",
     "Search for `Sydney Opera House`.",
     "Drag Pegman onto the map near Sydney Opera House."

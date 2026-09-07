@@ -3,11 +3,11 @@
   "snapshot": "chrome",
   "category": "management",
   "difficulty": "medium",
-  "instruction": "Enable Windows Live Captions, watch the video, determine how long the stand mixer should rest after the first kneading period, then use https://vclock.com to create a timer for that duration. Leave the timer visible in the browser.",
+  "instruction": "Turn on captions in the opened YouTube video, determine how long the stand mixer should rest after the first kneading period, then use https://vclock.com to create a timer for that duration. Leave the timer visible in the browser.",
   "source": "https://www.youtube.com/watch?v=52TNfrsSMuA",
   "gt_steps": [
-    "Turn on Windows Live captions.",
-    "Watch the YouTube video and use the live captions to determine that the stand mixer should rest for 5 minutes after the first kneading period.",
+    "Turn on captions in the YouTube player.",
+    "Watch the YouTube video and use the YouTube captions to determine that the stand mixer should rest for 5 minutes after the first kneading period.",
     "Open https://vclock.com in the browser.",
     "Click the Timer page.",
     "Create and start a 5 minute timer.",
@@ -53,17 +53,35 @@
     "chrome"
   ],
   "evaluator": {
-    "func": "is_expected_url_pattern_match",
-    "result": {
-      "type": "active_tab_info_simple"
-    },
-    "expected": {
-      "type": "rule",
-      "rules": {
-        "expected": [
-          "https?://(www\\.)?vclock\\.com/timer/#countdown=00:05:00(&|$)"
-        ]
+    "func": [
+      "is_expected_url_pattern_match",
+      "exact_match"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "active_tab_info_simple"
+      },
+      {
+        "type": "youtube_captions_enabled",
+        "url": "https://www.youtube.com/watch?v=52TNfrsSMuA"
       }
-    }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "expected": [
+            "https?://(www\\.)?vclock\\.com/timer/#countdown=00:05:00(&|$)"
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "expected": "true"
+        }
+      }
+    ]
   }
 }
