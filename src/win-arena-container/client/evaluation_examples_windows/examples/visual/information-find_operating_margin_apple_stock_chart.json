@@ -4,16 +4,14 @@
   "snapshot": "chrome",
   "category": "information",
   "difficulty": "hard",
-  "instruction": "Turn on a screen reader. Use the opened Apple financial report PDF. Use the screen reader to locate the Margin and Efficiency Analysis chart and find the Q3 2025 Operating Margin value. Open Notepad and write the operating margin percentage value. Save it in answer.txt on Desktop and leave everything open.",
-  "source": "synthetic",
+  "instruction": "Turn on Windows Narrator. Use the opened Apple financial report PDF to find the Q3 2025 Operating Margin in the Margin and Efficiency Analysis chart. Save the exact percentage in `answer.txt` on the Desktop and leave the report open.",
+  "source": "Local PDF: assets/Apple-Inc.-Full-Year-2025-Report-Summary.pdf",
   "gt_steps": [
     "Turn on Windows Narrator.",
-    "Navigate through the PDF.",
-    "Find the Margin and Efficiency Analysis chart.",
-    "Locate the Q3 2025 Operating Margin value from the chart.",
-    "Open Notepad.",
-    "Write '31.30%' in Notepad.",
-    "Save it in answer.txt and leave everything open."
+    "Find the Margin and Efficiency Analysis chart in the Apple report PDF.",
+    "Identify the Q3 2025 Operating Margin as 31.30%.",
+    "Open Notepad and write 31.30%.",
+    "Save the file as answer.txt on the Desktop."
   ],
   "config": [
     {
@@ -64,13 +62,14 @@
   ],
   "trajectory": "trajectories\\",
   "related_apps": [
+    "narrator",
     "chrome",
-    "basic_os"
+    "notepad"
   ],
   "evaluator": {
     "func": [
       "check_narrator_enabled",
-      "check_include_exclude"
+      "exact_match"
     ],
     "conj": "and",
     "result": [
@@ -78,9 +77,10 @@
         "type": "narrator_status"
       },
       {
-        "type": "vm_file",
-        "path": "C:\\Users\\Docker\\Desktop\\answer.txt",
-        "dest": "answer.txt"
+        "type": "is_file_saved_desktop",
+        "filename": "answer.txt",
+        "textcontent": "31.30%",
+        "exact": true
       }
     ],
     "expected": [
@@ -91,9 +91,7 @@
       {
         "type": "rule",
         "rules": {
-          "include": [
-            "31.3"
-          ]
+          "expected": "true"
         }
       }
     ]

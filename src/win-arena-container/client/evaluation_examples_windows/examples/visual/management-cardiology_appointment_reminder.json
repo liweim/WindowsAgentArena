@@ -5,7 +5,7 @@
   "snapshot": "windows",
   "category": "management",
   "difficulty": "medium",
-  "instruction": "Enable Windows Narrator as a visual accessibility aid and keep it enabled throughout the task. Open the provided AppointmentLetter.docx in Microsoft Word or LibreOffice Writer and review the densely formatted appointment information. Then open Thunderbird Calendar and create an event named `Cardiology Appointment` for the appointment date and time shown in the letter. Set the location to the full clinic location shown in the letter and configure a reminder for exactly one day before the appointment. Save the event.",
+  "instruction": "Turn on Windows Narrator and keep it enabled. Review `AppointmentLetter.docx` in LibreOffice Writer, then create a Thunderbird Calendar event titled `Cardiology Appointment` for the appointment date and time in the letter. Use the full clinic location and set a reminder exactly one day before the appointment.",
   "source": "Local Document: assets/AppointmentLetter.docx. Adapted from the NHS England patient appointment confirmation template: https://www.england.nhs.uk/wp-content/uploads/2023/02/B2012iii-patient-letter-template-appointment-confirmation.docx",
   "gt_steps": [
     "Enable Windows Narrator.",
@@ -96,9 +96,8 @@
         "shell": true
       },
       {
-        "type": "vm_file",
-        "path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release\\calendar-data\\local.sqlite",
-        "dest": "thunderbird-calendar.sqlite"
+        "type": "thunderbird_calendar_events",
+        "profile_path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release"
       }
     ],
     "expected": [
@@ -117,7 +116,9 @@
         "type": "rule",
         "rules": {
           "title": "Cardiology Appointment",
-          "start": "2026-10-20 10:30",
+          "date": "2026-10-20",
+          "hour": 10,
+          "minute": 30,
           "location": "Cardiology Clinic, Level 3, Riverside Medical Centre",
           "reminder_minutes_before": 1440
         }

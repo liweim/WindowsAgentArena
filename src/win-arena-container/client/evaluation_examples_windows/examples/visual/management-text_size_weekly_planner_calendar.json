@@ -21,7 +21,8 @@
     "Create Career Adviser Appointment on 13 November 2026 at 10:30 AM for 30 minutes at UNSW Careers Office.",
     "Create Car Service Booking on 14 November 2026 at 1:00 PM for 45 minutes at City Toyota Service Centre.",
     "Save all six calendar events.",
-    "Keep Windows text size at 150%."  ],
+    "Keep Windows text size at 150%."
+  ],
   "config": [
     {
       "type": "upload_file",
@@ -77,25 +78,50 @@
   ],
   "trajectory": "trajectories\\",
   "related_apps": [
-    "windows_settings",
+    "settings",
     "libreoffice_writer",
-    "thunderbird"  ],
+    "thunderbird"
+  ],
   "evaluator": {
     "func": [
       "check_include_exclude",
-      "check_thunderbird_calendar_events"
+      "check_thunderbird_calendar_event",
+      "check_thunderbird_calendar_event",
+      "check_thunderbird_calendar_event",
+      "check_thunderbird_calendar_event",
+      "check_thunderbird_calendar_event",
+      "check_thunderbird_calendar_event"
     ],
     "conj": "and",
     "result": [
       {
         "type": "vm_command_line",
-        "command": "powershell -NoProfile -Command \"$v=(Get-ItemProperty -Path 'HKCU:\\Software\\Microsoft\\Accessibility' -Name TextScaleFactor -ErrorAction SilentlyContinue).TextScaleFactor; if ($v -eq 150) { Write-Output 'TEXT_SIZE_150' } else { Write-Output ('TEXT_SIZE_' + $v) }\"",
+        "command": "powershell -NoProfile -Command \"$v=(Get-ItemProperty -Path 'HKCU:\\\\Software\\\\Microsoft\\\\Accessibility' -Name TextScaleFactor -ErrorAction SilentlyContinue).TextScaleFactor; if ($v -eq 150) { Write-Output 'TEXT_SIZE_150' } else { Write-Output ('TEXT_SIZE_' + $v) }\"",
         "shell": true
       },
       {
-        "type": "vm_file",
-        "path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release\\calendar-data\\local.sqlite",
-        "dest": "thunderbird-calendar.sqlite"
+        "type": "thunderbird_calendar_events",
+        "profile_path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release"
+      },
+      {
+        "type": "thunderbird_calendar_events",
+        "profile_path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release"
+      },
+      {
+        "type": "thunderbird_calendar_events",
+        "profile_path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release"
+      },
+      {
+        "type": "thunderbird_calendar_events",
+        "profile_path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release"
+      },
+      {
+        "type": "thunderbird_calendar_events",
+        "profile_path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release"
+      },
+      {
+        "type": "thunderbird_calendar_events",
+        "profile_path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release"
       }
     ],
     "expected": [
@@ -116,44 +142,67 @@
       {
         "type": "rule",
         "rules": {
-          "events": [
-            {
-              "title": "Dental Check-up",
-              "start": "2026-11-09 09:00",
-              "duration_minutes": 30,
-              "location": "Bright Smile Dental, Suite 4"
-            },
-            {
-              "title": "Honours Supervisor Meeting",
-              "start": "2026-11-10 14:30",
-              "duration_minutes": 45,
-              "location": "UNSW Library, Room 215"
-            },
-            {
-              "title": "Physiotherapy Session",
-              "start": "2026-11-11 11:15",
-              "duration_minutes": 30,
-              "location": "Harbour Health Clinic"
-            },
-            {
-              "title": "Project Team Review",
-              "start": "2026-11-12 16:00",
-              "duration_minutes": 60,
-              "location": "Online – Teams"
-            },
-            {
-              "title": "Career Adviser Appointment",
-              "start": "2026-11-13 10:30",
-              "duration_minutes": 30,
-              "location": "UNSW Careers Office"
-            },
-            {
-              "title": "Car Service Booking",
-              "start": "2026-11-14 13:00",
-              "duration_minutes": 45,
-              "location": "City Toyota Service Centre"
-            }
-          ]
+          "title": "Dental Check-up",
+          "date": "2026-11-09",
+          "hour": 9,
+          "minute": 0,
+          "duration_minutes": 30,
+          "location": "Bright Smile Dental, Suite 4"
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "title": "Honours Supervisor Meeting",
+          "date": "2026-11-10",
+          "hour": 14,
+          "minute": 30,
+          "duration_minutes": 45,
+          "location": "UNSW Library, Room 215"
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "title": "Physiotherapy Session",
+          "date": "2026-11-11",
+          "hour": 11,
+          "minute": 15,
+          "duration_minutes": 30,
+          "location": "Harbour Health Clinic"
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "title": "Project Team Review",
+          "date": "2026-11-12",
+          "hour": 16,
+          "minute": 0,
+          "duration_minutes": 60,
+          "location": "Online – Teams"
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "title": "Career Adviser Appointment",
+          "date": "2026-11-13",
+          "hour": 10,
+          "minute": 30,
+          "duration_minutes": 30,
+          "location": "UNSW Careers Office"
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "title": "Car Service Booking",
+          "date": "2026-11-14",
+          "hour": 13,
+          "minute": 0,
+          "duration_minutes": 45,
+          "location": "City Toyota Service Centre"
         }
       }
     ]

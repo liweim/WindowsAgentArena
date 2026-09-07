@@ -5,8 +5,8 @@
   "snapshot": "chrome",
   "category": "mobility",
   "difficulty": "medium",
-  "instruction": "Turn on a screen reader. Use it to navigate Google Maps and find walking directions from Circular Quay Station to the Sydney Opera House. Leave the walking directions open.",
-  "source": "synthetic",
+  "instruction": "Turn on Windows Narrator. Use it to navigate Google Maps and find walking directions from Circular Quay Station to the Sydney Opera House. Leave the walking directions open.",
+  "source": "Google Maps",
   "gt_steps": [
     "Open Google Maps in Chrome.",
     "Turn on Windows Narrator.",
@@ -55,8 +55,8 @@
   ],
   "trajectory": "trajectories\\",
   "related_apps": [
-    "chrome",
-    "basic_os"
+    "narrator",
+    "chrome"
   ],
   "evaluator": {
     "func": [

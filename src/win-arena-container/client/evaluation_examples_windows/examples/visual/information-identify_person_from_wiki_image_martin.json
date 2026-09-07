@@ -4,8 +4,8 @@
   "snapshot": "chrome",
   "category": "information",
   "difficulty": "medium",
-  "instruction": "Turn on a screen reader. Use the Wikipedia page already open in Chrome to identify the person shown in the first image. Open the Wikipedia page of the person shown in the image and leave that page open.",
-  "source": "synthetic",
+  "instruction": "Turn on Windows Narrator. Use the Wikipedia page already open in Chrome to identify the person shown in the first image, open that person's Wikipedia page, and leave it open.",
+  "source": "WebArena self-hosted Wikipedia/Kiwix page: I Have a Dream",
   "gt_steps": [
     "Open the Wikipedia page about the I Have a Dream speech.",
     "Turn on Windows Narrator.",
@@ -21,7 +21,7 @@
       "parameters": {
         "command": [
           "google-chrome",
-          "--remote-debugging-port:1337",
+          "--remote-debugging-port=1337",
           "--force-renderer-accessibility"
         ]
       }
@@ -53,8 +53,8 @@
   ],
   "trajectory": "trajectories\\",
   "related_apps": [
-    "chrome",
-    "basic_os"
+    "narrator",
+    "chrome"
   ],
   "evaluator": {
     "func": [

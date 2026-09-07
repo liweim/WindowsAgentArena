@@ -1,6 +1,6 @@
 {
   "id": "management-narrator_utility_bill_summary",
-  "_comment": "You need to specify how the data should be organized in the table. Ideally, the provider names should be used as column headers, and the row names should be provided so that the results can be entered in the corresponding fields.",
+  "_comment": "",
   "manually_evaluated": false,
   "snapshot": "windows",
   "category": "management",
@@ -69,12 +69,13 @@
   "trajectory": "trajectories\\",
   "related_apps": [
     "narrator",
-    "libreoffice_calc",
-    "pdf_viewer"  ],
+    "msedge",
+    "libreoffice_calc"
+  ],
   "evaluator": {
     "func": [
       "check_include_exclude",
-      "check_sheet"
+      "check_ods_cell_values"
     ],
     "conj": "and",
     "result": [
@@ -102,18 +103,20 @@
         }
       },
       {
-        "type": "spreadsheet",
-        "sheet_name": "Bill Summary",
-        "cells": {
-          "B4": "BluePeak Utilities",
-          "C4": "18 August 2026",
-          "D4": "$184.65",
-          "B5": "ClearFlow Water Services",
-          "C5": "2 September 2026",
-          "D5": "$96.40",
-          "B6": "GreenFlame Energy",
-          "C6": "7 September 2026",
-          "D6": "$128.75"
+        "type": "rule",
+        "rules": {
+          "sheet": "Bill Summary",
+          "cells": {
+            "B4": "BluePeak Utilities",
+            "C4": "18 August 2026",
+            "D4": "$184.65",
+            "B5": "ClearFlow Water Services",
+            "C5": "2 September 2026",
+            "D5": "$96.40",
+            "B6": "GreenFlame Energy",
+            "C6": "7 September 2026",
+            "D6": "$128.75"
+          }
         }
       }
     ]

@@ -4,17 +4,16 @@
   "snapshot": "base_setup",
   "category": "access",
   "difficulty": "easy",
-  "instruction": "Open magnifier UI with Windows Key + Plus Sign (+).",
-  "source": "human",
+  "instruction": "Open Windows Magnifier and leave it open.",
+  "source": "Windows Magnifier",
   "gt_steps": [
-    "Press Windows Key + Plus Sign (+).",
-    "Magnifier UI shows up."
+    "Open Windows Magnifier.",
+    "Leave Magnifier open."
   ],
   "config": [],
   "trajectory": "trajectories/",
   "related_apps": [
-    "settings",
-    "basic_os"
+    "magnifier"
   ],
   "evaluator": {
     "func": "check_magnifier_ui_open",

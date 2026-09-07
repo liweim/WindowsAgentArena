@@ -4,8 +4,8 @@
   "snapshot": "chrome",
   "category": "consumption",
   "difficulty": "medium",
-  "instruction": "Turn on a screen reader. Use it to read the opened shopping reminder PDF in Chrome and identify the requested product. Search for that product on the opened shopping website, add exactly one unit to the shopping cart, and leave the shopping cart page open.",
-  "source": "synthetic",
+  "instruction": "Turn on Windows Narrator. Use it to read the opened shopping reminder PDF in Chrome and identify the requested product. Search for that product on the opened shopping website, add exactly one unit to the shopping cart, and leave the shopping cart page open.",
+  "source": "Local PDF: assets/Consumption-marshmallow_bunnies_reminder.pdf",
   "gt_steps": [
     "Open the shopping reminder PDF in Chrome.",
     "Turn on Windows Narrator.",
@@ -68,8 +68,8 @@
   ],
   "trajectory": "trajectories\\",
   "related_apps": [
-    "chrome",
-    "basic_os"
+    "narrator",
+    "chrome"
   ],
   "evaluator": {
     "func": [
@@ -101,7 +101,10 @@
         "type": "rule",
         "rules": {
           "items": [
-            "Melster Candies Chocolatey Covered Chocolate Flavored Marshmallow Bunnies"
+            {
+              "name": "Melster Candies Chocolatey Covered Chocolate Flavored Marshmallow Bunnies",
+              "quantity": 1
+            }
           ]
         }
       },

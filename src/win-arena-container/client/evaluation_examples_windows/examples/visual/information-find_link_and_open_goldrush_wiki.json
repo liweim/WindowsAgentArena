@@ -4,14 +4,13 @@
   "snapshot": "chrome",
   "category": "information",
   "difficulty": "medium",
-  "instruction": "Turn on a screen reader. Use it to read the opened Gold rush Wikipedia page on chrome, and find information about the second gold rush in history. Open the link for that gold rush and leave the page open.",
-  "source": "synthetic",
+  "instruction": "Turn on Windows Narrator. Use it to read the Gold rush Wikipedia page already open in Chrome, identify the second gold rush in history, open that gold rush's linked Wikipedia page, and leave it open.",
+  "source": "WebArena self-hosted Wikipedia/Kiwix page: Gold rush",
   "gt_steps": [
-    "Open the Gold rush Wikipedia page in Chrome.",
     "Turn on Windows Narrator.",
-    "Use the screen reader to navigate the Gold rush article.",
-    "Find the information about the second gold rush in history.",
-    "Open the linked Wikipedia page for the second gold rush.",
+    "Read the Gold rush Wikipedia article in Chrome.",
+    "Identify the second gold rush as the Carolina Gold Rush.",
+    "Open the linked Carolina Gold Rush Wikipedia page.",
     "Leave that page open."
   ],
   "config": [
@@ -52,8 +51,8 @@
   ],
   "trajectory": "trajectories\\",
   "related_apps": [
-    "chrome",
-    "basic_os"
+    "narrator",
+    "chrome"
   ],
   "evaluator": {
     "func": [

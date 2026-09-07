@@ -4,18 +4,15 @@
   "snapshot": "chrome",
   "category": "information",
   "difficulty": "medium",
-  "instruction": "Turn on a screen reader. Compare the densities of gold and aluminium using the two Wikipedia pages already open in Chrome. Determine which metal is denser, then open Notepad and write the name of the denser metal on the first line and its density on the second line.",
-  "source": "synthetic",
+  "instruction": "Turn on Windows Narrator. Compare the densities of gold and aluminium using the two Wikipedia pages already open in Chrome. Save `answer.txt` on the Desktop with the denser metal name on the first line and its density value on the second line.",
+  "source": "WebArena self-hosted Wikipedia/Kiwix pages for Gold and Aluminium",
   "gt_steps": [
-    "Open the Gold Wikipedia page and Aluminium Wikipedia page in Chrome.",
     "Turn on Windows Narrator.",
-    "Use the screen reader to find the density information on the Gold page.",
-    "Use the screen reader to find the density information on the Aluminium page.",
-    "Compare the density values.",
-    "Determine that gold is denser than aluminium.",
+    "Compare the density values on the Gold and Aluminium Wikipedia pages.",
+    "Identify Gold as the denser metal with density 19.3 g/cm³.",
     "Open Notepad.",
-    "Write 'Gold' on the first line.",
-    "Write '19.3' on the second line."
+    "Write Gold on the first line and 19.3 on the second line.",
+    "Save the file as answer.txt on the Desktop."
   ],
   "config": [
     {
@@ -48,21 +45,22 @@
       "type": "chrome_open_tabs",
       "parameters": {
         "urls_to_open": [
-          "http://host.docker.internal:8888/wiki/Gold",
-          "http://host.docker.internal:8888/wiki/Aluminium"
+          "http://host.docker.internal:8888/wikipedia_en_all_maxi_2022-05/A/Gold",
+          "http://host.docker.internal:8888/wikipedia_en_all_maxi_2022-05/A/Aluminium"
         ]
       }
     }
   ],
   "trajectory": "trajectories\\",
   "related_apps": [
+    "narrator",
     "chrome",
-    "basic_os"
+    "notepad"
   ],
   "evaluator": {
     "func": [
       "check_narrator_enabled",
-      "check_include_exclude"
+      "exact_match"
     ],
     "conj": "and",
     "result": [
@@ -70,8 +68,10 @@
         "type": "narrator_status"
       },
       {
-        "type": "file",
-        "path": "C:\\Users\\Docker\\Desktop\\answer.txt"
+        "type": "is_file_saved_desktop",
+        "filename": "answer.txt",
+        "textcontent": "Gold\n19.3",
+        "exact": true
       }
     ],
     "expected": [
@@ -82,15 +82,7 @@
       {
         "type": "rule",
         "rules": {
-          "include": [
-            "Gold",
-            "19.3"
-          ],
-          "exclude": [
-            "Aluminium",
-            "Aluminum",
-            "2.70"
-          ]
+          "expected": "true"
         }
       }
     ]

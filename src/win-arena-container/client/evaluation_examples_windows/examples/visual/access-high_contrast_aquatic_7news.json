@@ -4,8 +4,8 @@
   "snapshot": "windows",
   "category": "access",
   "difficulty": "easy",
-  "instruction": "Enable High Contrast mode to Aquatic. Open Google Chrome and navigate to https://7news.com.au/. Leave the 7News homepage open with High Contrast mode enabled.",
-  "source": "human",
+  "instruction": "Set the Windows contrast theme to Aquatic, open https://7news.com.au/ in Chrome, and leave the 7News homepage open with the Aquatic theme enabled.",
+  "source": "Windows Settings > Accessibility > Contrast themes; https://7news.com.au/",
   "gt_steps": [
     "Open Windows Settings.",
     "Navigate to Accessibility settings.",
@@ -56,7 +56,7 @@
         "type": "vm_command_line",
         "command": "reg query \"HKCU\\Control Panel\\Accessibility\\HighContrast\" /v Flags",
         "shell": true
-        },
+      },
       {
         "type": "vm_command_line",
         "command": "reg query \"HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\" /v CurrentTheme",

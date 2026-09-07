@@ -4,15 +4,12 @@
   "snapshot": "libreoffice_writer",
   "category": "information",
   "difficulty": "medium",
-  "instruction": "The image in this file does not have alt text for voice over feature. Add descriptive alt text for the image. Save the file after adding alt text, and if prompt shows up to choose between odt and word format, choose word format to save the file.",
-  "source": "https://www.acquia.com/blog/accessibility-issues-visual-impairmenthttps://www.acquia.com/blog/accessibility-issues-visual-impairment",
+  "instruction": "Add descriptive alt text to the image in the provided DOCX file so it describes the visible scene, then save the file in its existing Word format.",
+  "source": "Local Document: assets/information-image_to_text_cat.docx",
   "gt_steps": [
-    "Close if the pop up window for Libre tour shows up.",
-    "Select the image (simply click the image to focus).",
-    "Go to Format > Alt Text in the tabs.",
-    "Fill out the alt text description as 'A cat sitting on the hood of a red car photo'.",
-    "Click 'OK' and save the file.",
-    "If prompt shows up to choose between odt and word format, choose word format to save the file."
+    "Select the image in information-image_to_text_cat.docx.",
+    "Add alt text describing a cat sitting on the hood of a red car.",
+    "Save the DOCX file in Word format."
   ],
   "config": [
     {
@@ -47,26 +44,26 @@
     "expected": {
       "type": "rule",
       "rules": {
-          "ignore_case": true,
-          "points": [
-            [
-              "cat",
-              "the cat"
-            ],
-            [
-              "red"
-            ],
-            [
-              "car",
-              "the car",
-              "hood of the car"
-            ],
-            [
-              "sit",
-              "sitting"
-            ]
+        "ignore_case": true,
+        "points": [
+          [
+            "cat",
+            "the cat"
+          ],
+          [
+            "red"
+          ],
+          [
+            "car",
+            "the car",
+            "hood of the car"
+          ],
+          [
+            "sit",
+            "sitting"
           ]
-        }
+        ]
+      }
     }
   },
   "proxy": false,

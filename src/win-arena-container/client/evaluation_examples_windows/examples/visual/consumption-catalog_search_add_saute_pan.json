@@ -4,8 +4,8 @@
   "snapshot": "chrome",
   "category": "consumption",
   "difficulty": "medium",
-  "instruction": "Turn on a screen reader. Use it to read the opened kitchen catalogue in Chrome and identify the featured cookware, including its brand and capacity. Find the matching product on the opened shopping website, add exactly one unit to the shopping cart, and leave the shopping cart page open.",
-  "source": "synthetic",
+  "instruction": "Turn on Windows Narrator. Use it to read the opened kitchen catalogue in Chrome and identify the featured cookware, including its brand and capacity. Find the matching product on the opened shopping website, add exactly one unit to the shopping cart, and leave the shopping cart page open.",
+  "source": "Local HTML: assets/Consumption-kitchen_catalog.html",
   "gt_steps": [
     "Open the kitchen catalogue in Chrome.",
     "Turn on Windows Narrator.",
@@ -69,8 +69,8 @@
   ],
   "trajectory": "trajectories\\",
   "related_apps": [
-    "chrome",
-    "basic_os"
+    "narrator",
+    "chrome"
   ],
   "evaluator": {
     "func": [
@@ -102,7 +102,10 @@
         "type": "rule",
         "rules": {
           "items": [
-            "Thunder Group Saute Pan 7 Quart"
+            {
+              "name": "Thunder Group Saute Pan 7 Quart",
+              "quantity": 1
+            }
           ]
         }
       },

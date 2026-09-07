@@ -1,17 +1,17 @@
 {
   "id": "consumption-swingset_price_filter",
-  "_comment": "Use the self-hosted shopping service, since the data is more stable.",
+  "_comment": "",
   "snapshot": "chrome",
   "category": "consumption",
   "difficulty": "easy",
-  "instruction": "Turn on Window Narrator from Accessibility Setting. Open https://www.smythstoys.com/, and search for swing set under 49.99 pounds. Leave the search result page open",
-  "source": "https://www.jbidigital.co.uk/blog/jbis-5-favourite-examples-of-accessible-and-inaccessible-websites/",
+  "instruction": "Turn on Windows Narrator. In Chrome, open https://www.smythstoys.com/, find swing sets priced at no more than £49.99, and leave the filtered results page open.",
+  "source": "https://www.smythstoys.com/",
   "gt_steps": [
-    "Enable Window's Narrator.",
-    "Open https://www.smythstoys.com/",
-    "Find swing set",
-    "Filter the price to be under 49.99 pounds",
-    "Leave the search result page open in the active tab."
+    "Turn on Windows Narrator.",
+    "Open https://www.smythstoys.com/ in Chrome.",
+    "Find the swing-set category or search results.",
+    "Set the maximum price to £49.99.",
+    "Leave the filtered results page open."
   ],
   "config": [
     {
@@ -44,6 +44,7 @@
   ],
   "trajectory": "trajectories\\",
   "related_apps": [
+    "narrator",
     "chrome"
   ],
   "evaluator": {

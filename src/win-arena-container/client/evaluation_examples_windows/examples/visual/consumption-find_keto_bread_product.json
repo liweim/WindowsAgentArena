@@ -4,8 +4,8 @@
   "snapshot": "chrome",
   "category": "consumption",
   "difficulty": "easy",
-  "instruction": "Turn on a screen reader. Use it to read the provided shopping note in Chrome and identify the requested product. Find that product on the opened shopping website, open its product page, and leave the page open.",
-  "source": "synthetic",
+  "instruction": "Turn on Windows Narrator. Use it to read the provided shopping note in Chrome and identify the requested product. Find that product on the opened shopping website, open its product page, and leave the page open.",
+  "source": "Local HTML: assets/consumption-find_keto_bread_product.html",
   "gt_steps": [
     "Open the provided shopping note in Chrome.",
     "Turn on Windows Narrator.",
@@ -22,8 +22,8 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/Consumption-keto_bread_shopping_note.html",
-            "path": "C:\\Users\\Docker\\Desktop\\Consumption-keto_bread_shopping_note.html"
+            "local_path": "assets/consumption-find_keto_bread_product.html",
+            "path": "C:\\Users\\Docker\\Desktop\\consumption-find_keto_bread_product.html"
           }
         ]
       }
@@ -58,7 +58,7 @@
       "type": "chrome_open_tabs",
       "parameters": {
         "urls_to_open": [
-          "file:///C:/Users/Docker/Desktop/Consumption-keto_bread_shopping_note.html",
+          "file:///C:/Users/Docker/Desktop/consumption-find_keto_bread_product.html",
           "http://host.docker.internal:7770"
         ]
       }
@@ -66,8 +66,8 @@
   ],
   "trajectory": "trajectories\\",
   "related_apps": [
-    "chrome",
-    "basic_os"
+    "narrator",
+    "chrome"
   ],
   "evaluator": {
     "func": [
