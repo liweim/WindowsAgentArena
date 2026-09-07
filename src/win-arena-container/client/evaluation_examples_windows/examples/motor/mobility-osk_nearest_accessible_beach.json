@@ -5,7 +5,7 @@
   "snapshot": "chrome",
   "category": "mobility",
   "difficulty": "hard",
-  "instruction": "Enable the Windows On-Screen Keyboard as a motor accessibility aid and keep it open throughout the task. I live in the Bondi, Australia area. From the provided Accessible Beaches NSW directory, use the map to find the nearest beach within 5 km of my area. Read more about the beach and save the beach name and all available accessibility features in a text file named `NearestBeach.txt` on the Desktop. Write the answer in 7 lines, with one item per line. Do not paraphrase the accessibility features.",
+  "instruction": "Enable the Windows On-Screen Keyboard as a motor accessibility aid and keep it open throughout the task. I live in the Bondi, Australia area. From the provided Accessible Beaches NSW directory, use the map to find the nearest beach within 5 km of my area. Read more about the beach and save the beach name and all available accessibility features in a text file named `NearestBeach.txt` on the Desktop. Write the beach name on the first line and all six listed accessibility features on the next six lines, preserving the feature order shown on the directory. Do not paraphrase the accessibility features.",
   "source": "https://accessiblebeaches.com/beach-directory/category/NSW",
   "gt_steps": [
     "Enable the Windows On-Screen Keyboard and keep it open.",
@@ -21,7 +21,7 @@
     "Write `Accessible Bathroom` on the fourth line.",
     "Write `Accessible Shower` on the fifth line.",
     "Write `Accessible Parking` on the sixth line.",
-    "Write `Changing Places facility` on the seventh line.",
+    "Write `Retail within 150 metres` on the seventh line.",
     "Do not paraphrase any of the accessibility features.",
     "Save the file as `NearestBeach.txt` on the Desktop.",
     "Leave the saved file on the Desktop.",
@@ -65,7 +65,7 @@
   "evaluator": {
     "func": [
       "check_include_exclude",
-      "multi_answer_file_saved_desktop"
+      "exact_match"
     ],
     "conj": "and",
     "result": [
@@ -75,18 +75,10 @@
         "shell": true
       },
       {
-        "type": "multi_answer_file_saved_desktop",
+        "type": "is_file_saved_desktop",
         "filename": "NearestBeach.txt",
-        "answers": [
-          "Bondi Beach",
-          "Accessible Beach Matting",
-          "Beach Wheelchair availability",
-          "Accessible Bathroom",
-          "Accessible Shower",
-          "Accessible Parking",
-          "Changing Places facility"
-        ],
-        "case_sensitive": false
+        "textcontent": "Bondi Beach\nAccessible Beach Matting\nBeach Wheelchair availability\nAccessible Bathroom\nAccessible Shower\nAccessible Parking\nRetail within 150 metres",
+        "exact": true
       }
     ],
     "expected": [
@@ -104,7 +96,7 @@
       {
         "type": "rule",
         "rules": {
-          "expected": 1.0
+          "expected": "true"
         }
       }
     ]

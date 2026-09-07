@@ -80,7 +80,8 @@
       {
         "type": "is_file_saved_desktop",
         "filename": "insulinTemperature.txt",
-        "textcontent": "36°F to 46°F"
+        "textcontent": "36°F to 46°F",
+        "exact": true
       }
     ],
     "expected": [

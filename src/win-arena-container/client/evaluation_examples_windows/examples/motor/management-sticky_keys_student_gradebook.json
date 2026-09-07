@@ -13,8 +13,8 @@
     "Open Grades.ods in LibreOffice Calc.",
     "Review the three students and their scores in cells A3:D5.",
     "Review the grading table in cells F2:H7.",
-    "Calculate each student's average score.",
-    "Assign each student the correct letter grade using the grading table.",
+    "Calculate the averages: Aisha Khan `90`, Ben Carter `78.6666666667`, Chloe Nguyen `70`.",
+    "Assign the grades: Aisha Khan `A`, Ben Carter `B`, Chloe Nguyen `C`.",
     "Enter the students, average scores, and letter grades in cells A10:C12.",
     "Sort the completed results by average score from highest to lowest.",
     "Verify that Aisha Khan appears first, Ben Carter appears second, and Chloe Nguyen appears third.",
@@ -61,8 +61,9 @@
         "shell": true
       },
       {
-        "type": "ods_file",
-        "path": "C:\\Users\\Docker\\Desktop\\Grades.ods"
+        "type": "vm_file",
+        "path": "C:\\Users\\Docker\\Desktop\\Grades.ods",
+        "dest": "Grades.ods"
       }
     ],
     "expected": [
@@ -83,10 +84,13 @@
           "sheet": "Grades",
           "cells": {
             "A10": "Aisha Khan",
+            "B10": 90,
             "C10": "A",
             "A11": "Ben Carter",
+            "B11": 78.6666666667,
             "C11": "B",
             "A12": "Chloe Nguyen",
+            "B12": 70,
             "C12": "C"
           }
         }

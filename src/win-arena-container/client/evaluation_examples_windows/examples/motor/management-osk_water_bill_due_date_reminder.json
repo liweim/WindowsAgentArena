@@ -1,9 +1,9 @@
 {
-  "id": "service-osk_water_bill_due_date_reminder",
+  "id": "management-osk_water_bill_due_date_reminder",
   "_comment": "",
   "manually_evaluated": false,
   "snapshot": "windows",
-  "category": "service",
+  "category": "management",
   "difficulty": "medium",
   "instruction": "Enable the Windows On-Screen Keyboard as a motor accessibility aid and keep it open throughout the task. Open the sample water bill PDF provided in Chrome and find the bill due date. In Thunderbird Calendar, create a 30-minute reminder at 10:00 AM three days before the bill is due. Set the title to `Water Bill Payment Reminder`. In the event description, write the bill due date using the format `Bill due date: MM/DD/YY`.",
   "source": "https://www.faypwc.com/managing-your-bill/",
@@ -120,9 +120,7 @@
       {
         "type": "rule",
         "rules": {
-          "year": 2024,
-          "month": 10,
-          "day": 29,
+          "date": "2024-10-29",
           "hour": 10,
           "minute": 0,
           "duration_minutes": 30,

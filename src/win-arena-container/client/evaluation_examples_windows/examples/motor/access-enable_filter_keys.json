@@ -4,10 +4,10 @@
   "snapshot": "windows",
   "category": "access",
   "difficulty": "easy",
-  "instruction": "I have limited hand dexterity, which can result in accidental repeated keystrokes. Please enable Filter Keys and keep it enabled.",
+  "instruction": "Enable Filter Keys and keep it enabled.",
   "source": "Settings > Accessibility > Keyboard > Filter Keys",
   "gt_steps": [
-   "Open Windows settings.",
+    "Open Windows settings.",
     "Navigate to Keyboard accessibility settings.",
     "Turn on the Filter Keys.",
     "Keep the Filter Keys enabled."

@@ -1,5 +1,5 @@
 {
-  "id": "service-osk-passport_application_post_office",
+  "id": "service-osk_passport_application_post_office",
   "_comment": "",
   "manually_evaluated": true,
   "snapshot": "chrome",
@@ -87,7 +87,8 @@
       {
         "type": "is_file_saved_desktop",
         "filename": "passportApplication.txt",
-        "textcontent": "Yes"
+        "textcontent": "Yes",
+        "exact": true
       }
     ],
     "expected": [

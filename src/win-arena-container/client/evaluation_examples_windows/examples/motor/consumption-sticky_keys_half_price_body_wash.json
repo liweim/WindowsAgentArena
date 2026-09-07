@@ -5,7 +5,7 @@
   "snapshot": "chrome",
   "category": "consumption",
   "difficulty": "medium",
-  "instruction": "Enable Windows Sticky Keys as a motor accessibility aid and keep it enabled throughout the task. The provided Coles catalogue PDF is already open in Chrome. Find every product with `Body Wash` in its full product name that costs less than $9. Write each full product name exactly as shown in the PDF, without paraphrasing, in a text file named `halfPriceBodyWash.txt` on the Desktop.",
+  "instruction": "Enable Windows Sticky Keys as a motor accessibility aid and keep it enabled throughout the task. The provided Coles catalogue PDF is already open in Chrome. Find every product with `Body Wash` in its full product name that costs less than $9. Write each full product name exactly as shown in the PDF, without paraphrasing, in a text file named `halfPriceBodyWash.txt` on the Desktop. Write one product per line in the order the products appear in the catalogue.",
   "source": "assets/COLNSWMETRO_220726_AQCAZRS1.pdf",
   "gt_steps": [
     "Enable Windows Sticky Keys.",
@@ -86,7 +86,8 @@
       {
         "type": "is_file_saved_desktop",
         "filename": "halfPriceBodyWash.txt",
-        "textcontent": "Palmolive Naturals Body Wash 1 Litre\nDove Serum Body Wash 300mL\nSukin Botanical Body Wash 1 Litre\nThankyou Body Wash 1 Litre\nNivea Shower Body Wash 1 Litre"
+        "textcontent": "Palmolive Naturals Body Wash 1 Litre\nDove Serum Body Wash 300mL\nSukin Botanical Body Wash 1 Litre\nThankyou Body Wash 1 Litre\nNivea Shower Body Wash 1 Litre",
+        "exact": true
       }
     ],
     "expected": [

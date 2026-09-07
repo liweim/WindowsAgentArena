@@ -5,11 +5,11 @@
   "snapshot": "windows",
   "category": "communication",
   "difficulty": "medium",
-  "instruction": "Enable the Windows On-Screen Keyboard as a motor accessibility aid and keep it enabled throughout the task. Open the provided MeetingAgenda.odt document in LibreOffice Writer and review the meeting details. Then compose a new email in Thunderbird to alice@example.com with the subject `Meeting Agenda`. In the email body, include the meeting date, time, location, all four agenda items, and the preparation requirement from the document. Save the email as a draft and do not send it.",
+  "instruction": "Enable the Windows On-Screen Keyboard as a motor accessibility aid and keep it open throughout the task. Open the provided MeetingAgenda.odt document in LibreOffice Writer and review the meeting details. Then compose a new email in Thunderbird to alice@example.com with the subject `Meeting Agenda`. In the email body, include the meeting date, time, location, all four agenda items, and the preparation requirement from the document. Save the email as a draft and do not send it.",
   "source": "Local Document: assets/MeetingAgenda.odt",
   "gt_steps": [
     "Enable the Windows On-Screen Keyboard.",
-    "Keep the On-Screen Keyboard enabled throughout the task.",
+    "Keep the On-Screen Keyboard open throughout the task.",
     "Open MeetingAgenda.odt in LibreOffice Writer.",
     "Identify the meeting date as 20 October 2026.",
     "Identify the meeting time as 10:00 AM to 11:00 AM.",
@@ -22,7 +22,7 @@
     "Include the meeting date, time, location, agenda items, and preparation requirement in the email body.",
     "Save the email as a draft.",
     "Do not send the email.",
-    "Keep the On-Screen Keyboard enabled."
+    "Keep the On-Screen Keyboard open."
   ],
   "config": [
     {
@@ -86,7 +86,8 @@
   "evaluator": {
     "func": [
       "check_include_exclude",
-      "check_thunderbird_email_composition"
+      "check_thunderbird_email_composition",
+      "check_thunderbird_email_absent"
     ],
     "conj": "and",
     "result": [
@@ -99,6 +100,11 @@
         "type": "vm_file",
         "path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release\\Mail\\Local Folders\\Drafts",
         "dest": "thunderbird-drafts.mbox"
+      },
+      {
+        "type": "vm_file",
+        "path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release\\Mail\\Local Folders\\Sent",
+        "dest": "thunderbird-sent.mbox"
       }
     ],
     "expected": [
@@ -155,6 +161,13 @@
               "updated task list"
             ]
           ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "to": "alice@example.com",
+          "subject": "Meeting Agenda"
         }
       }
     ]

@@ -4,7 +4,7 @@
   "snapshot": "windows",
   "category": "access",
   "difficulty": "easy",
-  "instruction": "I'm left-handed and would like to use my mouse more comfortably. Please change the primary mouse button to Right and leave it set that way.",
+  "instruction": "Set the primary mouse button to Right and leave it set that way.",
   "source": "Settings > Bluetooth & devices > Mouse > Primary mouse button",
   "gt_steps": [
     "Open Windows Settings.",

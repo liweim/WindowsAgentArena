@@ -14,7 +14,7 @@
     "Review the Amount Due and Status columns.",
     "Select cell B12.",
     "Enter a formula that sums the amounts for all rows whose status is `Unpaid`.",
-    "Verify the calculated total.",
+    "Verify that the calculated total in B12 is `648.49`.",
     "Save the spreadsheet.",
     "Keep Filter Keys enabled."
   ],
@@ -58,8 +58,9 @@
         "shell": true
       },
       {
-        "type": "ods_file",
-        "path": "C:\\Users\\Docker\\Desktop\\MonthlyBills.ods"
+        "type": "vm_file",
+        "path": "C:\\Users\\Docker\\Desktop\\MonthlyBills.ods",
+        "dest": "MonthlyBills.ods"
       }
     ],
     "expected": [

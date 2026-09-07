@@ -8,6 +8,7 @@ import operator
 import os
 import re
 import sqlite3
+import zipfile
 from numbers import Number
 from typing import Callable, Any, Union
 from typing import Dict, List, Pattern
@@ -191,6 +192,133 @@ def fuzzy_place_math(result_file_path, rules) -> float:
         return 0.
     return sum(fuzzy_score_list) / 3
 
+
+
+def check_ods_cell_values(result: str, rules: Dict[str, Any]) -> float:
+    """Check cell values (and optional formula presence) in an ODS spreadsheet."""
+    if result is None or not os.path.exists(result):
+        return 0.
+
+    expected_cells = rules.get("cells", {})
+    expected_formulas = rules.get("formulas", {})
+    if not expected_cells and not expected_formulas:
+        return 0.
+
+    sheet_name = rules.get("sheet")
+    tolerance = float(rules.get("tolerance", 1e-6))
+    ns = {
+        "office": "urn:oasis:names:tc:opendocument:xmlns:office:1.0",
+        "table": "urn:oasis:names:tc:opendocument:xmlns:table:1.0",
+        "text": "urn:oasis:names:tc:opendocument:xmlns:text:1.0",
+    }
+
+    def col_to_index(address: str) -> int:
+        match = re.fullmatch(r"([A-Za-z]+)([1-9][0-9]*)", address)
+        if not match:
+            raise ValueError(f"Invalid ODS cell address: {address}")
+        value = 0
+        for char in match.group(1).upper():
+            value = value * 26 + ord(char) - ord("A") + 1
+        return value
+
+    targets = set(expected_cells) | set(expected_formulas)
+    try:
+        target_positions = {
+            address: (int(re.search(r"[0-9]+$", address).group()), col_to_index(address))
+            for address in targets
+        }
+    except Exception:
+        return 0.
+
+    max_row = max((row for row, _ in target_positions.values()), default=0)
+    max_col = max((col for _, col in target_positions.values()), default=0)
+
+    try:
+        with zipfile.ZipFile(result) as archive:
+            content_xml = archive.read("content.xml")
+        root = lxml.etree.fromstring(content_xml)
+    except Exception as exc:
+        logger.warning("Failed to parse ODS %s: %s", result, exc)
+        return 0.
+
+    tables = root.xpath("//table:table", namespaces=ns)
+    if sheet_name:
+        tables = [
+            table for table in tables
+            if table.get(f"{{{ns['table']}}}name") == sheet_name
+        ]
+    if not tables:
+        return 0.
+    table = tables[0]
+
+    actual = {}
+    row_index = 1
+    for row in table.xpath("./table:table-row", namespaces=ns):
+        row_repeat = int(row.get(f"{{{ns['table']}}}number-rows-repeated", "1"))
+        if row_index > max_row:
+            break
+        row_end = min(row_index + row_repeat - 1, max_row)
+        relevant_rows = range(row_index, row_end + 1)
+
+        col_index = 1
+        cells = row.xpath("./table:table-cell | ./table:covered-table-cell", namespaces=ns)
+        for cell in cells:
+            col_repeat = int(cell.get(f"{{{ns['table']}}}number-columns-repeated", "1"))
+            if col_index > max_col:
+                break
+            col_end = min(col_index + col_repeat - 1, max_col)
+            relevant_cols = range(col_index, col_end + 1)
+
+            value_type = cell.get(f"{{{ns['office']}}}value-type", "")
+            office_value = cell.get(f"{{{ns['office']}}}value")
+            date_value = cell.get(f"{{{ns['office']}}}date-value")
+            formula = cell.get(f"{{{ns['table']}}}formula")
+            display = " ".join(
+                "".join(paragraph.itertext()).strip()
+                for paragraph in cell.xpath(".//text:p", namespaces=ns)
+                if "".join(paragraph.itertext()).strip()
+            ).strip()
+
+            if value_type in {"float", "currency", "percentage"} and office_value is not None:
+                try:
+                    value = float(office_value)
+                except ValueError:
+                    value = display
+            elif value_type == "date":
+                value = display or date_value or ""
+            elif value_type == "boolean":
+                value = cell.get(f"{{{ns['office']}}}boolean-value", display)
+            else:
+                value = display
+
+            for r in relevant_rows:
+                for c in relevant_cols:
+                    for address, position in target_positions.items():
+                        if position == (r, c):
+                            actual[address] = {"value": value, "formula": formula}
+            col_index += col_repeat
+        row_index += row_repeat
+
+    def values_match(actual_value: Any, expected_value: Any) -> bool:
+        if isinstance(expected_value, Number) and not isinstance(expected_value, bool):
+            try:
+                return abs(float(actual_value) - float(expected_value)) <= tolerance
+            except (TypeError, ValueError):
+                return False
+        return str(actual_value).strip() == str(expected_value).strip()
+
+    for address, expected_value in expected_cells.items():
+        if address not in actual or not values_match(actual[address]["value"], expected_value):
+            return 0.
+
+    for address, should_have_formula in expected_formulas.items():
+        if address not in actual:
+            return 0.
+        has_formula = bool(actual[address].get("formula"))
+        if has_formula != bool(should_have_formula):
+            return 0.
+
+    return 1.
 
 def check_csv(result: str, rules: Dict[str, List[Dict[str, str]]]) -> float:
     """

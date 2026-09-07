@@ -38,12 +38,17 @@ def get_are_files_sorted_by_modified_time(env, config: dict) -> bool:
 def get_is_file_saved_desktop(env, config) -> str:
     desktop_path = env.controller.get_vm_desktop_path()
     file_name = config["filename"]
-    file = env.controller.get_file_as_text(desktop_path + '\\' + file_name)
-    if file is not None and config['textcontent'] in file:
-        return "true"
-    else:
+    file = env.controller.get_file_as_text(desktop_path + "\\" + file_name)
+    if file is None:
         return "false"
-    
+
+    expected = config["textcontent"]
+    if config.get("exact", False):
+        normalize = lambda value: str(value).replace("\r\n", "\n").replace("\r", "\n").strip()
+        return "true" if normalize(file) == normalize(expected) else "false"
+
+    return "true" if expected in file else "false"
+
 def get_is_details_view(env, config):
     if not config["folder_path"]:
         return False

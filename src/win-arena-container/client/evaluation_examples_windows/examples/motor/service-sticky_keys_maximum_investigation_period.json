@@ -3,7 +3,7 @@
   "_comment": "",
   "manually_evaluated": false,
   "snapshot": "chrome",
-  "category": "health",
+  "category": "service",
   "difficulty": "medium",
   "instruction": "Enable Windows Sticky Keys as a motor accessibility aid and keep it enabled throughout the task. The provided bank statement PDF is already open in Chrome. Find the maximum investigation period mentioned for a complaint or question, then save only the investigation period in a text file named `investigationPeriod.txt` on the Desktop.",
   "source": "https://www.carsonbank.com/",
@@ -81,7 +81,8 @@
       {
         "type": "is_file_saved_desktop",
         "filename": "investigationPeriod.txt",
-        "textcontent": "90 days"
+        "textcontent": "90 days",
+        "exact": true
       }
     ],
     "expected": [

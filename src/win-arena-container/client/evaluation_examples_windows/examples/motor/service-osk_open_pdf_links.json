@@ -1,17 +1,18 @@
 {
-  "id": "service_osk_open_pdf_links",
+  "id": "service-osk_open_pdf_links",
   "_comment": "Put the answer to the `gt_steps`.",
   "snapshot": "chrome",
   "category": "service",
   "difficulty": "easy",
-  "instruction": "Enable the Windows On-Screen Keyboard. The PDF is already open in Chrome. Open every website link contained in the PDF in new Chrome tabs and leave all of the opened tabs visible.",
+  "instruction": "Enable the Windows On-Screen Keyboard and keep it open. The PDF is already open in Chrome. Open the website link for the voter authority certificate application from the PDF in a new Chrome tab, leave that tab open, and leave the On-Screen Keyboard open.",
   "source": "assets/ER_How_to_apply_online_final.pdf",
   "gt_steps": [
-    "Enable the Windows On-Screen Keyboard.",
+    "Enable the Windows On-Screen Keyboard and keep it open.",
     "Return to the PDF already open in Chrome.",
-    "Find every website link contained in the PDF.",
-    "Open each website link in a new Chrome tab.",
-    "Leave the opened website tab(s) open."
+    "Find the voter authority certificate application website link.",
+    "Identify the link as `https://www.gov.uk/apply-for-photo-id-voter-authority-certificate`.",
+    "Open the link in a new Chrome tab.",
+    "Leave the linked website tab and the On-Screen Keyboard open."
   ],
   "config": [
     {
@@ -56,6 +57,7 @@
   "trajectory": "trajectories\\",
   "related_apps": [
     "settings",
+    "on_screen_keyboard",
     "chrome"
   ],
   "evaluator": {

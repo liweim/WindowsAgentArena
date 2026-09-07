@@ -5,7 +5,7 @@
   "snapshot": "chrome",
   "category": "information",
   "difficulty": "medium",
-  "instruction": "Enable Windows Filter Keys as a motor accessibility aid and keep it enabled throughout the task. Two Economic Survey of Singapore PDF documents are already open in Chrome. In the 2024 document, find the Real GDP growth percentage for 2024. In the 2025 document, find the Real GDP growth percentage for 2025. Compare the two percentages and calculate the difference. Open Notepad and write only the difference percentage, without any additional words or explanation. Save the file as `differenceGDP.txt` on the Desktop.",
+  "instruction": "Enable Windows Filter Keys as a motor accessibility aid and keep it enabled throughout the task. Compare Singapore’s Real GDP growth percentages in the provided 2024 and 2025 reports. Calculate the absolute numeric difference between the two percentages. Save only that numeric difference followed by `%` in `differenceGDP.txt` on the Desktop.",
   "source": [
     "Local PDF: assets/FullReport_AES2024.pdf",
     "Local PDF: assets/FullReport_AES2025.pdf"
@@ -79,7 +79,8 @@
       {
         "type": "is_file_saved_desktop",
         "filename": "differenceGDP.txt",
-        "textcontent": "0.6%"
+        "textcontent": "0.6%",
+        "exact": true
       }
     ],
     "expected": [

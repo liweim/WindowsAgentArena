@@ -98,7 +98,7 @@
         "shell": true
       },
       {
-        "type": "thunderbird_calendar"
+        "type": "thunderbird_calendar_events"
       }
     ],
     "expected": [
@@ -116,9 +116,11 @@
       {
         "type": "rule",
         "rules": {
-          "title": "Tuck Le's place",
-          "start": "2008-08-30T10:00:00",
-          "end": "2008-08-30T11:00:00"
+          "date": "2008-08-30",
+          "hour": 10,
+          "minute": 0,
+          "duration_minutes": 60,
+          "title": "Tuck Le's place"
         }
       }
     ]

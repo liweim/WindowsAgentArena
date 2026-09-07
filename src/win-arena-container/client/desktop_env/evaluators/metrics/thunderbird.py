@@ -273,6 +273,28 @@ def _message_score(message: Message, rules: Dict[str, Any]) -> float:
     return matched / len(body_points)
 
 
+
+def check_thunderbird_email_absent(result: Union[str, List[str]], rules: Dict[str, Any]) -> float:
+    """Return 1 when no message matching the expected recipient and subject exists."""
+    if result is None:
+        return 1.
+
+    expected_to = _normalize_email_text(rules.get("to", ""))
+    expected_subject = _normalize_email_text(rules.get("subject", ""))
+    paths = result if isinstance(result, list) else [result]
+    for path in paths:
+        if path is None:
+            continue
+        try:
+            for message in _iter_messages(path):
+                actual_to = _normalize_email_text(_decode_header_value(message.get("to")))
+                actual_subject = _normalize_email_text(_decode_header_value(message.get("subject")))
+                if (not expected_to or expected_to in actual_to) and (not expected_subject or actual_subject == expected_subject):
+                    return 0.
+        except Exception as exc:
+            logger.warning("Failed to inspect Thunderbird mailbox %s: %s", path, exc)
+    return 1.
+
 def check_thunderbird_email_composition(result: Union[str, List[str]], rules: Dict[str, Any]) -> float:
     """
     Score a Thunderbird composed/saved email from one or more mbox files.
@@ -412,6 +434,25 @@ def _calendar_event_end(event: Dict[str, Any]) -> Union[datetime.datetime, None]
     ], "end")
 
 
+
+def _calendar_event_recurrence_matches(event: Dict[str, Any], expected: str) -> bool:
+    expected_norm = str(expected or "").strip().upper()
+    if not expected_norm:
+        return True
+
+    records = [event]
+    records.extend(item for item in event.get("related", []) if isinstance(item, dict))
+    for record in records:
+        for key, value in record.items():
+            key_norm = str(key).lower()
+            if not any(token in key_norm for token in ("recur", "rrule", "repeat")):
+                continue
+            if str(value or "").strip().upper() == expected_norm:
+                return True
+            if expected_norm in str(value or "").upper():
+                return True
+    return False
+
 def check_thunderbird_calendar_event(result: Dict[str, Any], rules: Dict[str, Any]) -> float:
     """
     Score a Thunderbird calendar event.
@@ -424,27 +465,33 @@ def check_thunderbird_calendar_event(result: Dict[str, Any], rules: Dict[str, An
       - duration_minutes: expected event duration
       - title: expected title phrase
       - body_points: list of acceptable phrase variants, like email scoring
+      - any_date: if true, do not constrain the event date
+      - recurrence: expected recurrence type such as DAILY
     """
     if not result:
         return 0.
 
-    absolute_date = rules.get("date")
-    if absolute_date is not None:
-        try:
-            expected_date = datetime.date.fromisoformat(str(absolute_date))
-        except (TypeError, ValueError):
-            return 0.
+    if rules.get("any_date", False):
+        expected_date = None
     else:
-        try:
-            today = datetime.date.fromisoformat(result["today"])
-        except Exception:
-            today = datetime.date.today()
-        expected_date = today + datetime.timedelta(days=int(rules.get("days_from_today", 1)))
+        absolute_date = rules.get("date")
+        if absolute_date is not None:
+            try:
+                expected_date = datetime.date.fromisoformat(str(absolute_date))
+            except (TypeError, ValueError):
+                return 0.
+        else:
+            try:
+                today = datetime.date.fromisoformat(result["today"])
+            except Exception:
+                today = datetime.date.today()
+            expected_date = today + datetime.timedelta(days=int(rules.get("days_from_today", 1)))
     expected_hour = int(rules.get("hour", 9))
     expected_minute = int(rules.get("minute", 0))
     expected_duration = rules.get("duration_minutes")
     expected_title = rules.get("title", "")
     body_points: List[List[str]] = rules.get("body_points", [])
+    expected_recurrence = rules.get("recurrence")
 
     best_score = 0.
     for event in result.get("events", []):
@@ -453,7 +500,9 @@ def check_thunderbird_calendar_event(result: Dict[str, Any], rules: Dict[str, An
         start = _calendar_event_start(event)
         if not start:
             continue
-        if start.date() != expected_date or start.hour != expected_hour or start.minute != expected_minute:
+        if expected_date is not None and start.date() != expected_date:
+            continue
+        if start.hour != expected_hour or start.minute != expected_minute:
             continue
         if expected_duration is not None:
             end = _calendar_event_end(event)
@@ -462,6 +511,9 @@ def check_thunderbird_calendar_event(result: Dict[str, Any], rules: Dict[str, An
             duration_minutes = int((end - start).total_seconds() / 60)
             if duration_minutes != int(expected_duration):
                 continue
+
+        if expected_recurrence and not _calendar_event_recurrence_matches(event, expected_recurrence):
+            continue
 
         event_text = _calendar_event_text(event)
         if expected_title and _normalize_email_text(expected_title).lower() not in event_text:
