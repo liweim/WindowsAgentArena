@@ -3,14 +3,14 @@
   "snapshot": "chrome",
   "category": "health",
   "difficulty": "medium",
-  "instruction": "I have been diagnosed with celiac disease and want to know the treatment mentioned in the video. Turn on captions in the opened YouTube video, then watch it and save the answer in `answer.txt` on the Desktop.",
+  "instruction": "Turn on captions in the opened YouTube video, identify the treatment mentioned for celiac disease, then save the answer in `answer.txt` on the Desktop.",
   "source": "https://www.youtube.com/watch?v=A9pbzFAqaho",
   "gt_steps": [
     "Turn on captions in the YouTube player.",
     "Play the video and use the YouTube captions to identify the treatment mentioned for celiac disease.",
-    "Create answer.txt on the Desktop.",
-    "Write `gluten-free diet` in answer.txt.",
-    "Save and close answer.txt."
+    "Open Notepad.",
+    "Write `gluten-free diet`.",
+    "Save the file as `answer.txt` on the Desktop."
   ],
   "config": [
     {
@@ -49,7 +49,8 @@
   ],
   "trajectory": "trajectories\\",
   "related_apps": [
-    "chrome"
+    "chrome",
+    "notepad"
   ],
   "evaluator": {
     "func": [

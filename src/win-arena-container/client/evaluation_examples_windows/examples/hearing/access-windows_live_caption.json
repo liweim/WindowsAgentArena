@@ -4,7 +4,7 @@
   "snapshot": "base_setup",
   "category": "access",
   "difficulty": "easy",
-  "instruction": "Help me turn on Windows Live captions.",
+  "instruction": "Turn on Windows Live captions.",
   "source": "Settings > Accessibility > Captions > Live captions",
   "gt_steps": [
     "Open Windows Settings to Accessibility > Captions.",

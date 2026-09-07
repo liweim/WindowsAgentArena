@@ -3,11 +3,11 @@
   "snapshot": "chrome",
   "category": "management",
   "difficulty": "medium",
-  "instruction": "Enable Windows Live Captions, watch the video, determine how long the quick sponge should sit before checking whether the yeast is active, then use https://vclock.com to create a timer for that duration. Leave the timer visible in the browser.",
+  "instruction": "Turn on captions in the opened YouTube video, determine how long the quick sponge should sit before checking whether the yeast is active, then use https://vclock.com to create a timer for that duration. Leave the timer visible in the browser.",
   "source": "https://www.youtube.com/watch?v=NPiA69p4gqE",
   "gt_steps": [
-    "Turn on Windows Live captions.",
-    "Watch the YouTube video and use the live captions to determine that the quick sponge should sit for 15 minutes before checking whether the yeast is active.",
+    "Turn on captions in the YouTube player.",
+    "Watch the YouTube video and use the YouTube captions to determine that the quick sponge should sit for 15 minutes before checking whether the yeast is active.",
     "Open https://vclock.com in the browser.",
     "Click the Timer page.",
     "Create and start a 15 minute timer.",
@@ -53,17 +53,35 @@
     "chrome"
   ],
   "evaluator": {
-    "func": "is_expected_url_pattern_match",
-    "result": {
-      "type": "active_tab_info_simple"
-    },
-    "expected": {
-      "type": "rule",
-      "rules": {
-        "expected": [
-          "https?://(www\\.)?vclock\\.com/timer/#countdown=00:15:00(&|$)"
-        ]
+    "func": [
+      "is_expected_url_pattern_match",
+      "exact_match"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "active_tab_info_simple"
+      },
+      {
+        "type": "youtube_captions_enabled",
+        "url": "https://www.youtube.com/watch?v=NPiA69p4gqE"
       }
-    }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "expected": [
+            "https?://(www\\.)?vclock\\.com/timer/#countdown=00:15:00(&|$)"
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "expected": "true"
+        }
+      }
+    ]
   }
 }

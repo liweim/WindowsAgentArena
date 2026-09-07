@@ -3,15 +3,14 @@
   "snapshot": "chrome",
   "category": "health",
   "difficulty": "hard",
-  "instruction": "I have allergies and need to know what medicine to take. Open Chrome Live Caption, watch the video, and write the recommended medication name in `answer.txt` on the Desktop.",
+  "instruction": "Use Chrome Live Caption to identify the recommended allergy medication in the opened video, then save the medication name in `answer.txt` on the Desktop.",
   "source": "https://medlineplus.gov/ency/videos/mov/200094_eng.mp4",
   "gt_steps": [
-    "Open the MedlinePlus allergy video in Chrome.",
     "Turn on Chrome Live Caption.",
     "Play the video and use Live Caption to identify the recommended medication for allergies.",
-    "Create answer.txt on the Desktop.",
-    "Write `antihistamines` in answer.txt.",
-    "Save and close answer.txt."
+    "Open Notepad.",
+    "Write `antihistamines`.",
+    "Save the file as `answer.txt` on the Desktop."
   ],
   "config": [
     {
@@ -51,7 +50,8 @@
   ],
   "trajectory": "trajectories\\",
   "related_apps": [
-    "chrome"
+    "chrome",
+    "notepad"
   ],
   "evaluator": {
     "func": [

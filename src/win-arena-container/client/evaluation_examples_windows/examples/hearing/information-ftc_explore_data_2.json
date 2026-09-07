@@ -12,9 +12,9 @@
     "Go to State and Metro Area Maps.",
     "Open Fraud & ID Theft by State.",
     "Set the year to 2024 and Quarter to `All`.",
-    "Create answer.txt on the Desktop.",
-    "Write `2639302` in answer.txt.",
-    "Save and close answer.txt."
+    "Open Notepad.",
+    "Write `2639302`.",
+    "Save the file as `answer.txt` on the Desktop."
   ],
   "config": [
     {
@@ -53,7 +53,8 @@
   ],
   "trajectory": "trajectories\\",
   "related_apps": [
-    "chrome"
+    "chrome",
+    "notepad"
   ],
   "evaluator": {
     "func": [

@@ -3,14 +3,14 @@
   "snapshot": "chrome",
   "category": "consumption",
   "difficulty": "medium",
-  "instruction": "Your roommate sent an audio shopping reminder. Open the audio in Chrome, enable Live Caption, listen for the exact item to buy, then find that item on the shopping website and add it to the shopping cart.",
+  "instruction": "Use Chrome Live Caption to identify the exact item in the audio shopping reminder, then find it on the shopping website and add it to the cart.",
   "source": "synthetic",
   "transcript": "Leo, the kayak rental finally confirmed our Saturday slot, so I need to replace the old action cam before we go. Can you order the Insta360 ONE X2 from the shopping site? I want that model for the paddle trip.",
   "gt_steps": [
-    "Open the Insta360 shopping reminder audio file in Chrome.",
+    "Switch to the audio shopping reminder tab.",
     "Turn on Chrome Live Caption.",
     "Play the audio and use the captions to identify the item to buy: Insta360 ONE X2 360 Degree Waterproof Action Camera.",
-    "Use the already-open shopping website.",
+    "Switch back to the shopping website tab.",
     "Find the Insta360 ONE X2 waterproof action camera product on the website.",
     "Add the product to the shopping cart."
   ],

@@ -13,9 +13,9 @@
     "Open Fraud & ID Theft by State.",
     "Set the year to 2024 and Quarter to `4`.",
     "Select Washington on the map.",
-    "Create answer.txt on the Desktop.",
-    "Write `Imposter Scams` in answer.txt.",
-    "Save and close answer.txt."
+    "Open Notepad.",
+    "Write `Imposter Scams`.",
+    "Save the file as `answer.txt` on the Desktop."
   ],
   "config": [
     {
@@ -54,7 +54,8 @@
   ],
   "trajectory": "trajectories\\",
   "related_apps": [
-    "chrome"
+    "chrome",
+    "notepad"
   ],
   "evaluator": {
     "func": [

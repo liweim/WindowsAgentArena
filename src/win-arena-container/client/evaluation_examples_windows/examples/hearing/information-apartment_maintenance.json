@@ -1,17 +1,16 @@
 {
-  "id": "communication-apartment_maintenance",
+  "id": "information-apartment_maintenance",
   "manually_evaluated": true,
   "snapshot": "chrome",
-  "category": "communication",
+  "category": "information",
   "difficulty": "medium",
-  "instruction": "Your apartment property manager sent an audio notice about an urgent water pipe repair tomorrow. Play the audio and use Live Caption to capture the key information. Identify the 2 items that must be turned off and the deadline mentioned in the recording. Record them in a sticky note.",
+  "instruction": "Use Chrome Live Caption to identify the two items that must be turned off and the deadline in the apartment maintenance audio, then record all three details in a Sticky Note.",
   "source": "synthetic",
   "transcript": "Hi, this is the building management team. We have an urgent emergency water pipe repair on your floor tomorrow morning. To avoid any flooding, please ensure you shut off the main blue valve under your kitchen sink, and also turn off the water heater switch in the laundry closet. Um, please complete this before 8:00 AM tomorrow. Thanks for your cooperation.",
   "gt_steps": [
-    "Open the apartment maintenance audio file in Chrome.",
     "Turn on Chrome Live Caption.",
     "Play the audio and use the captions to identify the two items to turn off and the deadline.",
-    "Open Sticky Notes.",
+    "Switch to Sticky Notes.",
     "Close the sign-in prompt if it appears.",
     "Create a sticky note.",
     "Write the two items to turn off and the deadline in the sticky note: main blue valve\nwater heater switch\n8:00 AM tomorrow"

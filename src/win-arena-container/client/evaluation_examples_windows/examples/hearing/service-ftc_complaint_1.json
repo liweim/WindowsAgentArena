@@ -3,12 +3,12 @@
   "snapshot": "chrome",
   "category": "service",
   "difficulty": "easy",
-  "instruction": "Turn on captions in the opened YouTube video, then watch it and open the complaint website it mentions in a new Chrome tab.",
+  "instruction": "Turn on captions in the opened YouTube video, then watch it and open the complaint website it mentions in Chrome.",
   "source": "https://www.youtube.com/watch?v=3LvMO5UMCl8",
   "gt_steps": [
     "Turn on captions in the YouTube player.",
     "Play the video and use the YouTube captions to identify where victims should go to file a complaint online.",
-    "Open https://ftc.gov/complaint in a new Chrome tab."
+    "Open https://reportfraud.ftc.gov in Chrome."
   ],
   "config": [
     {

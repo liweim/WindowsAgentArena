@@ -1,16 +1,16 @@
 {
-  "id": "service-ftc_complaint_3",
+  "id": "information-ftc_complaint",
   "snapshot": "chrome",
-  "category": "service",
+  "category": "information",
   "difficulty": "medium",
-  "instruction": "Turn on captions in the opened YouTube video, then watch it and answer: what personal financial information did the scammer ask for in the fake job opportunity example? Save the answer in `answer.txt` on the Desktop.",
+  "instruction": "Turn on captions in the opened YouTube video, identify the personal financial information requested in the fake job opportunity example, then save the answer in `answer.txt` on the Desktop.",
   "source": "https://www.youtube.com/watch?v=3LvMO5UMCl8",
   "gt_steps": [
     "Turn on captions in the YouTube player.",
     "Play the video and use the YouTube captions to identify the personal financial information requested in the fake job opportunity example.",
-    "Create answer.txt on the Desktop.",
-    "Write `bank account number` in answer.txt.",
-    "Save and close answer.txt."
+    "Open Notepad.",
+    "Write `bank account number`.",
+    "Save the file as `answer.txt` on the Desktop."
   ],
   "config": [
     {
@@ -49,7 +49,8 @@
   ],
   "trajectory": "trajectories\\",
   "related_apps": [
-    "chrome"
+    "chrome",
+    "notepad"
   ],
   "evaluator": {
     "func": [
