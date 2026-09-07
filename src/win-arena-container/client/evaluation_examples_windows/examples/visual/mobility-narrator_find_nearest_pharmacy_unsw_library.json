@@ -4,7 +4,7 @@
   "manually_evaluated": false,
   "snapshot": "chrome",
   "category": "mobility",
-  "difficulty": "easy",
+  "difficulty": "medium",
   "instruction": "Turn on Windows Narrator. Use it to navigate Google Maps and find the nearest pharmacy to the UNSW Main Library. Open the place details for the nearest pharmacy and leave the place details open.",
   "source": "Google Maps",
   "gt_steps": [

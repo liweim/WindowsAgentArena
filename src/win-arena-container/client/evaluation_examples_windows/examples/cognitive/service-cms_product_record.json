@@ -2,7 +2,7 @@
   "id": "service-cms_product_record",
   "snapshot": "chrome",
   "category": "service",
-  "difficulty": "medium",
+  "difficulty": "hard",
   "instruction": "Update the Value column in `cms_product_record.xlsx` on the Desktop with the current CMS details for `Joust Duffle Bag`. Use username `admin` and password `admin1234` to access the CMS admin site.",
   "source": "WebArena self-hosted e-commerce CMS service",
   "gt_steps": [

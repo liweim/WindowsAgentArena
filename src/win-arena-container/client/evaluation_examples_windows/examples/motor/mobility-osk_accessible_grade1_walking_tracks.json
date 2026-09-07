@@ -4,7 +4,7 @@
   "manually_evaluated": false,
   "snapshot": "chrome",
   "category": "mobility",
-  "difficulty": "medium",
+  "difficulty": "hard",
   "instruction": "Enable the Windows On-Screen Keyboard as a motor accessibility aid and keep it open throughout the task. From the provided NSW National Parks webpage, find all walk titles that are Grade 1 and have a maximum listed walking time of 45 minutes or less. Save the titles in webpage order, one title per line, in `AccessibleTracks.txt` on the Desktop.",
   "source": "https://www.nationalparks.nsw.gov.au/access-friendly/access-friendly-walking-tracks",
   "gt_steps": [

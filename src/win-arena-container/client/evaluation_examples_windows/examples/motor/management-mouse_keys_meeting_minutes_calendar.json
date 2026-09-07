@@ -4,7 +4,7 @@
   "manually_evaluated": false,
   "snapshot": "windows",
   "category": "management",
-  "difficulty": "easy",
+  "difficulty": "medium",
   "instruction": "Enable Windows Mouse Keys as a motor accessibility aid and keep it enabled throughout the task. Open the meeting minutes PDF and find the place, date, and time of the next meeting. In the Thunderbird calendar, create a one-hour appointment starting at that date and time. Use the meeting place as the appointment title.",
   "source": "Local PDF: assets/meeting-minutes-sample.pdf",
   "gt_steps": [

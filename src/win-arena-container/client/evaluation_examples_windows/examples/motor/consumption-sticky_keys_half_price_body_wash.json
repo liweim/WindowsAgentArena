@@ -4,7 +4,7 @@
   "manually_evaluated": false,
   "snapshot": "chrome",
   "category": "consumption",
-  "difficulty": "medium",
+  "difficulty": "hard",
   "instruction": "Enable Windows Sticky Keys as a motor accessibility aid and keep it enabled throughout the task. The provided Coles catalogue PDF is already open in Chrome. Find every product with `Body Wash` in its full product name that costs less than $9. Write each full product name exactly as shown in the PDF, without paraphrasing, in a text file named `halfPriceBodyWash.txt` on the Desktop. Write one product per line in the order the products appear in the catalogue.",
   "source": "assets/COLNSWMETRO_220726_AQCAZRS1.pdf",
   "gt_steps": [

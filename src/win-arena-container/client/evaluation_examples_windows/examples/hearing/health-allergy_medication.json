@@ -2,7 +2,7 @@
   "id": "health-allergy_medication",
   "snapshot": "chrome",
   "category": "health",
-  "difficulty": "hard",
+  "difficulty": "medium",
   "instruction": "Use Chrome Live Caption to identify the recommended allergy medication in the opened video, then save the medication name in `answer.txt` on the Desktop.",
   "source": "https://medlineplus.gov/ency/videos/mov/200094_eng.mp4",
   "gt_steps": [
