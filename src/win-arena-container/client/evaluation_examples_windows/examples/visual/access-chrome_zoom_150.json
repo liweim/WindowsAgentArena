@@ -4,8 +4,8 @@
   "snapshot": "chrome",
   "category": "access",
   "difficulty": "easy",
-  "instruction": "Open Google Chrome and navigate to https://www.digital.nsw.gov.au/delivery/accessibility-and-inclusivity-toolkit. Increase the page zoom level to 150% and leave the webpage open.",
-  "source": "human",
+  "instruction": "Set the Chrome page zoom to 150% on https://www.digital.nsw.gov.au/delivery/accessibility-and-inclusivity-toolkit and leave the page open.",
+  "source": "https://www.digital.nsw.gov.au/delivery/accessibility-and-inclusivity-toolkit",
   "gt_steps": [
     "Open Google Chrome.",
     "Navigate to https://www.digital.nsw.gov.au/delivery/accessibility-and-inclusivity-toolkit.",

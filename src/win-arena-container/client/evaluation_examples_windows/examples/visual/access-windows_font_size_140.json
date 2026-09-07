@@ -4,8 +4,8 @@
   "snapshot": "base_setup",
   "category": "access",
   "difficulty": "easy",
-  "instruction": "In windows accessibility setting, change the text size to 140% and apply the change.",
-  "source": "human",
+  "instruction": "Set the Windows text size to 140% and apply the change.",
+  "source": "Windows Settings > Accessibility > Text size",
   "gt_steps": [
     "Open Windows Setting.",
     "Navigate to Accessibility Setting.",
@@ -14,7 +14,9 @@
   ],
   "config": [],
   "trajectory": "trajectories/",
-  "related_apps": [],
+  "related_apps": [
+    "settings"
+  ],
   "evaluator": {
     "func": "check_include_exclude",
     "result": {
@@ -25,11 +27,11 @@
     "expected": {
       "type": "rule",
       "rules": {
-          "include": [
-            "0x8c"
-          ],
-          "exclude": []
-        }
+        "include": [
+          "0x8c"
+        ],
+        "exclude": []
+      }
     }
   },
   "proxy": false,

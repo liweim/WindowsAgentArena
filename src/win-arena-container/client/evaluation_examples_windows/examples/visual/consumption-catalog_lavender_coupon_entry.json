@@ -4,8 +4,8 @@
   "snapshot": "chrome",
   "category": "consumption",
   "difficulty": "hard",
-  "instruction": "Turn on a screen reader. Use it to read the opened garden catalogue in Chrome and identify the featured lavender product and its coupon code. Find the matching product on the opened shopping website, add exactly one unit to the shopping cart, and enter the catalogue coupon code in the coupon code field. Do not apply the coupon. Leave the shopping cart page open.",
-  "source": "synthetic",
+  "instruction": "Turn on Windows Narrator. Use it to read the opened garden catalogue in Chrome and identify the featured lavender product and its coupon code. Find the matching product on the opened shopping website, add exactly one unit to the shopping cart, and enter the catalogue coupon code in the coupon code field. Do not apply the coupon. Leave the shopping cart page open.",
+  "source": "Local HTML: assets/Consumption-lavender_coupon_catalog.html",
   "gt_steps": [
     "Open the garden catalogue in Chrome.",
     "Turn on Windows Narrator.",
@@ -73,8 +73,8 @@
   ],
   "trajectory": "trajectories\\",
   "related_apps": [
-    "chrome",
-    "basic_os"
+    "narrator",
+    "chrome"
   ],
   "evaluator": {
     "func": [
@@ -111,7 +111,10 @@
         "type": "rule",
         "rules": {
           "items": [
-            "L+ Lavender French Provence Very Fragrant ( Blue Flowers, 2.5QT Size Pot, 1 Live Plant)"
+            {
+              "name": "L+ Lavender French Provence Very Fragrant ( Blue Flowers, 2.5QT Size Pot, 1 Live Plant)",
+              "quantity": 1
+            }
           ]
         }
       },

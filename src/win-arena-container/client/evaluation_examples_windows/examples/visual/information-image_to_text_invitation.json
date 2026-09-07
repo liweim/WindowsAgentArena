@@ -4,15 +4,14 @@
   "snapshot": "libreoffice_writer",
   "category": "information",
   "difficulty": "hard",
-  "instruction": "The image in this file does not have alt text for voice over feature. The image is an invitation card. Add descriptive alt text for the image. The alt text must include detail information of the event. If there are date and time, use 'EEEE, MMMM d, yyyy HH:MM AM' format. Save the file after adding alt text, and if prompt shows up to choose between odt and word format, choose word format to save the file.",
-  "source": "https://www.acquia.com/blog/accessibility-issues-visual-impairmenthttps://www.acquia.com/blog/accessibility-issues-visual-impairment",
+  "instruction": "Add descriptive alt text to the invitation image in the provided DOCX file. Include the restaurant name, grand-opening purpose, date, time, full address, and RSVP phone number, then save the file in its existing Word format.",
+  "source": "Local Document: assets/information-image_to_text_invitation.docx",
   "gt_steps": [
-    "Close if the pop up window for Libre tour shows up.",
-    "Select the image (simply click the image to focus).",
-    "Go to Format > Alt Text in the tabs.",
-    "Fill out the alt text description as 'A digital invitation card for the grand opening of The Coastal Spoon restaurant on Thursday, July 16, 2026, at 11:00 AM. Event address is 123 Harbour View St., Sydney, 2000. Call +61-456-789-000 to RSVP.",
-    "Click 'OK' and save the file.",
-    "If prompt shows up to choose between odt and word format, choose word format to save the file."
+    "Select the invitation image in information-image_to_text_invitation.docx.",
+    "Add alt text stating that The Coastal Spoon is holding a grand opening on Thursday, July 16, 2026 at 11:00 AM.",
+    "Include the address 123 Harbour View St., Sydney, 2000.",
+    "Include the RSVP phone number +61-456-789-000.",
+    "Save the DOCX file in Word format."
   ],
   "config": [
     {
@@ -47,47 +46,48 @@
     "expected": {
       "type": "rule",
       "rules": {
-          "ignore_case": true,
-          "points": [
-            [
-              "the costal spoon"
-            ],
-            [
-              "grand opening",
-              "grand opening restaurant",
-              "grand opening of the restaurant",
-              "grand opening of our restaurant"
-            ],
-            [
-              "July 16, 2026",
-              "July 16 2026",
-              "July 16, 2026,"
-            ],
-            [
-              "11:00 AM.",
-              "11:00 AM"
-            ],
-            [
-              "123 Harbour View ST.",
-              "123 Harbour View ST",
-              "123",
-              "Harbour View ST"
-            ],
-            [
-              "Sydney"
-            ],
-            [
-              "2000",
-              "2000."
-            ],
-            [
-              "+61-456-789-000",
-              "+61 456 789 000",
-              "+61 456789000",
-              "+61456789000"
-            ]
+        "ignore_case": true,
+        "points": [
+          [
+            "the coastal spoon",
+            "coastal spoon"
+          ],
+          [
+            "grand opening",
+            "grand opening restaurant",
+            "grand opening of the restaurant",
+            "grand opening of our restaurant"
+          ],
+          [
+            "July 16, 2026",
+            "July 16 2026",
+            "July 16, 2026,"
+          ],
+          [
+            "11:00 AM.",
+            "11:00 AM"
+          ],
+          [
+            "123 Harbour View St.",
+            "123 Harbour View St",
+            "123 Harbour View Street",
+            "123 Harbour View Street."
+          ],
+          [
+            "Sydney"
+          ],
+          [
+            "2000",
+            "2000."
+          ],
+          [
+            "+61-456-789-000",
+            "+61 456 789 000",
+            "+61 456789000",
+            "+61456789000"
           ]
-        }
+        ]
+      }
     }
   },
   "proxy": false,

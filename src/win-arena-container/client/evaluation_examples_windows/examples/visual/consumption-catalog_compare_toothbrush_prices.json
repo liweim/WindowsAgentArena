@@ -4,8 +4,8 @@
   "snapshot": "chrome",
   "category": "consumption",
   "difficulty": "hard",
-  "instruction": "Turn on a screen reader. Use it to read the opened oral-care catalogue in Chrome and compare the listed prices of the two six-count toothbrush products. Find the cheaper product on the opened shopping website, add exactly one unit to the shopping cart, and leave the shopping cart page open.",
-  "source": "synthetic",
+  "instruction": "Turn on Windows Narrator. Use it to read the opened oral-care catalogue in Chrome and compare the listed prices of the two six-count toothbrush products. Find the cheaper product on the opened shopping website, add exactly one unit to the shopping cart, and leave the shopping cart page open.",
+  "source": "Local HTML: assets/Consumption-toothbrush_price_catalog.html",
   "gt_steps": [
     "Open the oral-care catalogue in Chrome.",
     "Turn on Windows Narrator.",
@@ -72,8 +72,8 @@
   ],
   "trajectory": "trajectories\\",
   "related_apps": [
-    "chrome",
-    "basic_os"
+    "narrator",
+    "chrome"
   ],
   "evaluator": {
     "func": [
@@ -105,7 +105,10 @@
         "type": "rule",
         "rules": {
           "items": [
-            "Colgate Slimsoft Floss-Tip Charcoal Toothbrush (Pack of 6)"
+            {
+              "name": "Colgate Slimsoft Floss-Tip Charcoal Toothbrush (Pack of 6)",
+              "quantity": 1
+            }
           ]
         }
       },

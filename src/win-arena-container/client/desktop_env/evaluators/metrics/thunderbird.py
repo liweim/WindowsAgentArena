@@ -435,6 +435,81 @@ def _calendar_event_end(event: Dict[str, Any]) -> Union[datetime.datetime, None]
 
 
 
+def _calendar_event_location_matches(event: Dict[str, Any], expected: str) -> bool:
+    expected_norm = _normalize_email_text(str(expected or "")).lower()
+    if not expected_norm:
+        return True
+
+    # Thunderbird normally stores LOCATION in cal_properties as key/value.
+    for record in [event] + [item for item in event.get("related", []) if isinstance(item, dict)]:
+        key_name = str(record.get("key", "")).strip().lower()
+        if key_name == "location":
+            value = _normalize_email_text(str(record.get("value", ""))).lower()
+            if expected_norm in value:
+                return True
+        for key, value in record.items():
+            if "location" in str(key).lower():
+                value_norm = _normalize_email_text(str(value or "")).lower()
+                if expected_norm in value_norm:
+                    return True
+    return False
+
+
+def _ical_duration_minutes(value: str) -> Union[int, None]:
+    # Parse the subset of RFC 5545 durations used by Thunderbird alarm TRIGGER values.
+    match = re.fullmatch(
+        r"(?P<sign>[+-])?P(?:(?P<days>\d+)D)?(?:T(?:(?P<hours>\d+)H)?(?:(?P<minutes>\d+)M)?(?:(?P<seconds>\d+)S)?)?",
+        str(value or "").strip().upper(),
+    )
+    if not match:
+        return None
+    total = (
+        int(match.group("days") or 0) * 1440
+        + int(match.group("hours") or 0) * 60
+        + int(match.group("minutes") or 0)
+        + (1 if int(match.group("seconds") or 0) >= 30 else 0)
+    )
+    return -total if match.group("sign") == "-" else total
+
+
+def _calendar_event_reminder_matches(event: Dict[str, Any], minutes_before: int) -> bool:
+    try:
+        expected = int(minutes_before)
+    except (TypeError, ValueError):
+        return False
+
+    for record in [event] + [item for item in event.get("related", []) if isinstance(item, dict)]:
+        # Older schemas may expose a numeric alarm offset directly.
+        for key, value in record.items():
+            key_norm = str(key).lower()
+            if "alarm_offset" in key_norm or "reminder_offset" in key_norm:
+                try:
+                    raw = int(value)
+                except (TypeError, ValueError):
+                    raw = None
+                if raw is not None:
+                    candidates = {abs(raw), abs(raw) // 60, abs(raw) // 1000000 // 60}
+                    if expected in candidates:
+                        return True
+
+        # Current Thunderbird stores alarms as iCalendar text in cal_alarms.
+        record_text = "\n".join(str(value) for value in record.values() if isinstance(value, str))
+        for trigger in re.findall(r"TRIGGER(?:;[^:]*)?:(?P<duration>[+-]?P[^\r\n]+)", record_text, flags=re.IGNORECASE):
+            parsed = _ical_duration_minutes(trigger.strip())
+            if parsed is not None and parsed < 0 and abs(parsed) == expected:
+                return True
+    return False
+
+
+def _calendar_event_all_day_matches(event: Dict[str, Any], expected: bool) -> bool:
+    try:
+        flags = int(event.get("flags", 0) or 0)
+    except (TypeError, ValueError):
+        flags = 0
+    is_all_day = bool(flags & 8)  # CAL_ITEM_FLAG_EVENT_ALLDAY
+    return is_all_day == bool(expected)
+
+
 def _calendar_event_recurrence_matches(event: Dict[str, Any], expected: str) -> bool:
     expected_norm = str(expected or "").strip().upper()
     if not expected_norm:
@@ -467,6 +542,9 @@ def check_thunderbird_calendar_event(result: Dict[str, Any], rules: Dict[str, An
       - body_points: list of acceptable phrase variants, like email scoring
       - any_date: if true, do not constrain the event date
       - recurrence: expected recurrence type such as DAILY
+      - location: expected event location
+      - reminder_minutes_before: expected alarm offset before the event
+      - all_day: whether the event must be an all-day event
     """
     if not result:
         return 0.
@@ -490,8 +568,11 @@ def check_thunderbird_calendar_event(result: Dict[str, Any], rules: Dict[str, An
     expected_minute = int(rules.get("minute", 0))
     expected_duration = rules.get("duration_minutes")
     expected_title = rules.get("title", "")
-    body_points: List[List[str]] = rules.get("body_points", [])
+    body_points: List[List[str]] = rules.get("body_points", rules.get("description_points", []))
     expected_recurrence = rules.get("recurrence")
+    expected_location = rules.get("location")
+    expected_reminder = rules.get("reminder_minutes_before")
+    expected_all_day = rules.get("all_day")
 
     best_score = 0.
     for event in result.get("events", []):
@@ -513,6 +594,12 @@ def check_thunderbird_calendar_event(result: Dict[str, Any], rules: Dict[str, An
                 continue
 
         if expected_recurrence and not _calendar_event_recurrence_matches(event, expected_recurrence):
+            continue
+        if expected_location and not _calendar_event_location_matches(event, expected_location):
+            continue
+        if expected_reminder is not None and not _calendar_event_reminder_matches(event, expected_reminder):
+            continue
+        if expected_all_day is not None and not _calendar_event_all_day_matches(event, expected_all_day):
             continue
 
         event_text = _calendar_event_text(event)

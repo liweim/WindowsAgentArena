@@ -1,11 +1,11 @@
 {
-  "id": "management-hunderbird_calendar_delivery_calendar",
-  "_comment": "Don't put your answer to the instruction",
+  "id": "management-thunderbird_calendar_delivery_calendar",
+  "_comment": "",
   "manually_evaluated": false,
   "snapshot": "windows",
   "category": "management",
   "difficulty": "medium",
-  "instruction": "Enable Windows Narrator as a visual accessibility aid and keep it enabled throughout the task. Open the provided DeliveryConfirmation.jpg image and use Narrator to review the delivery information. Identify the tracking number and expected delivery date. Then open Thunderbird Calendar and create an all-day event named `Package Delivery - HXAU-4827-1936` on the expected delivery date. Add the tracking number `HXAU-4827-1936` to the event description and save the event.",
+  "instruction": "Turn on Windows Narrator and keep it enabled. Review `DeliveryConfirmation.jpg`, identify the tracking number and expected delivery date, then create a Thunderbird Calendar all-day event titled `Package Delivery - ` followed by the tracking number on that date. Put the same tracking number in the event description.",
   "source": "Local Image: assets/DeliveryConfirmation.jpg",
   "gt_steps": [
     "Enable Windows Narrator.",
@@ -94,9 +94,8 @@
         "shell": true
       },
       {
-        "type": "vm_file",
-        "path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release\\calendar-data\\local.sqlite",
-        "dest": "thunderbird-calendar.sqlite"
+        "type": "thunderbird_calendar_events",
+        "profile_path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release"
       }
     ],
     "expected": [
@@ -116,8 +115,10 @@
         "rules": {
           "title": "Package Delivery - HXAU-4827-1936",
           "date": "2026-11-05",
+          "hour": 0,
+          "minute": 0,
           "all_day": true,
-          "description_points": [
+          "body_points": [
             [
               "HXAU-4827-1936"
             ]

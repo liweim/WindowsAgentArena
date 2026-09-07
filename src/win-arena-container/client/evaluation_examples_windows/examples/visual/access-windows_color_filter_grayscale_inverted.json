@@ -4,8 +4,8 @@
   "snapshot": "base_setup",
   "category": "access",
   "difficulty": "easy",
-  "instruction": "In windows accessibility setting, change the color filter to Grayscale Inverted.",
-  "source": "human",
+  "instruction": "Set the Windows color filter to Grayscale inverted.",
+  "source": "Windows Settings > Accessibility > Color filters",
   "gt_steps": [
     "Open Windows Setting.",
     "Navigate to Accessibility Setting.",
@@ -14,7 +14,9 @@
   ],
   "config": [],
   "trajectory": "trajectories/",
-  "related_apps": [],
+  "related_apps": [
+    "settings"
+  ],
   "evaluator": {
     "func": [
       "check_include_exclude",
@@ -37,14 +39,18 @@
       {
         "type": "rule",
         "rules": {
-          "include": ["0x1"],
+          "include": [
+            "0x1"
+          ],
           "exclude": []
         }
       },
       {
         "type": "rule",
         "rules": {
-          "include": ["0x2"],
+          "include": [
+            "0x2"
+          ],
           "exclude": []
         }
       }

@@ -5,15 +5,15 @@
   "snapshot": "chrome",
   "category": "mobility",
   "difficulty": "easy",
-  "instruction": "Turn on a screen reader. Use it to navigate Google Maps and find the nearest pharmacy to the UNSW Main Library. Open the place details for the nearest pharmacy and leave the place details open.",
-  "source": "synthetic",
+  "instruction": "Turn on Windows Narrator. Use it to navigate Google Maps and find the nearest pharmacy to the UNSW Main Library. Open the place details for the nearest pharmacy and leave the place details open.",
+  "source": "Google Maps",
   "gt_steps": [
-    "Open Google Maps in Chrome.",
     "Turn on Windows Narrator.",
-    "Use the screen reader to navigate Google Maps.",
-    "Search for the nearest pharmacy to the UNSW Main Library.",
-    "Open the place details for the nearest pharmacy.",
-    "Leave the place details page open."
+    "Open Google Maps in Chrome.",
+    "Search near UNSW Main Library for pharmacies.",
+    "Identify Pharmacy at UNSW as the nearest pharmacy.",
+    "Open the Pharmacy at UNSW place details.",
+    "Leave the place details open."
   ],
   "config": [
     {
@@ -53,8 +53,8 @@
   ],
   "trajectory": "trajectories\\",
   "related_apps": [
-    "chrome",
-    "basic_os"
+    "narrator",
+    "chrome"
   ],
   "evaluator": {
     "func": [

@@ -4,8 +4,8 @@
   "snapshot": "base_setup",
   "category": "access",
   "difficulty": "easy",
-  "instruction": "In windows accessibility setting, change the color filter to Protanopia with intensity 80% and color boost 75%.",
-  "source": "human",
+  "instruction": "Set the Windows color filter to Protanopia with intensity 80% and color boost 75%.",
+  "source": "Windows Settings > Accessibility > Color filters",
   "gt_steps": [
     "Open Windows Setting.",
     "Navigate to Accessibility Setting.",
@@ -16,7 +16,9 @@
   ],
   "config": [],
   "trajectory": "trajectories/",
-  "related_apps": [],
+  "related_apps": [
+    "settings"
+  ],
   "evaluator": {
     "func": [
       "check_include_exclude",
@@ -51,28 +53,36 @@
       {
         "type": "rule",
         "rules": {
-          "include": ["0x1"],
+          "include": [
+            "0x1"
+          ],
           "exclude": []
         }
       },
       {
         "type": "rule",
         "rules": {
-          "include": ["0x4"],
+          "include": [
+            "0x4"
+          ],
           "exclude": []
         }
       },
       {
         "type": "rule",
         "rules": {
-          "include": ["0x50"],
+          "include": [
+            "0x50"
+          ],
           "exclude": []
         }
       },
       {
         "type": "rule",
         "rules": {
-          "include": ["0x4b"],
+          "include": [
+            "0x4b"
+          ],
           "exclude": []
         }
       }

@@ -1,32 +1,51 @@
 {
   "id": "access-windows_magnifier_200",
   "_comment": "",
-  "snapshot": "chrome",
+  "snapshot": "base_setup",
   "category": "access",
   "difficulty": "easy",
-  "instruction": "Open magnifier UI with Windows Key + Plus Sign (+). Make it 300% zoom.",
-  "source": "human",
+  "instruction": "Open Windows Magnifier, set the zoom level to 200%, and leave Magnifier open.",
+  "source": "Windows Magnifier",
   "gt_steps": [
-    "Press Windows Key + Plus Sign (+).",
-    "Magnifier UI shows up.",
-    "Press the + button and increase to 300%."
+    "Open Windows Magnifier.",
+    "Set the Magnifier zoom level to 200%.",
+    "Leave Magnifier open."
   ],
   "config": [],
   "trajectory": "trajectories/",
   "related_apps": [
-    "chrome"
+    "magnifier"
   ],
   "evaluator": {
-    "func": "check_zoom_access_tree",
-    "result": {
-      "type": "chrome_page_zoom_from_access_tree"
-    },
-    "expected": {
-      "type": "rule",
-      "rules": {
-        "zoom": "300%"
+    "func": [
+      "check_magnifier_ui_open",
+      "check_include_exclude"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "access_tree_and_process"
+      },
+      {
+        "type": "vm_command_line",
+        "command": "powershell -NoProfile -Command \"$v=(Get-ItemProperty -Path 'HKCU:\\\\Software\\\\Microsoft\\\\ScreenMagnifier' -Name Magnification -ErrorAction SilentlyContinue).Magnification; if ($v -eq 200) { Write-Output 'MAGNIFICATION_200' } else { Write-Output ('MAGNIFICATION_' + $v) }\"",
+        "shell": true
       }
-    }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {}
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "include": [
+            "MAGNIFICATION_200"
+          ]
+        }
+      }
+    ]
   },
   "proxy": false,
   "fixed_ip": false,
