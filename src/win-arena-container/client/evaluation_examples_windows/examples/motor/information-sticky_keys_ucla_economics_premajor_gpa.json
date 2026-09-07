@@ -4,7 +4,7 @@
   "manually_evaluated": false,
   "snapshot": "chrome",
   "category": "information",
-  "difficulty": "easy",
+  "difficulty": "medium",
   "instruction": "Enable Windows Sticky Keys as a motor accessibility aid and keep it enabled throughout the task. In the UCLA Economics Undergraduate Handbook PDF already open in Chrome, find the minimum pre-major GPA requirement for the UCLA Economics major. Save the minimum pre-major GPA in a text file named `EconomicsGPA.txt` on the Desktop.",
   "source": "Local PDF: assets/UCLA Handbook.pdf",
   "gt_steps": [

@@ -4,7 +4,7 @@
   "manually_evaluated": false,
   "snapshot": "chrome",
   "category": "information",
-  "difficulty": "medium",
+  "difficulty": "hard",
   "instruction": "Enable the Windows On-Screen Keyboard as a motor accessibility aid and keep it open throughout the task. Using Chrome, find the FIFA World Cup winner and the country where the final match was hosted for the 2026, 2022, and 2018 tournaments. Open Notepad and write the answers in 6 lines in this order: 2026 winner, 2026 host country, 2022 winner, 2022 host country, 2018 winner, 2018 host country. Use the formats `Winner {Year}: {Winner}` and `Host Country {Year}: {Host Country}`. Save the file as `worldcup.txt` on the Desktop.",
   "source": "Web research using Chrome",
   "gt_steps": [

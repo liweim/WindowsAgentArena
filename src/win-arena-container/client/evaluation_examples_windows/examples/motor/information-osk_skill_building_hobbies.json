@@ -4,7 +4,7 @@
   "manually_evaluated": true,
   "snapshot": "chrome",
   "category": "information",
-  "difficulty": "medium",
+  "difficulty": "hard",
   "instruction": "Enable the Windows On-Screen Keyboard as a motor accessibility aid and keep it open throughout the task. On the Covey webpage already open in Chrome, find the 11 examples listed under \"11 Examples of Skill-Building Hobbies for Adults with Disabilities\". Open Notepad and write only the 11 hobby topics exactly as written on the webpage, one topic per line. Do not include numbers, bullet symbols, or descriptions, and do not paraphrase. Write every topic in lowercase. Save the file as `hobbies.txt` on the Desktop.",
   "source": "https://covey.org/11-skill-building-hobbies-for-adults-with-disabilities/",
   "gt_steps": [

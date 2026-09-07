@@ -2,7 +2,7 @@
   "id": "access-docker_install",
   "snapshot": "base_setup",
   "category": "access",
-  "difficulty": "medium",
+  "difficulty": "hard",
   "instruction": "Install Docker Desktop on this Windows PC without restarting Windows.",
   "source": "https://docs.docker.com/desktop/setup/install/windows-install/",
   "gt_steps": [

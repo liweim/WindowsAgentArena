@@ -2,7 +2,7 @@
   "id": "information-handwashing_steps",
   "snapshot": "chrome",
   "category": "information",
-  "difficulty": "hard",
+  "difficulty": "medium",
   "instruction": "Turn on captions in the opened YouTube video, identify the hand-washing steps mentioned there, then record them in a Sticky Note.",
   "source": "https://www.youtube.com/watch?v=UitUdTjhZz8",
   "gt_steps": [

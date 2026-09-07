@@ -2,7 +2,7 @@
   "id": "consumption-shopping_desktop_movie_night_note",
   "snapshot": "chrome",
   "category": "consumption",
-  "difficulty": "medium",
+  "difficulty": "hard",
   "instruction": "Use the movie-night shopping reminder on the Desktop to add everything still needed to the shopping cart.",
   "source": "WebArena self-hosted OneStopShop service",
   "gt_steps": [
