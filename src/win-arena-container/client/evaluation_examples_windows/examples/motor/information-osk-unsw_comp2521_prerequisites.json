@@ -4,7 +4,7 @@
   "snapshot": "chrome",
   "category": "information",
   "difficulty": "hard",
-  "instruction": "Enable the On-Screen Keyboard as a motor accessibility aid and keep it open while completing the task. Go to https://www.handbook.unsw.edu.au/undergraduate/programs/2022/3778 and view the 2025 version of the program. Under the Disciplinary Component, open Computer Science (COMPA1). In the Course Cores section, view more information for Data Structures and Algorithms (COMP2521). Using the On-Screen Keyboard, write the complete prerequisite expression for COMP2521 in a sticky note exactly as shown in the handbook, including every `or` between the course codes.",
+  "instruction": "Enable the Windows On-Screen Keyboard and keep it open. In the 2025 UNSW Handbook version of undergraduate program 3778, find the complete prerequisite expression for COMP2521 under the Computer Science disciplinary component and write it in a sticky note exactly as shown, including every `or` between course codes.",
   "source": "https://www.handbook.unsw.edu.au/undergraduate/programs/2022/3778",
   "gt_steps": [
     "Enable the On-Screen Keyboard as a motor accessibility aid and keep it open while completing the task.",

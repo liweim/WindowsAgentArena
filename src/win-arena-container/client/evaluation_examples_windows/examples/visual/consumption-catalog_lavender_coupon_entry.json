@@ -4,7 +4,7 @@
   "snapshot": "chrome",
   "category": "consumption",
   "difficulty": "hard",
-  "instruction": "Turn on Windows Narrator. Use it to read the opened garden catalogue in Chrome and identify the featured lavender product and its coupon code. Find the matching product on the opened shopping website, add exactly one unit to the shopping cart, and enter the catalogue coupon code in the coupon code field. Do not apply the coupon. Leave the shopping cart page open.",
+  "instruction": "Turn on Windows Narrator. Using the provided garden catalogue, identify the featured lavender product and coupon code. Add exactly one unit of the matching product to the shopping cart, enter the catalogue coupon code without applying it, and leave the cart page open.",
   "source": "Local HTML: assets/Consumption-lavender_coupon_catalog.html",
   "gt_steps": [
     "Open the garden catalogue in Chrome.",

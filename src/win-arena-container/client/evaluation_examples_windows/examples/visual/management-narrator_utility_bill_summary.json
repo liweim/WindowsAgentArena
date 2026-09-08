@@ -5,7 +5,7 @@
   "snapshot": "windows",
   "category": "management",
   "difficulty": "hard",
-  "instruction": "Enable Windows Narrator and keep it enabled throughout the task. Open the three provided utility bill PDF documents. For each bill, identify the provider, due date, and total amount due. Enter the information into the provided BillSummary.ods spreadsheet and save the spreadsheet.",
+  "instruction": "Enable Windows Narrator and keep it enabled. Populate the provided `BillSummary.ods` with the provider, due date, and total amount due from each of the three provided utility bills, then save the spreadsheet.",
   "source": "Local Documents: assets/BluePeak_Electricity_Bill.pdf, assets/ClearFlow_Water_Bill.pdf, assets/GreenFlame_Gas_Bill.pdf, assets/BillSummary.ods",
   "gt_steps": [
     "Enable Windows Narrator.",

@@ -4,7 +4,7 @@
   "snapshot": "windows",
   "category": "health",
   "difficulty": "hard",
-  "instruction": "Enable Sticky Keys as a motor accessibility aid and keep it enabled. I take my Parkinson's medication at 8:00 AM, 12:00 PM, and 4:00 PM each day to help manage my movement symptoms. In Thunderbird Calendar, create three daily medication reminders at these times. Set the title of each reminder to `Parkinson's medication` and make each reminder repeat daily.",
+  "instruction": "Enable Windows Sticky Keys and keep them enabled. Create three Thunderbird Calendar reminders titled `Parkinson's medication` at 8:00 AM, 12:00 PM, and 4:00 PM, with each reminder repeating daily.",
   "source": "https://www.parkinsons.org.au/i-have-parkinsons/?utm_term=parkinson%27s%20australia&utm_campaign=GD+%7C+Parkinson%27s+Search+Campaign&utm_source=adwords&utm_medium=ppc&hsa_acc=5551006727&hsa_cam=21391943163&hsa_grp=171009508227&hsa_ad=714906645515&hsa_src=g&hsa_tgt=kwd-1098016929&hsa_kw=parkinson%27s%20australia&hsa_mt=b&hsa_net=adwords&hsa_ver=3&gad_source=1&gad_campaignid=21391943163&gbraid=0AAAAA95bhWomStfjYCr6l0hTkNSewGFQP&gclid=CjwKCAjwvNfSBhBiEiwAyaGMCX2KqU9452XhOdtpFtJHcnRlNrV7zkjSFVHArqsXNOWt8bCLJ5LT8hoCQOYQAvD_BwE",
   "gt_steps": [
     "Open Windows Settings.",

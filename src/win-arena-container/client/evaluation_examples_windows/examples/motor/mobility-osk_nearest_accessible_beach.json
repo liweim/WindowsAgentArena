@@ -5,7 +5,7 @@
   "snapshot": "chrome",
   "category": "mobility",
   "difficulty": "hard",
-  "instruction": "Enable the Windows On-Screen Keyboard as a motor accessibility aid and keep it open throughout the task. I live in the Bondi, Australia area. From the provided Accessible Beaches NSW directory, use the map to find the nearest beach within 5 km of my area. Read more about the beach and save the beach name and all available accessibility features in a text file named `NearestBeach.txt` on the Desktop. Write the beach name on the first line and all six listed accessibility features on the next six lines, preserving the feature order shown on the directory. Do not paraphrase the accessibility features.",
+  "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Using the provided Accessible Beaches NSW directory, identify the nearest beach within 5 km of Bondi, Australia, and save its name followed by all six listed accessibility features to `NearestBeach.txt` on the Desktop. Put the beach name on the first line and the features on the next six lines in directory order without paraphrasing.",
   "source": "https://accessiblebeaches.com/beach-directory/category/NSW",
   "gt_steps": [
     "Enable the Windows On-Screen Keyboard and keep it open.",

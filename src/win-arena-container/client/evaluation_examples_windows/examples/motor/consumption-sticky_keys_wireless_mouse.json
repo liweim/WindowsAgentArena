@@ -5,7 +5,7 @@
   "snapshot": "chrome",
   "category": "consumption",
   "difficulty": "easy",
-  "instruction": "Enable Windows Sticky Keys as a motor accessibility aid and keep it enabled throughout the task. On the OneStopShop website, search for `wireless mouse`. Open the first search result and add one unit of the product to the shopping cart.",
+  "instruction": "Enable Windows Sticky Keys and keep them enabled. Add exactly one unit of the first OneStopShop search result for `wireless mouse` to the shopping cart.",
   "source": "OneStopShop (self-hosted)",
   "gt_steps": [
     "Enable Windows Sticky Keys.",

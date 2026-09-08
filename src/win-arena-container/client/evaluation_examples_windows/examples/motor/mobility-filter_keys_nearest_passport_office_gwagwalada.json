@@ -4,7 +4,7 @@
   "snapshot": "windows",
   "category": "mobility",
   "difficulty": "hard",
-  "instruction": "Enable Filter Keys as a motor accessibility aid and keep it enabled throughout the task. I’m at El Rufai Park Bus Stop, Gwagwalada 902101, Federal Capital Territory, Nigeria. The Nigeria Immigration Service passport office directory PDF is already open in Chrome. Determine the nearest passport office listed in the PDF, then open Google Maps, find the driving route from my current location to that office, and leave the driving directions visible.",
+  "instruction": "Enable Windows Filter Keys and keep them enabled. From El Rufai Park Bus Stop, Gwagwalada 902101, Federal Capital Territory, Nigeria, determine the nearest passport office listed in the provided Nigeria Immigration Service directory and leave Google Maps driving directions to that office visible.",
   "source": "https://immigration.gov.ng/",
   "gt_steps": [
     "Open Windows Settings.",

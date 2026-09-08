@@ -5,7 +5,7 @@
   "snapshot": "windows",
   "category": "health",
   "difficulty": "hard",
-  "instruction": "Enable the Windows On-Screen Keyboard as a motor accessibility aid and keep it open throughout the task. In Thunderbird Calendar, create a 1-hour appointment reminder for 10:00 AM tomorrow. Set the title to `Physiotherapy Appointment`. Open the provided website and find the `Common Mistakes to Avoid` section. In the event description, include all the listed common mistakes to avoid. Do not paraphrase.",
+  "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Create a 1-hour Thunderbird Calendar event for 10:00 AM tomorrow titled `Physiotherapy Appointment`, with every item from the provided webpage's `Common Mistakes to Avoid` section copied exactly into the description.",
   "source": "https://inclinehealth.com.au/how-to-prepare-for-first-appointment/",
   "gt_steps": [
     "Enable the Windows On-Screen Keyboard and keep it open.",

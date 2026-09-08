@@ -5,7 +5,7 @@
   "snapshot": "chrome",
   "category": "health",
   "difficulty": "medium",
-  "instruction": "Enable the Windows On-Screen Keyboard as a motor accessibility aid and keep it open throughout the task. The insulin-storage PDF is already open in Chrome. Find the recommended refrigerated temperature range for storing unopened insulin safely, then save only the temperature range in a text file named `insulinTemperature.txt` on the Desktop.",
+  "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Save only the recommended refrigerated temperature range for unopened insulin from the provided insulin-storage PDF in `insulinTemperature.txt` on the Desktop.",
   "source": "assets/ddrc-storing-insulin-2018.pdf",
   "gt_steps": [
     "Enable the Windows On-Screen Keyboard.",

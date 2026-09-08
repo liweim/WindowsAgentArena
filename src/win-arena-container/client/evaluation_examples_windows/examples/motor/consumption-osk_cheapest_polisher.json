@@ -5,7 +5,7 @@
   "snapshot": "chrome",
   "category": "consumption",
   "difficulty": "medium",
-  "instruction": "Enable the Windows On-Screen Keyboard as a motor accessibility aid and keep it open throughout the task. The provided Harbor Freight catalog PDF is already open in Chrome. Find the cheapest polisher in the catalog. In `cheapPolisher.txt` on the Desktop, write the full product name exactly as shown in the PDF on the first line and its price on the second line.",
+  "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Find the cheapest polisher in the provided Harbor Freight catalogue and save its full product name exactly as shown on the first line and its price on the second line of `cheapPolisher.txt` on the Desktop.",
   "source": "assets/Nov2020Catalog_Full.pdf",
   "gt_steps": [
     "Enable the Windows On-Screen Keyboard.",

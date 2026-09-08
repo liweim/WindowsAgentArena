@@ -5,7 +5,7 @@
   "snapshot": "windows",
   "category": "management",
   "difficulty": "medium",
-  "instruction": "Enable Windows Filter Keys as a motor accessibility aid and keep it enabled throughout the task. Open the provided MonthlyBills.ods spreadsheet in LibreOffice Calc. Use a formula to calculate the total amount due for all bills with the status `Unpaid` and enter the result in cell B12. Save the spreadsheet.",
+  "instruction": "Enable Windows Filter Keys and keep them enabled. In the provided `MonthlyBills.ods`, use a formula in cell B12 to calculate the total amount due for all bills with status `Unpaid`, then save the spreadsheet.",
   "source": "Local Spreadsheet: assets/MonthlyBills.ods",
   "gt_steps": [
     "Enable Windows Filter Keys.",

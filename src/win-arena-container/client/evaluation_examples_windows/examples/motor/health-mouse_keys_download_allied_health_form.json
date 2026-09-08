@@ -5,7 +5,7 @@
   "snapshot": "windows",
   "category": "health",
   "difficulty": "medium",
-  "instruction": "Enable Mouse Keys as a motor accessibility aid and keep it enabled. Go to the SIRA website(https://www.sira.nsw.gov.au/), find the Allied Health Treatment Request form, download the PDF, and save it on the Desktop as `AlliedHeathTreatmentRequestForm.pdf`.",
+  "instruction": "Enable Windows Mouse Keys and keep them enabled. Download the Allied Health Treatment Request form from the SIRA website and save the PDF on the Desktop as `AlliedHeathTreatmentRequestForm.pdf`.",
   "source": "https://www.sira.nsw.gov.au/",
   "gt_steps": [
     "Open Windows Settings.",
