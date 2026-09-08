@@ -5,8 +5,8 @@
   "snapshot": "chrome",
   "category": "information",
   "difficulty": "medium",
-  "instruction": "Enable Windows Filter Keys and keep them enabled. Find the maximum coursework file upload size in the provided Department of Psychology Undergraduate Student Handbook and save it in `maxSizeAssignement.txt` on the Desktop.",
-  "source": "Local PDF: assets/department_of_psychology_ug.pdf",
+  "instruction": "Enable Windows Filter Keys and keep them enabled. Find the maximum coursework file upload size in the provided Department of Psychology Undergraduate Student Handbook and save it in `answer.txt` on the Desktop.",
+  "source": "Local PDF: assets/information-psychology_coursework_upload_limit.pdf",
   "gt_steps": [
     "Open Windows Accessibility keyboard settings.",
     "Navigate to the Filter Keys settings.",
@@ -17,7 +17,7 @@
     "Identify the maximum file upload size as 50MB.",
     "Open Notepad.",
     "Write the maximum upload size in the text file.",
-    "Save the file as `maxSizeAssignement.txt` on the Desktop.",
+    "Save the file as `answer.txt` on the Desktop.",
     "Leave the saved file on the Desktop.",
     "Leave Filter Keys enabled."
   ],
@@ -29,7 +29,7 @@
           "google-chrome",
           "--remote-debugging-port=1337",
           "--force-renderer-accessibility",
-          "file:///C:/Users/Docker/assets/department_of_psychology_ug.pdf"
+          "file:///C:/Users/Docker/assets/information-psychology_coursework_upload_limit.pdf"
         ]
       }
     },
@@ -70,7 +70,7 @@
       },
       {
         "type": "vm_command_line",
-        "command": "powershell -NoProfile -Command \"$file='C:\\Users\\Docker\\Desktop\\maxSizeAssignement.txt'; if (-not (Test-Path $file)) { Write-Output 'FILE_MISSING'; exit }; $c=Get-Content $file -Raw; if ($c -match '(?i)(?<![0-9])50\\s*(MB|megabytes?)(?![A-Za-z0-9])') { Write-Output 'CORRECT_MAX_SIZE_FOUND' } else { Write-Output 'INCORRECT_MAX_SIZE' }\"",
+        "command": "powershell -NoProfile -Command \"$file='C:\\Users\\Docker\\Desktop\\answer.txt'; if (-not (Test-Path $file)) { Write-Output 'FILE_MISSING'; exit }; $c=Get-Content $file -Raw; if ($c -match '(?i)(?<![0-9])50\\s*(MB|megabytes?)(?![A-Za-z0-9])') { Write-Output 'CORRECT_MAX_SIZE_FOUND' } else { Write-Output 'INCORRECT_MAX_SIZE' }\"",
         "shell": true
       }
     ],

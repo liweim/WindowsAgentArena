@@ -3,20 +3,20 @@
   "snapshot": "chrome",
   "category": "consumption",
   "difficulty": "medium",
-  "instruction": "I'm looking for a ginger ale that's less sweet, has a noticeable ginger flavor, and tastes good on its own rather than just as a mixer. Check the OneStopShop reviews and tell me if this one fits. Write only `yes` or `no` in `onestopshop_note.txt` on the Desktop.",
+  "instruction": "I'm looking for a ginger ale that's less sweet, has a noticeable ginger flavor, and tastes good on its own rather than just as a mixer. Check the OneStopShop reviews and tell me if this one fits. Write only `yes` or `no` in `answer.txt` on the Desktop.",
   "source": "WebArena self-hosted OneStopShop service",
   "gt_steps": [
     "Review the customer reviews on the already-open Q Mixers Premium Ginger Ale product page.",
     "Determine that the standard answer is `yes` because the reviews support the stated preferences.",
     "Open Notepad.",
     "Enter only `yes`.",
-    "Save the file as `onestopshop_note.txt` on the Desktop."
+    "Save the file as `answer.txt` on the Desktop."
   ],
   "config": [
     {
       "type": "execute",
       "parameters": {
-        "command": "powershell -NoProfile -Command \"$p=Join-Path $env:USERPROFILE 'Desktop\\onestopshop_note.txt'; if(Test-Path $p){Remove-Item $p -Force}\"",
+        "command": "powershell -NoProfile -Command \"$p=Join-Path $env:USERPROFILE 'Desktop\\answer.txt'; if(Test-Path $p){Remove-Item $p -Force}\"",
         "shell": true
       }
     },
@@ -40,7 +40,7 @@
     "func": "check_text_points",
     "result": {
       "type": "vm_command_line",
-      "command": "powershell -NoProfile -Command \"$p=Join-Path $env:USERPROFILE 'Desktop\\onestopshop_note.txt'; if(Test-Path $p){$v=(Get-Content $p -Raw).Trim(); if($v -ieq 'yes'){Write-Output 'EXACT_YES'}}\"",
+      "command": "powershell -NoProfile -Command \"$p=Join-Path $env:USERPROFILE 'Desktop\\answer.txt'; if(Test-Path $p){$v=(Get-Content $p -Raw).Trim(); if($v -ieq 'yes'){Write-Output 'EXACT_YES'}}\"",
       "shell": true
     },
     "expected": {

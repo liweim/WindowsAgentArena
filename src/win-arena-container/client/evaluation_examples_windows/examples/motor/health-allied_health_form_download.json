@@ -5,7 +5,7 @@
   "snapshot": "windows",
   "category": "health",
   "difficulty": "medium",
-  "instruction": "Enable Windows Mouse Keys and keep them enabled. Download the Allied Health Treatment Request form from the SIRA website and save the PDF on the Desktop as `AlliedHeathTreatmentRequestForm.pdf`.",
+  "instruction": "Enable Windows Mouse Keys and keep them enabled. Download the Allied Health Treatment Request form from the SIRA website and save the PDF on the Desktop as `answer.pdf`.",
   "source": "https://www.sira.nsw.gov.au/",
   "gt_steps": [
     "Open Windows Settings.",
@@ -17,7 +17,7 @@
     "Navigate through the SIRA website to find the Allied Health Treatment Request form.",
     "Open the Allied Health Treatment Request form.",
     "Download the correct PDF form.",
-    "Save the PDF on the Desktop as `AlliedHeathTreatmentRequestForm.pdf`.",
+    "Save the PDF on the Desktop as `answer.pdf`.",
     "Leave Mouse Keys enabled."
   ],
   "config": [
@@ -68,7 +68,7 @@
       },
       {
         "type": "vm_command_line",
-        "command": "powershell -NoProfile -Command \"$file='C:\\Users\\Docker\\Desktop\\AlliedHeathTreatmentRequestForm.pdf'; if (-not (Test-Path $file)) { Write-Output 'FILE_MISSING'; exit }; Write-Output 'FILE_EXISTS'; $txt=Join-Path $env:TEMP 'allied_health_form.txt'; pdftotext $file $txt; $content=Get-Content $txt -Raw; if ($content -match '(?i)Allied\\s+Health\\s+Treatment') { Write-Output 'PDF_CONTENT_CORRECT' } else { Write-Output 'PDF_CONTENT_INCORRECT' }; Remove-Item $txt -ErrorAction SilentlyContinue\"",
+        "command": "powershell -NoProfile -Command \"$file='C:\\Users\\Docker\\Desktop\\answer.pdf'; if (-not (Test-Path $file)) { Write-Output 'FILE_MISSING'; exit }; Write-Output 'FILE_EXISTS'; $txt=Join-Path $env:TEMP 'allied_health_form.txt'; pdftotext $file $txt; $content=Get-Content $txt -Raw; if ($content -match '(?i)Allied\\s+Health\\s+Treatment') { Write-Output 'PDF_CONTENT_CORRECT' } else { Write-Output 'PDF_CONTENT_INCORRECT' }; Remove-Item $txt -ErrorAction SilentlyContinue\"",
         "shell": true
       }
     ],

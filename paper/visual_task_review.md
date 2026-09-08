@@ -15,7 +15,7 @@
 
 ## Manual Action Still Required
 
-- `management-utility_bill_summary`: restore the missing source asset `examples/visual/assets/BillSummary.ods`. The evaluator expects sheet `Bill Summary` with the three bill rows in `B4:D6`; verify the restored template uses that layout. This is the only remaining missing local asset found in the visual directory.
+- `management-utility_bill_summary`: restore the missing source asset `examples/visual/assets/management-utility_bill_summary.ods`. The evaluator expects sheet `Bill Summary` with the three bill rows in `B4:D6`; verify the restored template uses that layout. This is the only remaining missing local asset found in the visual directory.
 
 ## Change Log
 
@@ -33,7 +33,7 @@
 | `consumption-toothbrush_price_comparison` | Made Narrator explicit/canonical; concrete local source; evaluator now requires exactly one unit of the correct product. Instruction made high-level; routine operation steps removed, constraints preserved. |
 | `consumption-lavender_coupon` | Made Narrator explicit/canonical; concrete local source; evaluator now requires exactly one unit. Instruction made high-level; routine operation steps removed, constraints preserved. |
 | `consumption-saute_pan` | Made Narrator explicit/canonical; concrete local source; evaluator now requires exactly one unit. Instruction made high-level; routine operation steps removed, constraints preserved. |
-| `consumption-keto_bread` | Made Narrator explicit/canonical; corrected the missing HTML asset reference to `assets/consumption-find_keto_bread_product.html`. |
+| `consumption-keto_bread` | Made Narrator explicit/canonical; corrected the missing HTML asset reference to `assets/consumption-keto_bread.html`. |
 | `consumption-marshmallow_bunnies` | Made Narrator explicit/canonical; concrete local source; evaluator now requires exactly one unit. Instruction made high-level; routine operation steps removed, constraints preserved. |
 | `consumption-swingset_price_filter` | Removed stale self-hosted comment; corrected source to Smyths Toys; rewrote instruction/`gt_steps`; added canonical `narrator` app. |
 | `desktop_env/evaluators/metrics/thunderbird.py` | Added optional Thunderbird Calendar checks for location, reminder offset, all-day flag, and `description_points` compatibility. |
@@ -60,6 +60,6 @@
 - No duplicate IDs or case-only duplicate filenames were found.
 - All evaluator metric/getter names used by visual tasks resolve to registered repository names.
 - Modified Thunderbird evaluator code passes Python syntax compilation and synthetic checks for cardiology reminder/location, delivery all-day/description, and weekly-planner location rules.
-- All referenced local assets exist except `assets/BillSummary.ods` noted above.
+- All referenced local assets exist except `assets/management-utility_bill_summary.ods` noted above.
 - Difficulty distribution after the latest pass: easy 21, medium 12, hard 7.
 - The old misspelled delivery-task path is recorded in `DELETED_FILES.txt`.

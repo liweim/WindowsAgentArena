@@ -61,7 +61,7 @@
           "google-chrome",
           "--remote-debugging-port=1337",
           "--force-renderer-accessibility",
-          "assets/sample-bill-2024.pdf"
+          "assets/management-water_bill_reminder.pdf"
         ]
       }
     },

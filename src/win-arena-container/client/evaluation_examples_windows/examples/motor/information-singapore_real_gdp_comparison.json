@@ -5,10 +5,10 @@
   "snapshot": "chrome",
   "category": "information",
   "difficulty": "hard",
-  "instruction": "Enable Windows Filter Keys as a motor accessibility aid and keep it enabled throughout the task. Compare Singapore’s Real GDP growth percentages in the provided 2024 and 2025 reports. Calculate the absolute numeric difference between the two percentages. Save only that numeric difference followed by `%` in `differenceGDP.txt` on the Desktop.",
+  "instruction": "Enable Windows Filter Keys as a motor accessibility aid and keep it enabled throughout the task. Compare Singapore’s Real GDP growth percentages in the provided 2024 and 2025 reports. Calculate the absolute numeric difference between the two percentages. Save only that numeric difference followed by `%` in `answer.txt` on the Desktop.",
   "source": [
-    "Local PDF: assets/FullReport_AES2024.pdf",
-    "Local PDF: assets/FullReport_AES2025.pdf"
+    "Local PDF: assets/information-singapore_real_gdp_comparison_2024.pdf",
+    "Local PDF: assets/information-singapore_real_gdp_comparison_2025.pdf"
   ],
   "gt_steps": [
     "Open Windows Accessibility keyboard settings.",
@@ -24,7 +24,7 @@
     "Calculate the difference between 5.0% and 4.4% as 0.6 percentage points.",
     "Open Notepad.",
     "Write only `0.6%` in the file.",
-    "Save the file as `differenceGDP.txt` on the Desktop.",
+    "Save the file as `answer.txt` on the Desktop.",
     "Leave the saved file on the Desktop.",
     "Leave Filter Keys enabled."
   ],
@@ -36,8 +36,8 @@
           "google-chrome",
           "--remote-debugging-port=1337",
           "--force-renderer-accessibility",
-          "file:///C:/Users/Docker/assets/FullReport_AES2024.pdf",
-          "file:///C:/Users/Docker/assets/FullReport_AES2025.pdf"
+          "file:///C:/Users/Docker/assets/information-singapore_real_gdp_comparison_2024.pdf",
+          "file:///C:/Users/Docker/assets/information-singapore_real_gdp_comparison_2025.pdf"
         ]
       }
     },
@@ -78,7 +78,7 @@
       },
       {
         "type": "is_file_saved_desktop",
-        "filename": "differenceGDP.txt",
+        "filename": "answer.txt",
         "textcontent": "0.6%",
         "exact": true
       }

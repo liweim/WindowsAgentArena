@@ -5,8 +5,8 @@
   "snapshot": "chrome",
   "category": "information",
   "difficulty": "medium",
-  "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Copy the touchpad-cleaning instructions from the provided Dell User's Guide exactly as written into `cleanTouchpad.txt` on the Desktop.",
-  "source": "assets/desk_laptop_ug_en-us.pdf",
+  "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Copy the touchpad-cleaning instructions from the provided Dell User's Guide exactly as written into `answer.txt` on the Desktop.",
+  "source": "assets/information-touchpad_cleaning_instructions.pdf",
   "gt_steps": [
     "Enable the Windows On-Screen Keyboard.",
     "Keep the On-Screen Keyboard open throughout the task.",
@@ -16,7 +16,7 @@
     "Copy the touchpad cleaning instructions exactly as written without paraphrasing.",
     "Open Notepad.",
     "Paste or type the instructions exactly as written.",
-    "Save the file as `cleanTouchpad.txt` on the Desktop.",
+    "Save the file as `answer.txt` on the Desktop.",
     "Leave the saved file on the Desktop.",
     "Leave the On-Screen Keyboard open."
   ],
@@ -26,7 +26,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/desk_laptop_ug_en-us.pdf",
+            "local_path": "assets/information-touchpad_cleaning_instructions.pdf",
             "path": "C:\\Users\\Docker\\Downloads\\desk_laptop_ug_en-us.pdf"
           }
         ]
@@ -81,7 +81,7 @@
       },
       {
         "type": "is_file_saved_desktop",
-        "filename": "cleanTouchpad.txt",
+        "filename": "answer.txt",
         "textcontent": "1. Turn the computer off.\n2. Disconnect the computer from the electrical outlet, and disconnect all the devices from the computer.\n3. Remove the battery.\n4. Moisten a soft, lint-free cloth with water, and wipe it gently across the surface of the touch pad. Do not allow water from the cloth to seep between the touchpad and the surrounding palmrest.",
         "exact": true
       }

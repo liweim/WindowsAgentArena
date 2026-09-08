@@ -5,7 +5,7 @@
   "category": "consumption",
   "difficulty": "hard",
   "instruction": "Turn on Windows Narrator. Using the provided oral-care catalogue, identify the cheaper of the two six-count toothbrush products and add exactly one unit of it to the shopping cart. Leave the cart page open.",
-  "source": "Local HTML: assets/Consumption-toothbrush_price_catalog.html",
+  "source": "Local HTML: assets/consumption-toothbrush_price_comparison.html",
   "gt_steps": [
     "Open the oral-care catalogue in Chrome.",
     "Turn on Windows Narrator.",
@@ -28,7 +28,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/Consumption-toothbrush_price_catalog.html",
+            "local_path": "assets/consumption-toothbrush_price_comparison.html",
             "path": "C:\\Users\\Docker\\Desktop\\Consumption-toothbrush_price_catalog.html"
           }
         ]

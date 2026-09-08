@@ -5,8 +5,8 @@
   "snapshot": "chrome",
   "category": "consumption",
   "difficulty": "medium",
-  "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Find the cheapest polisher in the provided Harbor Freight catalogue and save its full product name exactly as shown on the first line and its price on the second line of `cheapPolisher.txt` on the Desktop.",
-  "source": "assets/Nov2020Catalog_Full.pdf",
+  "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Find the cheapest polisher in the provided Harbor Freight catalogue and save its full product name exactly as shown on the first line and its price on the second line of `answer.txt` on the Desktop.",
+  "source": "assets/consumption-cheapest_polisher.pdf",
   "gt_steps": [
     "Enable the Windows On-Screen Keyboard.",
     "Keep the On-Screen Keyboard open throughout the task.",
@@ -19,7 +19,7 @@
     "Write the following exactly:",
     "6\" PALM POLISHER",
     "$19.99",
-    "Save the file as `cheapPolisher.txt` on the Desktop.",
+    "Save the file as `answer.txt` on the Desktop.",
     "Leave the saved file on the Desktop.",
     "Leave the On-Screen Keyboard open."
   ],
@@ -29,7 +29,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/Nov2020Catalog_Full.pdf",
+            "local_path": "assets/consumption-cheapest_polisher.pdf",
             "path": "C:\\Users\\Docker\\Downloads\\Nov2020Catalog_Full.pdf"
           }
         ]
@@ -84,7 +84,7 @@
       },
       {
         "type": "is_file_saved_desktop",
-        "filename": "cheapPolisher.txt",
+        "filename": "answer.txt",
         "textcontent": "6\" PALM POLISHER\n$19.99",
         "exact": true
       }

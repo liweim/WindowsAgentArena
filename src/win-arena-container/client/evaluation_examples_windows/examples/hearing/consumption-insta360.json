@@ -20,7 +20,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/Consumption-insta360.mp3",
+            "local_path": "assets/consumption-insta360.mp3",
             "path": "C:\\Users\\Docker\\Desktop\\Consumption-insta360.mp3"
           }
         ]

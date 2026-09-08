@@ -5,7 +5,7 @@
   "snapshot": "chrome",
   "category": "information",
   "difficulty": "hard",
-  "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Save the FIFA World Cup winner and final-match host country for 2026, 2022, and 2018 to `worldcup.txt` on the Desktop in six lines ordered by year from 2026 to 2018, with the winner before the host country for each year. Use `Winner {Year}: {Winner}` and `Host Country {Year}: {Host Country}`.",
+  "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Save the FIFA World Cup winner and final-match host country for 2026, 2022, and 2018 to `answer.txt` on the Desktop in six lines ordered by year from 2026 to 2018, with the winner before the host country for each year. Use `Winner {Year}: {Winner}` and `Host Country {Year}: {Host Country}`.",
   "source": "Web research using Chrome",
   "gt_steps": [
     "Enable the Windows On-Screen Keyboard.",
@@ -24,7 +24,7 @@
     "Write `Host Country 2022: Qatar` on the fourth line.",
     "Write `Winner 2018: France` on the fifth line.",
     "Write `Host Country 2018: Russia` on the sixth line.",
-    "Save the file as `worldcup.txt` on the Desktop.",
+    "Save the file as `answer.txt` on the Desktop.",
     "Leave the saved file on the Desktop.",
     "Leave the On-Screen Keyboard open."
   ],
@@ -58,7 +58,7 @@
       },
       {
         "type": "is_file_saved_desktop",
-        "filename": "worldcup.txt",
+        "filename": "answer.txt",
         "textcontent": "Winner 2026: Spain\nHost Country 2026: United States\nWinner 2022: Argentina\nHost Country 2022: Qatar\nWinner 2018: France\nHost Country 2018: Russia",
         "exact": true
       }

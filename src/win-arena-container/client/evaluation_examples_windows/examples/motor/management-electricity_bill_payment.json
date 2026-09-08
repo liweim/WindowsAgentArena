@@ -5,8 +5,8 @@
   "snapshot": "windows",
   "category": "management",
   "difficulty": "easy",
-  "instruction": "Enable the Windows On-Screen Keyboard and keep it open. In the provided `Bills.ods`, change the Electricity bill status from `Unpaid` to `Paid`, set the payment date to `15/10/2026`, and save the spreadsheet.",
-  "source": "Local Spreadsheet: assets/Bills.ods",
+  "instruction": "Enable the Windows On-Screen Keyboard and keep it open. In the provided `Bills.ods`, change the Electricity bill status from `Unpaid` to `Paid`, set the payment date to `15/10/2026`, and save the spreadsheet as `answer.ods` on the Desktop.",
+  "source": "Local Spreadsheet: assets/management-electricity_bill_payment.ods",
   "gt_steps": [
     "Enable the Windows On-Screen Keyboard.",
     "Keep the On-Screen Keyboard open throughout the task.",
@@ -14,7 +14,7 @@
     "Locate the Electricity bill row.",
     "Change the Status from `Unpaid` to `Paid`.",
     "Enter `15/10/2026` in the Payment Date column.",
-    "Save the spreadsheet.",
+    "Save the spreadsheet as `answer.ods` on the Desktop.",
     "Keep the On-Screen Keyboard open."
   ],
   "config": [
@@ -23,7 +23,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/Bills.ods",
+            "local_path": "assets/management-electricity_bill_payment.ods",
             "path": "C:\\Users\\Docker\\Desktop\\Bills.ods"
           }
         ]
@@ -58,8 +58,8 @@
       },
       {
         "type": "vm_file",
-        "path": "C:\\Users\\Docker\\Desktop\\Bills.ods",
-        "dest": "Bills.ods"
+        "path": "C:\\Users\\Docker\\Desktop\\answer.ods",
+        "dest": "answer.ods"
       }
     ],
     "expected": [

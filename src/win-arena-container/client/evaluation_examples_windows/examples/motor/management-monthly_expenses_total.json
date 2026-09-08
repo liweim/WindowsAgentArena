@@ -5,8 +5,8 @@
   "snapshot": "windows",
   "category": "management",
   "difficulty": "medium",
-  "instruction": "Enable Windows Filter Keys and keep them enabled. In the provided `MonthlyBills.ods`, use a formula in cell B12 to calculate the total amount due for all bills with status `Unpaid`, then save the spreadsheet.",
-  "source": "Local Spreadsheet: assets/MonthlyBills.ods",
+  "instruction": "Enable Windows Filter Keys and keep them enabled. In the provided `MonthlyBills.ods`, use a formula in cell B12 to calculate the total amount due for all bills with status `Unpaid`, then save the spreadsheet as `answer.ods` on the Desktop.",
+  "source": "Local Spreadsheet: assets/management-monthly_expenses_total.ods",
   "gt_steps": [
     "Enable Windows Filter Keys.",
     "Keep Filter Keys enabled throughout the task.",
@@ -15,7 +15,7 @@
     "Select cell B12.",
     "Enter a formula that sums the amounts for all rows whose status is `Unpaid`.",
     "Verify that the calculated total in B12 is `648.49`.",
-    "Save the spreadsheet.",
+    "Save the spreadsheet as `answer.ods` on the Desktop.",
     "Keep Filter Keys enabled."
   ],
   "config": [
@@ -24,7 +24,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/MonthlyBills.ods",
+            "local_path": "assets/management-monthly_expenses_total.ods",
             "path": "C:\\Users\\Docker\\Desktop\\MonthlyBills.ods"
           }
         ]
@@ -59,8 +59,8 @@
       },
       {
         "type": "vm_file",
-        "path": "C:\\Users\\Docker\\Desktop\\MonthlyBills.ods",
-        "dest": "MonthlyBills.ods"
+        "path": "C:\\Users\\Docker\\Desktop\\answer.ods",
+        "dest": "answer.ods"
       }
     ],
     "expected": [

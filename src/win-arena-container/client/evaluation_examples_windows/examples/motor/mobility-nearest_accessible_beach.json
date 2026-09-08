@@ -5,7 +5,7 @@
   "snapshot": "chrome",
   "category": "mobility",
   "difficulty": "hard",
-  "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Using the provided Accessible Beaches NSW directory, identify the nearest beach within 5 km of Bondi, Australia, and save its name followed by all six listed accessibility features to `NearestBeach.txt` on the Desktop. Put the beach name on the first line and the features on the next six lines in directory order without paraphrasing.",
+  "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Using the provided Accessible Beaches NSW directory, identify the nearest beach within 5 km of Bondi, Australia, and save its name followed by all six listed accessibility features to `answer.txt` on the Desktop. Put the beach name on the first line and the features on the next six lines in directory order without paraphrasing.",
   "source": "https://accessiblebeaches.com/beach-directory/category/NSW",
   "gt_steps": [
     "Enable the Windows On-Screen Keyboard and keep it open.",
@@ -23,7 +23,7 @@
     "Write `Accessible Parking` on the sixth line.",
     "Write `Retail within 150 metres` on the seventh line.",
     "Do not paraphrase any of the accessibility features.",
-    "Save the file as `NearestBeach.txt` on the Desktop.",
+    "Save the file as `answer.txt` on the Desktop.",
     "Leave the saved file on the Desktop.",
     "Leave the On-Screen Keyboard open."
   ],
@@ -76,7 +76,7 @@
       },
       {
         "type": "is_file_saved_desktop",
-        "filename": "NearestBeach.txt",
+        "filename": "answer.txt",
         "textcontent": "Bondi Beach\nAccessible Beach Matting\nBeach Wheelchair availability\nAccessible Bathroom\nAccessible Shower\nAccessible Parking\nRetail within 150 metres",
         "exact": true
       }

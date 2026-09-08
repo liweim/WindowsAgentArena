@@ -6,7 +6,7 @@
   "category": "management",
   "difficulty": "hard",
   "instruction": "Set Windows text size to 150% and keep it at 150%. Create a separate Thunderbird Calendar event for every appointment in `WeeklyPlanner.odt`, using each appointment name as the title and preserving its date, start time, duration, and location exactly.",
-  "source": "Local Document: assets/WeeklyPlanner.odt",
+  "source": "Local Document: assets/management-weekly_planner_calendar.odt",
   "gt_steps": [
     "Open Windows Accessibility text size settings.",
     "Set Windows text size to 150%.",
@@ -29,7 +29,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/WeeklyPlanner.odt",
+            "local_path": "assets/management-weekly_planner_calendar.odt",
             "path": "C:\\Users\\Docker\\Desktop\\WeeklyPlanner.odt"
           }
         ]

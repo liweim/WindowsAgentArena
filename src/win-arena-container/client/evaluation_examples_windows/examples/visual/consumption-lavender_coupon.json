@@ -5,7 +5,7 @@
   "category": "consumption",
   "difficulty": "hard",
   "instruction": "Turn on Windows Narrator. Using the provided garden catalogue, identify the featured lavender product and coupon code. Add exactly one unit of the matching product to the shopping cart, enter the catalogue coupon code without applying it, and leave the cart page open.",
-  "source": "Local HTML: assets/Consumption-lavender_coupon_catalog.html",
+  "source": "Local HTML: assets/consumption-lavender_coupon.html",
   "gt_steps": [
     "Open the garden catalogue in Chrome.",
     "Turn on Windows Narrator.",
@@ -29,7 +29,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/Consumption-lavender_coupon_catalog.html",
+            "local_path": "assets/consumption-lavender_coupon.html",
             "path": "C:\\Users\\Docker\\Desktop\\Consumption-lavender_coupon_catalog.html"
           }
         ]

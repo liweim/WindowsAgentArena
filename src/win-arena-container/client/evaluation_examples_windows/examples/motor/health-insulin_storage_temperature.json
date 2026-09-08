@@ -5,8 +5,8 @@
   "snapshot": "chrome",
   "category": "health",
   "difficulty": "medium",
-  "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Save only the recommended refrigerated temperature range for unopened insulin from the provided insulin-storage PDF in `insulinTemperature.txt` on the Desktop.",
-  "source": "assets/ddrc-storing-insulin-2018.pdf",
+  "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Save only the recommended refrigerated temperature range for unopened insulin from the provided insulin-storage PDF in `answer.txt` on the Desktop.",
+  "source": "assets/health-insulin_storage_temperature.pdf",
   "gt_steps": [
     "Enable the Windows On-Screen Keyboard.",
     "Keep the On-Screen Keyboard open throughout the task.",
@@ -15,7 +15,7 @@
     "Identify the temperature range as 36°F to 46°F.",
     "Open Notepad.",
     "Write `36°F to 46°F` in the file.",
-    "Save the file as `insulinTemperature.txt` on the Desktop.",
+    "Save the file as `answer.txt` on the Desktop.",
     "Leave the saved file on the Desktop.",
     "Leave the On-Screen Keyboard open."
   ],
@@ -25,7 +25,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/ddrc-storing-insulin-2018.pdf",
+            "local_path": "assets/health-insulin_storage_temperature.pdf",
             "path": "C:\\Users\\Docker\\Downloads\\ddrc-storing-insulin-2018.pdf"
           }
         ]
@@ -79,7 +79,7 @@
       },
       {
         "type": "is_file_saved_desktop",
-        "filename": "insulinTemperature.txt",
+        "filename": "answer.txt",
         "textcontent": "36°F to 46°F",
         "exact": true
       }

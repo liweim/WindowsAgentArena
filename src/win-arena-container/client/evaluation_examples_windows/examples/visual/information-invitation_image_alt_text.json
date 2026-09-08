@@ -4,14 +4,14 @@
   "snapshot": "libreoffice_writer",
   "category": "information",
   "difficulty": "hard",
-  "instruction": "Add descriptive alt text to the invitation image in the provided DOCX file. Include the restaurant name, grand-opening purpose, date, time, full address, and RSVP phone number, then save the file in its existing Word format.",
-  "source": "Local Document: assets/information-image_to_text_invitation.docx",
+  "instruction": "Add descriptive alt text to the invitation image in the provided DOCX file. Include the restaurant name, grand-opening purpose, date, time, full address, and RSVP phone number, then save the completed file as `answer.docx` on the Desktop in Word format.",
+  "source": "Local Document: assets/information-invitation_image_alt_text.docx",
   "gt_steps": [
     "Select the invitation image in information-image_to_text_invitation.docx.",
     "Add alt text stating that The Coastal Spoon is holding a grand opening on Thursday, July 16, 2026 at 11:00 AM.",
     "Include the address 123 Harbour View St., Sydney, 2000.",
     "Include the RSVP phone number +61-456-789-000.",
-    "Save the DOCX file in Word format."
+    "Save the completed file as `answer.docx` on the Desktop in Word format."
   ],
   "config": [
     {
@@ -19,7 +19,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/information-image_to_text_invitation.docx",
+            "local_path": "assets/information-invitation_image_alt_text.docx",
             "path": "C:\\Users\\Docker\\Desktop\\information-image_to_text_invitation.docx"
           }
         ]
@@ -40,8 +40,8 @@
     "func": "check_docx_image_alt_text",
     "result": {
       "type": "vm_file",
-      "path": "C:\\Users\\Docker\\Desktop\\information-image_to_text_invitation.docx",
-      "dest": "information-image_to_text_invitation.docx"
+      "path": "C:\\Users\\Docker\\Desktop\\answer.docx",
+      "dest": "answer.docx"
     },
     "expected": {
       "type": "rule",

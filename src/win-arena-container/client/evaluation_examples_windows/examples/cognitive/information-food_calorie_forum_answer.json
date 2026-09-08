@@ -3,7 +3,7 @@
   "snapshot": "chrome",
   "category": "information",
   "difficulty": "medium",
-  "instruction": "Find out from the forum how food manufacturers know the exact calories in each package, and write a short answer in `forum_post_note.txt` on the Desktop.",
+  "instruction": "Find out from the forum how food manufacturers know the exact calories in each package, and write a short answer in `answer.txt` on the Desktop.",
   "source": "WebArena self-hosted Reddit-style forum service: http://host.docker.internal:9999/f/explainlikeimfive",
   "gt_steps": [
     "Open the local Explain Like I'm Five forum in Google Chrome.",
@@ -11,15 +11,15 @@
     "Open `ELI5: How do food manufacturers know for sure how many exact calories are in each package?`.",
     "Read the comments for the short answer.",
     "Open Notepad.",
-    "Create `forum_post_note.txt` on the Desktop.",
+    "Create `answer.txt` on the Desktop.",
     "Enter the standard answer `They don't know exactly.` in the file.",
-    "Save `forum_post_note.txt`."
+    "Save `answer.txt`."
   ],
   "config": [
     {
       "type": "execute",
       "parameters": {
-        "command": "powershell -NoProfile -Command \"$p=Join-Path $env:USERPROFILE 'Desktop\\forum_post_note.txt'; if(Test-Path $p){Remove-Item $p -Force}\"",
+        "command": "powershell -NoProfile -Command \"$p=Join-Path $env:USERPROFILE 'Desktop\\answer.txt'; if(Test-Path $p){Remove-Item $p -Force}\"",
         "shell": true
       }
     },
@@ -43,7 +43,7 @@
     "func": "check_text_points",
     "result": {
       "type": "vm_command_line",
-      "command": "powershell -NoProfile -Command \"$p=Join-Path $env:USERPROFILE 'Desktop\\forum_post_note.txt'; if(Test-Path $p){Get-Content $p -Raw}\"",
+      "command": "powershell -NoProfile -Command \"$p=Join-Path $env:USERPROFILE 'Desktop\\answer.txt'; if(Test-Path $p){Get-Content $p -Raw}\"",
       "shell": true
     },
     "expected": {

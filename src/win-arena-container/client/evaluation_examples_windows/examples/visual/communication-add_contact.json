@@ -5,8 +5,8 @@
   "snapshot": "windows",
   "category": "communication",
   "difficulty": "easy",
-  "instruction": "Enable Windows Magnifier and keep it enabled. Add `Olivia Bennett` with email `olivia.bennett@example.com` to the contact list in the provided `Contacts.odt`, then save the updated file as `Contacts.odt` on the Desktop.",
-  "source": "Local Document: assets/Contacts_clean.odt",
+  "instruction": "Enable Windows Magnifier and keep it enabled. Add `Olivia Bennett` with email `olivia.bennett@example.com` to the contact list in the provided `Contacts.odt`, then save the updated file as `answer.odt` on the Desktop.",
+  "source": "Local Document: assets/communication-add_contact.odt",
   "gt_steps": [
     "Enable Windows Magnifier.",
     "Keep Magnifier enabled throughout the task.",
@@ -15,7 +15,7 @@
     "Add a new contact entry.",
     "Enter the name Olivia Bennett.",
     "Enter the email address olivia.bennett@example.com.",
-    "Save the updated document as Contacts.odt on the Desktop.",
+    "Save the updated document as `answer.odt` on the Desktop.",
     "Keep Magnifier enabled."
   ],
   "config": [
@@ -24,7 +24,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/Contacts_clean.odt",
+            "local_path": "assets/communication-add_contact.odt",
             "path": "C:\\Users\\Docker\\Desktop\\Contacts.odt"
           }
         ]
@@ -55,7 +55,7 @@
     "func": "check_include_exclude",
     "result": {
       "type": "vm_command_line",
-      "command": "powershell -NoProfile -Command \"$file='C:\\Users\\Docker\\Desktop\\Contacts.odt'; $mag=Get-Process Magnify -ErrorAction SilentlyContinue; if ($mag) { Write-Output 'MAGNIFIER_ENABLED' } else { Write-Output 'MAGNIFIER_DISABLED' }; if (Test-Path $file) { $tmp=Join-Path $env:TEMP ('contacts_eval_' + [guid]::NewGuid().ToString()); New-Item -ItemType Directory -Path $tmp | Out-Null; $zip=Join-Path $tmp 'Contacts.zip'; Copy-Item $file $zip; Expand-Archive -Path $zip -DestinationPath $tmp -Force; $xml=Get-Content (Join-Path $tmp 'content.xml') -Raw; if (($xml -match 'Olivia Bennett') -and ($xml -match 'olivia.bennett@example.com')) { Write-Output 'CONTACT_ADDED' } else { Write-Output 'CONTACT_MISSING' }; Remove-Item $tmp -Recurse -Force } else { Write-Output 'FILE_MISSING' }\"",
+      "command": "powershell -NoProfile -Command \"$file='C:\\Users\\Docker\\Desktop\\answer.odt'; $mag=Get-Process Magnify -ErrorAction SilentlyContinue; if ($mag) { Write-Output 'MAGNIFIER_ENABLED' } else { Write-Output 'MAGNIFIER_DISABLED' }; if (Test-Path $file) { $tmp=Join-Path $env:TEMP ('contacts_eval_' + [guid]::NewGuid().ToString()); New-Item -ItemType Directory -Path $tmp | Out-Null; $zip=Join-Path $tmp 'Contacts.zip'; Copy-Item $file $zip; Expand-Archive -Path $zip -DestinationPath $tmp -Force; $xml=Get-Content (Join-Path $tmp 'content.xml') -Raw; if (($xml -match 'Olivia Bennett') -and ($xml -match 'olivia.bennett@example.com')) { Write-Output 'CONTACT_ADDED' } else { Write-Output 'CONTACT_MISSING' }; Remove-Item $tmp -Recurse -Force } else { Write-Output 'FILE_MISSING' }\"",
       "shell": true
     },
     "expected": {

@@ -5,7 +5,7 @@
   "category": "service",
   "difficulty": "easy",
   "instruction": "Enable the Windows On-Screen Keyboard and keep it open. The PDF is already open in Chrome. Open the website link for the voter authority certificate application from the PDF in a new Chrome tab, leave that tab open, and leave the On-Screen Keyboard open.",
-  "source": "assets/ER_How_to_apply_online_final.pdf",
+  "source": "assets/service-voter_certificate_link.pdf",
   "gt_steps": [
     "Enable the Windows On-Screen Keyboard and keep it open.",
     "Return to the PDF already open in Chrome.",
@@ -20,7 +20,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/ER_How_to_apply_online_final.pdf",
+            "local_path": "assets/service-voter_certificate_link.pdf",
             "path": "C:\\Users\\Docker\\Downloads\\ER_How_to_apply_online_final.pdf"
           }
         ]
