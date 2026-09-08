@@ -26,6 +26,10 @@ logger = logging.getLogger("desktopenv.setup")
 
 FILE_PATH = os.path.dirname(os.path.abspath(__file__))
 HTTP_REQUEST_TIMEOUT = 20
+LIBREOFFICE_PROFILE_PATH = r"C:\Temp\winarena-libreoffice-profile"
+LIBREOFFICE_PROFILE_ARG = (
+    "-env:UserInstallation=file:///C:/Temp/winarena-libreoffice-profile"
+)
 
 
 class SetupController:
@@ -286,12 +290,20 @@ class SetupController:
             ".pptx": "simpress.exe", ".ppt": "simpress.exe", ".odp": "simpress.exe",
         }
         if extension in office_apps:
+            # LibreOffice can reuse an earlier process/profile and leak state
+            # across tasks. Reset every office process and use an isolated
+            # profile before opening the requested document.
             executable = rf"C:\Program Files\LibreOffice\program\{office_apps[extension]}"
             self._execute_setup(
-                rf'taskkill /IM soffice.bin /F 2>NUL & taskkill /IM soffice.exe /F 2>NUL & '
-                rf'taskkill /IM {office_apps[extension]} /F 2>NUL & '
-                r'rmdir /S /Q "C:\Temp\winarena-libreoffice-profile" 2>NUL & '
-                r'mkdir "C:\Temp\winarena-libreoffice-profile"',
+                (
+                    r"taskkill /IM soffice.bin /F 2>NUL & "
+                    r"taskkill /IM soffice.exe /F 2>NUL & "
+                    r"taskkill /IM scalc.exe /F 2>NUL & "
+                    r"taskkill /IM swriter.exe /F 2>NUL & "
+                    r"taskkill /IM simpress.exe /F 2>NUL & "
+                    rf'rmdir /S /Q "{LIBREOFFICE_PROFILE_PATH}" 2>NUL & '
+                    rf'mkdir "{LIBREOFFICE_PROFILE_PATH}"'
+                ),
                 shell=True,
             )
             self._launch_setup([
@@ -299,10 +311,10 @@ class SetupController:
                 "--norestore",
                 "--nolockcheck",
                 "--nofirststartwizard",
-                "-env:UserInstallation=file:///C:/Temp/winarena-libreoffice-profile",
+                LIBREOFFICE_PROFILE_ARG,
                 path,
             ])
-            time.sleep(2)
+            time.sleep(5)
             return
 
         media_extensions = {

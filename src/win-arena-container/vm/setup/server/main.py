@@ -62,6 +62,7 @@ custom_logger = Logger(logger)
 import ctypes
 import platform
 import shlex
+import shutil
 import subprocess, signal
 from pathlib import Path
 from typing import Any, Optional
@@ -1324,12 +1325,29 @@ def open_file():
                 ".mp4", ".mpeg", ".mpg", ".ogg", ".wav", ".webm", ".wmv",
             }
             if extension in office_handlers:
+                for process_name in (
+                    "soffice.bin",
+                    "soffice.exe",
+                    "scalc.exe",
+                    "swriter.exe",
+                    "simpress.exe",
+                ):
+                    subprocess.run(
+                        ["taskkill", "/IM", process_name, "/F"],
+                        stdout=subprocess.DEVNULL,
+                        stderr=subprocess.DEVNULL,
+                        check=False,
+                    )
+                libreoffice_profile = Path(r"C:\Temp\winarena-libreoffice-profile")
+                shutil.rmtree(libreoffice_profile, ignore_errors=True)
+                libreoffice_profile.mkdir(parents=True, exist_ok=True)
                 executable = Path(r"C:\Program Files\LibreOffice\program") / office_handlers[extension]
                 subprocess.Popen([
                     str(executable),
                     "--norestore",
                     "--nolockcheck",
                     "--nofirststartwizard",
+                    "-env:UserInstallation=file:///C:/Temp/winarena-libreoffice-profile",
                     str(path),
                 ])
             elif extension in media_extensions:
@@ -1371,21 +1389,59 @@ def activate_window():
         if by_class_name:
             return "Get window by class name is currently not supported on Windows.", 500
 
-        windows: List[gw.Window] = gw.getWindowsWithTitle(window_name)
-        
-        # window: Optional[gw.Window] = None       
-        if len(windows) == 0:
+        def find_windows() -> List[gw.Window]:
+            all_windows = [window for window in gw.getAllWindows() if window.title]
+            if strict:
+                return [window for window in all_windows if window.title == window_name]
+
+            windows = gw.getWindowsWithTitle(window_name)
+            if windows:
+                return windows
+
+            # LibreOffice versions use different title separators. Fall back
+            # to the document name while retaining the application check.
+            document_name = window_name
+            for separator in (" — ", " – ", " - "):
+                if separator in document_name:
+                    document_name = document_name.split(separator, 1)[0]
+                    break
+            document_name = document_name.strip().casefold()
+            if not document_name:
+                return []
+            return [
+                window
+                for window in all_windows
+                if document_name in window.title.casefold()
+                and (
+                    "libreoffice" not in window_name.casefold()
+                    or "libreoffice" in window.title.casefold()
+                )
+            ]
+
+        deadline = time.time() + 15
+        windows: List[gw.Window] = []
+        while time.time() < deadline:
+            windows = find_windows()
+            if windows:
+                break
+            time.sleep(0.5)
+
+        if not windows:
             return "Window {:} not found (empty results)".format(window_name), 404
 
-        if windows and strict:
-            window = windows[0]
+        window = windows[0]
+        try:
+            if window.isMinimized:
+                window.restore()
+                time.sleep(0.5)
+            window.activate()
+        except Exception:
+            # SetForegroundWindow can be denied; minimize/restore is a useful
+            # fallback for bringing the window to the foreground.
             window.minimize()
-            time.sleep(1)
+            time.sleep(0.5)
             window.restore()
-            time.sleep(1)
-            
-            assert window.isActive
-            # return f"ACTIVE? {window.title} is {window.isActive} active"
+        time.sleep(1)
     
         # windows = []
         # for w in gw.getAllWindows():

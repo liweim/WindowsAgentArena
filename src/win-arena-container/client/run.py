@@ -28,6 +28,7 @@ from mm_agents.compat import (
 )
 from mm_agents.cli import parse_agent_args
 from mm_agents.navi.agent import NaviAgent
+from mm_agents import utils
 import requests
 import time
 
@@ -576,3 +577,4 @@ if __name__ == '__main__':
         test_file_list_worker
     )
     test(args, test_file_list_worker)
+    utils.summary(args.result_dir, test_all_meta)
