@@ -5,7 +5,7 @@
   "snapshot": "windows",
   "category": "management",
   "difficulty": "easy",
-  "instruction": "Enable the Windows On-Screen Keyboard as a motor accessibility aid and keep it open throughout the task. Open the provided Bills.ods spreadsheet in LibreOffice Calc. Update the Electricity bill status from `Unpaid` to `Paid` and enter the payment date as `15/10/2026`. Save the spreadsheet.",
+  "instruction": "Enable the Windows On-Screen Keyboard and keep it open. In the provided `Bills.ods`, change the Electricity bill status from `Unpaid` to `Paid`, set the payment date to `15/10/2026`, and save the spreadsheet.",
   "source": "Local Spreadsheet: assets/Bills.ods",
   "gt_steps": [
     "Enable the Windows On-Screen Keyboard.",

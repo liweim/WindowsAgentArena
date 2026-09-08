@@ -4,7 +4,7 @@
   "snapshot": "chrome",
   "category": "consumption",
   "difficulty": "hard",
-  "instruction": "Turn on Windows Narrator. Use it to read the opened oral-care catalogue in Chrome and compare the listed prices of the two six-count toothbrush products. Find the cheaper product on the opened shopping website, add exactly one unit to the shopping cart, and leave the shopping cart page open.",
+  "instruction": "Turn on Windows Narrator. Using the provided oral-care catalogue, identify the cheaper of the two six-count toothbrush products and add exactly one unit of it to the shopping cart. Leave the cart page open.",
   "source": "Local HTML: assets/Consumption-toothbrush_price_catalog.html",
   "gt_steps": [
     "Open the oral-care catalogue in Chrome.",

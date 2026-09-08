@@ -5,7 +5,7 @@
   "snapshot": "windows",
   "category": "management",
   "difficulty": "hard",
-  "instruction": "Enable Windows Sticky Keys as a motor accessibility aid and keep it enabled throughout the task. Open the provided Grades.ods spreadsheet in LibreOffice Calc. Calculate each student's average score, assign each student a letter grade using the grading table in the spreadsheet, and enter the three students with their average scores and letter grades in the completed grade summary area. Sort the students by average score in descending order and save the spreadsheet.",
+  "instruction": "Enable Windows Sticky Keys and keep them enabled. Complete the grade summary in the provided `Grades.ods` by calculating each student's average, assigning the letter grade from the spreadsheet's grading table, and listing the three students in descending average-score order with their averages and letter grades. Save the spreadsheet.",
   "source": "Local Spreadsheet: assets/Grades.ods",
   "gt_steps": [
     "Enable Windows Sticky Keys.",

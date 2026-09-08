@@ -4,7 +4,7 @@
   "snapshot": "chrome",
   "category": "consumption",
   "difficulty": "medium",
-  "instruction": "Turn on Windows Narrator. Use it to read the opened shopping reminder PDF in Chrome and identify the requested product. Search for that product on the opened shopping website, add exactly one unit to the shopping cart, and leave the shopping cart page open.",
+  "instruction": "Turn on Windows Narrator. Identify the requested product from the provided shopping reminder PDF and add exactly one matching unit to the shopping cart. Leave the cart page open.",
   "source": "Local PDF: assets/Consumption-marshmallow_bunnies_reminder.pdf",
   "gt_steps": [
     "Open the shopping reminder PDF in Chrome.",

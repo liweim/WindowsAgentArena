@@ -5,7 +5,7 @@
   "snapshot": "windows",
   "category": "management",
   "difficulty": "medium",
-  "instruction": "Turn on Windows Narrator and keep it enabled. Review `AppointmentLetter.docx` in LibreOffice Writer, then create a Thunderbird Calendar event titled `Cardiology Appointment` for the appointment date and time in the letter. Use the full clinic location and set a reminder exactly one day before the appointment.",
+  "instruction": "Turn on Windows Narrator and keep it enabled. Create a Thunderbird Calendar event from `AppointmentLetter.docx` with title `Cardiology Appointment`, the appointment date and time, the full clinic location, and a reminder exactly one day before the appointment.",
   "source": "Local Document: assets/AppointmentLetter.docx. Adapted from the NHS England patient appointment confirmation template: https://www.england.nhs.uk/wp-content/uploads/2023/02/B2012iii-patient-letter-template-appointment-confirmation.docx",
   "gt_steps": [
     "Enable Windows Narrator.",

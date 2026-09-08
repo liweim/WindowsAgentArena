@@ -5,7 +5,7 @@
   "snapshot": "windows",
   "category": "communication",
   "difficulty": "hard",
-  "instruction": "Enable the Windows On-Screen Keyboard as a motor accessibility aid and keep it open throughout the task. Open the provided MeetingAgenda.odt document in LibreOffice Writer and review the meeting details. Then compose a new email in Thunderbird to alice@example.com with the subject `Meeting Agenda`. In the email body, include the meeting date, time, location, all four agenda items, and the preparation requirement from the document. Save the email as a draft and do not send it.",
+  "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Draft, but do not send, a Thunderbird email to `alice@example.com` with subject `Meeting Agenda`, using `MeetingAgenda.odt` to include the meeting date, time, location, all four agenda items, and the preparation requirement.",
   "source": "Local Document: assets/MeetingAgenda.odt",
   "gt_steps": [
     "Enable the Windows On-Screen Keyboard.",

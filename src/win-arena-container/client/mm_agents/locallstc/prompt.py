@@ -18,6 +18,9 @@ Wait for async operations to complete and observe UI changes. Represent it as th
 ## bash_execution
 Execute execution-side automation through the `bash_execution` tool. This is a historical tool name: on Linux, output Bash commands or Python scripts; on Windows, output Python code snippets executed in the Windows guest. Use this when file-side editing, inspection, or automation is more reliable than GUI interaction. Follow the platform-specific skill section for paths, commands, and examples. Represent it as a bare command/code action string.
 
+## termination
+Request task completion after the required result has been verified. Represent it as the exact action string `TERMINATE` and explain the completion evidence in `thought`.
+
 ## infeasible
 Declare that the task is objectively impossible to complete. Represent it as the exact action string `INFEASIBLE`.
 - Some tasks may be infeasible by design. If required capabilities, variables, or app features are unavailable, use `INFEASIBLE` instead of `TERMINATE` and explain the blocker in `thought`.
@@ -69,7 +72,7 @@ Field guide:
   - a bare `Class.method(...)` string for API calls
   - a bare command/code string for `bash_execution`
   - the string `WAIT` for `wait`
-  - the string `TERMINATE` only when the task is already verified complete, with the blocker reason explained in `thought`
+  - the string `TERMINATE` only when the task is already verified complete, with the completion evidence explained in `thought`
   - the string `INFEASIBLE` only when the task is objectively impossible, with the blocker reason explained in `thought`
 - Use exactly one API call per action item.
 - Bash example:
@@ -162,7 +165,7 @@ Field guide:
 - If you list candidates, keep them short and plain text only. Do not put JSON, code blocks, or extra headings inside candidate text.
 - End your response with exactly one final JSON object.
 - The final JSON object must contain `thought`, `subgoal`, and `actions`.
-- `subgoal` must always state the full phase-level objective for this turn. If the same stage remains active, repeat its full objective instead of using a placeholder. Keep it at the stage level rather than naming an action or method. Avoid labels like "Open menu", "Click link", "Scroll to inspect", or "Run script"; prefer "Navigate to the target page", "Update the spreadsheet", or "Verify the result".
+- `subgoal` must always state the full phase-level objective for this turn. If the same stage remains active, repeat its full objective instead of using a placeholder. Keep it at the stage level. Avoid labels like "Open menu", "Click link", "Scroll to inspect", or "Run script"; prefer "Navigate to the target page", "Update the spreadsheet", or "Verify the result".
 - `actions` must be a non-empty ordered list. The environment changes after each action, so plan them in execution order.
 - Prefer one meaningful interaction per action item. Even though some action strings can contain multiple low-level operations, you should usually split sequential interactions into separate `actions` items for clarity and better replanning.
 - Each action item should be one of:
@@ -170,7 +173,7 @@ Field guide:
   - a bare `Class.method(...)` string for API calls
   - a bare command/code string for `bash_execution`
   - the string `WAIT` for `wait`
-  - the string `TERMINATE` only when the task is already verified complete, with the blocker reason explained in `thought`
+  - the string `TERMINATE` only when the task is already verified complete, with the completion evidence explained in `thought`
   - the string `INFEASIBLE` only when the task is objectively impossible, with the blocker reason explained in `thought`
 - Use exactly one API call per action item.
 - Bash example:
@@ -340,6 +343,9 @@ Wait for async operations to complete and observe UI changes. Represent it as th
 ## bash_execution
 Execute execution-side automation through the `bash_execution` tool. This is a historical tool name: on Linux, output Bash commands or Python scripts; on Windows, output Python code snippets executed in the Windows guest. Use this when file-side editing, inspection, or automation is more reliable than GUI interaction. Follow the platform-specific skill section for paths, commands, and examples. Represent it as a bare command/code action string.
 
+## termination
+Request task completion after the required result has been verified. Represent it as the exact action string `TERMINATE` and explain the completion evidence in `thought`.
+
 ## infeasible
 Declare that the task is objectively impossible to complete. Represent it as the exact action string `INFEASIBLE`.
 - Some tasks may be infeasible by design. If required capabilities, variables, or app features are unavailable, use `INFEASIBLE` instead of `TERMINATE` and explain the blocker in `thought`.
@@ -393,7 +399,7 @@ Field guide:
   - a bare `pyautogui...` string for GUI actions
   - a bare command/code string for `bash_execution`
   - the string `WAIT` for `wait`
-  - the string `TERMINATE` only when the task is already verified complete, with the blocker reason explained in `thought`
+  - the string `TERMINATE` only when the task is already verified complete, with the completion evidence explained in `thought`
   - the string `INFEASIBLE` only when the task is objectively impossible, with the blocker reason explained in `thought`
 - Bash example:
 ```json
@@ -477,7 +483,7 @@ Field guide:
   - a bare `Class.method(...)` string for API calls
   - a bare command/code string for `bash_execution`
   - the string `WAIT` for `wait`
-  - the string `TERMINATE` only when the task is already verified complete, with the blocker reason explained in `thought`
+  - the string `TERMINATE` only when the task is already verified complete, with the completion evidence explained in `thought`
   - the string `INFEASIBLE` only when the task is objectively impossible, with the blocker reason explained in `thought`
 - Use exactly one API call per action item.
 """
@@ -520,7 +526,7 @@ Field guide:
   - a bare `Class.method(...)` string for API calls
   - a bare command/code string for `bash_execution`
   - the string `WAIT` for `wait`
-  - the string `TERMINATE` only when the task is already verified complete, with the blocker reason explained in `thought`
+  - the string `TERMINATE` only when the task is already verified complete, with the completion evidence explained in `thought`
   - the string `INFEASIBLE` only when the task is objectively impossible, with the blocker reason explained in `thought`
 - Use exactly one API call per action item.
 - End your response with exactly one final JSON object.
@@ -545,7 +551,7 @@ Field guide:
   - a bare `Class.method(...)` string for API calls
   - a bare command/code string for `bash_execution`
   - the string `WAIT` for `wait`
-  - the string `TERMINATE` only when the task is already verified complete, with the blocker reason explained in `thought`
+  - the string `TERMINATE` only when the task is already verified complete, with the completion evidence explained in `thought`
   - the string `INFEASIBLE` only when the task is objectively impossible, with the blocker reason explained in `thought`
 - Use exactly one API call per action item.
 - For a shell action, put only the command in `action`. Correct: `"action": "find /home/user -type f | head"`. Incorrect: `"action": "bash_execution(find ...)"` or `"action": "bash_execution: find ..."`.
@@ -569,7 +575,7 @@ Field guide:
   - a bare `pyautogui...` string for GUI actions
   - a bare command/code string for `bash_execution`
   - the string `WAIT` for `wait`
-  - the string `TERMINATE` only when the task is already verified complete, with the blocker reason explained in `thought`
+  - the string `TERMINATE` only when the task is already verified complete, with the completion evidence explained in `thought`
   - the string `INFEASIBLE` only when the task is objectively impossible, with the blocker reason explained in `thought`
 - For a shell action, put only the command in `action`. Correct: `"action": "find /home/user -type f | head"`. Incorrect: `"action": "bash_execution(find ...)"`, `"action": "bash_execution: find ..."`, or `"action": "bash_execution find ..."`.
 
@@ -652,7 +658,7 @@ FAIL
 Rules:
 - Return only `PASS` or `FAIL`.
 - Use `PASS` only if the task requirements appear fully satisfied in the provided execution history and screenshots.
-- Some tasks may be infeasible by design. If required capabilities, variables, or app features were unavailable, return `FAIL` rather than accepting a workaround.
+- Some tasks may be infeasible by design. If required capabilities, variables, or app features were unavailable, return `FAIL`.
 - If there is uncertainty, return `FAIL`.
 - The screenshots are primary evidence for visible state. Use the initial screenshot as baseline context and the latest screenshot as the final state to judge.
 - If the task outcome is only obvious by comparing before vs after, explicitly use that comparison before deciding.
@@ -682,7 +688,7 @@ FAIL
 Rules:
 - Return only `PASS` or `FAIL`.
 - Use `PASS` only if the task requirements appear fully satisfied in the provided execution history and screenshots.
-- Some tasks may be infeasible by design. If required capabilities, variables, or app features were unavailable, return `FAIL` rather than accepting a workaround.
+- Some tasks may be infeasible by design. If required capabilities, variables, or app features were unavailable, return `FAIL`.
 - If there is uncertainty, return `FAIL`.
 - The screenshots are primary evidence for visible state. Use the initial screenshot as baseline context and the latest screenshot as the final state to judge.
 - If the task outcome is only obvious by comparing before vs after, explicitly use that comparison before deciding.
@@ -703,7 +709,7 @@ You will receive: a task instruction, execution history range and execution hist
 Instructions:
 - Summarize the full execution history into one unified summary covering the entire range
 - List what was done in order (successes and failures)
-- **IMPORTANT**: Preserve coordinates in click actions (e.g., "click(500,300)") - these can be reused later
+- **IMPORTANT**: Preserve coordinates in click actions (e.g., "click(500,300)") so the summary records the exact prior interactions
 - Identify repeated no-progress behavior, task-relevant progress, or stalled execution.
 - Provide actionable suggestions for the next step if there are issues
 - If `bash_execution` or api already verified the requested file/data state, do not suggest GUI Save, reopen, reload, or refresh just to sync a stale window; suggest termination or another text-level verification instead.

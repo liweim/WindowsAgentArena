@@ -5,7 +5,7 @@
   "snapshot": "chrome",
   "category": "information",
   "difficulty": "medium",
-  "instruction": "Enable Windows Filter Keys as a motor accessibility aid and keep it enabled throughout the task. In the Department of Psychology Undergraduate Student Handbook PDF already open in Chrome, find the coursework submission information and identify the maximum file upload size. Record the maximum upload size in Notepad and save the file as `maxSizeAssignement.txt` on the Desktop.",
+  "instruction": "Enable Windows Filter Keys and keep them enabled. Find the maximum coursework file upload size in the provided Department of Psychology Undergraduate Student Handbook and save it in `maxSizeAssignement.txt` on the Desktop.",
   "source": "Local PDF: assets/department_of_psychology_ug.pdf",
   "gt_steps": [
     "Open Windows Accessibility keyboard settings.",

@@ -5,7 +5,7 @@
   "snapshot": "chrome",
   "category": "service",
   "difficulty": "medium",
-  "instruction": "Enable the Windows On-Screen Keyboard as a motor accessibility aid and keep it open throughout the task. On the Reddit website, search for the post titled \"Passport Application Locations?\". Read the comments and determine whether passport registration or application can be completed through a post office. Save only `Yes` if it can be done through a post office, or `No` if it cannot, in a text file named `passportApplication.txt` on the Desktop.",
+  "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Using the comments on the Reddit post titled `Passport Application Locations?`, determine whether passport registration or application can be completed through a post office and save only `Yes` or `No` in `passportApplication.txt` on the Desktop.",
   "source": "WebArena Reddit website",
   "gt_steps": [
     "Open Windows Accessibility keyboard settings.",

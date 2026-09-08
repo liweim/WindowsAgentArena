@@ -5,7 +5,7 @@
   "snapshot": "chrome",
   "category": "information",
   "difficulty": "medium",
-  "instruction": "Enable the Windows On-Screen Keyboard as a motor accessibility aid and keep it open throughout the task. The provided Dell User's Guide PDF is already open in Chrome. Find the instructions for cleaning the touchpad, copy the instructions exactly as written without paraphrasing, and save them in a text file named `cleanTouchpad.txt` on the Desktop.",
+  "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Copy the touchpad-cleaning instructions from the provided Dell User's Guide exactly as written into `cleanTouchpad.txt` on the Desktop.",
   "source": "assets/desk_laptop_ug_en-us.pdf",
   "gt_steps": [
     "Enable the Windows On-Screen Keyboard.",

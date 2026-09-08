@@ -4,7 +4,7 @@
   "snapshot": "chrome",
   "category": "service",
   "difficulty": "medium",
-  "instruction": "Enable Windows Mouse Keys as a motor accessibility aid and keep it enabled throughout the task. On the Reddit website, search for the post titled \"How do I vote?\". Read the comments and open every website link mentioned in the comments in separate new Chrome tabs. Leave both website tabs open and leave Mouse Keys enabled.",
+  "instruction": "Enable Windows Mouse Keys and keep them enabled. From the Reddit post titled `How do I vote?`, open every website link mentioned in the comments in separate Chrome tabs and leave both linked website tabs open.",
   "source": "WebArena Reddit website",
   "gt_steps": [
     "Open Windows Accessibility mouse settings.",

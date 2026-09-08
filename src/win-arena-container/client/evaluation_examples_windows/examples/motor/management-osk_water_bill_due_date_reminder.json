@@ -5,7 +5,7 @@
   "snapshot": "windows",
   "category": "management",
   "difficulty": "medium",
-  "instruction": "Enable the Windows On-Screen Keyboard as a motor accessibility aid and keep it open throughout the task. Open the sample water bill PDF provided in Chrome and find the bill due date. In Thunderbird Calendar, create a 30-minute reminder at 10:00 AM three days before the bill is due. Set the title to `Water Bill Payment Reminder`. In the event description, write the bill due date using the format `Bill due date: MM/DD/YY`.",
+  "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Using the due date in the provided water bill, create a 30-minute Thunderbird Calendar reminder at 10:00 AM three days before the due date, titled `Water Bill Payment Reminder`, with description `Bill due date: MM/DD/YY` using the bill's date.",
   "source": "https://www.faypwc.com/managing-your-bill/",
   "gt_steps": [
     "Enable the Windows On-Screen Keyboard and keep it open.",

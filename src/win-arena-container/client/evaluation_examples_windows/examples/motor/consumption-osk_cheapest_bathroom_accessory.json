@@ -5,7 +5,7 @@
   "snapshot": "chrome",
   "category": "consumption",
   "difficulty": "medium",
-  "instruction": "Enable the Windows On-Screen Keyboard as a motor accessibility aid and keep it open throughout the task. On the OneStopShop website, open the `Home & Kitchen` category, navigate to `Bathroom Accessories`, find the cheapest item in that category, and add one unit of the item to the shopping cart.",
+  "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Add exactly one unit of the cheapest item in OneStopShop's `Bathroom Accessories` category to the shopping cart.",
   "source": "OneStopShop (self-hosted)",
   "gt_steps": [
     "Enable the Windows On-Screen Keyboard.",

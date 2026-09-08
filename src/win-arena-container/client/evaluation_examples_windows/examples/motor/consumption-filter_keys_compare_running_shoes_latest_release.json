@@ -5,7 +5,7 @@
   "snapshot": "chrome",
   "category": "consumption",
   "difficulty": "hard",
-  "instruction": "Enable Windows Filter Keys as a motor accessibility aid and keep it enabled throughout the task. Search for `Salomon Men's Predict Soc2 Running`. Add the product to Compare. Then search for `Nike Men's Stroke Running Shoe, 6.5 us` and add it to Compare. Compare the release dates of the two products, determine which shoe has the more recent release date, select the Black colour and size 12 for that shoe, and add one unit of that shoe to the shopping cart.",
+  "instruction": "Enable Windows Filter Keys and keep them enabled. Compare the release dates of `Salomon Men's Predict Soc2 Running` and `Nike Men's Stroke Running Shoe, 6.5 us`. For the more recently released shoe, select Black, size 12, and add exactly one unit to the shopping cart.",
   "source": "OneStopShop (self-hosted)",
   "gt_steps": [
     "Enable Windows Filter Keys.",

@@ -1638,6 +1638,16 @@ print(output)
         """Normalize a GUI action for repeated-action detection."""
         return str(action or "").strip()
 
+    def _get_loop_action_fingerprint(self, action: Any) -> str:
+        """Compute the per-action fingerprint stored in execution logs."""
+        tool_input = str(action or "").strip()
+        tool = self._infer_tool_from_action(tool_input)
+        if tool == "bash_execution":
+            tool_input = self._normalize_bash_command(tool_input)
+        elif tool == "gui_action":
+            tool_input = self._normalize_pyautogui_code(tool_input)
+        return self._hash_text(tool_input)
+
     def _get_decision_action_fingerprint(self, decision: Dict) -> str:
         """Compute action fingerprint from current decision before execution."""
         normalized_actions = []
@@ -1691,25 +1701,31 @@ print(output)
         if not actionable_tools or not self.action_logs:
             return None
 
-        tool = actionable_tools[-1]
-        threshold = 5 if tool == "gui_action" else 3
-        candidate_action_fp = self._get_decision_action_fingerprint(decision)
-        if not candidate_action_fp:
-            return None
-
         last_log = self.action_logs[-1]
-        if last_log.get("type") != tool:
+        tool = last_log.get("type")
+        if tool not in actionable_tools:
             return None
+        threshold = 5 if tool == "gui_action" else 3
 
         last_action_fp = last_log.get("loop_action_fingerprint", "")
         last_result_fp = last_log.get("loop_result_fingerprint", "")
         if not last_action_fp or not last_result_fp:
             return None
-        if candidate_action_fp != last_action_fp:
+        candidate_matches = any(
+            candidate_tool == tool
+            and self._get_loop_action_fingerprint(action) == last_action_fp
+            for action, candidate_tool in zip(actions, tools)
+        )
+        if not candidate_matches:
             return None
 
         repeat_count = 0
+        previous_step = None
         for log in reversed(self.action_logs):
+            log_step = log.get("step")
+            if log_step == previous_step:
+                continue
+            previous_step = log_step
             if log.get("type") != tool:
                 break
             if log.get("loop_action_fingerprint") != last_action_fp:

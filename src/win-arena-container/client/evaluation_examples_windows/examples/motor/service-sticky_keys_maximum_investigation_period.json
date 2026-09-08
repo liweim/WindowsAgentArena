@@ -5,7 +5,7 @@
   "snapshot": "chrome",
   "category": "service",
   "difficulty": "medium",
-  "instruction": "Enable Windows Sticky Keys as a motor accessibility aid and keep it enabled throughout the task. The provided bank statement PDF is already open in Chrome. Find the maximum investigation period mentioned for a complaint or question, then save only the investigation period in a text file named `investigationPeriod.txt` on the Desktop.",
+  "instruction": "Enable Windows Sticky Keys and keep them enabled. Save only the maximum investigation period for a complaint or question from the provided bank statement PDF in `investigationPeriod.txt` on the Desktop.",
   "source": "https://www.carsonbank.com/",
   "gt_steps": [
     "Enable Windows Sticky Keys.",

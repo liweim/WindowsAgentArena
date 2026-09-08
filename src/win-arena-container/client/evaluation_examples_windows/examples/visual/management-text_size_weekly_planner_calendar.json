@@ -5,7 +5,7 @@
   "snapshot": "windows",
   "category": "management",
   "difficulty": "hard",
-  "instruction": "Increase the Windows text size to 150% as a visual accessibility setting and keep it at 150% throughout the task. Open the provided WeeklyPlanner.odt document in LibreOffice Writer. The document uses unusually small text, so review it carefully. Open Thunderbird Calendar and create a separate calendar event for every appointment listed in the planner. Use each appointment name as the event title and copy its date, start time, duration, and location exactly. Save all events.",
+  "instruction": "Set Windows text size to 150% and keep it at 150%. Create a separate Thunderbird Calendar event for every appointment in `WeeklyPlanner.odt`, using each appointment name as the title and preserving its date, start time, duration, and location exactly.",
   "source": "Local Document: assets/WeeklyPlanner.odt",
   "gt_steps": [
     "Open Windows Accessibility text size settings.",
