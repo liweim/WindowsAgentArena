@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
-source ./shared.sh
+
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+source "$SCRIPT_DIR/shared.sh"
 
 mode="azure"
 prepare_image=false
@@ -11,6 +13,7 @@ use_kvm=true
 ram_size=8G
 cpu_cores=8
 mount_vm_storage=true
+vm_storage_path=""
 ephemeral_vm_storage=false
 mount_client=true
 mount_server=true
@@ -52,6 +55,7 @@ while [[ $# -gt 0 ]]; do
         --ram-size) ram_size=$2; shift 2 ;;
         --cpu-cores) cpu_cores=$2; shift 2 ;;
         --mount-vm-storage) mount_vm_storage=$2; shift 2 ;;
+        --vm-storage-path) vm_storage_path=$2; shift 2 ;;
         --ephemeral-vm-storage) ephemeral_vm_storage=$2; shift 2 ;;
         --mount-client) mount_client=$2; shift 2 ;;
         --mount-server) mount_server=$2; shift 2 ;;
@@ -112,9 +116,11 @@ if ! docker image inspect "${winarena_full_image_name}:${winarena_image_tag}" >/
     fi
 fi
 
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 vm_setup_image_path=$(getrealpath "$SCRIPT_DIR/../src/win-arena-container/vm/image")
 vm_storage_mount_path=$(getrealpath "$SCRIPT_DIR/../src/win-arena-container/vm/storage")
+if [ -n "$vm_storage_path" ]; then
+    vm_storage_mount_path=$(getrealpath "$vm_storage_path")
+fi
 if [ -n "$storage_base_path" ]; then
     vm_storage_base_path=$(getrealpath "$storage_base_path")
 else

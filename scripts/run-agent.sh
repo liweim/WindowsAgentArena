@@ -12,7 +12,7 @@ fi
 
 nohup setsid env \
     PYTHONUNBUFFERED=1 \
-    WINARENA_IMAGE_TAG=locallstc-stable \
+    WINARENA_IMAGE_TAG=latest \
     "LOCALLSTC_HOST_UID=$(id -u)" \
     "LOCALLSTC_HOST_GID=$(id -g)" \
     ./run.sh \
@@ -32,12 +32,12 @@ nohup setsid env \
     --worker-id 0 \
     --num-workers 1 \
     --ephemeral-vm-storage true \
-    --container-name winarena-waa \
+    --container-name a11yarena \
     --browser-port 18113 \
     --rdp-port 13392 \
     --result-dir /locallstc/projects/WindowsAgentArena/results/locallstc_qwen3.5-9b \
     --json-name evaluation_examples_windows/test_one.json \
-    --remove-container false \
+    --remove-container true \
     "$@" >"$LOG_FILE" 2>&1 < /dev/null &
 
 runner_pid=$!

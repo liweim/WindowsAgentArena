@@ -2,6 +2,7 @@
 *.pid
 tmp
 *.bak
+*.sh
 results
 
 # a few testing images
