@@ -54,19 +54,19 @@ These six tasks cannot be fully source-validated or executed until the original 
 
 | Task ID | Missing asset |
 |---|---|
-| `communication-osk_meeting_agenda_draft` | `MeetingAgenda.odt` |
-| `consumption-filter_keys_shopping_list_cart` | `ShoppingList.ods` |
-| `consumption-osk_cheapest_polisher` | `Nov2020Catalog_Full.pdf` |
-| `consumption-sticky_keys_half_price_body_wash` | `COLNSWMETRO_220726_AQCAZRS1.pdf` |
-| `information-osk_clean_touchpad_instructions` | `desk_laptop_ug_en-us.pdf` |
-| `service-osk_open_pdf_links` | `ER_How_to_apply_online_final.pdf` |
+| `communication-meeting_agenda_draft` | `MeetingAgenda.odt` |
+| `consumption-shopping_list_cart` | `ShoppingList.ods` |
+| `consumption-cheapest_polisher` | `Nov2020Catalog_Full.pdf` |
+| `consumption-half_price_body_wash` | `COLNSWMETRO_220726_AQCAZRS1.pdf` |
+| `information-touchpad_cleaning_instructions` | `desk_laptop_ug_en-us.pdf` |
+| `service-voter_certificate_link` | `ER_How_to_apply_online_final.pdf` |
 
 ### 2.2 Live-source tasks
 
 Two tasks have already experienced ground-truth drift:
 
-- `mobility-osk_accessible_grade1_walking_tracks`
-- `mobility-osk_nearest_accessible_beach`
+- `mobility-accessible_grade1_walks`
+- `mobility-nearest_accessible_beach`
 
 For long-term reproducibility, freezing these web sources is preferable.
 
@@ -82,34 +82,34 @@ For long-term reproducibility, freezing these web sources is preferable.
 | `access-enable_on_screen_keyboard` | Simplified instruction; changed requirement to keep OSK **open**; added `settings`; aligned `gt_steps`. |
 | `access-enable_sticky_keys` | Simplified instruction to a direct command. |
 | `access-set_primary_mouse_button_right` | Simplified instruction to a direct command. |
-| `communication-osk_meeting_agenda_draft` | Changed OSK wording to **open**; aligned `gt_steps`; evaluator now checks the complete draft and verifies it was not sent. Instruction made high-level; routine operation steps removed, constraints preserved. Difficulty `medium` → `hard`. |
-| `consumption-filter_keys_compare_running_shoes_latest_release` | Added one-unit requirement; recorded the correct latest-release shoe; evaluator now checks SKU, quantity, Black, and size 12. Instruction made high-level; routine operation steps removed, constraints preserved. |
-| `consumption-filter_keys_shopping_list_cart` | Reclassified `management` → `consumption`; renamed ID/filename; normalized `related_apps`; evaluator now enforces item quantities and no extra products. Instruction made high-level; routine operation steps removed, constraints preserved. |
-| `consumption-osk_cheapest_bathroom_accessory` | Changed OSK wording to **open**; evaluator now enforces quantity 1. Instruction made high-level; routine operation steps removed, constraints preserved. |
-| `consumption-osk_cheapest_polisher` | Added exact two-line output requirement; added OSK app; aligned `gt_steps`; enabled exact text evaluation. Instruction made high-level; routine operation steps removed, constraints preserved. Difficulty `easy` → `medium`. |
-| `consumption-sticky_keys_half_price_body_wash` | Added one-product-per-line and catalogue-order requirements; enabled exact text evaluation. Instruction made high-level; routine operation steps removed, constraints preserved. Difficulty `medium` → `hard`. |
-| `consumption-sticky_keys_wireless_mouse` | Evaluator now enforces quantity 1. Instruction made high-level; routine operation steps removed, constraints preserved. |
-| `health-filter_keys_wheelchair_charging_timer` | Instruction made high-level; routine operation steps removed, constraints preserved. |
+| `communication-meeting_agenda_draft` | Changed OSK wording to **open**; aligned `gt_steps`; evaluator now checks the complete draft and verifies it was not sent. Instruction made high-level; routine operation steps removed, constraints preserved. Difficulty `medium` → `hard`. |
+| `consumption-running_shoe_release_comparison` | Added one-unit requirement; recorded the correct latest-release shoe; evaluator now checks SKU, quantity, Black, and size 12. Instruction made high-level; routine operation steps removed, constraints preserved. |
+| `consumption-shopping_list_cart` | Reclassified `management` → `consumption`; renamed ID/filename; normalized `related_apps`; evaluator now enforces item quantities and no extra products. Instruction made high-level; routine operation steps removed, constraints preserved. |
+| `consumption-cheapest_bathroom_accessory` | Changed OSK wording to **open**; evaluator now enforces quantity 1. Instruction made high-level; routine operation steps removed, constraints preserved. |
+| `consumption-cheapest_polisher` | Added exact two-line output requirement; added OSK app; aligned `gt_steps`; enabled exact text evaluation. Instruction made high-level; routine operation steps removed, constraints preserved. Difficulty `easy` → `medium`. |
+| `consumption-half_price_body_wash` | Added one-product-per-line and catalogue-order requirements; enabled exact text evaluation. Instruction made high-level; routine operation steps removed, constraints preserved. Difficulty `medium` → `hard`. |
+| `consumption-wireless_mouse_search_result` | Evaluator now enforces quantity 1. Instruction made high-level; routine operation steps removed, constraints preserved. |
+| `health-wheelchair_charging_timer` | Instruction made high-level; routine operation steps removed, constraints preserved. |
 | `health-insulin_storage_temperature` | Changed evaluator to exact-only text output. Instruction made high-level; routine operation steps removed, constraints preserved. |
-| `health-mouse_keys_download_allied_health_form` | Instruction made high-level; routine operation steps removed, constraints preserved. |
-| `health-osk_physiotherapy_appointment_mistakes` | Instruction made high-level; routine operation steps removed, constraints preserved. |
-| `health-sticky_keys_parkinsons_medication_reminders` | Evaluator now verifies all three reminders recur `DAILY`. Instruction made high-level; routine operation steps removed, constraints preserved. |
-| `information-filter_keys_compare_singapore_real_gdp` | Simplified instruction; aligned output filename to `differenceGDP.txt`; enabled exact text evaluation. Difficulty `medium` → `hard`. |
-| `information-filter_keys_psychology_coursework_max_upload_size` | Instruction made high-level; routine operation steps removed, constraints preserved. |
-| `information-osk-unsw_comp2521_prerequisites` | Corrected task ID to match filename. Instruction made high-level; routine operation steps removed, constraints preserved. |
-| `information-osk_clean_touchpad_instructions` | Reclassified to `information`; renamed ID/filename; added OSK app; changed OSK wording to **open**; enabled exact text evaluation. Instruction made high-level; routine operation steps removed, constraints preserved. |
-| `information-osk_skill_building_hobbies` | Changed OSK wording to **open**; aligned `gt_steps`; evaluator now requires the exact 11-line output. Instruction made high-level; routine operation steps removed, constraints preserved. Difficulty `medium` → `hard`. |
-| `information-osk_world_cup_winners_final_hosts` | Added explicit six-line output order; enabled exact text evaluation; revalidated the 2026 result. Instruction made high-level; routine operation steps removed, constraints preserved. Difficulty `medium` → `hard`. |
-| `information-sticky_keys_ucla_economics_premajor_gpa` | Difficulty `easy` → `medium`. |
-| `management-filter_keys_calculate_monthly_expenses` | Added expected total `648.49` to `gt_steps`; replaced unsupported spreadsheet evaluation with ODS cell/formula checks. Instruction made high-level; routine operation steps removed, constraints preserved. |
-| `management-mouse_keys_meeting_minutes_calendar` | Evaluator now checks the fixed date `2008-08-30`, correct start time, and duration. Instruction made high-level; routine operation steps removed, constraints preserved. Difficulty `easy` → `medium`. |
-| `management-osk_update_electricity_bill` | Changed OSK wording to **open**; aligned `gt_steps`; evaluator now checks saved ODS cells. Instruction made high-level; routine operation steps removed, constraints preserved. |
-| `management-osk_water_bill_due_date_reminder` | Reclassified `service` → `management`; renamed ID/filename; evaluator now checks fixed date `2024-10-29`. Instruction made high-level; routine operation steps removed, constraints preserved. |
-| `management-sticky_keys_student_gradebook` | Added expected averages/grades/order to `gt_steps`; evaluator now checks the completed ODS summary. Instruction made high-level; routine operation steps removed, constraints preserved. |
-| `mobility-filter_keys_nearest_passport_office_gwagwalada` | Reclassified `service` → `mobility`; renamed ID/filename. Instruction made high-level; routine operation steps removed, constraints preserved. |
-| `mobility-osk_accessible_grade1_walking_tracks` | Updated instruction, `gt_steps`, and evaluator from one track to the current ten matching tracks in exact webpage order. Instruction made high-level; routine operation steps removed, constraints preserved. Difficulty `medium` → `hard`. |
-| `mobility-osk_nearest_accessible_beach` | Updated Bondi Beach ground truth; clarified required feature order; enabled exact text evaluation. Instruction made high-level; routine operation steps removed, constraints preserved. |
-| `service-mouse_keys_open_voting_links` | Instruction made high-level; routine operation steps removed, constraints preserved. |
-| `service-osk_open_pdf_links` | Normalized ID/filename; narrowed instruction to the specific target link checked by the evaluator; added OSK app; aligned `gt_steps`. |
-| `service-osk_passport_application_post_office` | Corrected task ID; evaluator now requires exact `Yes` output. Instruction made high-level; routine operation steps removed, constraints preserved. |
-| `service-sticky_keys_maximum_investigation_period` | Corrected category `health` → `service`; evaluator now requires exact `90 days` output. Instruction made high-level; routine operation steps removed, constraints preserved. |
+| `health-allied_health_form_download` | Instruction made high-level; routine operation steps removed, constraints preserved. |
+| `health-physiotherapy_appointment_checklist` | Instruction made high-level; routine operation steps removed, constraints preserved. |
+| `health-parkinsons_medication_reminders` | Evaluator now verifies all three reminders recur `DAILY`. Instruction made high-level; routine operation steps removed, constraints preserved. |
+| `information-singapore_real_gdp_comparison` | Simplified instruction; aligned output filename to `differenceGDP.txt`; enabled exact text evaluation. Difficulty `medium` → `hard`. |
+| `information-psychology_coursework_upload_limit` | Instruction made high-level; routine operation steps removed, constraints preserved. |
+| `information-unsw_comp2521_prerequisites` | Corrected task ID to match filename. Instruction made high-level; routine operation steps removed, constraints preserved. |
+| `information-touchpad_cleaning_instructions` | Reclassified to `information`; renamed ID/filename; added OSK app; changed OSK wording to **open**; enabled exact text evaluation. Instruction made high-level; routine operation steps removed, constraints preserved. |
+| `information-skill_building_hobbies` | Changed OSK wording to **open**; aligned `gt_steps`; evaluator now requires the exact 11-line output. Instruction made high-level; routine operation steps removed, constraints preserved. Difficulty `medium` → `hard`. |
+| `information-world_cup_winners_hosts` | Added explicit six-line output order; enabled exact text evaluation; revalidated the 2026 result. Instruction made high-level; routine operation steps removed, constraints preserved. Difficulty `medium` → `hard`. |
+| `information-ucla_economics_premajor_gpa` | Difficulty `easy` → `medium`. |
+| `management-monthly_expenses_total` | Added expected total `648.49` to `gt_steps`; replaced unsupported spreadsheet evaluation with ODS cell/formula checks. Instruction made high-level; routine operation steps removed, constraints preserved. |
+| `management-next_meeting_calendar` | Evaluator now checks the fixed date `2008-08-30`, correct start time, and duration. Instruction made high-level; routine operation steps removed, constraints preserved. Difficulty `easy` → `medium`. |
+| `management-electricity_bill_payment` | Changed OSK wording to **open**; aligned `gt_steps`; evaluator now checks saved ODS cells. Instruction made high-level; routine operation steps removed, constraints preserved. |
+| `management-water_bill_reminder` | Reclassified `service` → `management`; renamed ID/filename; evaluator now checks fixed date `2024-10-29`. Instruction made high-level; routine operation steps removed, constraints preserved. |
+| `management-student_gradebook` | Added expected averages/grades/order to `gt_steps`; evaluator now checks the completed ODS summary. Instruction made high-level; routine operation steps removed, constraints preserved. |
+| `mobility-nearest_passport_office_gwagwalada` | Reclassified `service` → `mobility`; renamed ID/filename. Instruction made high-level; routine operation steps removed, constraints preserved. |
+| `mobility-accessible_grade1_walks` | Updated instruction, `gt_steps`, and evaluator from one track to the current ten matching tracks in exact webpage order. Instruction made high-level; routine operation steps removed, constraints preserved. Difficulty `medium` → `hard`. |
+| `mobility-nearest_accessible_beach` | Updated Bondi Beach ground truth; clarified required feature order; enabled exact text evaluation. Instruction made high-level; routine operation steps removed, constraints preserved. |
+| `service-voting_comment_links` | Instruction made high-level; routine operation steps removed, constraints preserved. |
+| `service-voter_certificate_link` | Normalized ID/filename; narrowed instruction to the specific target link checked by the evaluator; added OSK app; aligned `gt_steps`. |
+| `service-passport_application_post_office` | Corrected task ID; evaluator now requires exact `Yes` output. Instruction made high-level; routine operation steps removed, constraints preserved. |
+| `service-bank_investigation_period` | Corrected category `health` → `service`; evaluator now requires exact `90 days` output. Instruction made high-level; routine operation steps removed, constraints preserved. |

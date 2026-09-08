@@ -1,12 +1,58 @@
 {
-  "chrome": [
-    "2ae9ba84-3a0d-4d4c-8338-3a1478dc5fe3-wos",
-    "06fe7178-4491-4589-810f-2e2bc9502122-wos",
-    "7a5a7856-f1b6-42a4-ade9-1ca81ca0f263-wos"
-  ],
-  "libreoffice_calc": [
-    "0a2e43bf-b26c-4631-a966-af9dfa12c9e5-WOS",
-    "0acbd372-ca7a-4507-b949-70673120190f-WOS",
-    "0bf05a7d-b28b-44d2-955a-50b41e24012a-WOS"
-  ]
+    "cognitive": [
+        "captcha-click_sequence_3",
+        "access-chrome_immersive_reader_extension",
+        "information-passport_renewal_checklist",
+        "captcha-count_chars_1",
+        "service-passport_renewal_options",
+        "management-sunscreen_ingredient_reminder",
+        "access-spotify_install",
+        "service-cms_product_record",
+        "access-edge_immersive_reader_setup",
+        "information-emergency_kit_checklist"
+    ],
+    "hearing": [
+        "mobility-giverny_street_view",
+        "access-windows_mono_audio_screen_flash",
+        "mobility-rottnest_island_map",
+        "information-handwashing_steps",
+        "access-windows_audio_flash_window",
+        "access-chrome_live_caption_language",
+        "service-ftc_report_fraud_site",
+        "consumption-insta360",
+        "consumption-sony_alpha",
+        "mobility-keukenhof_map",
+        "health-celiac_disease_treatment",
+        "access-windows_notification_5_minutes",
+        "information-fake_job_bank_account"
+    ],
+    "motor": [
+        "service-voter_certificate_link",
+        "management-student_gradebook",
+        "information-skill_building_hobbies",
+        "consumption-cheapest_polisher",
+        "information-ucla_economics_premajor_gpa",
+        "mobility-nearest_accessible_beach",
+        "consumption-shopping_list_cart",
+        "access-enable_clicklock",
+        "captcha-robot_checkbox_1",
+        "information-touchpad_cleaning_instructions",
+        "health-parkinsons_medication_reminders",
+        "mobility-accessible_grade1_walks",
+        "access-enable_sticky_keys"
+    ],
+    "visual": [
+        "captcha-hold_button_2",
+        "consumption-lavender_coupon",
+        "access-windows_magnifier_open",
+        "access-windows_magnifier_200",
+        "consumption-swingset_price_filter",
+        "mobility-nearest_pharmacy_unsw_library",
+        "consumption-marshmallow_bunnies",
+        "management-cardiology_appointment_reminder",
+        "captcha-patch_select_2",
+        "consumption-toothbrush_price_comparison",
+        "access-high_contrast_aquatic_7news",
+        "consumption-saute_pan"
+    ]
 }

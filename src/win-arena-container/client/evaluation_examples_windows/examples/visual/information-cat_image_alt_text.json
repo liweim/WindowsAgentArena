@@ -1,0 +1,72 @@
+{
+  "id": "information-cat_image_alt_text",
+  "_comment": "The evaluator `points` list contains redundant entries and I suggest to use existing webpage with image.",
+  "snapshot": "libreoffice_writer",
+  "category": "information",
+  "difficulty": "medium",
+  "instruction": "Add descriptive alt text to the image in the provided DOCX file so it describes the visible scene, then save the file in its existing Word format.",
+  "source": "Local Document: assets/information-image_to_text_cat.docx",
+  "gt_steps": [
+    "Select the image in information-image_to_text_cat.docx.",
+    "Add alt text describing a cat sitting on the hood of a red car.",
+    "Save the DOCX file in Word format."
+  ],
+  "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/information-image_to_text_cat.docx",
+            "path": "C:\\Users\\Docker\\Desktop\\information-image_to_text_cat.docx"
+          }
+        ]
+      }
+    },
+    {
+      "type": "open",
+      "parameters": {
+        "path": "C:\\Users\\Docker\\Desktop\\information-image_to_text_cat.docx"
+      }
+    }
+  ],
+  "trajectory": "trajectories/",
+  "related_apps": [
+    "libreoffice_writer"
+  ],
+  "evaluator": {
+    "func": "check_docx_image_alt_text",
+    "result": {
+      "type": "vm_file",
+      "path": "C:\\Users\\Docker\\Desktop\\information-image_to_text_cat.docx",
+      "dest": "information-image_to_text_cat.docx"
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "ignore_case": true,
+        "points": [
+          [
+            "cat",
+            "the cat"
+          ],
+          [
+            "red"
+          ],
+          [
+            "car",
+            "the car",
+            "hood of the car"
+          ],
+          [
+            "sit",
+            "sitting"
+          ]
+        ]
+      }
+    }
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

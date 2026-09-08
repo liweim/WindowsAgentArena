@@ -1,0 +1,101 @@
+{
+  "id": "information-town_southeast_of_brisbane",
+  "snapshot": "chrome",
+  "category": "information",
+  "difficulty": "hard",
+  "instruction": "Turn on Windows Narrator. Use the Australia map PDF already open in Chrome to identify the town immediately southeast of Brisbane. Save the town name in `answer.txt` on the Desktop.",
+  "source": "Local PDF: assets/Australia-Map.pdf",
+  "gt_steps": [
+    "Turn on Windows Narrator.",
+    "Locate Brisbane on the Australia map PDF.",
+    "Identify Gold Coast immediately southeast of Brisbane.",
+    "Open Notepad and write Gold Coast.",
+    "Save the file as answer.txt on the Desktop."
+  ],
+  "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/Australia-Map.pdf",
+            "path": "C:\\Users\\Docker\\Desktop\\Australia-Map.pdf"
+          }
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port=1337",
+          "--force-renderer-accessibility"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    },
+    {
+      "type": "sleep",
+      "parameters": {
+        "seconds": 1
+      }
+    },
+    {
+      "type": "chrome_open_tabs",
+      "parameters": {
+        "urls_to_open": [
+          "file:///C:/Users/Docker/Desktop/Australia-Map.pdf"
+        ]
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "narrator",
+    "chrome",
+    "notepad"
+  ],
+  "evaluator": {
+    "func": [
+      "check_narrator_enabled",
+      "exact_match"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "narrator_status"
+      },
+      {
+        "type": "is_file_saved_desktop",
+        "filename": "answer.txt",
+        "textcontent": "Gold Coast",
+        "exact": true
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {}
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "expected": "true"
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}
