@@ -4,12 +4,12 @@
   "snapshot": "libreoffice_writer",
   "category": "information",
   "difficulty": "medium",
-  "instruction": "Add descriptive alt text to the image in the provided DOCX file so it describes the visible scene, then save the file in its existing Word format.",
-  "source": "Local Document: assets/information-image_to_text_cat.docx",
+  "instruction": "Add descriptive alt text to the image in the provided DOCX file so it describes the visible scene, then save the completed file as `answer.docx` on the Desktop in Word format.",
+  "source": "Local Document: assets/information-cat_image_alt_text.docx",
   "gt_steps": [
     "Select the image in information-image_to_text_cat.docx.",
     "Add alt text describing a cat sitting on the hood of a red car.",
-    "Save the DOCX file in Word format."
+    "Save the completed file as `answer.docx` on the Desktop in Word format."
   ],
   "config": [
     {
@@ -17,7 +17,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/information-image_to_text_cat.docx",
+            "local_path": "assets/information-cat_image_alt_text.docx",
             "path": "C:\\Users\\Docker\\Desktop\\information-image_to_text_cat.docx"
           }
         ]
@@ -38,8 +38,8 @@
     "func": "check_docx_image_alt_text",
     "result": {
       "type": "vm_file",
-      "path": "C:\\Users\\Docker\\Desktop\\information-image_to_text_cat.docx",
-      "dest": "information-image_to_text_cat.docx"
+      "path": "C:\\Users\\Docker\\Desktop\\answer.docx",
+      "dest": "answer.docx"
     },
     "expected": {
       "type": "rule",

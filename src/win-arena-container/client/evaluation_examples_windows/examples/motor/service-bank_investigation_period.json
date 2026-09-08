@@ -5,7 +5,7 @@
   "snapshot": "chrome",
   "category": "service",
   "difficulty": "medium",
-  "instruction": "Enable Windows Sticky Keys and keep them enabled. Save only the maximum investigation period for a complaint or question from the provided bank statement PDF in `investigationPeriod.txt` on the Desktop.",
+  "instruction": "Enable Windows Sticky Keys and keep them enabled. Save only the maximum investigation period for a complaint or question from the provided bank statement PDF in `answer.txt` on the Desktop.",
   "source": "https://www.carsonbank.com/",
   "gt_steps": [
     "Enable Windows Sticky Keys.",
@@ -16,7 +16,7 @@
     "Identify the maximum investigation period as 90 days.",
     "Open Notepad.",
     "Write `90 days` in the file.",
-    "Save the file as `investigationPeriod.txt` on the Desktop.",
+    "Save the file as `answer.txt` on the Desktop.",
     "Leave the saved file on the Desktop.",
     "Leave Sticky Keys enabled."
   ],
@@ -26,7 +26,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/Sample-Statement.pdf",
+            "local_path": "assets/service-bank_investigation_period.pdf",
             "path": "C:\\Users\\Docker\\Downloads\\Sample-Statement.pdf"
           }
         ]
@@ -80,7 +80,7 @@
       },
       {
         "type": "is_file_saved_desktop",
-        "filename": "investigationPeriod.txt",
+        "filename": "answer.txt",
         "textcontent": "90 days",
         "exact": true
       }

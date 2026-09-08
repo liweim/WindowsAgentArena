@@ -54,12 +54,12 @@ These six tasks cannot be fully source-validated or executed until the original 
 
 | Task ID | Missing asset |
 |---|---|
-| `communication-meeting_agenda_draft` | `MeetingAgenda.odt` |
-| `consumption-shopping_list_cart` | `ShoppingList.ods` |
-| `consumption-cheapest_polisher` | `Nov2020Catalog_Full.pdf` |
-| `consumption-half_price_body_wash` | `COLNSWMETRO_220726_AQCAZRS1.pdf` |
-| `information-touchpad_cleaning_instructions` | `desk_laptop_ug_en-us.pdf` |
-| `service-voter_certificate_link` | `ER_How_to_apply_online_final.pdf` |
+| `communication-meeting_agenda_draft` | `communication-meeting_agenda_draft.odt` |
+| `consumption-shopping_list_cart` | `consumption-shopping_list_cart.ods` |
+| `consumption-cheapest_polisher` | `consumption-cheapest_polisher.pdf` |
+| `consumption-half_price_body_wash` | `consumption-half_price_body_wash.pdf` |
+| `information-touchpad_cleaning_instructions` | `information-touchpad_cleaning_instructions.pdf` |
+| `service-voter_certificate_link` | `service-voter_certificate_link.pdf` |
 
 ### 2.2 Live-source tasks
 

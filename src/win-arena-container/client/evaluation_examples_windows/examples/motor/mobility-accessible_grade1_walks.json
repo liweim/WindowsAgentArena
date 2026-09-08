@@ -5,7 +5,7 @@
   "snapshot": "chrome",
   "category": "mobility",
   "difficulty": "hard",
-  "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Save every walk title on the provided NSW National Parks webpage that is Grade 1 with a maximum listed walking time of 45 minutes or less to `AccessibleTracks.txt` on the Desktop, one title per line in webpage order.",
+  "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Save every walk title on the provided NSW National Parks webpage that is Grade 1 with a maximum listed walking time of 45 minutes or less to `answer.txt` on the Desktop, one title per line in webpage order.",
   "source": "https://www.nationalparks.nsw.gov.au/access-friendly/access-friendly-walking-tracks",
   "gt_steps": [
     "Enable the Windows On-Screen Keyboard and keep it open.",
@@ -24,7 +24,7 @@
     "Identify `Whitegum lookout walking track` as a matching track.",
     "Open Notepad.",
     "Write the 10 matching titles in webpage order, one title per line.",
-    "Save the file as `AccessibleTracks.txt` on the Desktop.",
+    "Save the file as `answer.txt` on the Desktop.",
     "Leave the saved file on the Desktop.",
     "Leave the On-Screen Keyboard open."
   ],
@@ -77,7 +77,7 @@
       },
       {
         "type": "is_file_saved_desktop",
-        "filename": "AccessibleTracks.txt",
+        "filename": "answer.txt",
         "textcontent": "Fairfax Heritage walking track\nJennifer Street boardwalk\nThree Sisters walk\nBungoona lookout and path\nPalm Valley Currenbah walking track\nVictoria Park boardwalk\nDevils Hole lookout walk and picnic area\nPoint lookout walking track\nRainforest walking track\nWhitegum lookout walking track",
         "exact": true
       }

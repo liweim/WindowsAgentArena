@@ -5,7 +5,7 @@
   "snapshot": "chrome",
   "category": "information",
   "difficulty": "hard",
-  "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Save the 11 hobby topics from the provided Covey webpage's `11 Examples of Skill-Building Hobbies for Adults with Disabilities` section to `hobbies.txt` on the Desktop, one topic per line, exactly as written but in lowercase, with no numbers, bullet symbols, or descriptions.",
+  "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Save the 11 hobby topics from the provided Covey webpage's `11 Examples of Skill-Building Hobbies for Adults with Disabilities` section to `answer.txt` on the Desktop, one topic per line, exactly as written but in lowercase, with no numbers, bullet symbols, or descriptions.",
   "source": "https://covey.org/11-skill-building-hobbies-for-adults-with-disabilities/",
   "gt_steps": [
     "Open Windows Accessibility keyboard settings.",
@@ -25,7 +25,7 @@
     "Write `photography` on its own line.",
     "Write `music` on its own line.",
     "Write `volunteering` on its own line.",
-    "Save the file as `hobbies.txt` on the Desktop.",
+    "Save the file as `answer.txt` on the Desktop.",
     "Leave the saved file on the Desktop.",
     "Leave the On-Screen Keyboard open."
   ],
@@ -79,7 +79,7 @@
       },
       {
         "type": "is_file_saved_desktop",
-        "filename": "hobbies.txt",
+        "filename": "answer.txt",
         "textcontent": "biking\nbook club\nart\nswimming\ngardening\ncooking or baking\nadaptive sports\ndancing\nphotography\nmusic\nvolunteering",
         "exact": true
       }

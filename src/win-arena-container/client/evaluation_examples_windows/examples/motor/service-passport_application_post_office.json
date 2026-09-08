@@ -5,7 +5,7 @@
   "snapshot": "chrome",
   "category": "service",
   "difficulty": "medium",
-  "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Using the comments on the Reddit post titled `Passport Application Locations?`, determine whether passport registration or application can be completed through a post office and save only `Yes` or `No` in `passportApplication.txt` on the Desktop.",
+  "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Using the comments on the Reddit post titled `Passport Application Locations?`, determine whether passport registration or application can be completed through a post office and save only `Yes` or `No` in `answer.txt` on the Desktop.",
   "source": "WebArena Reddit website",
   "gt_steps": [
     "Open Windows Accessibility keyboard settings.",
@@ -19,7 +19,7 @@
     "Confirm from the comments that it can be completed through a post office.",
     "Open Notepad.",
     "Write only `Yes` in the file.",
-    "Save the file as `passportApplication.txt` on the Desktop.",
+    "Save the file as `answer.txt` on the Desktop.",
     "Leave the saved file on the Desktop.",
     "Leave the On-Screen Keyboard open."
   ],
@@ -86,7 +86,7 @@
       },
       {
         "type": "is_file_saved_desktop",
-        "filename": "passportApplication.txt",
+        "filename": "answer.txt",
         "textcontent": "Yes",
         "exact": true
       }

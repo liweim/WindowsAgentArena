@@ -3,7 +3,7 @@
   "snapshot": "libreoffice_writer",
   "category": "information",
   "difficulty": "medium",
-  "instruction": "Find the sentence in the local Wikipedia `Accessibility` article that defines accessibility as a design concept, replace `[add definition here]` in the open LibreOffice Writer document with that sentence only, and save the document.",
+  "instruction": "Find the sentence in the local Wikipedia `Accessibility` article that defines accessibility as a design concept, replace `[add definition here]` in the open LibreOffice Writer document with that sentence only, and save the completed document as `answer.docx` on the Desktop.",
   "source": "WebArena self-hosted Wikipedia/Kiwix service: http://host.docker.internal:8888",
   "gt_steps": [
     "Open the local Kiwix Wikipedia site in Google Chrome.",
@@ -12,7 +12,7 @@
     "Use `accessibility is the design of products, devices, services, vehicles, or environments so as to be usable by people with disabilities` as the standard answer.",
     "Switch to the open `accessibility_definition_paper.docx` document in LibreOffice Writer.",
     "Replace `[add definition here]` with the standard answer only.",
-    "Save `accessibility_definition_paper.docx`."
+    "Save the completed document as `answer.docx` on the Desktop."
   ],
   "config": [
     {
@@ -88,8 +88,8 @@
     "func": "compare_docx_files",
     "result": {
       "type": "vm_file",
-      "path": "C:\\Users\\Docker\\Desktop\\accessibility_definition_paper.docx",
-      "dest": "accessibility_definition_paper.docx"
+      "path": "C:\\Users\\Docker\\Desktop\\answer.docx",
+      "dest": "answer.docx"
     },
     "expected": {
       "type": "vm_file",

@@ -5,8 +5,8 @@
   "snapshot": "chrome",
   "category": "consumption",
   "difficulty": "hard",
-  "instruction": "Enable Windows Sticky Keys and keep them enabled. From the provided Coles catalogue, save every product whose full name contains `Body Wash` and costs less than $9 to `halfPriceBodyWash.txt` on the Desktop, one exact product name per line in catalogue order.",
-  "source": "assets/COLNSWMETRO_220726_AQCAZRS1.pdf",
+  "instruction": "Enable Windows Sticky Keys and keep them enabled. From the provided Coles catalogue, save every product whose full name contains `Body Wash` and costs less than $9 to `answer.txt` on the Desktop, one exact product name per line in catalogue order.",
+  "source": "assets/consumption-half_price_body_wash.pdf",
   "gt_steps": [
     "Enable Windows Sticky Keys.",
     "Keep Sticky Keys enabled throughout the task.",
@@ -21,7 +21,7 @@
     "Open Notepad.",
     "Write each full product name exactly as shown in the PDF, with one product per line.",
     "Do not include prices, products costing exactly $9, or products costing more than $9.",
-    "Save the file as `halfPriceBodyWash.txt` on the Desktop.",
+    "Save the file as `answer.txt` on the Desktop.",
     "Leave the saved file on the Desktop.",
     "Leave Sticky Keys enabled."
   ],
@@ -31,7 +31,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/COLNSWMETRO_220726_AQCAZRS1.pdf",
+            "local_path": "assets/consumption-half_price_body_wash.pdf",
             "path": "C:\\Users\\Docker\\Downloads\\COLNSWMETRO_220726_AQCAZRS1.pdf"
           }
         ]
@@ -85,7 +85,7 @@
       },
       {
         "type": "is_file_saved_desktop",
-        "filename": "halfPriceBodyWash.txt",
+        "filename": "answer.txt",
         "textcontent": "Palmolive Naturals Body Wash 1 Litre\nDove Serum Body Wash 300mL\nSukin Botanical Body Wash 1 Litre\nThankyou Body Wash 1 Litre\nNivea Shower Body Wash 1 Litre",
         "exact": true
       }

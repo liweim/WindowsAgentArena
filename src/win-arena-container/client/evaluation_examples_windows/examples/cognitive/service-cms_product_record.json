@@ -3,7 +3,7 @@
   "snapshot": "chrome",
   "category": "service",
   "difficulty": "hard",
-  "instruction": "Update the Value column in `cms_product_record.xlsx` on the Desktop with the current CMS details for `Joust Duffle Bag`. Use username `admin` and password `admin1234` to access the CMS admin site.",
+  "instruction": "Update the Value column in `cms_product_record.xlsx` on the Desktop with the current CMS details for `Joust Duffle Bag`, then save the completed spreadsheet as `answer.xlsx` on the Desktop. Use username `admin` and password `admin1234` to access the CMS admin site.",
   "source": "WebArena self-hosted e-commerce CMS service",
   "gt_steps": [
     "Open the self-hosted CMS admin site in Google Chrome.",
@@ -27,7 +27,7 @@
     "Enter the displayed CMS value for `Websites` in the spreadsheet Value column.",
     "Enter the displayed CMS value for `Last Updated At` in the spreadsheet Value column.",
     "Enter the displayed CMS value for `Action` in the spreadsheet Value column.",
-    "Save `cms_product_record.xlsx`."
+    "Save the completed spreadsheet as `answer.xlsx` on the Desktop."
   ],
   "config": [
     {
@@ -67,7 +67,7 @@
     "func": "check_text_points",
     "result": {
       "type": "vm_command_line",
-      "command": "python -c \"from openpyxl import load_workbook; from pathlib import Path; p=Path.home()/'Desktop'/'cms_product_record.xlsx'; wb=load_workbook(p, data_only=True); ws=wb.active; print('\\n'.join(f'{ws.cell(r,1).value}: {ws.cell(r,2).value}' for r in range(2, ws.max_row+1) if ws.cell(r,2).value is not None and str(ws.cell(r,2).value).strip() != ''))\"",
+      "command": "python -c \"from openpyxl import load_workbook; from pathlib import Path; p=Path.home()/'Desktop'/'answer.xlsx'; wb=load_workbook(p, data_only=True); ws=wb.active; print('\\n'.join(f'{ws.cell(r,1).value}: {ws.cell(r,2).value}' for r in range(2, ws.max_row+1) if ws.cell(r,2).value is not None and str(ws.cell(r,2).value).strip() != ''))\"",
       "shell": true
     },
     "expected": {

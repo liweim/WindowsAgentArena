@@ -5,8 +5,8 @@
   "snapshot": "windows",
   "category": "management",
   "difficulty": "hard",
-  "instruction": "Enable Windows Narrator and keep it enabled. Populate the provided `BillSummary.ods` with the provider, due date, and total amount due from each of the three provided utility bills, then save the spreadsheet.",
-  "source": "Local Documents: assets/BluePeak_Electricity_Bill.pdf, assets/ClearFlow_Water_Bill.pdf, assets/GreenFlame_Gas_Bill.pdf, assets/BillSummary.ods",
+  "instruction": "Enable Windows Narrator and keep it enabled. Populate the provided `BillSummary.ods` with the provider, due date, and total amount due from each of the three provided utility bills, then save the spreadsheet as `answer.ods` on the Desktop.",
+  "source": "Local Documents: assets/management-utility_bill_summary_electricity.pdf, assets/management-utility_bill_summary_water.pdf, assets/management-utility_bill_summary_gas.pdf, assets/management-utility_bill_summary.ods",
   "gt_steps": [
     "Enable Windows Narrator.",
     "Open BluePeak_Electricity_Bill.pdf.",
@@ -23,7 +23,7 @@
     "Identify the total amount due as $128.75.",
     "Open BillSummary.ods.",
     "Enter all three bills into the spreadsheet.",
-    "Save BillSummary.ods.",
+    "Save the spreadsheet as `answer.ods` on the Desktop.",
     "Keep Narrator enabled."
   ],
   "config": [
@@ -32,19 +32,19 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/BluePeak_Electricity_Bill.pdf",
+            "local_path": "assets/management-utility_bill_summary_electricity.pdf",
             "path": "C:\\Users\\Docker\\Desktop\\BluePeak_Electricity_Bill.pdf"
           },
           {
-            "local_path": "assets/ClearFlow_Water_Bill.pdf",
+            "local_path": "assets/management-utility_bill_summary_water.pdf",
             "path": "C:\\Users\\Docker\\Desktop\\ClearFlow_Water_Bill.pdf"
           },
           {
-            "local_path": "assets/GreenFlame_Gas_Bill.pdf",
+            "local_path": "assets/management-utility_bill_summary_gas.pdf",
             "path": "C:\\Users\\Docker\\Desktop\\GreenFlame_Gas_Bill.pdf"
           },
           {
-            "local_path": "assets/BillSummary.ods",
+            "local_path": "assets/management-utility_bill_summary.ods",
             "path": "C:\\Users\\Docker\\Desktop\\BillSummary.ods"
           }
         ]
@@ -86,8 +86,8 @@
       },
       {
         "type": "vm_file",
-        "path": "C:\\Users\\Docker\\Desktop\\BillSummary.ods",
-        "dest": "BillSummary.ods"
+        "path": "C:\\Users\\Docker\\Desktop\\answer.ods",
+        "dest": "answer.ods"
       }
     ],
     "expected": [

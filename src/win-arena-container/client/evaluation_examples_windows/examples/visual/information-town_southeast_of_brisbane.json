@@ -4,7 +4,7 @@
   "category": "information",
   "difficulty": "hard",
   "instruction": "Turn on Windows Narrator. Use the Australia map PDF already open in Chrome to identify the town immediately southeast of Brisbane. Save the town name in `answer.txt` on the Desktop.",
-  "source": "Local PDF: assets/Australia-Map.pdf",
+  "source": "Local PDF: assets/information-town_southeast_of_brisbane.pdf",
   "gt_steps": [
     "Turn on Windows Narrator.",
     "Locate Brisbane on the Australia map PDF.",
@@ -18,7 +18,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/Australia-Map.pdf",
+            "local_path": "assets/information-town_southeast_of_brisbane.pdf",
             "path": "C:\\Users\\Docker\\Desktop\\Australia-Map.pdf"
           }
         ]
