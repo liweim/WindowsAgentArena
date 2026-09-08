@@ -1,0 +1,73 @@
+{
+  "id": "service-passport_renewal_options",
+  "snapshot": "chrome",
+  "category": "service",
+  "difficulty": "medium",
+  "instruction": "Create a Sticky Note containing the three passport renewal option names exactly as written on the State Department renewal page.",
+  "source": "https://travel.state.gov/content/travel/en/passports/have-passport/renew.html",
+  "gt_steps": [
+    "Open the State Department passport renewal page in Google Chrome.",
+    "Locate the section that lists renewal options.",
+    "Open Sticky Notes.",
+    "Create a new note.",
+    "Enter exactly `Renew Online` in the note.",
+    "Add exactly `Renew by Mail` to the note.",
+    "Add exactly `Renew in Person` to the note."
+  ],
+  "config": [
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "cmd",
+          "/c",
+          "start chrome https://travel.state.gov/content/travel/en/passports/have-passport/renew.html"
+        ]
+      }
+    },
+    {
+      "type": "execute",
+      "parameters": {
+        "command": [
+          "powershell",
+          "-NoProfile",
+          "-ExecutionPolicy",
+          "Bypass",
+          "-Command",
+          "Start-Process 'shell:AppsFolder\\Microsoft.MicrosoftStickyNotes_8wekyb3d8bbwe!App'"
+        ]
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "chrome",
+    "sticky_notes"
+  ],
+  "evaluator": {
+    "func": "check_text_points",
+    "result": {
+      "type": "sticky_notes_content"
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "ignore_case": true,
+        "points": [
+          [
+            "Renew Online"
+          ],
+          [
+            "Renew by Mail"
+          ],
+          [
+            "Renew in Person"
+          ]
+        ]
+      }
+    }
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "medium"
+}

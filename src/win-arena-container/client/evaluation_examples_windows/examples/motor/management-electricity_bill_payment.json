@@ -1,0 +1,92 @@
+{
+  "id": "management-electricity_bill_payment",
+  "_comment": "",
+  "manually_evaluated": false,
+  "snapshot": "windows",
+  "category": "management",
+  "difficulty": "easy",
+  "instruction": "Enable the Windows On-Screen Keyboard and keep it open. In the provided `Bills.ods`, change the Electricity bill status from `Unpaid` to `Paid`, set the payment date to `15/10/2026`, and save the spreadsheet.",
+  "source": "Local Spreadsheet: assets/Bills.ods",
+  "gt_steps": [
+    "Enable the Windows On-Screen Keyboard.",
+    "Keep the On-Screen Keyboard open throughout the task.",
+    "Open Bills.ods in LibreOffice Calc.",
+    "Locate the Electricity bill row.",
+    "Change the Status from `Unpaid` to `Paid`.",
+    "Enter `15/10/2026` in the Payment Date column.",
+    "Save the spreadsheet.",
+    "Keep the On-Screen Keyboard open."
+  ],
+  "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/Bills.ods",
+            "path": "C:\\Users\\Docker\\Desktop\\Bills.ods"
+          }
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "libreoffice",
+          "C:\\Users\\Docker\\Desktop\\Bills.ods"
+        ]
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "on_screen_keyboard",
+    "libreoffice_calc"
+  ],
+  "evaluator": {
+    "func": [
+      "check_include_exclude",
+      "check_ods_cell_values"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "vm_command_line",
+        "command": "powershell -Command \"if (Get-Process osk -ErrorAction SilentlyContinue) { Write-Output 'OSK_OPEN' } else { Write-Output 'OSK_CLOSED' }\"",
+        "shell": true
+      },
+      {
+        "type": "vm_file",
+        "path": "C:\\Users\\Docker\\Desktop\\Bills.ods",
+        "dest": "Bills.ods"
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "include": [
+            "OSK_OPEN"
+          ],
+          "exclude": [
+            "OSK_CLOSED"
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "sheet": "Bills",
+          "cells": {
+            "D2": "Paid",
+            "E2": "15/10/2026"
+          }
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

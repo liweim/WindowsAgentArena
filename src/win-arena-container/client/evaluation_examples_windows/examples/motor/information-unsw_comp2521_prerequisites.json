@@ -1,0 +1,107 @@
+{
+  "id": "information-unsw_comp2521_prerequisites",
+  "_comment": "Never disclose personal information such as the school, nationality or location.",
+  "snapshot": "chrome",
+  "category": "information",
+  "difficulty": "hard",
+  "instruction": "Enable the Windows On-Screen Keyboard and keep it open. In the 2025 UNSW Handbook version of undergraduate program 3778, find the complete prerequisite expression for COMP2521 under the Computer Science disciplinary component and write it in a sticky note exactly as shown, including every `or` between course codes.",
+  "source": "https://www.handbook.unsw.edu.au/undergraduate/programs/2022/3778",
+  "gt_steps": [
+    "Enable the On-Screen Keyboard as a motor accessibility aid and keep it open while completing the task.",
+    "Open the 2022 UNSW Computer Science program page in Google Chrome.",
+    "Use the year selector to view the 2025 version of the program.",
+    "Scroll to the Disciplinary Component section.",
+    "Open Computer Science (COMPA1).",
+    "In the Course Cores section, find Data Structures and Algorithms (COMP2521).",
+    "Select See More Information for COMP2521.",
+    "Find the Enrolment Requirements and identify the complete prerequisite expression: `COMP1511 or DPST1091 or COMP1917 or COMP1921`.",
+    "Open Sticky Notes.",
+    "Using the On-Screen Keyboard, write `COMP1511 or DPST1091 or COMP1917 or COMP1921` in a sticky note, preserving every `or`."
+  ],
+  "config": [
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port=1337",
+          "--force-renderer-accessibility",
+          "https://www.handbook.unsw.edu.au/undergraduate/programs/2022/3778"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    },
+    {
+      "type": "execute",
+      "parameters": {
+        "command": [
+          "powershell",
+          "-NoProfile",
+          "-ExecutionPolicy",
+          "Bypass",
+          "-Command",
+          "Start-Process 'shell:AppsFolder\\Microsoft.MicrosoftStickyNotes_8wekyb3d8bbwe!App'"
+        ]
+      }
+    },
+    {
+      "type": "activate_window",
+      "parameters": {
+        "window_name": "Google Chrome"
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "chrome",
+    "sticky_notes",
+    "on_screen_keyboard"
+  ],
+  "evaluator": {
+    "func": [
+      "check_text_points",
+      "check_include_exclude"
+    ],
+    "result": [
+      {
+        "type": "sticky_notes_content"
+      },
+      {
+        "type": "vm_command_line",
+        "command": "powershell -Command \"if (Get-Process osk -ErrorAction SilentlyContinue) { Write-Output 'OSK_OPEN' }\"",
+        "shell": true
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "ignore_case": true,
+          "points": [
+            [
+              "COMP1511 or DPST1091 or COMP1917 or COMP1921"
+            ]
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "include": [
+            "OSK_OPEN"
+          ],
+          "exclude": []
+        }
+      }
+    ]
+  }
+}

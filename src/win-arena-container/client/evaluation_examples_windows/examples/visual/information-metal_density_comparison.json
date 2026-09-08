@@ -1,0 +1,93 @@
+{
+  "id": "information-metal_density_comparison",
+  "_comment": "",
+  "snapshot": "chrome",
+  "category": "information",
+  "difficulty": "medium",
+  "instruction": "Turn on Windows Narrator. Compare the densities of gold and aluminium using the two Wikipedia pages already open in Chrome. Save `answer.txt` on the Desktop with the denser metal name on the first line and its density value on the second line.",
+  "source": "WebArena self-hosted Wikipedia/Kiwix pages for Gold and Aluminium",
+  "gt_steps": [
+    "Turn on Windows Narrator.",
+    "Compare the density values on the Gold and Aluminium Wikipedia pages.",
+    "Identify Gold as the denser metal with density 19.3 g/cm³.",
+    "Open Notepad.",
+    "Write Gold on the first line and 19.3 on the second line.",
+    "Save the file as answer.txt on the Desktop."
+  ],
+  "config": [
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port=1337",
+          "--force-renderer-accessibility"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    },
+    {
+      "type": "sleep",
+      "parameters": {
+        "seconds": 1
+      }
+    },
+    {
+      "type": "chrome_open_tabs",
+      "parameters": {
+        "urls_to_open": [
+          "http://host.docker.internal:8888/wikipedia_en_all_maxi_2022-05/A/Gold",
+          "http://host.docker.internal:8888/wikipedia_en_all_maxi_2022-05/A/Aluminium"
+        ]
+      }
+    }
+  ],
+  "trajectory": "trajectories\\",
+  "related_apps": [
+    "narrator",
+    "chrome",
+    "notepad"
+  ],
+  "evaluator": {
+    "func": [
+      "check_narrator_enabled",
+      "exact_match"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "narrator_status"
+      },
+      {
+        "type": "is_file_saved_desktop",
+        "filename": "answer.txt",
+        "textcontent": "Gold\n19.3",
+        "exact": true
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {}
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "expected": "true"
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}
