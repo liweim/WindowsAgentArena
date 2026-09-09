@@ -98,11 +98,17 @@ Use a consistent style with **concise, direct imperative phrasing**.
 
 ### 5. `gt_steps`
 
-* `gt_steps` are intended for annotators, and should allow them to reproduce the successful trajectory by following the steps.
+* `gt_steps` are intended for annotators, and should allow them to reproduce the successful trajectory by following concrete UI/file operations.
 
-* For tasks that require reproduction guidance, each step should contain only one major action.
+* Each step should contain only one major **executable action**.
 
-* When there is a unique correct answer, provide the exact answer, date, title, text, product, or setting value directly.
+* A canonical answer may appear in `gt_steps` only when it is the exact value used by that action, for example: `Type WAT-4821 into the Booking reference field`, `Create the event on July 20, 2026`, or `Set the title to Refill medication`.
+
+* Do **not** create standalone answer-key steps such as `Standard answer — pickup window: 8:20 AM-8:35 AM`, `The correct answer is ...`, or `Read X as Y`. Extracted facts, intermediate conclusions, comparison results, and reasoning are not actions and should not appear as separate `gt_steps`.
+
+* Do **not** describe the reasoning used to reach a choice. Avoid steps that compare candidates, eliminate options, explain why a choice is correct, or summarize information from the source. Put only the resulting value into the UI action that actually uses it.
+
+* If the task requires reading source material before acting, it is fine to include the executable action that opens or navigates to the source. Do not add a separate step whose only purpose is to state what was learned from it.
 
 * Do not duplicate environment-preparation steps from `config` in `gt_steps`.
 
@@ -136,7 +142,7 @@ Use a consistent style with **concise, direct imperative phrasing**.
 
 5. Then check instruction style.
 
-6. For tasks that are neither CAPTCHA tasks nor pending restructuring, check the atomicity of `gt_steps` and verify any canonical answers.
+6. For tasks that are neither CAPTCHA tasks nor pending restructuring, check that every `gt_steps` item is an executable action and that any canonical answer appears only as the value used by that action, never as a standalone answer-key or reasoning step.
 
 7. Check evaluator consistency with the instruction.
 

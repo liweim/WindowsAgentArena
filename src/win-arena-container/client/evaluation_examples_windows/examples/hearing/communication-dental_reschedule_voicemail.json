@@ -1,0 +1,153 @@
+{
+  "id": "communication-dental_reschedule_voicemail",
+  "category": "communication",
+  "difficulty": "medium",
+  "instruction": "Use Chrome Live Caption to read the dental voicemail on the Desktop. Choose the earlier of the two offered appointments and draft a Thunderbird email to `appointments@example.com` with subject `Dental reschedule`, including the chosen date, time, and confirmation code. Do not send it.",
+  "source": "Synthetic fixed audio: assets/communication-dental_reschedule_voicemail.mp3",
+  "transcript": "Hi Jamie. This is Lakeside Dental. Your Tuesday appointment needs to move. We can offer Thursday, September 17th at 2:20 PM, or Friday, September 18th at 9:40 AM. Reply by email to appointments@example.com. Include confirmation code LD731.",
+  "gt_steps": [
+    "Turn on Chrome Live Caption.",
+    "Play `DentalRescheduleVoicemail.mp3` in Chrome with Live Caption enabled.",
+    "Open Thunderbird and create a new email draft.",
+    "Set To to `appointments@example.com`.",
+    "Set Subject to `Dental reschedule`.",
+    "Enter `Please reschedule my appointment to Thursday, 17 September 2026 at 2:20 PM. Confirmation code: LD-731.` in the message body.",
+    "Save the message as a draft. Do not send it.",
+    "Leave Chrome Live Caption enabled."
+  ],
+  "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/communication-dental_reschedule_voicemail.mp3",
+            "path": "C:\\Users\\Docker\\Desktop\\DentalRescheduleVoicemail.mp3"
+          }
+        ]
+      }
+    },
+    {
+      "type": "download",
+      "parameters": {
+        "files": [
+          {
+            "url": "https://huggingface.co/datasets/xlangai/ubuntu_osworld_file_cache/resolve/main/thunderbird/dd84e895-72fd-4023-a336-97689ded257c/thunderbird-profile.tar.gz",
+            "path": "C:\\Users\\Docker\\Downloads\\thunderbird-profile.tar.gz"
+          }
+        ]
+      }
+    },
+    {
+      "type": "prepare_thunderbird_profile",
+      "parameters": {}
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port=1337",
+          "--force-renderer-accessibility"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "thunderbird.exe",
+          "-profile",
+          "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release"
+        ]
+      }
+    },
+    {
+      "type": "sleep",
+      "parameters": {
+        "seconds": 2
+      }
+    },
+    {
+      "type": "chrome_open_tabs",
+      "parameters": {
+        "urls_to_open": [
+          "file:///C:/Users/Docker/Desktop/DentalRescheduleVoicemail.mp3"
+        ]
+      }
+    },
+    {
+      "type": "activate_window",
+      "parameters": {
+        "window_name": "Google Chrome"
+      }
+    }
+  ],
+  "related_apps": [
+    "chrome",
+    "thunderbird"
+  ],
+  "evaluator": {
+    "func": [
+      "check_thunderbird_email_composition",
+      "exact_match"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "vm_file",
+        "path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release\\Mail\\Local Folders\\Drafts",
+        "dest": "thunderbird-drafts.mbox"
+      },
+      {
+        "type": "live_caption_enabled"
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "to": "appointments@example.com",
+          "subject": "Dental reschedule",
+          "body_points": [
+            [
+              "Thursday"
+            ],
+            [
+              "17 September 2026",
+              "September 17, 2026",
+              "Sep 17, 2026"
+            ],
+            [
+              "2:20 PM",
+              "2:20"
+            ],
+            [
+              "LD-731",
+              "LD 731"
+            ]
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "expected": "true"
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

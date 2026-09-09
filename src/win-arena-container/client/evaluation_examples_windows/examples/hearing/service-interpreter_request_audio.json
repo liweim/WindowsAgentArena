@@ -1,0 +1,108 @@
+{
+  "id": "service-interpreter_request_audio",
+  "category": "service",
+  "difficulty": "medium",
+  "instruction": "Turn on Windows Live captions and use them to read the service-access audio on the Desktop. Save the exact form name, minimum lead time, fallback phone number, and service code to `answer.txt` on the Desktop, one item per line.",
+  "source": "Synthetic fixed audio: assets/service-interpreter_request_audio.mp3",
+  "transcript": "For city service appointments, sign language interpreter requests use the Access Accommodation Request Form. Submit it at least five business days before the appointment. If the form is inaccessible, call 555-014-7720. Put service code ASL-5 on the request.",
+  "gt_steps": [
+    "Turn on Windows Live captions.",
+    "Play `InterpreterRequestAudio.mp3` in Chrome with Windows Live captions running.",
+    "Open Notepad.",
+    "Enter `Access Accommodation Request Form\\nfive business days\\n555-014-7720\\nASL-5`, one item per line.",
+    "Save the file as `answer.txt` on the Desktop.",
+    "Leave Windows Live captions running."
+  ],
+  "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/service-interpreter_request_audio.mp3",
+            "path": "C:\\Users\\Docker\\Desktop\\InterpreterRequestAudio.mp3"
+          }
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port=1337",
+          "--force-renderer-accessibility"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    },
+    {
+      "type": "chrome_open_tabs",
+      "parameters": {
+        "urls_to_open": [
+          "file:///C:/Users/Docker/Desktop/InterpreterRequestAudio.mp3"
+        ]
+      }
+    }
+  ],
+  "related_apps": [
+    "settings",
+    "chrome",
+    "notepad"
+  ],
+  "evaluator": {
+    "func": [
+      "check_include_exclude",
+      "exact_match"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "vm_command_line",
+        "command": [
+          "powershell",
+          "-NoProfile",
+          "-Command",
+          "$found = Get-Process | Where-Object { $_.ProcessName -match 'LiveCaptions|LiveCaption' -or $_.MainWindowTitle -match 'Live captions|Live Caption' }; if ($found) { 'WINDOWS_LIVE_CAPTIONS_RUNNING' } else { 'WINDOWS_LIVE_CAPTIONS_NOT_RUNNING' }"
+        ]
+      },
+      {
+        "type": "is_file_saved_desktop",
+        "filename": "answer.txt",
+        "textcontent": "Access Accommodation Request Form\nfive business days\n555-014-7720\nASL-5",
+        "exact": true
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "include": [
+            "WINDOWS_LIVE_CAPTIONS_RUNNING"
+          ],
+          "exclude": [
+            "WINDOWS_LIVE_CAPTIONS_NOT_RUNNING"
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "expected": "true"
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

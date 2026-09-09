@@ -1,0 +1,93 @@
+{
+  "id": "mobility-paratransit_pickup_checklist",
+  "category": "mobility",
+  "difficulty": "medium",
+  "instruction": "Turn the paratransit confirmation on the Desktop into a Sticky Note containing the pickup window, ready-by time, booking reference, and arrival instructions.",
+  "source": "Local paratransit confirmation: assets/mobility-paratransit_pickup_checklist.txt",
+  "gt_steps": [
+    "Open `ParatransitConfirmation.txt` on the Desktop.",
+    "Open Sticky Notes and create a new note.",
+    "Enter `Pickup window: 8:20 AM-8:35 AM\\nReady-by time: 8:15 AM\\nBooking reference: WAT-4821\\nArrival instructions: Driver will call your mobile. Meet the driver at the front lobby.` into the note.",
+    "Leave the completed Sticky Note saved in Sticky Notes."
+  ],
+  "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/mobility-paratransit_pickup_checklist.txt",
+            "path": "C:\\Users\\Docker\\Desktop\\ParatransitConfirmation.txt"
+          }
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "notepad.exe",
+          "C:\\Users\\Docker\\Desktop\\ParatransitConfirmation.txt"
+        ]
+      }
+    },
+    {
+      "type": "execute",
+      "parameters": {
+        "command": [
+          "powershell",
+          "-NoProfile",
+          "-ExecutionPolicy",
+          "Bypass",
+          "-Command",
+          "Start-Process 'shell:AppsFolder\\Microsoft.MicrosoftStickyNotes_8wekyb3d8bbwe!App'"
+        ]
+      }
+    },
+    {
+      "type": "activate_window",
+      "parameters": {
+        "window_name": "Notepad"
+      }
+    }
+  ],
+  "related_apps": [
+    "notepad",
+    "sticky_notes"
+  ],
+  "evaluator": {
+    "func": "check_text_points",
+    "result": {
+      "type": "sticky_notes_content"
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "ignore_case": true,
+        "points": [
+          [
+            "8:20 AM-8:35 AM",
+            "8:20 AM – 8:35 AM",
+            "8:20 AM to 8:35 AM"
+          ],
+          [
+            "8:15 AM"
+          ],
+          [
+            "WAT-4821"
+          ],
+          [
+            "driver will call your mobile",
+            "driver will call"
+          ],
+          [
+            "front lobby"
+          ]
+        ]
+      }
+    }
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

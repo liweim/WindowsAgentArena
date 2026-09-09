@@ -150,20 +150,22 @@ If a task has decision criteria or user preferences, state them directly as cons
 
 ### Ground-Truth Step Writing Style
 
-Write `gt_steps` for annotators and task maintainers who need to reproduce a successful trajectory. Unlike `instruction`, `gt_steps` may include concrete UI navigation, intermediate actions, and expected answers.
+Write `gt_steps` for annotators and task maintainers who need to reproduce a successful trajectory. Unlike `instruction`, `gt_steps` may include concrete UI navigation, intermediate UI actions, and exact values that must be entered or selected.
 
-For tasks that benefit from reproducibility guidance, each `gt_steps` item should describe **one atomic action**. A step may name the target object and exact value used by that action, but it should have one primary action. Split independent actions into separate steps instead of writing a mini procedure inside one item.
+For tasks that benefit from reproducibility guidance, each `gt_steps` item should describe **one atomic executable action**. A step may contain the exact canonical value required by that action, but the value must be embedded in an operation such as typing it into a field, selecting it from a control, naming a file, or creating an item. Split independent actions into separate steps instead of writing a mini procedure inside one item.
 
 Use the following rules:
 
 1. Write steps in the order needed to reproduce a successful trajectory.
-2. Keep one primary action per step, such as opening a page, selecting an option, entering a value, saving a file, or submitting a form.
+2. Keep one primary executable action per step, such as opening a page, selecting an option, entering a value, saving a file, or submitting a form.
 3. Name the application, page, control, file, item, or field precisely enough for another annotator to follow the same path.
-4. When a deterministic standard answer is known, include the exact answer in backticks. Examples include source phrases, dates, filenames, titles, calculated values, product names, and required settings.
-5. When multiple outputs are genuinely valid and the evaluator accepts alternatives, describe the acceptance criterion instead of inventing a single canonical answer.
-6. Keep submission, confirmation, save, or send actions separate when they are required to complete the task.
-7. Do not copy environment preparation into `gt_steps`; setup actions that occur before the agent starts belong in `config`.
-8. Do not hide a known deterministic answer behind vague wording such as `find the answer` or `enter the result`. `gt_steps` should let an annotator reproduce the expected outcome without rediscovering known ground truth.
+4. When an action requires a deterministic canonical value, include the exact value in backticks **inside that action**. Examples include text to type, a date to select, a filename to save, an event title to enter, a product to choose, or a setting value to select.
+5. Do **not** add standalone answer-key steps such as `Standard answer — ...`, `The correct answer is ...`, `Read ... as ...`, or other steps whose only purpose is to state an extracted fact, intermediate conclusion, comparison result, or reasoning outcome. If a canonical answer matters, place it directly in the later UI action that uses it.
+6. Do **not** expose reasoning or decision-making in `gt_steps`. Avoid steps such as comparing alternatives, explaining why one option is valid, eliminating candidates, or restating facts learned from source material. `gt_steps` should show what to do, not how to think about it.
+7. When multiple outputs are genuinely valid and the evaluator accepts alternatives, describe the actionable acceptance criterion without inventing a single canonical answer.
+8. Keep submission, confirmation, save, or send actions separate when they are required to complete the task.
+9. Do not copy environment preparation into `gt_steps`; setup actions that occur before the agent starts belong in `config`.
+10. Do not hide a known deterministic value behind vague wording such as `enter the result` when that value is required for reproduction. Put the exact value directly in the corresponding executable step.
 
 CAPTCHA tasks do not need detailed step-by-step ground truth. Their interaction is self-explanatory from the challenge UI, so keep `gt_steps` minimal rather than expanding them into answer keys or click-by-click procedures.
 
@@ -180,18 +182,19 @@ Prefer:
 ]
 ```
 
-For a task with a fixed answer, include it explicitly:
+For a task with a fixed answer, embed the answer only in the executable action that uses it:
 
 ```json
 "gt_steps": [
   "Open `pharmacy_message.txt` on the Desktop.",
-  "Read the refill deadline `July 20, 2026`.",
   "Open Thunderbird Calendar.",
   "Create a new all-day event on `July 20, 2026`.",
   "Set the event title to `Refill medication`.",
   "Save the calendar event."
 ]
 ```
+
+Do not add a separate step such as `Standard answer — refill deadline: July 20, 2026` or `Read the refill deadline as July 20, 2026`. The canonical date is already present where it is operationally needed: the calendar-creation step.
 
 Avoid multi-action steps:
 
@@ -270,7 +273,7 @@ Use the following workflow:
 3. Adapt it to the target platform and available applications.
 4. Define the user-facing goal and measurable final state.
 5. Write a concise, direct, goal-oriented instruction.
-6. Write reproducible `gt_steps` where they add value, using one primary action per step and including known deterministic answers.
+6. Write reproducible `gt_steps` where they add value, using one executable action per step and embedding any deterministic canonical value only in the action that uses it.
 7. Build a deterministic evaluator covering all graded requirements.
 8. Manually verify that setup does not solve the task and that the task is realistic, executable, and repeatable.
 
@@ -287,7 +290,7 @@ Each task JSON may use the following fields:
 | `difficulty` | Estimated task complexity. |
 | `instruction` | Direct user-facing task command. Follow the instruction style above. |
 | `source` | Concrete source used to ground the task. |
-| `gt_steps` | Ground-truth actions for annotator reproduction and verification. Keep each useful step atomic and include known deterministic answers; CAPTCHA tasks may remain minimal. |
+| `gt_steps` | Ground-truth executable actions for annotator reproduction and verification. Keep each useful step atomic; embed canonical values only in the UI action that uses them, never as standalone answer-key or reasoning steps. CAPTCHA tasks may remain minimal. |
 | `config` | Environment setup actions. Setup must prepare but not complete the task. |
 | `related_apps` | Applications the agent actually interacts with while completing the task. Use the benchmark's existing canonical app identifiers; omit setup-only components and unrelated alternatives. |
 | `evaluator` | Deterministic completion logic. |

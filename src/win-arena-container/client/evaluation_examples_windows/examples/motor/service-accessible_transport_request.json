@@ -1,0 +1,87 @@
+{
+  "id": "service-accessible_transport_request",
+  "category": "service",
+  "difficulty": "medium",
+  "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Complete the accessible transport request template on the Desktop using the supplied request details, then save the completed form as `answer.txt` on the Desktop.",
+  "source": "Local request materials: assets/service-accessible_transport_request_template.txt and assets/service-accessible_transport_request_details.txt",
+  "gt_steps": [
+    "Enable the Windows On-Screen Keyboard and leave it open.",
+    "Open `TransportRequestDetails.txt` on the Desktop.",
+    "Open `TransportRequest.txt` in Notepad.",
+    "Replace the template placeholders so the document reads `ACCESSIBLE TRANSPORT REQUEST\\nName: Morgan Lee\\nMember ID: AT-20491\\nPickup date: 24 September 2026\\nMobility aid: folding wheelchair`.",
+    "Save the completed document as `answer.txt` on the Desktop.",
+    "Leave the Windows On-Screen Keyboard open."
+  ],
+  "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/service-accessible_transport_request_template.txt",
+            "path": "C:\\Users\\Docker\\Desktop\\TransportRequest.txt"
+          },
+          {
+            "local_path": "assets/service-accessible_transport_request_details.txt",
+            "path": "C:\\Users\\Docker\\Desktop\\TransportRequestDetails.txt"
+          }
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "notepad.exe",
+          "C:\\Users\\Docker\\Desktop\\TransportRequest.txt"
+        ]
+      }
+    }
+  ],
+  "related_apps": [
+    "on_screen_keyboard",
+    "notepad"
+  ],
+  "evaluator": {
+    "func": [
+      "check_include_exclude",
+      "exact_match"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "vm_command_line",
+        "command": "powershell -Command \"if (Get-Process osk -ErrorAction SilentlyContinue) { Write-Output 'OSK_OPEN' } else { Write-Output 'OSK_CLOSED' }\"",
+        "shell": true
+      },
+      {
+        "type": "is_file_saved_desktop",
+        "filename": "answer.txt",
+        "textcontent": "ACCESSIBLE TRANSPORT REQUEST\nName: Morgan Lee\nMember ID: AT-20491\nPickup date: 24 September 2026\nMobility aid: folding wheelchair",
+        "exact": true
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "include": [
+            "OSK_OPEN"
+          ],
+          "exclude": [
+            "OSK_CLOSED"
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "expected": "true"
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}
