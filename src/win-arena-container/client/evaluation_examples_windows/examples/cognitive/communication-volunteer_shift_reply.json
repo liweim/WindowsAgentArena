@@ -1,0 +1,107 @@
+{
+  "id": "communication-volunteer_shift_reply",
+  "category": "communication",
+  "difficulty": "hard",
+  "instruction": "Use the availability note and volunteer shift options on the Desktop to choose the compatible shift. Draft a Thunderbird email to `volunteer@example.org` with subject `Volunteer shift confirmation` and include the chosen day, date, start time, and end time. Do not send it.",
+  "source": "Local scheduling materials: assets/communication-volunteer_shift_options.txt and assets/communication-volunteer_availability.txt",
+  "gt_steps": [
+    "Open `VolunteerAvailability.txt` on the Desktop.",
+    "Open `VolunteerShiftOptions.txt` on the Desktop.",
+    "Open Thunderbird and create a new email draft.",
+    "Set To to `volunteer@example.org`.",
+    "Set Subject to `Volunteer shift confirmation`.",
+    "Enter `I confirm the volunteer shift for Thursday, 17 September 2026, from 11:15 AM to 12:45 PM.` in the message body.",
+    "Save the message as a draft. Do not send it."
+  ],
+  "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/communication-volunteer_shift_options.txt",
+            "path": "C:\\Users\\Docker\\Desktop\\VolunteerShiftOptions.txt"
+          },
+          {
+            "local_path": "assets/communication-volunteer_availability.txt",
+            "path": "C:\\Users\\Docker\\Desktop\\VolunteerAvailability.txt"
+          }
+        ]
+      }
+    },
+    {
+      "type": "download",
+      "parameters": {
+        "files": [
+          {
+            "url": "https://huggingface.co/datasets/xlangai/ubuntu_osworld_file_cache/resolve/main/thunderbird/dd84e895-72fd-4023-a336-97689ded257c/thunderbird-profile.tar.gz",
+            "path": "C:\\Users\\Docker\\Downloads\\thunderbird-profile.tar.gz"
+          }
+        ]
+      }
+    },
+    {
+      "type": "prepare_thunderbird_profile",
+      "parameters": {}
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "notepad.exe",
+          "C:\\Users\\Docker\\Desktop\\VolunteerAvailability.txt"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "thunderbird.exe",
+          "-profile",
+          "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release"
+        ]
+      }
+    }
+  ],
+  "related_apps": [
+    "notepad",
+    "thunderbird"
+  ],
+  "evaluator": {
+    "func": "check_thunderbird_email_composition",
+    "result": {
+      "type": "vm_file",
+      "path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release\\Mail\\Local Folders\\Drafts",
+      "dest": "thunderbird-drafts.mbox"
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "to": "volunteer@example.org",
+        "subject": "Volunteer shift confirmation",
+        "body_points": [
+          [
+            "Thursday"
+          ],
+          [
+            "17 September 2026",
+            "September 17, 2026",
+            "Sep 17, 2026"
+          ],
+          [
+            "11:15 AM",
+            "11:15"
+          ],
+          [
+            "12:45 PM",
+            "12:45"
+          ]
+        ]
+      }
+    }
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

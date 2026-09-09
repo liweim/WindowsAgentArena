@@ -77,11 +77,18 @@ def human_agent():
     input()
     print("Time elapsed of human operation: %.2f" % (time.time() - human_start_time))
 
-    print("Waiting for the environment to be stable...")
-    time.sleep(3)
+    while True:
+        print("Waiting for the environment to be stable...")
+        time.sleep(3)
 
-    result = env.evaluate()
-    logger.info("Result: %.2f", result)
+        result = env.evaluate()
+        logger.info("Result: %.2f", result)
+
+        choice = input(
+            "Press Enter to exit, or type 'e' to evaluate again: "
+        ).strip().lower()
+        if choice != "e":
+            break
 
     # env.close()
     logger.info("Environment closed.")

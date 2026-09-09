@@ -77,13 +77,6 @@ def run_command_capture(cmd: list[str], cwd: Path) -> subprocess.CompletedProces
     )
 
 
-def wait_before_cleanup() -> None:
-    if not sys.stdin.isatty():
-        return
-
-    input("human_run.py has finished. Press Enter to stop and remove the container...")
-
-
 def container_exists(container_name: str, cwd: Path) -> bool:
     result = run_command_capture(
         [
@@ -380,10 +373,7 @@ def main() -> int:
             f'cd /client && python human_run.py --example "{container_example}"',
         ]
         exec_cmd = [part for part in exec_cmd if part]
-        try:
-            run_command(exec_cmd, cwd=script_dir)
-        finally:
-            wait_before_cleanup()
+        run_command(exec_cmd, cwd=script_dir)
     finally:
         if cleanup_needed:
             subprocess.run(

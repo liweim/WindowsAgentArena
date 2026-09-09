@@ -1,0 +1,149 @@
+{
+  "id": "communication-community_event_rsvp",
+  "category": "communication",
+  "difficulty": "medium",
+  "instruction": "Turn on Windows Narrator and keep it enabled. Read the community workshop invitation on the Desktop, then draft a Thunderbird email to `rsvp@example.org` with subject `Workshop RSVP` confirming attendance and including the event date, start time, venue, and a request for a large-print handout. Do not send it.",
+  "source": "Local accessible HTML invitation: assets/communication-community_event_rsvp.html",
+  "gt_steps": [
+    "Turn on Windows Narrator and leave it enabled.",
+    "Open `CommunityWorkshopInvitation.html` in Chrome.",
+    "Open Thunderbird and create a new email draft.",
+    "Set To to `rsvp@example.org`.",
+    "Set Subject to `Workshop RSVP`.",
+    "Enter `I confirm that I will attend on Saturday, 26 September 2026 at 10:30 AM at Harbour Community Hall, 18 Pier Street. Please provide a large-print handout.` in the message body.",
+    "Save the message as a draft. Do not send it.",
+    "Leave Windows Narrator enabled."
+  ],
+  "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/communication-community_event_rsvp.html",
+            "path": "C:\\Users\\Docker\\Desktop\\CommunityWorkshopInvitation.html"
+          }
+        ]
+      }
+    },
+    {
+      "type": "download",
+      "parameters": {
+        "files": [
+          {
+            "url": "https://huggingface.co/datasets/xlangai/ubuntu_osworld_file_cache/resolve/main/thunderbird/dd84e895-72fd-4023-a336-97689ded257c/thunderbird-profile.tar.gz",
+            "path": "C:\\Users\\Docker\\Downloads\\thunderbird-profile.tar.gz"
+          }
+        ]
+      }
+    },
+    {
+      "type": "prepare_thunderbird_profile",
+      "parameters": {}
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "file:///C:/Users/Docker/Desktop/CommunityWorkshopInvitation.html"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "thunderbird.exe",
+          "-profile",
+          "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release"
+        ]
+      }
+    },
+    {
+      "type": "sleep",
+      "parameters": {
+        "seconds": 2
+      }
+    },
+    {
+      "type": "activate_window",
+      "parameters": {
+        "window_name": "Google Chrome"
+      }
+    }
+  ],
+  "related_apps": [
+    "narrator",
+    "chrome",
+    "thunderbird"
+  ],
+  "evaluator": {
+    "func": [
+      "check_include_exclude",
+      "check_thunderbird_email_composition"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "vm_command_line",
+        "command": "powershell -Command \"if (Get-Process Narrator -ErrorAction SilentlyContinue){'NARRATOR_OPEN'}else{'NARRATOR_CLOSED'}\"",
+        "shell": true
+      },
+      {
+        "type": "vm_file",
+        "path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release\\Mail\\Local Folders\\Drafts",
+        "dest": "thunderbird-drafts.mbox"
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "include": [
+            "NARRATOR_OPEN"
+          ],
+          "exclude": [
+            "NARRATOR_CLOSED"
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "to": "rsvp@example.org",
+          "subject": "Workshop RSVP",
+          "body_points": [
+            [
+              "confirm",
+              "attend",
+              "attendance"
+            ],
+            [
+              "Saturday",
+              "26 September 2026",
+              "September 26, 2026"
+            ],
+            [
+              "10:30 AM",
+              "10:30"
+            ],
+            [
+              "Harbour Community Hall"
+            ],
+            [
+              "18 Pier Street"
+            ],
+            [
+              "large-print handout",
+              "large print handout"
+            ]
+          ]
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}
