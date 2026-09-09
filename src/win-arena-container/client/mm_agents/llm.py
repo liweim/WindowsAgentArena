@@ -795,14 +795,41 @@ class LocalLLM(BaseLLMClient):
         """
         # Build messages (pass scale for gta1)
         messages = self._build_cua_messages(instruction, image, screen_width, screen_height, scale=scale)
+        trace_callback = getattr(self, "cua_trace_callback", None)
+        if trace_callback:
+            trace_callback(
+                "visual_grounder_request",
+                {
+                    "messages": messages,
+                    "screen_size": [screen_width, screen_height],
+                    "image_size": list(image.size),
+                    "scale": scale,
+                },
+            )
 
         # Call model directly (no retry logic for code block check)
-        raw_response = self(messages)
+        try:
+            raw_response = self(messages)
+        except Exception as exc:
+            if trace_callback:
+                trace_callback("visual_grounder_error", {"error": repr(exc)})
+            raise
+        if trace_callback:
+            trace_callback("visual_grounder_response", {"raw_response": raw_response})
 
         # Parse response using model-specific parser
         py_cmd, reasoning = self.parse_cua_response(
             raw_response, messages, screen_width, screen_height
         )
+        if trace_callback:
+            trace_callback(
+                "visual_grounder_parsed",
+                {
+                    "point": py_cmd,
+                    "reasoning": reasoning,
+                    "coordinate_trace": getattr(self, "last_gta1_trace", None),
+                },
+            )
 
         return py_cmd, reasoning
 
@@ -853,6 +880,11 @@ class LocalLLM(BaseLLMClient):
             # Total scale = scale * (smart_resize scale)
             self._gta1_scale_x = original_width / resized_width
             self._gta1_scale_y = original_height / resized_height
+            self.last_gta1_trace = {
+                "original_size": [original_width, original_height],
+                "resized_size": [resized_width, resized_height],
+                "scale": [self._gta1_scale_x, self._gta1_scale_y],
+            }
 
             # System prompt uses resized dimensions (what model actually sees)
             system_prompt = GTA1_SYSTEM_PROMPT.format(resized_height=resized_height, resized_width=resized_width)
@@ -1533,6 +1565,12 @@ class LocalLLM(BaseLLMClient):
             # Scale coordinates back to original image space
             scaled_x = int(pred_x * scale_x)
             scaled_y = int(pred_y * scale_y)
+            self.last_gta1_trace = {
+                **getattr(self, "last_gta1_trace", {}),
+                "raw_response": raw_response,
+                "parsed_point": [pred_x, pred_y],
+                "mapped_point": [scaled_x, scaled_y],
+            }
 
             py_cmd = (scaled_x, scaled_y)
 
