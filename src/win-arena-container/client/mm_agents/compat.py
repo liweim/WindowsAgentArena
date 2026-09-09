@@ -18,9 +18,10 @@ AGENT_ALIASES = {
     "gta1_agent": "gta1",
     "local-lstc": "locallstc",
     "local_lstc": "locallstc",
+    "tars_agent": "tars",
 }
 STEP_AGENT_NAMES = frozenset({"gta1", "agents3"})
-FRAMEWORK_AGENT_NAMES = frozenset({"locallstc", "hisa", "coact"})
+FRAMEWORK_AGENT_NAMES = frozenset({"locallstc", "hisa", "coact", "tars"})
 SUPPORTED_AGENT_NAMES = frozenset(
     {"navi", "claude"} | STEP_AGENT_NAMES | FRAMEWORK_AGENT_NAMES
 )
@@ -30,6 +31,7 @@ FRAMEWORK_DEFAULT_MODELS = {
     "agents3": "gpt-4o",
     "hisa": "gpt-5-mini",
     "locallstc": "gpt-5-mini",
+    "tars": "qwen3.8-27b",
 }
 
 
@@ -320,6 +322,26 @@ def _run_coact(env, example, args, example_result_dir) -> float:
     return float(score)
 
 
+def _run_tars(env, example, args, example_result_dir) -> float:
+    from mm_agents.tars.main import TARS
+
+    model = args.global_planner_model or args.model
+    framework = TARS(
+        env=env,
+        save_dir=example_result_dir,
+        max_steps=args.max_steps,
+        screen_width=args.screen_width,
+        screen_height=args.screen_height,
+        sleep_after_execution=args.sleep_after_execution,
+        record=args.record,
+        global_planner_model=model,
+        visual_grounder_model=args.visual_grounder_model,
+        reset_wait=args.tars_reset_wait,
+        evaluation_wait=args.tars_evaluation_wait,
+    )
+    return float(framework.execute_task(example))
+
+
 def run_framework_example(
     env,
     example,
@@ -334,6 +356,8 @@ def run_framework_example(
         score = _run_hisa(env, example, args, example_result_dir)
     elif args.agent_name == "coact":
         score = _run_coact(env, example, args, example_result_dir)
+    elif args.agent_name == "tars":
+        score = _run_tars(env, example, args, example_result_dir)
     else:
         raise ValueError("{} is not a framework agent".format(args.agent_name))
 

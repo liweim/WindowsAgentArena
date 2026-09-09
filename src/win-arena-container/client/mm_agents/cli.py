@@ -353,6 +353,31 @@ def _add_coact_options(parser: argparse.ArgumentParser) -> None:
     )
 
 
+def _add_tars_options(parser: argparse.ArgumentParser) -> None:
+    _add_standalone_environment_options(parser, provider=True)
+    parser.add_argument(
+        "--global_planner_model", "--global-planner-model", default=None
+    )
+    parser.add_argument(
+        "--visual_grounder_model", "--visual-grounder-model", default="gta1-7b"
+    )
+    parser.add_argument("--client_password", "--client-password", default="password")
+    parser.add_argument(
+        "--tars_reset_wait", "--tars-reset-wait", type=float, default=60.0
+    )
+    parser.add_argument(
+        "--tars_evaluation_wait", "--tars-evaluation-wait", type=float, default=20.0
+    )
+    parser.set_defaults(
+        observation_type="screenshot",
+        screen_width=1280,
+        screen_height=720,
+        sleep_after_execution=0.5,
+        model="qwen3.8-27b",
+        result_dir="./results/tars_qwen3.8-27b",
+    )
+
+
 METHOD_CONFIGURERS: Dict[str, Optional[ParserConfigurer]] = {
     "navi": None,
     "claude": None,
@@ -361,6 +386,7 @@ METHOD_CONFIGURERS: Dict[str, Optional[ParserConfigurer]] = {
     "locallstc": _add_locallstc_options,
     "hisa": _add_hisa_options,
     "coact": _add_coact_options,
+    "tars": _add_tars_options,
 }
 
 
@@ -390,6 +416,18 @@ def _validate_method_options(args: argparse.Namespace, parser: argparse.Argument
                 "LocalLSTC ablation flags are mutually exclusive except "
                 "--wo_l2s and --wo_s2l."
             )
+        if args.global_planner_model:
+            args.model = args.global_planner_model
+
+    if args.agent_name == "tars":
+        if args.max_steps <= 0:
+            parser.error("--max-steps must be positive for TARS")
+        if min(
+            args.tars_reset_wait,
+            args.tars_evaluation_wait,
+            args.sleep_after_execution,
+        ) < 0:
+            parser.error("TARS wait durations must be nonnegative")
         if args.global_planner_model:
             args.model = args.global_planner_model
 
