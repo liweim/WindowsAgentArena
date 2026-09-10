@@ -5,7 +5,7 @@
   "category": "access",
   "difficulty": "easy",
   "instruction": "Enable Mouse ClickLock and leave it enabled.",
-  "source": "Settings > Bluetooth & devices > Mouse > Additional mouse settings > Buttons > Turn on ClickLock",
+  "source": "synthetic",
   "gt_steps": [
     "Open Windows settings.",
     "Navigate to Bluetooth & devices and then Mouse.",

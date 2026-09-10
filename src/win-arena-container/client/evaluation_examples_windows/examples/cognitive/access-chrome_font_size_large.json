@@ -4,7 +4,7 @@
   "category": "access",
   "difficulty": "easy",
   "instruction": "Set Chrome's default font size to Large.",
-  "source": "Google Chrome Settings > Appearance > Customize fonts > Font size",
+  "source": "synthetic",
   "gt_steps": [
     "Open Google Chrome.",
     "Open Chrome Settings.",

@@ -5,7 +5,7 @@
   "category": "consumption",
   "difficulty": "easy",
   "instruction": "Turn on Windows Narrator. Use it to read the provided shopping note in Chrome and identify the requested product. Find that product on the opened shopping website, open its product page, and leave the page open.",
-  "source": "Local HTML: assets/consumption-keto_bread.html",
+  "source": "synthetic",
   "gt_steps": [
     "Open the provided shopping note in Chrome.",
     "Turn on Windows Narrator.",

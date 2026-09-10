@@ -4,7 +4,7 @@
   "category": "management",
   "difficulty": "easy",
   "instruction": "Read the waiting interval between the eye drops from the caregiver note on the Desktop, start a timer for that amount of time on vclock.com, and leave it running where it can be seen.",
-  "source": "Local caregiver note prepared for the task",
+  "source": "synthetic",
   "gt_steps": [
     "Open `caregiver_note.txt` on the Desktop.",
     "Read the waiting interval `5 minutes`.",

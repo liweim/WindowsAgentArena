@@ -6,7 +6,7 @@
   "category": "health",
   "difficulty": "medium",
   "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Save only the recommended refrigerated temperature range for unopened insulin from the provided insulin-storage PDF in `answer.txt` on the Desktop.",
-  "source": "assets/health-insulin_storage_temperature.pdf",
+  "source": "synthetic",
   "gt_steps": [
     "Enable the Windows On-Screen Keyboard.",
     "Keep the On-Screen Keyboard open throughout the task.",

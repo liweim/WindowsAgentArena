@@ -5,7 +5,7 @@
   "category": "access",
   "difficulty": "easy",
   "instruction": "Turn on Live Caption in Chrome.",
-  "source": "chrome://settings/accessibility > Live Caption",
+  "source": "synthetic",
   "gt_steps": [
     "Open chrome://settings/accessibility.",
     "Turn on Live Caption."

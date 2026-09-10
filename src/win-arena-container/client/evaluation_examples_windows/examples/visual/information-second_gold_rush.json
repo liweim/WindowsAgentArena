@@ -5,7 +5,7 @@
   "category": "information",
   "difficulty": "medium",
   "instruction": "Turn on Windows Narrator. Use it to read the Gold rush Wikipedia page already open in Chrome, identify the second gold rush in history, open that gold rush's linked Wikipedia page, and leave it open.",
-  "source": "WebArena self-hosted Wikipedia/Kiwix page: Gold rush",
+  "source": "http://host.docker.internal:8888/wikipedia_en_all_maxi_2022-05/A/Gold_rush",
   "gt_steps": [
     "Turn on Windows Narrator.",
     "Read the Gold rush Wikipedia article in Chrome.",

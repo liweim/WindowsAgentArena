@@ -5,7 +5,7 @@
   "category": "access",
   "difficulty": "easy",
   "instruction": "Set the caption style in Windows to Large text.",
-  "source": "Settings > Accessibility > Captions > Caption style",
+  "source": "synthetic",
   "gt_steps": [
     "Open Windows Settings.",
     "Go to Accessibility > Captions.",

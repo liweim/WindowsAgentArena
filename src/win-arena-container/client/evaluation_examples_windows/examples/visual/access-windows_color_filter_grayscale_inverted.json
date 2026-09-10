@@ -5,7 +5,7 @@
   "category": "access",
   "difficulty": "easy",
   "instruction": "Set the Windows color filter to Grayscale inverted.",
-  "source": "Windows Settings > Accessibility > Color filters",
+  "source": "synthetic",
   "gt_steps": [
     "Open Windows Setting.",
     "Navigate to Accessibility Setting.",

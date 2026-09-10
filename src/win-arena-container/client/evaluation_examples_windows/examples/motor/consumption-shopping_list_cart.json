@@ -5,7 +5,7 @@
   "category": "consumption",
   "difficulty": "hard",
   "instruction": "Enable Windows Filter Keys and keep them enabled. Add the products and quantities listed in the provided `ShoppingList.ods` to the OneStopMarket cart, with no additional products.",
-  "source": "Local Spreadsheet: assets/consumption-shopping_list_cart.ods and self-hosted OneStopMarket website",
+  "source": "synthetic",
   "gt_steps": [
     "Enable Windows Filter Keys.",
     "Keep Filter Keys enabled throughout the task.",

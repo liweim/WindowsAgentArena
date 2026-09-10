@@ -5,7 +5,7 @@
   "category": "information",
   "difficulty": "medium",
   "instruction": "Turn on Windows Narrator. Use the Wikipedia page already open in Chrome to identify the person shown in the first image, open that person's Wikipedia page, and leave it open.",
-  "source": "WebArena self-hosted Wikipedia/Kiwix page: I Have a Dream",
+  "source": "http://host.docker.internal:8888/wikipedia_en_all_maxi_2022-05/A/I_Have_a_Dream",
   "gt_steps": [
     "Open the Wikipedia page about the I Have a Dream speech.",
     "Turn on Windows Narrator.",

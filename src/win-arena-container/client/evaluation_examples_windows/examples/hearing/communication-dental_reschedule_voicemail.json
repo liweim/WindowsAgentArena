@@ -3,7 +3,7 @@
   "category": "communication",
   "difficulty": "medium",
   "instruction": "Use Chrome Live Caption to read the dental voicemail on the Desktop. Choose the earlier of the two offered appointments and draft a Thunderbird email to `appointments@example.com` with subject `Dental reschedule`, including the chosen date, time, and confirmation code. Do not send it.",
-  "source": "Synthetic fixed audio: assets/communication-dental_reschedule_voicemail.mp3",
+  "source": "synthetic",
   "transcript": "Hi Jamie. This is Lakeside Dental. Your Tuesday appointment needs to move. We can offer Thursday, September 17th at 2:20 PM, or Friday, September 18th at 9:40 AM. Reply by email to appointments@example.com. Include confirmation code LD731.",
   "gt_steps": [
     "Turn on Chrome Live Caption.",

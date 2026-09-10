@@ -6,7 +6,7 @@
   "category": "management",
   "difficulty": "medium",
   "instruction": "Enable Windows Mouse Keys and keep them enabled. Using the next-meeting details in the provided meeting minutes PDF, create a one-hour Thunderbird Calendar appointment at the listed date and time, with the meeting place as the title.",
-  "source": "Local PDF: assets/management-next_meeting_calendar.pdf",
+  "source": "synthetic",
   "gt_steps": [
     "Enable Windows Mouse Keys.",
     "Keep Mouse Keys enabled throughout the task.",

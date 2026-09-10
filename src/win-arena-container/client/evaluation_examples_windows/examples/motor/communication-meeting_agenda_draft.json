@@ -6,7 +6,7 @@
   "category": "communication",
   "difficulty": "hard",
   "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Draft, but do not send, a Thunderbird email to `alice@example.com` with subject `Meeting Agenda`, using `MeetingAgenda.odt` to include the meeting date, time, location, all four agenda items, and the preparation requirement.",
-  "source": "Local Document: assets/communication-meeting_agenda_draft.odt",
+  "source": "synthetic",
   "gt_steps": [
     "Enable the Windows On-Screen Keyboard.",
     "Keep the On-Screen Keyboard open throughout the task.",

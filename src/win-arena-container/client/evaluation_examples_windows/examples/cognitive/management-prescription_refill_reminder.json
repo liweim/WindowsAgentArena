@@ -4,7 +4,7 @@
   "category": "management",
   "difficulty": "medium",
   "instruction": "Create an all-day Thunderbird Calendar reminder titled `Refill medication` for the refill deadline in the pharmacy message on the Desktop.",
-  "source": "Local pharmacy message prepared for the task",
+  "source": "synthetic",
   "gt_steps": [
     "Open `pharmacy_message.txt` on the Desktop.",
     "Read the refill deadline `July 20, 2026`.",

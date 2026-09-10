@@ -3,7 +3,7 @@
   "category": "communication",
   "difficulty": "medium",
   "instruction": "Turn on Windows Narrator and keep it enabled. Read the community workshop invitation on the Desktop, then draft a Thunderbird email to `rsvp@example.org` with subject `Workshop RSVP` confirming attendance and including the event date, start time, venue, and a request for a large-print handout. Do not send it.",
-  "source": "Local accessible HTML invitation: assets/communication-community_event_rsvp.html",
+  "source": "synthetic",
   "gt_steps": [
     "Turn on Windows Narrator and leave it enabled.",
     "Open `CommunityWorkshopInvitation.html` in Chrome.",

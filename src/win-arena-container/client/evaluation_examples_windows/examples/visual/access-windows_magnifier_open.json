@@ -5,7 +5,7 @@
   "category": "access",
   "difficulty": "easy",
   "instruction": "Open Windows Magnifier and leave it open.",
-  "source": "Windows Magnifier",
+  "source": "synthetic",
   "gt_steps": [
     "Open Windows Magnifier.",
     "Leave Magnifier open."

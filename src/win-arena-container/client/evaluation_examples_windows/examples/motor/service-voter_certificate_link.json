@@ -5,7 +5,7 @@
   "category": "service",
   "difficulty": "easy",
   "instruction": "Enable the Windows On-Screen Keyboard and keep it open. The PDF is already open in Chrome. Open the website link for the voter authority certificate application from the PDF in a new Chrome tab, leave that tab open, and leave the On-Screen Keyboard open.",
-  "source": "assets/service-voter_certificate_link.pdf",
+  "source": "synthetic",
   "gt_steps": [
     "Enable the Windows On-Screen Keyboard and keep it open.",
     "Return to the PDF already open in Chrome.",

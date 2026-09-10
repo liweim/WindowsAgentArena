@@ -4,7 +4,7 @@
   "category": "captcha",
   "difficulty": "easy",
   "instruction": "Complete the click-sequence CAPTCHA open in Chrome.",
-  "source": "local CAPTCHA service using Pillow to render scattered letters and digits",
+  "source": "synthetic",
   "gt_steps": [
     "Click the requested characters in order to complete the CAPTCHA verification."
   ],

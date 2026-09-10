@@ -4,7 +4,7 @@
   "category": "captcha",
   "difficulty": "easy",
   "instruction": "Complete the geometry-click CAPTCHA verification in Microsoft Edge.",
-  "source": "local CAPTCHA service using OpenCaptchaWorld geometry_click data",
+  "source": "synthetic",
   "gt_steps": [
     "Read the prompt and click the requested shape or object in the image."
   ],

@@ -5,7 +5,7 @@
   "category": "access",
   "difficulty": "easy",
   "instruction": "Enable Mouse Keys and keep it enabled.",
-  "source": "Settings > Accessibility > Mouse > Mouse Keys",
+  "source": "synthetic",
   "gt_steps": [
     "Open Windows settings.",
     "Navigate to Mouse accessibility settings.",

@@ -5,7 +5,7 @@
   "category": "access",
   "difficulty": "easy",
   "instruction": "Set the primary mouse button to Right and leave it set that way.",
-  "source": "Settings > Bluetooth & devices > Mouse > Primary mouse button",
+  "source": "synthetic",
   "gt_steps": [
     "Open Windows Settings.",
     "Open Bluetooth & devices.",

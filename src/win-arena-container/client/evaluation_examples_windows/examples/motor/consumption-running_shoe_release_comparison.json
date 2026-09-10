@@ -6,7 +6,7 @@
   "category": "consumption",
   "difficulty": "hard",
   "instruction": "Enable Windows Filter Keys and keep them enabled. Compare the release dates of `Salomon Men's Predict Soc2 Running` and `Nike Men's Stroke Running Shoe, 6.5 us`. For the more recently released shoe, select Black, size 12, and add exactly one unit to the shopping cart.",
-  "source": "OneStopShop (self-hosted)",
+  "source": "http://host.docker.internal:7770",
   "gt_steps": [
     "Enable Windows Filter Keys.",
     "Keep Filter Keys enabled throughout the task.",

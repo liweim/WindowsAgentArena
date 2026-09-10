@@ -5,7 +5,7 @@
   "category": "access",
   "difficulty": "easy",
   "instruction": "Set the Windows text size to 140% and apply the change.",
-  "source": "Windows Settings > Accessibility > Text size",
+  "source": "synthetic",
   "gt_steps": [
     "Open Windows Setting.",
     "Navigate to Accessibility Setting.",

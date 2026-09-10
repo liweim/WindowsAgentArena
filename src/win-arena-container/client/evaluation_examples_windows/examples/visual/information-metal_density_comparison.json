@@ -5,7 +5,10 @@
   "category": "information",
   "difficulty": "medium",
   "instruction": "Turn on Windows Narrator. Compare the densities of gold and aluminium using the two Wikipedia pages already open in Chrome. Save `answer.txt` on the Desktop with the denser metal name on the first line and its density value on the second line.",
-  "source": "WebArena self-hosted Wikipedia/Kiwix pages for Gold and Aluminium",
+  "source": [
+    "http://host.docker.internal:8888/wikipedia_en_all_maxi_2022-05/A/Gold",
+    "http://host.docker.internal:8888/wikipedia_en_all_maxi_2022-05/A/Aluminium"
+  ],
   "gt_steps": [
     "Turn on Windows Narrator.",
     "Compare the density values on the Gold and Aluminium Wikipedia pages.",

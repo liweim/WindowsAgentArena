@@ -6,10 +6,7 @@
   "category": "information",
   "difficulty": "hard",
   "instruction": "Enable Windows Filter Keys as a motor accessibility aid and keep it enabled throughout the task. Compare Singapore’s Real GDP growth percentages in the provided 2024 and 2025 reports. Calculate the absolute numeric difference between the two percentages. Save only that numeric difference followed by `%` in `answer.txt` on the Desktop.",
-  "source": [
-    "Local PDF: assets/information-singapore_real_gdp_comparison_2024.pdf",
-    "Local PDF: assets/information-singapore_real_gdp_comparison_2025.pdf"
-  ],
+  "source": "synthetic",
   "gt_steps": [
     "Open Windows Accessibility keyboard settings.",
     "Navigate to the Filter Keys settings.",

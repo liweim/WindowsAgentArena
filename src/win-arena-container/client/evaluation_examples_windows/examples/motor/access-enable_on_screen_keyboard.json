@@ -5,7 +5,7 @@
   "category": "access",
   "difficulty": "easy",
   "instruction": "Enable the Windows On-Screen Keyboard and keep it open.",
-  "source": "Settings > Accessibility > Keyboard > On-Screen Keyboard",
+  "source": "synthetic",
   "gt_steps": [
     "Open Windows settings.",
     "Navigate to Keyboard accessibility settings.",

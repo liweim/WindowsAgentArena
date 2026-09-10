@@ -4,7 +4,7 @@
   "category": "captcha",
   "difficulty": "medium",
   "instruction": "Complete the patch-select CAPTCHA verification in Microsoft Edge.",
-  "source": "local CAPTCHA service using OpenCaptchaWorld patch_select data",
+  "source": "synthetic",
   "gt_steps": [
     "Select all grid squares containing the requested object, then continue."
   ],

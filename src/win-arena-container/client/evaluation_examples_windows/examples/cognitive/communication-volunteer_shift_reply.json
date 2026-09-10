@@ -3,7 +3,7 @@
   "category": "communication",
   "difficulty": "hard",
   "instruction": "Use the availability note and volunteer shift options on the Desktop to choose the compatible shift. Draft a Thunderbird email to `volunteer@example.org` with subject `Volunteer shift confirmation` and include the chosen day, date, start time, and end time. Do not send it.",
-  "source": "Local scheduling materials: assets/communication-volunteer_shift_options.txt and assets/communication-volunteer_availability.txt",
+  "source": "synthetic",
   "gt_steps": [
     "Open `VolunteerAvailability.txt` on the Desktop.",
     "Open `VolunteerShiftOptions.txt` on the Desktop.",

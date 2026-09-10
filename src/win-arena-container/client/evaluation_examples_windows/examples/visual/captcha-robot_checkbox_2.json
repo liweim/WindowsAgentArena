@@ -4,7 +4,7 @@
   "category": "captcha",
   "difficulty": "easy",
   "instruction": "Complete the I'm-not-a-robot CAPTCHA verification in Microsoft Edge.",
-  "source": "local CAPTCHA service using a classic checkbox CAPTCHA mock image",
+  "source": "synthetic",
   "gt_steps": [
     "Click the I'm not a robot checkbox, then continue."
   ],

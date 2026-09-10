@@ -4,7 +4,7 @@
   "category": "consumption",
   "difficulty": "medium",
   "instruction": "Find the lowest-priced standalone white wireless mouse on the shopping site and add it to the cart.",
-  "source": "WebArena self-hosted OneStopShop service",
+  "source": "http://host.docker.internal:7770",
   "gt_steps": [
     "Open the self-hosted shopping website.",
     "Search for wireless mouse products.",

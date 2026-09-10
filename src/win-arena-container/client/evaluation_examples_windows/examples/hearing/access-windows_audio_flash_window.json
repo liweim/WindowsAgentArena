@@ -5,7 +5,7 @@
   "category": "access",
   "difficulty": "easy",
   "instruction": "Set Windows to flash the active window during audio notifications.",
-  "source": "Settings > Accessibility > Audio > Flash my screen during audio notifications",
+  "source": "synthetic",
   "gt_steps": [
     "Open Windows Settings.",
     "Go to Accessibility > Audio.",

@@ -4,7 +4,7 @@
   "category": "captcha",
   "difficulty": "easy",
   "instruction": "Complete the character-count CAPTCHA open in Chrome.",
-  "source": "local CAPTCHA service using deterministic random character strings",
+  "source": "synthetic",
   "gt_steps": [
     "Count how many times the target character appears and enter the count."
   ],

@@ -3,7 +3,7 @@
   "category": "service",
   "difficulty": "medium",
   "instruction": "Turn on Windows Live captions and use them to read the service-access audio on the Desktop. Save the exact form name, minimum lead time, fallback phone number, and service code to `answer.txt` on the Desktop, one item per line.",
-  "source": "Synthetic fixed audio: assets/service-interpreter_request_audio.mp3",
+  "source": "synthetic",
   "transcript": "For city service appointments, sign language interpreter requests use the Access Accommodation Request Form. Submit it at least five business days before the appointment. If the form is inaccessible, call 555-014-7720. Put service code ASL-5 on the request.",
   "gt_steps": [
     "Turn on Windows Live captions.",
