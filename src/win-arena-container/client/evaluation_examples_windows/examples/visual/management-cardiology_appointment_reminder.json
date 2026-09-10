@@ -6,7 +6,7 @@
   "category": "management",
   "difficulty": "medium",
   "instruction": "Turn on Windows Narrator and keep it enabled. Create a Thunderbird Calendar event from `AppointmentLetter.docx` with title `Cardiology Appointment`, the appointment date and time, the full clinic location, and a reminder exactly one day before the appointment.",
-  "source": "Local Document: assets/management-cardiology_appointment_reminder.docx. Adapted from the NHS England patient appointment confirmation template: https://www.england.nhs.uk/wp-content/uploads/2023/02/B2012iii-patient-letter-template-appointment-confirmation.docx",
+  "source": "https://www.england.nhs.uk/wp-content/uploads/2023/02/B2012iii-patient-letter-template-appointment-confirmation.docx",
   "gt_steps": [
     "Enable Windows Narrator.",
     "Keep Narrator enabled throughout the task.",

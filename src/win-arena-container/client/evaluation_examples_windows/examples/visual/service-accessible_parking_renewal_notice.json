@@ -3,7 +3,7 @@
   "category": "service",
   "difficulty": "medium",
   "instruction": "Enable Windows Magnifier and keep it open. Read the small-print accessible-parking renewal notice image on the Desktop and save the permit reference, renewal deadline, and help-line phone number to `answer.txt` on the Desktop, one item per line in that order.",
-  "source": "Local image notice: assets/service-accessible_parking_renewal_notice.png",
+  "source": "synthetic",
   "gt_steps": [
     "Enable Windows Magnifier and leave it open.",
     "Open `ParkingRenewalNotice.png` on the Desktop.",

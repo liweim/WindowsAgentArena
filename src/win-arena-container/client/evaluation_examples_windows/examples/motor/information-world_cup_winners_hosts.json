@@ -6,7 +6,7 @@
   "category": "information",
   "difficulty": "hard",
   "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Save the FIFA World Cup winner and final-match host country for 2026, 2022, and 2018 to `answer.txt` on the Desktop in six lines ordered by year from 2026 to 2018, with the winner before the host country for each year. Use `Winner {Year}: {Winner}` and `Host Country {Year}: {Host Country}`.",
-  "source": "Web research using Chrome",
+  "source": "synthetic",
   "gt_steps": [
     "Enable the Windows On-Screen Keyboard.",
     "Keep the On-Screen Keyboard open throughout the task.",

@@ -5,7 +5,7 @@
   "category": "access",
   "difficulty": "easy",
   "instruction": "Enable Sticky Keys and leave it enabled.",
-  "source": "Settings > Accessibility > Keyboard > Sticky Keys",
+  "source": "synthetic",
   "gt_steps": [
     "Open Windows settings.",
     "Navigate to Keyboard accessibility settings.",

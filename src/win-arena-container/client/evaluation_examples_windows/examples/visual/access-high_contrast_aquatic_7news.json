@@ -5,7 +5,7 @@
   "category": "access",
   "difficulty": "easy",
   "instruction": "Set the Windows contrast theme to Aquatic, open https://7news.com.au/ in Chrome, and leave the 7News homepage open with the Aquatic theme enabled.",
-  "source": "Windows Settings > Accessibility > Contrast themes; https://7news.com.au/",
+  "source": "https://7news.com.au/",
   "gt_steps": [
     "Open Windows Settings.",
     "Navigate to Accessibility settings.",

@@ -6,7 +6,7 @@
   "category": "consumption",
   "difficulty": "medium",
   "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Add exactly one unit of the cheapest item in OneStopShop's `Bathroom Accessories` category to the shopping cart.",
-  "source": "OneStopShop (self-hosted)",
+  "source": "http://host.docker.internal:7770",
   "gt_steps": [
     "Enable the Windows On-Screen Keyboard.",
     "Keep the On-Screen Keyboard open throughout the task.",

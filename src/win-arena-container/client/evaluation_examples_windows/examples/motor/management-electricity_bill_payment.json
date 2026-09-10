@@ -6,7 +6,7 @@
   "category": "management",
   "difficulty": "easy",
   "instruction": "Enable the Windows On-Screen Keyboard and keep it open. In the provided `Bills.ods`, change the Electricity bill status from `Unpaid` to `Paid`, set the payment date to `15/10/2026`, and save the spreadsheet as `answer.ods` on the Desktop.",
-  "source": "Local Spreadsheet: assets/management-electricity_bill_payment.ods",
+  "source": "synthetic",
   "gt_steps": [
     "Enable the Windows On-Screen Keyboard.",
     "Keep the On-Screen Keyboard open throughout the task.",

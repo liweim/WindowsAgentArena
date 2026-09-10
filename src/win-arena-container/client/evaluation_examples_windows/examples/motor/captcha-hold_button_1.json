@@ -4,7 +4,7 @@
   "category": "captcha",
   "difficulty": "easy",
   "instruction": "Complete the hold-button CAPTCHA verification in Microsoft Edge.",
-  "source": "local CAPTCHA service using OpenCaptchaWorld hold_button data",
+  "source": "synthetic",
   "gt_steps": [
     "Press and hold the button until the progress completes, then continue."
   ],

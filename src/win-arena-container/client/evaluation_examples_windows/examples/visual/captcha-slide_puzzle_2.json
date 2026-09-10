@@ -4,7 +4,7 @@
   "category": "captcha",
   "difficulty": "easy",
   "instruction": "Complete the puzzle slider CAPTCHA verification in Microsoft Edge.",
-  "source": "local CAPTCHA service using OpenCaptchaWorld slide_puzzle data",
+  "source": "synthetic",
   "gt_steps": [
     "Complete the puzzle slider CAPTCHA verification."
   ],

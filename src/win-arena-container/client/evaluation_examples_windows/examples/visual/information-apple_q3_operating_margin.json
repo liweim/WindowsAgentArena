@@ -5,7 +5,7 @@
   "category": "information",
   "difficulty": "hard",
   "instruction": "Turn on Windows Narrator. Use the opened Apple financial report PDF to find the Q3 2025 Operating Margin in the Margin and Efficiency Analysis chart. Save the exact percentage in `answer.txt` on the Desktop and leave the report open.",
-  "source": "Local PDF: assets/information-apple_q3_operating_margin.pdf",
+  "source": "synthetic",
   "gt_steps": [
     "Turn on Windows Narrator.",
     "Find the Margin and Efficiency Analysis chart in the Apple report PDF.",

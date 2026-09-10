@@ -5,7 +5,7 @@
   "category": "access",
   "difficulty": "easy",
   "instruction": "Open Windows Magnifier, set the zoom level to 200%, and leave Magnifier open.",
-  "source": "Windows Magnifier",
+  "source": "synthetic",
   "gt_steps": [
     "Open Windows Magnifier.",
     "Set the Magnifier zoom level to 200%.",

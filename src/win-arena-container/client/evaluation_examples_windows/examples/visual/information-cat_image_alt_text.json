@@ -5,7 +5,7 @@
   "category": "information",
   "difficulty": "medium",
   "instruction": "Add descriptive alt text to the image in the provided DOCX file so it describes the visible scene, then save the completed file as `answer.docx` on the Desktop in Word format.",
-  "source": "Local Document: assets/information-cat_image_alt_text.docx",
+  "source": "synthetic",
   "gt_steps": [
     "Select the image in information-image_to_text_cat.docx.",
     "Add alt text describing a cat sitting on the hood of a red car.",

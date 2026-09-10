@@ -4,7 +4,7 @@
   "category": "consumption",
   "difficulty": "hard",
   "instruction": "Use the movie-night shopping reminder on the Desktop to add everything still needed to the shopping cart.",
-  "source": "WebArena self-hosted OneStopShop service",
+  "source": "http://host.docker.internal:7770",
   "gt_steps": [
     "Open `movie_night_note.txt` on the Desktop.",
     "Read the shopping reminder.",

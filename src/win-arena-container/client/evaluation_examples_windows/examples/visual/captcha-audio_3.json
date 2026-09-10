@@ -4,7 +4,7 @@
   "category": "captcha",
   "difficulty": "easy",
   "instruction": "Complete the audio CAPTCHA verification in Microsoft Edge.",
-  "source": "local CAPTCHA service using the Python `captcha` package audio generator",
+  "source": "synthetic",
   "gt_steps": [
     "Listen to the audio CAPTCHA and type the five-digit verification code."
   ],

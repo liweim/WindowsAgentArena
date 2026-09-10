@@ -5,7 +5,7 @@
   "category": "information",
   "difficulty": "hard",
   "instruction": "Add descriptive alt text to the invitation image in the provided DOCX file. Include the restaurant name, grand-opening purpose, date, time, full address, and RSVP phone number, then save the completed file as `answer.docx` on the Desktop in Word format.",
-  "source": "Local Document: assets/information-invitation_image_alt_text.docx",
+  "source": "synthetic",
   "gt_steps": [
     "Select the invitation image in information-image_to_text_invitation.docx.",
     "Add alt text stating that The Coastal Spoon is holding a grand opening on Thursday, July 16, 2026 at 11:00 AM.",

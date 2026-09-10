@@ -6,7 +6,7 @@
   "category": "information",
   "difficulty": "medium",
   "instruction": "Enable Windows Filter Keys and keep them enabled. Find the maximum coursework file upload size in the provided Department of Psychology Undergraduate Student Handbook and save it in `answer.txt` on the Desktop.",
-  "source": "Local PDF: assets/information-psychology_coursework_upload_limit.pdf",
+  "source": "synthetic",
   "gt_steps": [
     "Open Windows Accessibility keyboard settings.",
     "Navigate to the Filter Keys settings.",

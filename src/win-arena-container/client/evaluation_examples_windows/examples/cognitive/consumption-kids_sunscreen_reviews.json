@@ -4,7 +4,7 @@
   "category": "consumption",
   "difficulty": "hard",
   "instruction": "I'm looking for a kids sunscreen that doesn't sting and doesn't feel sticky. Check the OneStopShop customer reviews and add the matching product to the cart.",
-  "source": "WebArena self-hosted OneStopShop service",
+  "source": "http://host.docker.internal:7770",
   "gt_steps": [
     "Open the self-hosted shopping website.",
     "Search for kids sunscreen products.",

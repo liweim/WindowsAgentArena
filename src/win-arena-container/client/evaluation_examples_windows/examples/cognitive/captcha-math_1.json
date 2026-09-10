@@ -4,7 +4,7 @@
   "category": "captcha",
   "difficulty": "easy",
   "instruction": "Complete the math CAPTCHA open in Chrome.",
-  "source": "local CAPTCHA service using deterministic arithmetic expressions",
+  "source": "synthetic",
   "gt_steps": [
     "Solve the arithmetic expression and enter the result."
   ],

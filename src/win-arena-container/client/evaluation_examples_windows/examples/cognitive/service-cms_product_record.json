@@ -4,7 +4,7 @@
   "category": "service",
   "difficulty": "hard",
   "instruction": "Update the Value column in `cms_product_record.xlsx` on the Desktop with the current CMS details for `Joust Duffle Bag`, then save the completed spreadsheet as `answer.xlsx` on the Desktop. Use username `admin` and password `admin1234` to access the CMS admin site.",
-  "source": "WebArena self-hosted e-commerce CMS service",
+  "source": "http://host.docker.internal:7780/admin",
   "gt_steps": [
     "Open the self-hosted CMS admin site in Google Chrome.",
     "Enter the username `admin`.",

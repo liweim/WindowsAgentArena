@@ -4,7 +4,7 @@
   "category": "consumption",
   "difficulty": "easy",
   "instruction": "I'm looking for a Disney Frozen 2 Elsa water bottle. Find the matching product on the shopping site and add it to the cart.",
-  "source": "WebArena self-hosted OneStopShop service",
+  "source": "http://host.docker.internal:7770",
   "gt_steps": [
     "Open the self-hosted shopping website.",
     "Search for an Elsa water bottle.",

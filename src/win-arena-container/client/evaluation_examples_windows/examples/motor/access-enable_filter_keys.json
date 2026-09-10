@@ -5,7 +5,7 @@
   "category": "access",
   "difficulty": "easy",
   "instruction": "Enable Filter Keys and keep it enabled.",
-  "source": "Settings > Accessibility > Keyboard > Filter Keys",
+  "source": "synthetic",
   "gt_steps": [
     "Open Windows settings.",
     "Navigate to Keyboard accessibility settings.",

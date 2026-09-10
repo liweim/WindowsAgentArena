@@ -5,7 +5,7 @@
   "category": "access",
   "difficulty": "easy",
   "instruction": "Enable Mono audio and set visual audio alerts to Flash the entire screen in Windows.",
-  "source": "Settings > Accessibility > Audio",
+  "source": "synthetic",
   "gt_steps": [
     "Open Windows Settings.",
     "Go to Accessibility > Audio.",

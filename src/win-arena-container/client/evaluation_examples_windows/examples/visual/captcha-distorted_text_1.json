@@ -4,7 +4,7 @@
   "category": "captcha",
   "difficulty": "easy",
   "instruction": "Complete the CAPTCHA verification in Microsoft Edge.",
-  "source": "local CAPTCHA service using the Python `captcha` package",
+  "source": "synthetic",
   "gt_steps": [
     "Complete the CAPTCHA verification."
   ],

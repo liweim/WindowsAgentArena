@@ -4,7 +4,7 @@
   "category": "captcha",
   "difficulty": "easy",
   "instruction": "Complete the image-recognition CAPTCHA open in Chrome.",
-  "source": "local CAPTCHA service using OpenCaptchaWorld image_recognition data",
+  "source": "synthetic",
   "gt_steps": [
     "Select every image matching the prompt, then continue."
   ],

@@ -5,7 +5,7 @@
   "category": "access",
   "difficulty": "easy",
   "instruction": "Set Windows notifications to stay visible for 5 minutes.",
-  "source": "Settings > Accessibility > Visual effects > Dismiss notifications after this amount of time",
+  "source": "synthetic",
   "gt_steps": [
     "Open Windows Settings.",
     "Go to Accessibility > Visual effects.",

@@ -4,7 +4,7 @@
   "category": "consumption",
   "difficulty": "medium",
   "instruction": "Add only the core ingredients needed for tomato-and-egg stir-fry to the shopping cart, assuming the seasonings and pantry staples are already available.",
-  "source": "WebArena self-hosted OneStopShop service",
+  "source": "http://host.docker.internal:7770",
   "gt_steps": [
     "Open the self-hosted shopping website.",
     "Find an ordinary chicken egg product.",

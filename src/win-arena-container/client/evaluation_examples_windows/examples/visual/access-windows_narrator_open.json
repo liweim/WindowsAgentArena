@@ -5,7 +5,7 @@
   "category": "access",
   "difficulty": "easy",
   "instruction": "Turn on Windows Narrator and keep it running.",
-  "source": "Windows Narrator",
+  "source": "synthetic",
   "gt_steps": [
     "Turn on Windows Narrator.",
     "Keep Narrator running."

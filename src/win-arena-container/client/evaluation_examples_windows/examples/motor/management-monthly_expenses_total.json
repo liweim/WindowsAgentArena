@@ -6,7 +6,7 @@
   "category": "management",
   "difficulty": "medium",
   "instruction": "Enable Windows Filter Keys and keep them enabled. In the provided `MonthlyBills.ods`, use a formula in cell B12 to calculate the total amount due for all bills with status `Unpaid`, then save the spreadsheet as `answer.ods` on the Desktop.",
-  "source": "Local Spreadsheet: assets/management-monthly_expenses_total.ods",
+  "source": "synthetic",
   "gt_steps": [
     "Enable Windows Filter Keys.",
     "Keep Filter Keys enabled throughout the task.",

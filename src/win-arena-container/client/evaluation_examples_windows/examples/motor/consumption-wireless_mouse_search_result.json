@@ -6,7 +6,7 @@
   "category": "consumption",
   "difficulty": "easy",
   "instruction": "Enable Windows Sticky Keys and keep them enabled. Add exactly one unit of the first OneStopShop search result for `wireless mouse` to the shopping cart.",
-  "source": "OneStopShop (self-hosted)",
+  "source": "http://host.docker.internal:7770",
   "gt_steps": [
     "Enable Windows Sticky Keys.",
     "Keep Sticky Keys enabled throughout the task.",

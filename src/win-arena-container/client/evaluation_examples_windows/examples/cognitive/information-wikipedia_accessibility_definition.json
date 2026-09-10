@@ -4,7 +4,7 @@
   "category": "information",
   "difficulty": "medium",
   "instruction": "Find the sentence in the local Wikipedia `Accessibility` article that defines accessibility as a design concept, replace `[add definition here]` in the open LibreOffice Writer document with that sentence only, and save the completed document as `answer.docx` on the Desktop.",
-  "source": "WebArena self-hosted Wikipedia/Kiwix service: http://host.docker.internal:8888",
+  "source": "http://host.docker.internal:8888/wikipedia_en_all_maxi_2022-05/A/Accessibility",
   "gt_steps": [
     "Open the local Kiwix Wikipedia site in Google Chrome.",
     "Search for the `Accessibility` article.",

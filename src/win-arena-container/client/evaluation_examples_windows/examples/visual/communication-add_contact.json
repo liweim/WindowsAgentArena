@@ -6,7 +6,7 @@
   "category": "communication",
   "difficulty": "easy",
   "instruction": "Enable Windows Magnifier and keep it enabled. Add `Olivia Bennett` with email `olivia.bennett@example.com` to the contact list in the provided `Contacts.odt`, then save the updated file as `answer.odt` on the Desktop.",
-  "source": "Local Document: assets/communication-add_contact.odt",
+  "source": "synthetic",
   "gt_steps": [
     "Enable Windows Magnifier.",
     "Keep Magnifier enabled throughout the task.",

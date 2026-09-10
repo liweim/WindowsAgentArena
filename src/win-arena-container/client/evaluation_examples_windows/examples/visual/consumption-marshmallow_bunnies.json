@@ -5,7 +5,7 @@
   "category": "consumption",
   "difficulty": "medium",
   "instruction": "Turn on Windows Narrator. Identify the requested product from the provided shopping reminder PDF and add exactly one matching unit to the shopping cart. Leave the cart page open.",
-  "source": "Local PDF: assets/consumption-marshmallow_bunnies.pdf",
+  "source": "synthetic",
   "gt_steps": [
     "Open the shopping reminder PDF in Chrome.",
     "Turn on Windows Narrator.",

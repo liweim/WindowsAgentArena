@@ -5,7 +5,7 @@
   "category": "service",
   "difficulty": "medium",
   "instruction": "Enable Windows Mouse Keys and keep them enabled. From the Reddit post titled `How do I vote?`, open every website link mentioned in the comments in separate Chrome tabs and leave both linked website tabs open.",
-  "source": "WebArena Reddit website",
+  "source": "http://host.docker.internal:9999",
   "gt_steps": [
     "Open Windows Accessibility mouse settings.",
     "Enable Mouse Keys.",

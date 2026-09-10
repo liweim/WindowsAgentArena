@@ -6,7 +6,7 @@
   "category": "management",
   "difficulty": "hard",
   "instruction": "Enable Windows Sticky Keys and keep them enabled. Complete the grade summary in the provided `Grades.ods` by calculating each student's average, assigning the letter grade from the spreadsheet's grading table, and listing the three students in descending average-score order with their averages and letter grades. Save the spreadsheet as `answer.ods` on the Desktop.",
-  "source": "Local Spreadsheet: assets/management-student_gradebook.ods",
+  "source": "synthetic",
   "gt_steps": [
     "Enable Windows Sticky Keys.",
     "Keep Sticky Keys enabled throughout the task.",
