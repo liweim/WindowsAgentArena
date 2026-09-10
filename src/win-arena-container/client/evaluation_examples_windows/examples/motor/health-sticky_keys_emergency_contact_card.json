@@ -1,0 +1,133 @@
+{
+  "id": "health-sticky_keys_emergency_contact_card",
+  "category": "health",
+  "difficulty": "medium",
+  "instruction": "Enable Windows Sticky Keys and keep them enabled. Use the CDC Backpack Emergency Card saved on the Desktop to create one Sticky Note listing the seven fields shown in the child-information section, in the same order as the form. Keep the completed note saved.",
+  "source": "https://stacks.cdc.gov/view/cdc/139829/cdc_139829_DS1.pdf",
+  "gt_steps": [
+    "Enable Windows Sticky Keys and leave them enabled.",
+    "Switch to the CDC Backpack Emergency Card open in Chrome.",
+    "Open Sticky Notes and create a new note.",
+    "Enter the following text in one note:\n`Child’s Name\nDate of Birth\nHome Phone\nCell Phone\nSchool Name\nSchool Phone Number\nSpecial needs, medical conditions, allergies, important information`",
+    "Keep the completed Sticky Note saved.",
+    "Leave Windows Sticky Keys enabled."
+  ],
+  "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/health-sticky_keys_emergency_contact_card.pdf",
+            "path": "C:\\Users\\Docker\\Desktop\\BackpackEmergencyCard.pdf"
+          }
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port=1337",
+          "--force-renderer-accessibility",
+          "file:///C:/Users/Docker/Desktop/BackpackEmergencyCard.pdf"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    },
+    {
+      "type": "execute",
+      "parameters": {
+        "command": [
+          "powershell",
+          "-NoProfile",
+          "-ExecutionPolicy",
+          "Bypass",
+          "-Command",
+          "Start-Process 'shell:AppsFolder\\Microsoft.MicrosoftStickyNotes_8wekyb3d8bbwe!App'"
+        ]
+      }
+    }
+  ],
+  "related_apps": [
+    "settings",
+    "chrome",
+    "sticky_notes"
+  ],
+  "evaluator": {
+    "func": [
+      "check_include_exclude",
+      "check_text_points"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "vm_command_line",
+        "command": "powershell -NoProfile -Command \"$flags=[int](Get-ItemPropertyValue -Path 'HKCU:\\Control Panel\\Accessibility\\StickyKeys' -Name 'Flags' -ErrorAction SilentlyContinue); if (($flags -band 1) -eq 1) { 'STICKY_KEYS_ENABLED' } else { 'STICKY_KEYS_DISABLED' }\"",
+        "shell": true
+      },
+      {
+        "type": "sticky_notes_content"
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "include": [
+            "STICKY_KEYS_ENABLED"
+          ],
+          "exclude": [
+            "STICKY_KEYS_DISABLED"
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "ignore_case": true,
+          "points": [
+            [
+              "Child's Name",
+              "Child’s Name"
+            ],
+            [
+              "Date of Birth"
+            ],
+            [
+              "Home Phone"
+            ],
+            [
+              "Cell Phone"
+            ],
+            [
+              "School Name"
+            ],
+            [
+              "School Phone Number"
+            ],
+            [
+              "Special needs",
+              "medical conditions",
+              "allergies",
+              "important information"
+            ]
+          ]
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

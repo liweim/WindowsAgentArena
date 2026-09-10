@@ -1,0 +1,68 @@
+{
+  "id": "mobility-victoria_train_interchange_note",
+  "category": "mobility",
+  "difficulty": "medium",
+  "instruction": "Use the Victorian train network map saved locally on the Desktop to plan a one-change trip from Frankston to Pakenham that stays southeast of the CBD. Create a Sticky Note with the starting line, the interchange station where the Frankston and Pakenham corridors meet, the onward line, and the destination.",
+  "source": "https://edge.sitecorecloud.io/stategovernc45d-cftw-production-c9ca/media/Project/TransportWebsite/Forms/Vic-Train-Network-Map-Aug-2026.pdf",
+  "gt_steps": [
+    "Open Sticky Notes.",
+    "Create a new note.",
+    "Enter the following text:\n`Start line: Frankston Line\nInterchange: Caulfield\nOnward line: Pakenham Line\nDestination: Pakenham`",
+    "Keep the completed note saved in Sticky Notes."
+  ],
+  "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/mobility-victoria_train_interchange_note.pdf",
+            "path": "C:\\Users\\Docker\\Desktop\\VictorianTrainNetworkMap.pdf"
+          }
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "msedge",
+          "file:///C:/Users/Docker/Desktop/VictorianTrainNetworkMap.pdf"
+        ]
+      }
+    }
+  ],
+  "related_apps": [
+    "msedge",
+    "sticky_notes"
+  ],
+  "evaluator": {
+    "func": "check_text_points",
+    "result": {
+      "type": "sticky_notes_content"
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "ignore_case": true,
+        "points": [
+          [
+            "Frankston Line"
+          ],
+          [
+            "Caulfield"
+          ],
+          [
+            "Pakenham Line"
+          ],
+          [
+            "Pakenham"
+          ]
+        ]
+      }
+    }
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "medium"
+}

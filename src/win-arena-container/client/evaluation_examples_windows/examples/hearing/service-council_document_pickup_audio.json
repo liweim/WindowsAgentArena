@@ -1,0 +1,120 @@
+{
+  "id": "service-council_document_pickup_audio",
+  "category": "service",
+  "difficulty": "medium",
+  "instruction": "Turn on Windows Live captions and use them to read the council service recording on the Desktop. Save the pickup location, collection hours, item to bring, and reference number to `answer.txt`, one item per line.",
+  "source": "synthetic",
+  "transcript": "Council service update. Your parking permit documents are ready for pickup at the Civic Service Centre, counter 4. Collection hours are 9:00 AM to 4:30 PM. Bring photo ID. Reference number PS-482.",
+  "gt_steps": [
+    "Turn on Windows Live captions.",
+    "Play `CouncilPickupAudio.mp3` in Chrome with Windows Live captions running.",
+    "Open Notepad.",
+    "Enter `Civic Service Centre, counter 4\\n9:00 AM-4:30 PM\\nPhoto ID\\nPS-482`, one item per line.",
+    "Save the file as `answer.txt` on the Desktop.",
+    "Leave Windows Live captions running."
+  ],
+  "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/service-council_document_pickup_audio.mp3",
+            "path": "C:\\Users\\Docker\\Desktop\\CouncilPickupAudio.mp3"
+          }
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port=1337",
+          "--force-renderer-accessibility"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    },
+    {
+      "type": "sleep",
+      "parameters": {
+        "seconds": 1
+      }
+    },
+    {
+      "type": "chrome_open_tabs",
+      "parameters": {
+        "urls_to_open": [
+          "file:///C:/Users/Docker/Desktop/CouncilPickupAudio.mp3"
+        ]
+      }
+    },
+    {
+      "type": "activate_window",
+      "parameters": {
+        "window_name": "Google Chrome"
+      }
+    }
+  ],
+  "related_apps": [
+    "settings",
+    "chrome",
+    "notepad"
+  ],
+  "evaluator": {
+    "func": [
+      "check_include_exclude",
+      "exact_match"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "vm_command_line",
+        "command": [
+          "powershell",
+          "-NoProfile",
+          "-Command",
+          "$found = Get-Process | Where-Object { $_.ProcessName -match 'LiveCaptions|LiveCaption' -or $_.MainWindowTitle -match 'Live captions|Live Caption' }; if ($found) { 'WINDOWS_LIVE_CAPTIONS_RUNNING' } else { 'WINDOWS_LIVE_CAPTIONS_NOT_RUNNING' }"
+        ]
+      },
+      {
+        "type": "is_file_saved_desktop",
+        "filename": "answer.txt",
+        "textcontent": "Civic Service Centre, counter 4\n9:00 AM-4:30 PM\nPhoto ID\nPS-482",
+        "exact": true
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "include": [
+            "WINDOWS_LIVE_CAPTIONS_RUNNING"
+          ],
+          "exclude": [
+            "WINDOWS_LIVE_CAPTIONS_NOT_RUNNING"
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "expected": "true"
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

@@ -1,0 +1,108 @@
+{
+  "id": "service-utility_outage_audio",
+  "category": "service",
+  "difficulty": "medium",
+  "instruction": "Use Chrome Live Caption to read the utility outage recording on the Desktop. Save the outage area, restoration estimate, support phone number, and incident code to `answer.txt`, one item per line.",
+  "source": "synthetic",
+  "transcript": "Utility service notice. The outage affects the North Harbour zone. Estimated restoration is 6:45 PM. For accessibility support call 555-017-3088. Incident code UT-641.",
+  "gt_steps": [
+    "Turn on Chrome Live Caption.",
+    "Play `UtilityOutageAudio.mp3` in Chrome with Live Caption enabled.",
+    "Open Notepad.",
+    "Enter `North Harbour zone\\n6:45 PM\\n555-017-3088\\nUT-641`, one item per line.",
+    "Save the file as `answer.txt` on the Desktop.",
+    "Leave Chrome Live Caption enabled."
+  ],
+  "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/service-utility_outage_audio.mp3",
+            "path": "C:\\Users\\Docker\\Desktop\\UtilityOutageAudio.mp3"
+          }
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port=1337",
+          "--force-renderer-accessibility"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    },
+    {
+      "type": "sleep",
+      "parameters": {
+        "seconds": 1
+      }
+    },
+    {
+      "type": "chrome_open_tabs",
+      "parameters": {
+        "urls_to_open": [
+          "file:///C:/Users/Docker/Desktop/UtilityOutageAudio.mp3"
+        ]
+      }
+    },
+    {
+      "type": "activate_window",
+      "parameters": {
+        "window_name": "Google Chrome"
+      }
+    }
+  ],
+  "related_apps": [
+    "chrome",
+    "notepad"
+  ],
+  "evaluator": {
+    "func": [
+      "exact_match",
+      "exact_match"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "is_file_saved_desktop",
+        "filename": "answer.txt",
+        "textcontent": "North Harbour zone\n6:45 PM\n555-017-3088\nUT-641",
+        "exact": true
+      },
+      {
+        "type": "live_caption_enabled"
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "expected": "true"
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "expected": "true"
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

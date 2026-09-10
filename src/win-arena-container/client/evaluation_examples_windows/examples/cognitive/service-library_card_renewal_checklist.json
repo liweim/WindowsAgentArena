@@ -1,0 +1,106 @@
+{
+  "id": "service-library_card_renewal_checklist",
+  "category": "service",
+  "difficulty": "medium",
+  "instruction": "Use the library service page on the Desktop to create a Sticky Note for an adult renewing an existing library card in person. Include the two required documents, the renewal desk closing time, and the renewal desk code; ignore replacement-card and youth-card instructions.",
+  "source": "synthetic",
+  "gt_steps": [
+    "Switch to the open `LibraryRenewal.html` page in Chrome.",
+    "Switch to Sticky Notes.",
+    "Create a new note.",
+    "Enter the following text:\n`Photo ID\nProof of current address dated within the last 90 days\nDesk closes: 5:30 PM\nDesk code: LR-27`",
+    "Keep the completed note saved in Sticky Notes."
+  ],
+  "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/service-library_card_renewal_checklist.html",
+            "path": "C:\\Users\\Docker\\Desktop\\LibraryRenewal.html"
+          }
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port=1337",
+          "--force-renderer-accessibility"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    },
+    {
+      "type": "chrome_open_tabs",
+      "parameters": {
+        "urls_to_open": [
+          "file:///C:/Users/Docker/Desktop/LibraryRenewal.html"
+        ]
+      }
+    },
+    {
+      "type": "execute",
+      "parameters": {
+        "command": [
+          "powershell",
+          "-NoProfile",
+          "-ExecutionPolicy",
+          "Bypass",
+          "-Command",
+          "Start-Process 'shell:AppsFolder\\Microsoft.MicrosoftStickyNotes_8wekyb3d8bbwe!App'"
+        ]
+      }
+    }
+  ],
+  "related_apps": [
+    "chrome",
+    "sticky_notes"
+  ],
+  "evaluator": {
+    "func": "check_text_points",
+    "result": {
+      "type": "sticky_notes_content"
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "ignore_case": true,
+        "points": [
+          [
+            "Photo ID"
+          ],
+          [
+            "proof of current address"
+          ],
+          [
+            "90 days"
+          ],
+          [
+            "5:30 PM",
+            "5:30"
+          ],
+          [
+            "LR-27",
+            "LR 27"
+          ]
+        ]
+      }
+    }
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

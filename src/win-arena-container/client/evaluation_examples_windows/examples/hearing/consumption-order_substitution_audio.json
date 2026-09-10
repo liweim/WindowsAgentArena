@@ -1,0 +1,134 @@
+{
+  "id": "consumption-order_substitution_audio",
+  "category": "consumption",
+  "difficulty": "medium",
+  "instruction": "Use Chrome Live Caption to read the grocery order recording on the Desktop. Create a Sticky Note containing the unavailable item, approved substitute, price limit, and pickup code.",
+  "source": "synthetic",
+  "transcript": "Grocery order update. The oat yoghurt is unavailable. Substitute plain soy yoghurt only. Do not accept a substitute over $6.50. Pickup code GP-284.",
+  "gt_steps": [
+    "Turn on Chrome Live Caption.",
+    "Play `OrderSubstitutionAudio.mp3` in Chrome with Live Caption enabled.",
+    "Create a new note in Sticky Notes.",
+    "Enter `Unavailable: oat yoghurt\\nSubstitute: plain soy yoghurt only\\nPrice limit: $6.50\\nPickup code: GP-284` into the note.",
+    "Keep the completed note saved.",
+    "Leave Chrome Live Caption enabled."
+  ],
+  "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/consumption-order_substitution_audio.mp3",
+            "path": "C:\\Users\\Docker\\Desktop\\OrderSubstitutionAudio.mp3"
+          }
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port=1337",
+          "--force-renderer-accessibility"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    },
+    {
+      "type": "sleep",
+      "parameters": {
+        "seconds": 1
+      }
+    },
+    {
+      "type": "chrome_open_tabs",
+      "parameters": {
+        "urls_to_open": [
+          "file:///C:/Users/Docker/Desktop/OrderSubstitutionAudio.mp3"
+        ]
+      }
+    },
+    {
+      "type": "activate_window",
+      "parameters": {
+        "window_name": "Google Chrome"
+      }
+    },
+    {
+      "type": "execute",
+      "parameters": {
+        "command": [
+          "powershell",
+          "-NoProfile",
+          "-ExecutionPolicy",
+          "Bypass",
+          "-Command",
+          "Start-Process 'shell:AppsFolder\\Microsoft.MicrosoftStickyNotes_8wekyb3d8bbwe!App'"
+        ]
+      }
+    }
+  ],
+  "related_apps": [
+    "chrome",
+    "sticky_notes"
+  ],
+  "evaluator": {
+    "func": [
+      "check_text_points",
+      "exact_match"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "sticky_notes_content"
+      },
+      {
+        "type": "live_caption_enabled"
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "ignore_case": true,
+          "points": [
+            [
+              "oat yoghurt"
+            ],
+            [
+              "plain soy yoghurt"
+            ],
+            [
+              "$6.50",
+              "6.50"
+            ],
+            [
+              "GP-284",
+              "GP 284"
+            ]
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "expected": "true"
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

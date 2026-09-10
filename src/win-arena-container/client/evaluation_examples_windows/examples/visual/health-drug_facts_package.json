@@ -1,0 +1,74 @@
+{
+  "id": "health-drug_facts_package",
+  "category": "health",
+  "difficulty": "medium",
+  "instruction": "Use the original Drug Facts carton image on the Desktop to create a Sticky Note containing both active ingredients with their amounts and the acetaminophen warning shown on the carton.",
+  "source": "https://dailymed.nlm.nih.gov/dailymed/image.cfm?name=aceta-ibu-fig2.jpg&setid=b39fb93f-c140-40ab-8247-9559ef6df50a",
+  "gt_steps": [
+    "Open Sticky Notes and create a new note.",
+    "Enter the following text:\n`Acetaminophen: 250 mg\nIbuprofen: 125 mg (NSAID)\nWarning: Do not use with other medicines containing acetaminophen; can cause liver damage.`",
+    "Keep the completed note saved."
+  ],
+  "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/health-drug_facts_package.jpg",
+            "path": "C:\\Users\\Docker\\Desktop\\DrugFactsPackage.jpg"
+          }
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "C:\\Windows\\System32\\mspaint.exe",
+          "C:\\Users\\Docker\\Desktop\\DrugFactsPackage.jpg"
+        ]
+      }
+    }
+  ],
+  "related_apps": [
+    "paint",
+    "sticky_notes"
+  ],
+  "evaluator": {
+    "func": "check_text_points",
+    "result": {
+      "type": "sticky_notes_content"
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "ignore_case": true,
+        "points": [
+          [
+            "Acetaminophen",
+            "250 mg"
+          ],
+          [
+            "Ibuprofen",
+            "125 mg"
+          ],
+          [
+            "NSAID"
+          ],
+          [
+            "do not use",
+            "other medicines",
+            "acetaminophen"
+          ],
+          [
+            "liver damage"
+          ]
+        ]
+      }
+    }
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

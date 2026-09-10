@@ -1,0 +1,159 @@
+{
+  "id": "communication-pharmacy_pickup_voicemail",
+  "category": "communication",
+  "difficulty": "medium",
+  "instruction": "Use Chrome Live Caption to read the pharmacy voicemail on the Desktop. Draft a Thunderbird email to `pharmacy@example.com` with subject `Pickup confirmation` confirming the pickup date and window and including the locker code and order reference. Do not send it.",
+  "source": "synthetic",
+  "transcript": "Hello Morgan. Your prescription is ready for pickup on Thursday, September 17, 2026 between 4:10 PM and 5:00 PM. Use locker code 4826. Your order reference is RX-418. Reply to pharmacy@example.com if you need help.",
+  "gt_steps": [
+    "Turn on Chrome Live Caption.",
+    "Play `PharmacyPickupVoicemail.mp3` in Chrome with Live Caption enabled.",
+    "Create a new email draft in Thunderbird.",
+    "Set To to `pharmacy@example.com`.",
+    "Set Subject to `Pickup confirmation`.",
+    "Enter `I confirm pickup on Thursday, 17 September 2026 between 4:10 PM and 5:00 PM. Locker code: 4826. Order reference: RX-418.` in the message body.",
+    "Save the message as a draft. Do not send it.",
+    "Leave Chrome Live Caption enabled."
+  ],
+  "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/communication-pharmacy_pickup_voicemail.mp3",
+            "path": "C:\\Users\\Docker\\Desktop\\PharmacyPickupVoicemail.mp3"
+          }
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port=1337",
+          "--force-renderer-accessibility"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    },
+    {
+      "type": "download",
+      "parameters": {
+        "files": [
+          {
+            "url": "https://huggingface.co/datasets/xlangai/ubuntu_osworld_file_cache/resolve/main/thunderbird/dd84e895-72fd-4023-a336-97689ded257c/thunderbird-profile.tar.gz",
+            "path": "C:\\Users\\Docker\\Downloads\\thunderbird-profile.tar.gz"
+          }
+        ]
+      }
+    },
+    {
+      "type": "prepare_thunderbird_profile",
+      "parameters": {}
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "thunderbird.exe",
+          "-profile",
+          "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release"
+        ]
+      }
+    },
+    {
+      "type": "sleep",
+      "parameters": {
+        "seconds": 1
+      }
+    },
+    {
+      "type": "chrome_open_tabs",
+      "parameters": {
+        "urls_to_open": [
+          "file:///C:/Users/Docker/Desktop/PharmacyPickupVoicemail.mp3"
+        ]
+      }
+    },
+    {
+      "type": "activate_window",
+      "parameters": {
+        "window_name": "Google Chrome"
+      }
+    }
+  ],
+  "related_apps": [
+    "chrome",
+    "thunderbird"
+  ],
+  "evaluator": {
+    "func": [
+      "check_thunderbird_email_composition",
+      "exact_match"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "vm_file",
+        "path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release\\Mail\\Local Folders\\Drafts",
+        "dest": "thunderbird-drafts.mbox"
+      },
+      {
+        "type": "live_caption_enabled"
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "to": "pharmacy@example.com",
+          "subject": "Pickup confirmation",
+          "body_points": [
+            [
+              "Thursday"
+            ],
+            [
+              "17 September 2026",
+              "September 17, 2026"
+            ],
+            [
+              "4:10 PM",
+              "4:10"
+            ],
+            [
+              "5:00 PM",
+              "5:00"
+            ],
+            [
+              "4826"
+            ],
+            [
+              "RX-418",
+              "RX 418"
+            ]
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "expected": "true"
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

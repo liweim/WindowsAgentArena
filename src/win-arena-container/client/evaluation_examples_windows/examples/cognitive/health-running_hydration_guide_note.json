@@ -1,0 +1,96 @@
+{
+  "id": "health-running_hydration_guide_note",
+  "category": "health",
+  "difficulty": "medium",
+  "instruction": "Create a Sticky Note containing all three distance-based water-intake recommendations from the SELF article, using Microsoft Edge Immersive Reader to read the article. Keep one recommendation per line.",
+  "source": "https://www.self.com/gallery/best-hydration-packs",
+  "gt_steps": [
+    "Switch to the SELF hydration article in Microsoft Edge.",
+    "With the article active in Microsoft Edge, press `F9` to enter Immersive Reader.",
+    "Scroll to `Gear and Water Capacity`.",
+    "Switch to Sticky Notes.",
+    "Create a new note.",
+    "Enter the following text in the note, one recommendation per line:\n`Short distance (2 to 5 miles): 12 to 20 ounces via a handheld or belt`\n`Medium distance (5 to 10 miles): 20 to 50 ounces (0.5 to 1.5 liters) via a small pack or vest for medium-length runs, hot weather, or adventures with a dog`\n`Long distances (10+ miles): 50 to 100 ounces (1.5 to 3 liters) via a larger vest or day pack for longer runs in hot weather, or if there isn't water restock available`",
+    "Keep the completed note saved in Sticky Notes."
+  ],
+  "config": [
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "cmd",
+          "/c",
+          "start msedge https://www.self.com/gallery/best-hydration-packs"
+        ]
+      }
+    },
+    {
+      "type": "execute",
+      "parameters": {
+        "command": [
+          "powershell",
+          "-NoProfile",
+          "-ExecutionPolicy",
+          "Bypass",
+          "-Command",
+          "Start-Process 'shell:AppsFolder\\Microsoft.MicrosoftStickyNotes_8wekyb3d8bbwe!App'"
+        ]
+      }
+    }
+  ],
+  "related_apps": [
+    "msedge",
+    "sticky_notes"
+  ],
+  "evaluator": {
+    "func": [
+      "check_text_points",
+      "check_edge_immersive_reader_state"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "sticky_notes_content"
+      },
+      {
+        "type": "edge_immersive_reader_state",
+        "activate_edge": true
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "ignore_case": true,
+          "points": [
+            [
+              "Short distance (2 to 5 miles): 12 to 20 ounces via a handheld or belt"
+            ],
+            [
+              "Medium distance (5 to 10 miles): 20 to 50 ounces (0.5 to 1.5 liters) via a small pack or vest for medium-length runs, hot weather, or adventures with a dog"
+            ],
+            [
+              "Long distances (10+ miles): 50 to 100 ounces (1.5 to 3 liters)"
+            ],
+            [
+              "via a larger vest or day pack for longer runs in hot weather"
+            ],
+            [
+              "if there isn't water restock available",
+              "if there isn’t water restock available"
+            ]
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "reader_mode_open": true
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

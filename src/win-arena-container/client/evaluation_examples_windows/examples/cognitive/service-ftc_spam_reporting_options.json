@@ -1,0 +1,67 @@
+{
+  "id": "service-ftc_spam_reporting_options",
+  "category": "service",
+  "difficulty": "medium",
+  "instruction": "Use Microsoft Edge Immersive Reader to read the FTC spam-text reporting section. Save the action phrase from each of the three reporting bullets to `answer.txt` on the Desktop, one phrase per line and in webpage order.",
+  "source": "https://consumer.ftc.gov/articles/how-recognize-and-report-spam-text-messages",
+  "gt_steps": [
+    "Switch to the FTC spam text guidance in Microsoft Edge.",
+    "With the article active in Microsoft Edge, press `F9` to enter Immersive Reader.",
+    "Scroll to `How To Report Spam Text Messages`.",
+    "Open Notepad.",
+    "Enter the following text, one phrase per line:\n`forward it to 7726 (SPAM)`\n`Report it on the messaging app you use`\n`Report it to the FTC at ReportFraud.ftc.gov`",
+    "Save the file as `answer.txt` on the Desktop."
+  ],
+  "config": [
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "cmd",
+          "/c",
+          "start msedge https://consumer.ftc.gov/articles/how-recognize-and-report-spam-text-messages"
+        ]
+      }
+    }
+  ],
+  "related_apps": [
+    "msedge",
+    "notepad"
+  ],
+  "evaluator": {
+    "func": [
+      "exact_match",
+      "check_edge_immersive_reader_state"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "is_file_saved_desktop",
+        "filename": "answer.txt",
+        "textcontent": "forward it to 7726 (SPAM)\nReport it on the messaging app you use\nReport it to the FTC at ReportFraud.ftc.gov",
+        "exact": true
+      },
+      {
+        "type": "edge_immersive_reader_state",
+        "activate_edge": true
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "expected": "true"
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "reader_mode_open": true
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

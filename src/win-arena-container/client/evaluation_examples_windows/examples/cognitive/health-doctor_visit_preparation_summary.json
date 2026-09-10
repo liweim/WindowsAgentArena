@@ -1,0 +1,65 @@
+{
+  "id": "health-doctor_visit_preparation_summary",
+  "category": "health",
+  "difficulty": "medium",
+  "instruction": "Use Microsoft Edge Immersive Reader to read the AP News article about preparing for a doctor appointment. Save `answer.txt` on the Desktop with five preparation details in webpage wording: the top tip for the start of the visit, the family-history requirement, what to check on medicine bottles, the nonprescription items not to forget, and the recent records to verify were received. Put one item per line in that order.",
+  "source": "https://apnews.com/article/3fcde5b5c927734429818bd0ed1c6680",
+  "gt_steps": [
+    "With the AP News appointment-preparation article active in Microsoft Edge, press `F9` to enter Immersive Reader.",
+    "Open Notepad.",
+    "Enter the following text:\n`Bring a list of symptoms and questions\nfamily medical history is critical\nname and dose\nvitamins and supplements\nrecent lab tests, hospitalizations or visits to other health providers`",
+    "Save the file as `answer.txt` on the Desktop."
+  ],
+  "config": [
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "cmd",
+          "/c",
+          "start msedge https://apnews.com/article/3fcde5b5c927734429818bd0ed1c6680"
+        ]
+      }
+    }
+  ],
+  "related_apps": [
+    "msedge",
+    "notepad"
+  ],
+  "evaluator": {
+    "func": [
+      "exact_match",
+      "check_edge_immersive_reader_state"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "is_file_saved_desktop",
+        "filename": "answer.txt",
+        "textcontent": "Bring a list of symptoms and questions\nfamily medical history is critical\nname and dose\nvitamins and supplements\nrecent lab tests, hospitalizations or visits to other health providers",
+        "exact": true
+      },
+      {
+        "type": "edge_immersive_reader_state",
+        "activate_edge": true
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "expected": "true"
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "reader_mode_open": true
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

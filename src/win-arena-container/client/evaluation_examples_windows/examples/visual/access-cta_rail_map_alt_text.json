@@ -1,0 +1,88 @@
+{
+  "id": "access-cta_rail_map_alt_text",
+  "category": "access",
+  "difficulty": "hard",
+  "instruction": "Turn on Windows Narrator and use it while editing the provided accessibility-review DOCX. On page 2, use the CTA rail map to add missing alternative text that describes the O'Hare-to-Midway rail connection. The description must mention the origin airport, its CTA line, the downtown transfer station, the onward CTA line, and the destination airport. Wording, punctuation, and order may vary. Keep Narrator running and save the completed document as `answer.docx` on the Desktop in Word format.",
+  "source": "synthetic",
+  "gt_steps": [
+    "Press `Ctrl+Windows+Enter` to turn on Windows Narrator and keep Narrator running.",
+    "In LibreOffice Writer, select the CTA rail system map image on page 2.",
+    "Open the image's properties and enter the following description/alternative text:\n`Chicago CTA rail map: O'Hare is on the Blue Line; change at Clark/Lake to the Orange Line for Midway.`",
+    "Save the completed document as `answer.docx` on the Desktop in Word format."
+  ],
+  "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/access-cta_rail_map_alt_text.docx",
+            "path": "C:\\Users\\Docker\\Desktop\\ChicagoConferenceTravelGuide.docx"
+          }
+        ]
+      }
+    },
+    {
+      "type": "open",
+      "parameters": {
+        "path": "C:\\Users\\Docker\\Desktop\\ChicagoConferenceTravelGuide.docx"
+      }
+    }
+  ],
+  "related_apps": [
+    "libreoffice_writer",
+    "narrator"
+  ],
+  "evaluator": {
+    "func": [
+      "check_docx_image_alt_text",
+      "check_narrator_enabled"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "vm_file",
+        "path": "C:\\Users\\Docker\\Desktop\\answer.docx",
+        "dest": "answer.docx"
+      },
+      {
+        "type": "narrator_status"
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "points": [
+            [
+              "O'Hare",
+              "O’Hare"
+            ],
+            [
+              "Blue Line"
+            ],
+            [
+              "Clark/Lake",
+              "Clark Lake",
+              "Clark-Lake"
+            ],
+            [
+              "Orange Line"
+            ],
+            [
+              "Midway"
+            ]
+          ],
+          "ignore_case": true
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {}
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

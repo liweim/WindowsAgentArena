@@ -1,0 +1,112 @@
+{
+  "id": "communication-library_program_reply",
+  "category": "communication",
+  "difficulty": "medium",
+  "instruction": "Use the library program notice on the Desktop to choose the memory-support workshop that is on Thursday and starts after 1:00 PM. Draft a Thunderbird email to `programs@example.org` with subject `Workshop confirmation` confirming one place and including the selected event date, time, room, and confirmation code. Do not send it.",
+  "source": "synthetic",
+  "gt_steps": [
+    "Switch to the open `LibraryProgram.txt` Notepad window.",
+    "Switch to Thunderbird.",
+    "Create a new email draft.",
+    "Set To to `programs@example.org`.",
+    "Set Subject to `Workshop confirmation`.",
+    "Enter the following message body:\n`Please confirm one place for the memory-support workshop on Thursday, 24 September 2026 from 1:30 PM to 2:30 PM in Riverside Library, Meeting Room 2. Code: MEM-42.`",
+    "Save the message as a draft without sending it."
+  ],
+  "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/communication-library_program_reply.txt",
+            "path": "C:\\Users\\Docker\\Desktop\\LibraryProgram.txt"
+          }
+        ]
+      }
+    },
+    {
+      "type": "download",
+      "parameters": {
+        "files": [
+          {
+            "url": "https://huggingface.co/datasets/xlangai/ubuntu_osworld_file_cache/resolve/main/thunderbird/dd84e895-72fd-4023-a336-97689ded257c/thunderbird-profile.tar.gz",
+            "path": "C:\\Users\\Docker\\Downloads\\thunderbird-profile.tar.gz"
+          }
+        ]
+      }
+    },
+    {
+      "type": "prepare_thunderbird_profile",
+      "parameters": {}
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "notepad.exe",
+          "C:\\Users\\Docker\\Desktop\\LibraryProgram.txt"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "thunderbird.exe",
+          "-profile",
+          "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release"
+        ]
+      }
+    }
+  ],
+  "related_apps": [
+    "notepad",
+    "thunderbird"
+  ],
+  "evaluator": {
+    "func": "check_thunderbird_email_composition",
+    "result": {
+      "type": "vm_file",
+      "path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release\\Mail\\Local Folders\\Drafts",
+      "dest": "thunderbird-drafts.mbox"
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "to": "programs@example.org",
+        "subject": "Workshop confirmation",
+        "body_points": [
+          [
+            "confirm"
+          ],
+          [
+            "24 September 2026",
+            "September 24, 2026"
+          ],
+          [
+            "1:30 PM",
+            "1:30"
+          ],
+          [
+            "2:30 PM",
+            "2:30"
+          ],
+          [
+            "Riverside Library"
+          ],
+          [
+            "Meeting Room 2"
+          ],
+          [
+            "MEM-42",
+            "MEM 42"
+          ]
+        ]
+      }
+    }
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}
