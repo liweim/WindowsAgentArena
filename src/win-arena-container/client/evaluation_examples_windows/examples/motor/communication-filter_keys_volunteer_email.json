@@ -1,0 +1,161 @@
+{
+  "id": "communication-filter_keys_volunteer_email",
+  "category": "communication",
+  "difficulty": "medium",
+  "instruction": "Enable Windows Filter Keys and keep them enabled. Use the official 2026 Yosemite Volunteer Catalog saved on the Desktop to draft a Thunderbird email to `volunteers@example.org` with subject `Campground Cleanup details`. Include the project number and name, campground, check-in date, check-out date, project schedule date, and maximum number of volunteers for the September `Campground Cleanup` entry. Do not send it.",
+  "source": "https://www.nps.gov/yose/getinvolved/supportyourpark/upload/2026-YOSE-VIP-Catalog.pdf",
+  "gt_steps": [
+    "Enable Windows Filter Keys and leave them enabled.",
+    "Switch to the official Yosemite volunteer catalog open in Chrome.",
+    "Create a new email draft in Thunderbird.",
+    "Set To to `volunteers@example.org`.",
+    "Set Subject to `Campground Cleanup details`.",
+    "Enter the following message body:\n`Project 31 — Campground Cleanup. Campground: Yellow Pine. Check-in: September 11, 2026. Check-out: September 13, 2026. Project schedule: September 12, 2026. Maximum volunteers: 20.`",
+    "Save the message as a draft. Do not send it.",
+    "Leave Windows Filter Keys enabled."
+  ],
+  "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/communication-filter_keys_volunteer_email.pdf",
+            "path": "C:\\Users\\Docker\\Desktop\\YosemiteVolunteerCatalog2026.pdf"
+          }
+        ]
+      }
+    },
+    {
+      "type": "download",
+      "parameters": {
+        "files": [
+          {
+            "url": "https://huggingface.co/datasets/xlangai/ubuntu_osworld_file_cache/resolve/main/thunderbird/dd84e895-72fd-4023-a336-97689ded257c/thunderbird-profile.tar.gz",
+            "path": "C:\\Users\\Docker\\Downloads\\thunderbird-profile.tar.gz"
+          }
+        ]
+      }
+    },
+    {
+      "type": "prepare_thunderbird_profile",
+      "parameters": {}
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port=1337",
+          "--force-renderer-accessibility"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    },
+    {
+      "type": "chrome_open_tabs",
+      "parameters": {
+        "urls_to_open": [
+          "file:///C:/Users/Docker/Desktop/YosemiteVolunteerCatalog2026.pdf"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "thunderbird.exe",
+          "-profile",
+          "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release"
+        ]
+      }
+    }
+  ],
+  "related_apps": [
+    "settings",
+    "chrome",
+    "thunderbird"
+  ],
+  "evaluator": {
+    "func": [
+      "check_include_exclude",
+      "check_thunderbird_email_composition"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "vm_command_line",
+        "command": "powershell -NoProfile -Command \"$flags=[int](Get-ItemPropertyValue -Path 'HKCU:\\Control Panel\\Accessibility\\Keyboard Response' -Name 'Flags' -ErrorAction SilentlyContinue); if (($flags -band 1) -eq 1) { Write-Output 'FILTER_KEYS_ENABLED' } else { Write-Output 'FILTER_KEYS_DISABLED' }\"",
+        "shell": true
+      },
+      {
+        "type": "vm_file",
+        "path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release\\Mail\\Local Folders\\Drafts",
+        "dest": "thunderbird-drafts.mbox"
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "include": [
+            "FILTER_KEYS_ENABLED"
+          ],
+          "exclude": [
+            "FILTER_KEYS_DISABLED"
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "to": "volunteers@example.org",
+          "subject": "Campground Cleanup details",
+          "body_points": [
+            [
+              "Project 31",
+              "31"
+            ],
+            [
+              "Campground Cleanup"
+            ],
+            [
+              "Yellow Pine"
+            ],
+            [
+              "September 11, 2026",
+              "9/11/26",
+              "09/11/2026"
+            ],
+            [
+              "September 13, 2026",
+              "9/13/26",
+              "09/13/2026"
+            ],
+            [
+              "September 12, 2026",
+              "9/12/26",
+              "09/12/2026"
+            ],
+            [
+              "20",
+              "20 volunteers"
+            ]
+          ]
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

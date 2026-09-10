@@ -1,0 +1,56 @@
+{
+  "id": "health-nutrition_facts_label",
+  "category": "health",
+  "difficulty": "medium",
+  "instruction": "Use the original FDA Nutrition Facts label image on the Desktop and save `answer.txt` with the serving size, calories, sodium, and added sugars, one item per line in that order.",
+  "source": "https://www.fda.gov/files/nutrition-facts-label-download-image2.jpg",
+  "gt_steps": [
+    "Open Notepad.",
+    "Enter the following text:\n`Serving size: 2/3 cup (55g)\nCalories: 230\nSodium: 160mg\nAdded sugars: 10g`",
+    "Save the file as `answer.txt` on the Desktop."
+  ],
+  "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/health-nutrition_facts_label.jpg",
+            "path": "C:\\Users\\Docker\\Desktop\\NutritionFacts.jpg"
+          }
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "C:\\Windows\\System32\\mspaint.exe",
+          "C:\\Users\\Docker\\Desktop\\NutritionFacts.jpg"
+        ]
+      }
+    }
+  ],
+  "related_apps": [
+    "paint",
+    "notepad"
+  ],
+  "evaluator": {
+    "func": "exact_match",
+    "result": {
+      "type": "is_file_saved_desktop",
+      "filename": "answer.txt",
+      "textcontent": "Serving size: 2/3 cup (55g)\nCalories: 230\nSodium: 160mg\nAdded sugars: 10g",
+      "exact": true
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "expected": "true"
+      }
+    }
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

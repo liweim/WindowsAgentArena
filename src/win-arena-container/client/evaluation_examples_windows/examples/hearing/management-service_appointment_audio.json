@@ -1,0 +1,149 @@
+{
+  "id": "management-service_appointment_audio",
+  "category": "management",
+  "difficulty": "medium",
+  "instruction": "Turn on Windows Live captions and use them to read the service appointment recording on the Desktop. Create a 45-minute Thunderbird Calendar event titled `Home support assessment` at the stated date and time.",
+  "source": "synthetic",
+  "transcript": "Your home support assessment is booked for Tuesday, September 29, 2026 at 1:15 PM. Allow forty-five minutes for the appointment. The appointment title is Home support assessment.",
+  "gt_steps": [
+    "Turn on Windows Live captions.",
+    "Play `ServiceAppointmentAudio.mp3` in Chrome with Windows Live captions running.",
+    "Switch to Thunderbird Calendar.",
+    "Create an event on `29 September 2026` at `1:15 PM`.",
+    "Set the duration to `45 minutes`.",
+    "Set the title to `Home support assessment`.",
+    "Save the calendar event.",
+    "Leave Windows Live captions running."
+  ],
+  "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/management-service_appointment_audio.mp3",
+            "path": "C:\\Users\\Docker\\Desktop\\ServiceAppointmentAudio.mp3"
+          }
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port=1337",
+          "--force-renderer-accessibility"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    },
+    {
+      "type": "download",
+      "parameters": {
+        "files": [
+          {
+            "url": "https://huggingface.co/datasets/xlangai/ubuntu_osworld_file_cache/resolve/main/thunderbird/dd84e895-72fd-4023-a336-97689ded257c/thunderbird-profile.tar.gz",
+            "path": "C:\\Users\\Docker\\Downloads\\thunderbird-profile.tar.gz"
+          }
+        ]
+      }
+    },
+    {
+      "type": "prepare_thunderbird_profile",
+      "parameters": {}
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "thunderbird.exe",
+          "-profile",
+          "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release"
+        ]
+      }
+    },
+    {
+      "type": "sleep",
+      "parameters": {
+        "seconds": 1
+      }
+    },
+    {
+      "type": "chrome_open_tabs",
+      "parameters": {
+        "urls_to_open": [
+          "file:///C:/Users/Docker/Desktop/ServiceAppointmentAudio.mp3"
+        ]
+      }
+    },
+    {
+      "type": "activate_window",
+      "parameters": {
+        "window_name": "Google Chrome"
+      }
+    }
+  ],
+  "related_apps": [
+    "settings",
+    "chrome",
+    "thunderbird"
+  ],
+  "evaluator": {
+    "func": [
+      "check_include_exclude",
+      "check_thunderbird_calendar_event"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "vm_command_line",
+        "command": [
+          "powershell",
+          "-NoProfile",
+          "-Command",
+          "$found = Get-Process | Where-Object { $_.ProcessName -match 'LiveCaptions|LiveCaption' -or $_.MainWindowTitle -match 'Live captions|Live Caption' }; if ($found) { 'WINDOWS_LIVE_CAPTIONS_RUNNING' } else { 'WINDOWS_LIVE_CAPTIONS_NOT_RUNNING' }"
+        ]
+      },
+      {
+        "type": "thunderbird_calendar_events",
+        "profile_path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release"
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "include": [
+            "WINDOWS_LIVE_CAPTIONS_RUNNING"
+          ],
+          "exclude": [
+            "WINDOWS_LIVE_CAPTIONS_NOT_RUNNING"
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "date": "2026-09-29",
+          "hour": 13,
+          "minute": 15,
+          "duration_minutes": 45,
+          "title": "Home support assessment"
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

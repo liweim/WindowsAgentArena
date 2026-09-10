@@ -1,0 +1,106 @@
+{
+  "id": "communication-webinar_flyer_email",
+  "category": "communication",
+  "difficulty": "medium",
+  "instruction": "Use the webinar flyer image on the Desktop to draft a Thunderbird email to `researchteam@example.org` with subject `Archived webinar details`. Include the webinar date, time, and both featured speaker names. Save the draft and do not send it.",
+  "source": "https://www.niddk.nih.gov/-/media/Files/News/Meetings/NIDDK_AI-Workshop_SpeakerSeries_Flyer_2024_10_17_Series1.pdf",
+  "gt_steps": [
+    "Create a new email draft in Thunderbird.",
+    "Set To to `researchteam@example.org`.",
+    "Set Subject to `Archived webinar details`.",
+    "Enter the following message body:\n`Archived webinar: Thursday, October 17, 2024, 11:00 AM-1:00 PM EST. Featured speakers: Yao Qin, Ph.D. and Ashu Sabharwal, M.S., Ph.D.`",
+    "Save the message as a draft. Do not send it."
+  ],
+  "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/communication-webinar_flyer_email.pdf",
+            "path": "C:\\Users\\Docker\\Desktop\\WebinarFlyer.pdf"
+          }
+        ]
+      }
+    },
+    {
+      "type": "download",
+      "parameters": {
+        "files": [
+          {
+            "url": "https://huggingface.co/datasets/xlangai/ubuntu_osworld_file_cache/resolve/main/thunderbird/dd84e895-72fd-4023-a336-97689ded257c/thunderbird-profile.tar.gz",
+            "path": "C:\\Users\\Docker\\Downloads\\thunderbird-profile.tar.gz"
+          }
+        ]
+      }
+    },
+    {
+      "type": "prepare_thunderbird_profile",
+      "parameters": {}
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "msedge",
+          "file:///C:/Users/Docker/Desktop/WebinarFlyer.pdf"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "thunderbird.exe",
+          "-profile",
+          "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release"
+        ]
+      }
+    }
+  ],
+  "related_apps": [
+    "msedge",
+    "thunderbird"
+  ],
+  "evaluator": {
+    "func": "check_thunderbird_email_composition",
+    "result": {
+      "type": "vm_file",
+      "path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release\\Mail\\Local Folders\\Drafts",
+      "dest": "thunderbird-drafts.mbox"
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "to": "researchteam@example.org",
+        "subject": "Archived webinar details",
+        "body_points": [
+          [
+            "October 17, 2024",
+            "17 October 2024"
+          ],
+          [
+            "11:00 AM",
+            "11:00"
+          ],
+          [
+            "1:00 PM",
+            "1:00"
+          ],
+          [
+            "EST"
+          ],
+          [
+            "Yao Qin"
+          ],
+          [
+            "Ashu Sabharwal"
+          ]
+        ]
+      }
+    }
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

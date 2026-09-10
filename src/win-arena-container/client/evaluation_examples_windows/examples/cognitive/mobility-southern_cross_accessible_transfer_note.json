@@ -1,0 +1,74 @@
+{
+  "id": "mobility-southern_cross_accessible_transfer_note",
+  "category": "mobility",
+  "difficulty": "hard",
+  "instruction": "Use the Southern Cross Station precinct map saved locally on the Desktop to plan a step-free transfer from Platforms 3A-4A to the Coach Terminal via Bourke Street Bridge. Create a Sticky Note with the arrival platform group, transfer level, the lift used for step-free vertical movement, destination, and the street shown along the Coach Terminal side of the station.",
+  "source": "https://edge.sitecorecloud.io/stategovernc45d-cftw-production-c9ca/media/Project/TransportWebsite/TransportWebsite/News-and-resources/Maps/station-precinct/Southern-Cross-Station-precinct-map.pdf",
+  "gt_steps": [
+    "Open Sticky Notes.",
+    "Create a new note.",
+    "Enter the following text:\n`Arrival: Platforms 3A-4A\nTransfer level: Bourke Street Bridge\nAccessibility: Lift\nDestination: Coach Terminal\nCoach Terminal side: Spencer Street`",
+    "Keep the completed note saved in Sticky Notes."
+  ],
+  "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/mobility-southern_cross_accessible_transfer_note.pdf",
+            "path": "C:\\Users\\Docker\\Desktop\\SouthernCrossStationMap.pdf"
+          }
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "msedge",
+          "file:///C:/Users/Docker/Desktop/SouthernCrossStationMap.pdf"
+        ]
+      }
+    }
+  ],
+  "related_apps": [
+    "msedge",
+    "sticky_notes"
+  ],
+  "evaluator": {
+    "func": "check_text_points",
+    "result": {
+      "type": "sticky_notes_content"
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "ignore_case": true,
+        "points": [
+          [
+            "3A-4A",
+            "3A - 4A"
+          ],
+          [
+            "Bourke Street Bridge"
+          ],
+          [
+            "Lift",
+            "Accessible lift"
+          ],
+          [
+            "Coach Terminal"
+          ],
+          [
+            "Spencer Street",
+            "Spencer St"
+          ]
+        ]
+      }
+    }
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "medium"
+}

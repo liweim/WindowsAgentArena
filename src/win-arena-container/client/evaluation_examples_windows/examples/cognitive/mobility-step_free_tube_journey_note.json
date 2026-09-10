@@ -1,0 +1,56 @@
+{
+  "id": "mobility-step_free_tube_journey_note",
+  "category": "mobility",
+  "difficulty": "hard",
+  "instruction": "Use the TfL Step-free Tube guide saved locally on the Desktop to turn its Woodside Park-to-Green Park example into `answer.txt`. Record the southbound starting entrance, first line and direction, interchange station and platform, second line and direction, and final exit method, one item per line in that order.",
+  "source": "https://content.tfl.gov.uk/step-free-tube-guide-map.pdf",
+  "gt_steps": [
+    "Open Notepad.",
+    "Enter the following text:\n`Woodside Park entrance\nNorthern line southbound (Morden via Bank branch)\nEuston - platform 6\nVictoria line southbound\nGreen Park - exit via lifts`",
+    "Save the file as `answer.txt` on the Desktop."
+  ],
+  "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/mobility-step_free_tube_journey_note.pdf",
+            "path": "C:\\Users\\Docker\\Desktop\\TfLStepFreeTubeGuide.pdf"
+          }
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "msedge",
+          "file:///C:/Users/Docker/Desktop/TfLStepFreeTubeGuide.pdf"
+        ]
+      }
+    }
+  ],
+  "related_apps": [
+    "msedge",
+    "notepad"
+  ],
+  "evaluator": {
+    "func": "exact_match",
+    "result": {
+      "type": "is_file_saved_desktop",
+      "filename": "answer.txt",
+      "textcontent": "Woodside Park entrance\nNorthern line southbound (Morden via Bank branch)\nEuston - platform 6\nVictoria line southbound\nGreen Park - exit via lifts",
+      "exact": true
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "expected": "true"
+      }
+    }
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "medium"
+}

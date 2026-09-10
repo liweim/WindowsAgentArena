@@ -1,0 +1,77 @@
+{
+  "id": "service-real_id_infographic",
+  "category": "service",
+  "difficulty": "medium",
+  "instruction": "Use the original California DMV REAL ID decision infographic PDF on the Desktop. Create a Sticky Note recording the travel/federal-facility question, what the chart says when a traveler already has a valid passport, military ID, or other federally approved document, what it says when the traveler does not have one, and the in-person action shown for getting a REAL ID.",
+  "source": "https://qr.dmv.ca.gov/portal/file/real-id-infographic-english/",
+  "gt_steps": [
+    "Open Sticky Notes and create a new note.",
+    "Enter the following text:\n`Question: Do you travel by airplane or visit federal facilities?\nFederally approved document: YES - You DO NOT need a REAL ID\nFederally approved document: NO - You WILL NEED a REAL ID\nAction: Visit a DMV office with the required documents`",
+    "Keep the completed note saved."
+  ],
+  "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/service-real_id_infographic.pdf",
+            "path": "C:\\Users\\Docker\\Desktop\\RealIDInfographic.pdf"
+          }
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "msedge",
+          "file:///C:/Users/Docker/Desktop/RealIDInfographic.pdf"
+        ]
+      }
+    }
+  ],
+  "related_apps": [
+    "msedge",
+    "sticky_notes"
+  ],
+  "evaluator": {
+    "func": "check_text_points",
+    "result": {
+      "type": "sticky_notes_content"
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "ignore_case": true,
+        "points": [
+          [
+            "travel",
+            "airplane",
+            "federal facilities"
+          ],
+          [
+            "federally approved",
+            "yes",
+            "do not need",
+            "real id"
+          ],
+          [
+            "federally approved",
+            "no",
+            "will need",
+            "real id"
+          ],
+          [
+            "visit",
+            "DMV office",
+            "required documents"
+          ]
+        ]
+      }
+    }
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

@@ -1,0 +1,80 @@
+{
+  "id": "management-water_payment_spreadsheet",
+  "category": "management",
+  "difficulty": "medium",
+  "instruction": "Compare the payment activity on the Desktop with the bill tracker. Update the one bill that is still marked `Unpaid` in the tracker but has a `Completed` payment in the activity list. Record its payment date, leave the other bill rows unchanged, and save the spreadsheet as `answer.ods` on the Desktop.",
+  "source": "synthetic",
+  "gt_steps": [
+    "Switch to the open `WaterPayment.txt` Notepad window.",
+    "Switch to the open `Bills.ods` spreadsheet in LibreOffice Calc.",
+    "Set the Water row Status cell to `Paid`.",
+    "Set the Water row Payment Date cell to `20/10/2026`.",
+    "Save the spreadsheet as `answer.ods` on the Desktop."
+  ],
+  "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/management-water_payment_spreadsheet.ods",
+            "path": "C:\\Users\\Docker\\Desktop\\Bills.ods"
+          },
+          {
+            "local_path": "assets/management-water_payment_confirmation.txt",
+            "path": "C:\\Users\\Docker\\Desktop\\WaterPayment.txt"
+          }
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "libreoffice",
+          "C:\\Users\\Docker\\Desktop\\Bills.ods"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "notepad.exe",
+          "C:\\Users\\Docker\\Desktop\\WaterPayment.txt"
+        ]
+      }
+    }
+  ],
+  "related_apps": [
+    "notepad",
+    "libreoffice_calc"
+  ],
+  "evaluator": {
+    "func": "check_ods_cell_values",
+    "result": {
+      "type": "vm_file",
+      "path": "C:\\Users\\Docker\\Desktop\\answer.ods",
+      "dest": "answer.ods"
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "sheet": "Bills",
+        "cells": {
+          "D2": "Unpaid",
+          "E2": "",
+          "D3": "Paid",
+          "E3": "20/10/2026",
+          "D4": "Paid",
+          "E4": "10/10/2026",
+          "D5": "Unpaid",
+          "E5": ""
+        }
+      }
+    }
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

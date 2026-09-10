@@ -1,0 +1,56 @@
+{
+  "id": "service-medicare_card_sample",
+  "category": "service",
+  "difficulty": "medium",
+  "instruction": "Use the original sample Medicare card image on the Desktop and save `answer.txt` with the sample name, Medicare Number, Part A coverage type and start date, and Part B coverage type and start date, one item per line in that order.",
+  "source": "https://www.medicare.gov/sites/default/files/Medicare_card_new.jpg",
+  "gt_steps": [
+    "Open Notepad.",
+    "Enter the following text:\n`Name: JOHN L SMITH\nMedicare Number: 1EG4-TE5-MK72\nPart A: HOSPITAL - 03-01-2016\nPart B: MEDICAL - 03-01-2016`",
+    "Save the file as `answer.txt` on the Desktop."
+  ],
+  "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/service-medicare_card_sample.jpg",
+            "path": "C:\\Users\\Docker\\Desktop\\MedicareCard.jpg"
+          }
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "C:\\Windows\\System32\\mspaint.exe",
+          "C:\\Users\\Docker\\Desktop\\MedicareCard.jpg"
+        ]
+      }
+    }
+  ],
+  "related_apps": [
+    "paint",
+    "notepad"
+  ],
+  "evaluator": {
+    "func": "exact_match",
+    "result": {
+      "type": "is_file_saved_desktop",
+      "filename": "answer.txt",
+      "textcontent": "Name: JOHN L SMITH\nMedicare Number: 1EG4-TE5-MK72\nPart A: HOSPITAL - 03-01-2016\nPart B: MEDICAL - 03-01-2016",
+      "exact": true
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "expected": "true"
+      }
+    }
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

@@ -1,0 +1,145 @@
+{
+  "id": "communication-osk_referral_email",
+  "category": "communication",
+  "difficulty": "medium",
+  "instruction": "Open the Windows On-Screen Keyboard and keep it open. Use the National Library of Medicine patient referral form saved on the Desktop to draft a Thunderbird email to `accessdesk@example.org` with subject `Northwestern referral details`. Include the Northwestern University clinic manager, clinic name, street address, room number, and phone number shown on the form. Do not send it.",
+  "source": "https://www.nlm.nih.gov/exhibition/forallthepeople/img/1527.pdf",
+  "gt_steps": [
+    "Open the Windows On-Screen Keyboard and leave it open.",
+    "Switch to the National Library of Medicine referral form open in Chrome.",
+    "Create a new email draft in Thunderbird.",
+    "Set To to `accessdesk@example.org`.",
+    "Set Subject to `Northwestern referral details`.",
+    "Enter the following message body:\n`Northwestern University — Clinic Manager: Mrs. Mary Koga. Clinic: Montgomery Ward Clinics. Address: 747 Fairbanks Court (near Chicago Ave), Room #351-A. Phone: SUperior 7-4500 Ext. 217.`",
+    "Save the message as a draft. Do not send it.",
+    "Leave the Windows On-Screen Keyboard open."
+  ],
+  "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/communication-osk_referral_email.pdf",
+            "path": "C:\\Users\\Docker\\Desktop\\PatientReferralForm.pdf"
+          }
+        ]
+      }
+    },
+    {
+      "type": "download",
+      "parameters": {
+        "files": [
+          {
+            "url": "https://huggingface.co/datasets/xlangai/ubuntu_osworld_file_cache/resolve/main/thunderbird/dd84e895-72fd-4023-a336-97689ded257c/thunderbird-profile.tar.gz",
+            "path": "C:\\Users\\Docker\\Downloads\\thunderbird-profile.tar.gz"
+          }
+        ]
+      }
+    },
+    {
+      "type": "prepare_thunderbird_profile",
+      "parameters": {}
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port=1337",
+          "--force-renderer-accessibility",
+          "file:///C:/Users/Docker/Desktop/PatientReferralForm.pdf"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "thunderbird.exe",
+          "-profile",
+          "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release"
+        ]
+      }
+    }
+  ],
+  "related_apps": [
+    "on_screen_keyboard",
+    "chrome",
+    "thunderbird"
+  ],
+  "evaluator": {
+    "func": [
+      "check_include_exclude",
+      "check_thunderbird_email_composition"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "vm_command_line",
+        "command": "powershell -Command \"if (Get-Process osk -ErrorAction SilentlyContinue) { Write-Output 'OSK_OPEN' } else { Write-Output 'OSK_CLOSED' }\"",
+        "shell": true
+      },
+      {
+        "type": "vm_file",
+        "path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release\\Mail\\Local Folders\\Drafts",
+        "dest": "thunderbird-drafts.mbox"
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "include": [
+            "OSK_OPEN"
+          ],
+          "exclude": [
+            "OSK_CLOSED"
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "to": "accessdesk@example.org",
+          "subject": "Northwestern referral details",
+          "body_points": [
+            [
+              "Mrs. Mary Koga",
+              "Mary Koga"
+            ],
+            [
+              "Montgomery Ward Clinics"
+            ],
+            [
+              "747 Fairbanks Court"
+            ],
+            [
+              "351-A",
+              "351 A"
+            ],
+            [
+              "SUperior 7-4500 Ext. 217",
+              "Superior 7-4500 Ext 217",
+              "7-4500",
+              "217"
+            ]
+          ]
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

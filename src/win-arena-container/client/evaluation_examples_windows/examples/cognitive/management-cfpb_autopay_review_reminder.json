@@ -1,0 +1,108 @@
+{
+  "id": "management-cfpb_autopay_review_reminder",
+  "category": "management",
+  "difficulty": "medium",
+  "instruction": "Create a 30-minute Thunderbird Calendar reminder on October 2, 2026 at 9:00 AM titled `Review automatic payments`. Use Microsoft Edge Immersive Reader to read the CFPB guidance and include its three main step headings in the event description.",
+  "source": "https://www.consumerfinance.gov/ask-cfpb/how-do-i-stop-automatic-payments-from-my-bank-account-en-2023/",
+  "gt_steps": [
+    "Switch to the CFPB automatic payments guidance in Microsoft Edge.",
+    "With the article active in Microsoft Edge, press `F9` to enter Immersive Reader.",
+    "Scroll to `How to stop automatic debits from your account`.",
+    "Switch to Thunderbird Calendar.",
+    "Create a calendar event on `October 2, 2026` at `9:00 AM`.",
+    "Set the duration to `30 minutes`.",
+    "Set the title to `Review automatic payments`.",
+    "Enter the following event description, one heading per line:\n`Call and write the company`\n`Call and write your bank or credit union`\n`Monitor your accounts`",
+    "Save the calendar event."
+  ],
+  "config": [
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "cmd",
+          "/c",
+          "start msedge https://www.consumerfinance.gov/ask-cfpb/how-do-i-stop-automatic-payments-from-my-bank-account-en-2023/"
+        ]
+      }
+    },
+    {
+      "type": "download",
+      "parameters": {
+        "files": [
+          {
+            "url": "https://huggingface.co/datasets/xlangai/ubuntu_osworld_file_cache/resolve/main/thunderbird/dd84e895-72fd-4023-a336-97689ded257c/thunderbird-profile.tar.gz",
+            "path": "C:\\Users\\Docker\\Downloads\\thunderbird-profile.tar.gz"
+          }
+        ]
+      }
+    },
+    {
+      "type": "prepare_thunderbird_profile",
+      "parameters": {}
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "thunderbird.exe",
+          "-profile",
+          "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release"
+        ]
+      }
+    }
+  ],
+  "related_apps": [
+    "msedge",
+    "thunderbird"
+  ],
+  "evaluator": {
+    "func": [
+      "check_thunderbird_calendar_event",
+      "check_edge_immersive_reader_state"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "thunderbird_calendar_events",
+        "profile_path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release"
+      },
+      {
+        "type": "edge_immersive_reader_state",
+        "activate_edge": true
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "date": "2026-10-02",
+          "hour": 9,
+          "minute": 0,
+          "duration_minutes": 30,
+          "title": "Review automatic payments",
+          "body_points": [
+            [
+              "Call and write the company"
+            ],
+            [
+              "Call and write your bank or credit union"
+            ],
+            [
+              "Monitor your accounts"
+            ]
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "reader_mode_open": true
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

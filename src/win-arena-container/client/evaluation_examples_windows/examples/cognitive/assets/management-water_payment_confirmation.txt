@@ -1,0 +1,10 @@
+UTILITY PAYMENT ACTIVITY
+
+Match these entries against the bill tracker. Only a Completed payment should change an Unpaid tracker row to Paid.
+
+Electricity — $120.50 — Failed — 15/10/2026
+Water — $45.20 — Completed — 20/10/2026
+Internet — $79.99 — Completed — 10/10/2026
+Gas — $61.30 — Scheduled — 22/10/2026
+
+Scheduled and Failed entries are not completed payments.

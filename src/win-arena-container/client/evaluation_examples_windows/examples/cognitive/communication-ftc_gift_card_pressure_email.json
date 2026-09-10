@@ -1,0 +1,106 @@
+{
+  "id": "communication-ftc_gift_card_pressure_email",
+  "category": "communication",
+  "difficulty": "medium",
+  "instruction": "Draft a Thunderbird email to `relative@example.org` with subject `Gift card pressure tactics` using Microsoft Edge Immersive Reader to read the FTC guidance. Include the three scam-pressure phrases exactly as written on the page and save the draft without sending it.",
+  "source": "https://consumer.ftc.gov/articles/avoiding-and-reporting-gift-card-scams",
+  "gt_steps": [
+    "Switch to the FTC gift card scam guidance in Microsoft Edge.",
+    "With the article active in Microsoft Edge, press `F9` to enter Immersive Reader.",
+    "Scroll to `How Gift Card Scams Work`.",
+    "Switch to Thunderbird.",
+    "Create a new email draft.",
+    "Set the recipient to `relative@example.org`.",
+    "Set the subject to `Gift card pressure tactics`.",
+    "Enter the following message body:\n`pay them right away or something terrible will happen`\n`buy cards at several stores`\n`gift card number and PIN`",
+    "Save the email as a draft without sending it."
+  ],
+  "config": [
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "cmd",
+          "/c",
+          "start msedge https://consumer.ftc.gov/articles/avoiding-and-reporting-gift-card-scams"
+        ]
+      }
+    },
+    {
+      "type": "download",
+      "parameters": {
+        "files": [
+          {
+            "url": "https://huggingface.co/datasets/xlangai/ubuntu_osworld_file_cache/resolve/main/thunderbird/dd84e895-72fd-4023-a336-97689ded257c/thunderbird-profile.tar.gz",
+            "path": "C:\\Users\\Docker\\Downloads\\thunderbird-profile.tar.gz"
+          }
+        ]
+      }
+    },
+    {
+      "type": "prepare_thunderbird_profile",
+      "parameters": {}
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "thunderbird.exe",
+          "-profile",
+          "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release"
+        ]
+      }
+    }
+  ],
+  "related_apps": [
+    "msedge",
+    "thunderbird"
+  ],
+  "evaluator": {
+    "func": [
+      "check_thunderbird_email_composition",
+      "check_edge_immersive_reader_state"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "vm_file",
+        "path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release\\Mail\\Local Folders\\Drafts",
+        "dest": "thunderbird-drafts.mbox"
+      },
+      {
+        "type": "edge_immersive_reader_state",
+        "activate_edge": true
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "to": "relative@example.org",
+          "subject": "Gift card pressure tactics",
+          "body_points": [
+            [
+              "pay them right away or something terrible will happen"
+            ],
+            [
+              "buy cards at several stores"
+            ],
+            [
+              "gift card number and PIN"
+            ]
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "reader_mode_open": true
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

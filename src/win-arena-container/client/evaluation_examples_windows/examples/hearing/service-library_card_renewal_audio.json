@@ -1,0 +1,120 @@
+{
+  "id": "service-library_card_renewal_audio",
+  "category": "service",
+  "difficulty": "medium",
+  "instruction": "Turn on Windows Live captions and use them to read the library renewal recording on the Desktop. Save the renewal deadline, service desk, two documents to bring, and renewal code to `answer.txt`, one item per line.",
+  "source": "synthetic",
+  "transcript": "Library service notice. Renew your library card by September 30, 2026 at the Membership Desk. Bring photo ID and proof of address. Renewal code LR-904.",
+  "gt_steps": [
+    "Turn on Windows Live captions.",
+    "Play `LibraryRenewalAudio.mp3` in Chrome with Windows Live captions running.",
+    "Open Notepad.",
+    "Enter `30 September 2026\\nMembership Desk\\nPhoto ID\\nProof of address\\nLR-904`, one item per line.",
+    "Save the file as `answer.txt` on the Desktop.",
+    "Leave Windows Live captions running."
+  ],
+  "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/service-library_card_renewal_audio.mp3",
+            "path": "C:\\Users\\Docker\\Desktop\\LibraryRenewalAudio.mp3"
+          }
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port=1337",
+          "--force-renderer-accessibility"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    },
+    {
+      "type": "sleep",
+      "parameters": {
+        "seconds": 1
+      }
+    },
+    {
+      "type": "chrome_open_tabs",
+      "parameters": {
+        "urls_to_open": [
+          "file:///C:/Users/Docker/Desktop/LibraryRenewalAudio.mp3"
+        ]
+      }
+    },
+    {
+      "type": "activate_window",
+      "parameters": {
+        "window_name": "Google Chrome"
+      }
+    }
+  ],
+  "related_apps": [
+    "settings",
+    "chrome",
+    "notepad"
+  ],
+  "evaluator": {
+    "func": [
+      "check_include_exclude",
+      "exact_match"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "vm_command_line",
+        "command": [
+          "powershell",
+          "-NoProfile",
+          "-Command",
+          "$found = Get-Process | Where-Object { $_.ProcessName -match 'LiveCaptions|LiveCaption' -or $_.MainWindowTitle -match 'Live captions|Live Caption' }; if ($found) { 'WINDOWS_LIVE_CAPTIONS_RUNNING' } else { 'WINDOWS_LIVE_CAPTIONS_NOT_RUNNING' }"
+        ]
+      },
+      {
+        "type": "is_file_saved_desktop",
+        "filename": "answer.txt",
+        "textcontent": "30 September 2026\nMembership Desk\nPhoto ID\nProof of address\nLR-904",
+        "exact": true
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "include": [
+            "WINDOWS_LIVE_CAPTIONS_RUNNING"
+          ],
+          "exclude": [
+            "WINDOWS_LIVE_CAPTIONS_NOT_RUNNING"
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "expected": "true"
+        }
+      }
+    ]
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}

@@ -1,0 +1,95 @@
+{
+  "id": "health-medication_change_calendar",
+  "category": "health",
+  "difficulty": "medium",
+  "instruction": "Use the medication plan on the Desktop to find the first medication change that occurs after the 4:00 PM follow-up appointment on September 25, 2026. Create a 30-minute Thunderbird Calendar event titled `New dose start` at that change time and include the new-dose instruction and the old-dose action in the event description.",
+  "source": "synthetic",
+  "gt_steps": [
+    "Switch to the open `MedicationChange.txt` Notepad window.",
+    "Switch to Thunderbird Calendar.",
+    "Create a calendar event on `25 September 2026` at `7:00 PM`.",
+    "Set the event duration to `30 minutes`.",
+    "Set the event title to `New dose start`.",
+    "Enter the following event description:\n`Take 20 mg with dinner\nStop the old 10 mg dose when the new dose starts`",
+    "Save the calendar event."
+  ],
+  "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/health-medication_change_calendar.txt",
+            "path": "C:\\Users\\Docker\\Desktop\\MedicationChange.txt"
+          }
+        ]
+      }
+    },
+    {
+      "type": "download",
+      "parameters": {
+        "files": [
+          {
+            "url": "https://huggingface.co/datasets/xlangai/ubuntu_osworld_file_cache/resolve/main/thunderbird/dd84e895-72fd-4023-a336-97689ded257c/thunderbird-profile.tar.gz",
+            "path": "C:\\Users\\Docker\\Downloads\\thunderbird-profile.tar.gz"
+          }
+        ]
+      }
+    },
+    {
+      "type": "prepare_thunderbird_profile",
+      "parameters": {}
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "notepad.exe",
+          "C:\\Users\\Docker\\Desktop\\MedicationChange.txt"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "thunderbird.exe",
+          "-profile",
+          "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release"
+        ]
+      }
+    }
+  ],
+  "related_apps": [
+    "notepad",
+    "thunderbird"
+  ],
+  "evaluator": {
+    "func": "check_thunderbird_calendar_event",
+    "result": {
+      "type": "thunderbird_calendar_events",
+      "profile_path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release"
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "date": "2026-09-25",
+        "hour": 19,
+        "minute": 0,
+        "duration_minutes": 30,
+        "title": "New dose start",
+        "body_points": [
+          [
+            "Take 20 mg with dinner"
+          ],
+          [
+            "Stop the old 10 mg dose when the new dose starts"
+          ]
+        ]
+      }
+    }
+  },
+  "proxy": false,
+  "fixed_ip": false,
+  "possibility_of_env_change": "low"
+}
