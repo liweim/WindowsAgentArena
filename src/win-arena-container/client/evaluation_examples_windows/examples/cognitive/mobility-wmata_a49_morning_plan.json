@@ -18,12 +18,22 @@
   ],
   "config": [
     {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/mobility-wmata_a49_morning_plan.pdf",
+            "path": "C:\\Users\\Docker\\Desktop\\WMATA_A49_Timetable.pdf"
+          }
+        ]
+      }
+    },
+    {
       "type": "launch",
       "parameters": {
         "command": [
-          "cmd",
-          "/c",
-          "start msedge https://www.wmata.com/content/dam/wmata-com/Timetables/A49_timetable.pdf"
+          "msedge",
+          "file:///C:/Users/Docker/Desktop/WMATA_A49_Timetable.pdf"
         ]
       }
     }
@@ -47,32 +57,63 @@
         "points": [
           {
             "all_of": [
-              ["Glen Carlyn", "Vista Dr", "Vista Drive"],
-              ["7:20 am", "7:20am", "07:20"]
+              [
+                "Glen Carlyn",
+                "Vista Dr",
+                "Vista Drive"
+              ],
+              [
+                "7:20 am",
+                "7:20am",
+                "07:20"
+              ]
             ]
           },
           {
             "all_of": [
-              ["George Mason", "Columbia Pike"],
-              ["7:35 am", "7:35am", "07:35"]
+              [
+                "George Mason",
+                "Columbia Pike"
+              ],
+              [
+                "7:35 am",
+                "7:35am",
+                "07:35"
+              ]
             ]
           },
           {
             "all_of": [
-              ["18 St", "18th St", "C St NW"],
-              ["8:07 am", "8:07am", "08:07"]
+              [
+                "18 St",
+                "18th St",
+                "C St NW"
+              ],
+              [
+                "8:07 am",
+                "8:07am",
+                "08:07"
+              ]
             ]
           },
           {
             "all_of": [
-              ["Metro Center", "13 St", "G St NW"],
-              ["8:29 am", "8:29am", "08:29"]
+              [
+                "Metro Center",
+                "13 St",
+                "G St NW"
+              ],
+              [
+                "8:29 am",
+                "8:29am",
+                "08:29"
+              ]
             ]
           }
         ]
       }
     }
   },
-  "proxy": true,
+  "proxy": false,
   "possibility_of_env_change": "medium"
 }

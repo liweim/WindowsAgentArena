@@ -18,12 +18,22 @@
   ],
   "config": [
     {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/mobility-babson_bow_shuttle_plan.pdf",
+            "path": "C:\\Users\\Docker\\Desktop\\Babson_BOW_Shuttle_Schedule.pdf"
+          }
+        ]
+      }
+    },
+    {
       "type": "launch",
       "parameters": {
         "command": [
-          "cmd",
-          "/c",
-          "start msedge https://www.babson.edu/media/babson/assets/isss/AY-2025-2026-BOW-Shuttle-Schedule.pdf"
+          "msedge",
+          "file:///C:/Users/Docker/Desktop/Babson_BOW_Shuttle_Schedule.pdf"
         ]
       }
     }
@@ -47,32 +57,60 @@
         "points": [
           {
             "all_of": [
-              ["Olin", "East Hall"],
-              ["8:52 am", "8:52am", "08:52"]
+              [
+                "Olin",
+                "East Hall"
+              ],
+              [
+                "8:52 am",
+                "8:52am",
+                "08:52"
+              ]
             ]
           },
           {
             "all_of": [
-              ["Babson", "Hollister"],
-              ["8:55 am", "8:55am", "08:55"]
+              [
+                "Babson",
+                "Hollister"
+              ],
+              [
+                "8:55 am",
+                "8:55am",
+                "08:55"
+              ]
             ]
           },
           {
             "all_of": [
-              ["Founders", "Founders Parking Lot Gates"],
-              ["9:05 am", "9:05am", "09:05"]
+              [
+                "Founders",
+                "Founders Parking Lot Gates"
+              ],
+              [
+                "9:05 am",
+                "9:05am",
+                "09:05"
+              ]
             ]
           },
           {
             "all_of": [
-              ["Wellesley", "Campus Center"],
-              ["9:07 am", "9:07am", "09:07"]
+              [
+                "Wellesley",
+                "Campus Center"
+              ],
+              [
+                "9:07 am",
+                "9:07am",
+                "09:07"
+              ]
             ]
           }
         ]
       }
     }
   },
-  "proxy": true,
+  "proxy": false,
   "possibility_of_env_change": "medium"
 }

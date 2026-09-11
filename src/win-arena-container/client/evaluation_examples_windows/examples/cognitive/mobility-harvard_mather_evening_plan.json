@@ -17,12 +17,22 @@
   ],
   "config": [
     {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/mobility-harvard_mather_evening_plan.pdf",
+            "path": "C:\\Users\\Docker\\Desktop\\Harvard_Shuttle_Routes.pdf"
+          }
+        ]
+      }
+    },
+    {
       "type": "launch",
       "parameters": {
         "command": [
-          "cmd",
-          "/c",
-          "start msedge https://prod-transportation.drupalsites.harvard.edu/sites/g/files/omnuum12016/files/2025-08/All%20Shuttle%20Routes.pdf"
+          "msedge",
+          "file:///C:/Users/Docker/Desktop/Harvard_Shuttle_Routes.pdf"
         ]
       }
     }
@@ -43,32 +53,59 @@
         "points": [
           {
             "all_of": [
-              ["Mather House", "Mather"],
-              ["9:20 pm", "9:20pm", "21:20"]
+              [
+                "Mather House",
+                "Mather"
+              ],
+              [
+                "9:20 pm",
+                "9:20pm",
+                "21:20"
+              ]
             ]
           },
           {
             "all_of": [
-              ["Quad"],
-              ["9:40 pm", "9:40pm", "21:40"]
+              [
+                "Quad"
+              ],
+              [
+                "9:40 pm",
+                "9:40pm",
+                "21:40"
+              ]
             ]
           },
           {
             "all_of": [
-              ["Law School", "Law"],
-              ["9:45 pm", "9:45pm", "21:45"]
+              [
+                "Law School",
+                "Law"
+              ],
+              [
+                "9:45 pm",
+                "9:45pm",
+                "21:45"
+              ]
             ]
           },
           {
             "all_of": [
-              ["Lamont Library", "Lamont"],
-              ["9:53 pm", "9:53pm", "21:53"]
+              [
+                "Lamont Library",
+                "Lamont"
+              ],
+              [
+                "9:53 pm",
+                "9:53pm",
+                "21:53"
+              ]
             ]
           }
         ]
       }
     }
   },
-  "proxy": true,
+  "proxy": false,
   "possibility_of_env_change": "medium"
 }
