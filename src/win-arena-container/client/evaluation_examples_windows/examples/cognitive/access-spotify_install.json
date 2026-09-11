@@ -1,5 +1,7 @@
 {
   "id": "access-spotify_install",
+  "user_group": "cognitive",
+  "subgroup_ids": ["C-S3"],
   "category": "access",
   "need_ids": [
     "C4"

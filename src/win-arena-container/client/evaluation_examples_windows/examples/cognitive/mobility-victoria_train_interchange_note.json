@@ -1,5 +1,7 @@
 {
   "id": "mobility-victoria_train_interchange_note",
+  "user_group": "cognitive",
+  "subgroup_ids": ["C-S3"],
   "category": "mobility",
   "need_ids": [
     "C4",

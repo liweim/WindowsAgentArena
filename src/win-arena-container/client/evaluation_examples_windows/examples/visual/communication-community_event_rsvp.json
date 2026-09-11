@@ -1,5 +1,7 @@
 {
   "id": "communication-community_event_rsvp",
+  "user_group": "visual",
+  "subgroup_ids": ["V-S1", "V-S2"],
   "category": "communication",
   "need_ids": [
     "V1",

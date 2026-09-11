@@ -1,5 +1,7 @@
 {
   "id": "communication-mouse_keys_equipment_update_email",
+  "user_group": "motor",
+  "subgroup_ids": ["M-S2"],
   "category": "communication",
   "need_ids": [
     "M4"

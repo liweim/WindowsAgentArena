@@ -1,5 +1,9 @@
 {
   "id": "management-home_delivery_window_audio",
+  "user_group": "hearing",
+  "subgroup_ids": [
+    "H-S1"
+  ],
   "category": "management",
   "need_ids": [
     "H1"

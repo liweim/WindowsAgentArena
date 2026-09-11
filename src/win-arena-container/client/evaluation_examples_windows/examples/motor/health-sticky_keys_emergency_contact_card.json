@@ -1,5 +1,7 @@
 {
   "id": "health-sticky_keys_emergency_contact_card",
+  "user_group": "motor",
+  "subgroup_ids": ["M-S1"],
   "category": "health",
   "need_ids": [
     "M2"

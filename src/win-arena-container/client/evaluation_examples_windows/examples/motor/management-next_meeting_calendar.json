@@ -2,6 +2,8 @@
   "id": "management-next_meeting_calendar",
   "_comment": "",
   "manually_evaluated": false,
+  "user_group": "motor",
+  "subgroup_ids": ["M-S2"],
   "category": "management",
   "need_ids": [
     "M4"

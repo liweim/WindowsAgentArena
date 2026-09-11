@@ -1,5 +1,7 @@
 {
   "id": "communication-filter_keys_volunteer_email",
+  "user_group": "motor",
+  "subgroup_ids": ["M-S3"],
   "category": "communication",
   "need_ids": [
     "M3"

@@ -1,6 +1,8 @@
 {
   "id": "consumption-saute_pan",
   "_comment": "",
+  "user_group": "visual",
+  "subgroup_ids": ["V-S1"],
   "category": "consumption",
   "need_ids": [
     "V1"

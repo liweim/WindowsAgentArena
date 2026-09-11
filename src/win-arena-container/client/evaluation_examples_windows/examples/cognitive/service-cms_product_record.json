@@ -1,5 +1,7 @@
 {
   "id": "service-cms_product_record",
+  "user_group": "cognitive",
+  "subgroup_ids": ["C-S2", "C-S4"],
   "category": "service",
   "need_ids": [
     "C2",

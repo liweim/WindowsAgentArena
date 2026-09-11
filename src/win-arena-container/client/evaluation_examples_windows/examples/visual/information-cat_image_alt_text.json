@@ -1,6 +1,8 @@
 {
   "id": "information-cat_image_alt_text",
   "_comment": "The evaluator `points` list contains redundant entries and I suggest to use existing webpage with image.",
+  "user_group": "visual",
+  "subgroup_ids": ["V-S1", "V-S2"],
   "category": "information",
   "need_ids": [
     "V5"

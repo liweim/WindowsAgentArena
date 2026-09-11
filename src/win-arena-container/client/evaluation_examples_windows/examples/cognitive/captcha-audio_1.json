@@ -1,5 +1,7 @@
 {
   "id": "captcha-audio_1",
+  "user_group": "cognitive",
+  "subgroup_ids": ["C-S2", "C-S4"],
   "category": "captcha",
   "need_ids": [
     "C2",

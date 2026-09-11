@@ -1,5 +1,7 @@
 {
   "id": "management-prescription_refill_reminder",
+  "user_group": "cognitive",
+  "subgroup_ids": ["C-S2"],
   "category": "management",
   "need_ids": [
     "C3"

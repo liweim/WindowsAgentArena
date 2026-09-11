@@ -1,5 +1,7 @@
 {
   "id": "health-drug_facts_package",
+  "user_group": "visual",
+  "subgroup_ids": ["V-S1", "V-S2"],
   "category": "health",
   "need_ids": [
     "V5"

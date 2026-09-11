@@ -1,5 +1,7 @@
 {
   "id": "health-doctor_appointment_preparation",
+  "user_group": "cognitive",
+  "subgroup_ids": ["C-S1", "C-S2"],
   "category": "health",
   "need_ids": [
     "C1",

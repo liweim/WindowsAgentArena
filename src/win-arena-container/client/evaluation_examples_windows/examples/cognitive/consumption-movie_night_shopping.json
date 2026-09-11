@@ -1,5 +1,7 @@
 {
   "id": "consumption-movie_night_shopping",
+  "user_group": "cognitive",
+  "subgroup_ids": ["C-S2", "C-S3"],
   "category": "consumption",
   "need_ids": [
     "C2",

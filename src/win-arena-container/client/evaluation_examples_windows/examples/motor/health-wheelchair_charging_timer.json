@@ -2,6 +2,8 @@
   "id": "health-wheelchair_charging_timer",
   "_comment": "",
   "manually_evaluated": false,
+  "user_group": "motor",
+  "subgroup_ids": ["M-S3"],
   "category": "health",
   "need_ids": [
     "M3"

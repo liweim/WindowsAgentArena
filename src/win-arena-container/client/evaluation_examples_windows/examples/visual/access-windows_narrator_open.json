@@ -1,6 +1,8 @@
 {
   "id": "access-windows_narrator_open",
   "_comment": "",
+  "user_group": "visual",
+  "subgroup_ids": ["V-S1"],
   "category": "access",
   "need_ids": [
     "V1"

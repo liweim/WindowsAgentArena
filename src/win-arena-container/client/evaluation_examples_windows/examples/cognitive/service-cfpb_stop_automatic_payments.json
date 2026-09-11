@@ -1,5 +1,7 @@
 {
   "id": "service-cfpb_stop_automatic_payments",
+  "user_group": "cognitive",
+  "subgroup_ids": ["C-S1", "C-S3"],
   "category": "service",
   "need_ids": [
     "C1",

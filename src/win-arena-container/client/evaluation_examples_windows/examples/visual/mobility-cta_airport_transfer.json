@@ -1,5 +1,7 @@
 {
   "id": "mobility-cta_airport_transfer",
+  "user_group": "visual",
+  "subgroup_ids": ["V-S1", "V-S2"],
   "category": "mobility",
   "need_ids": [
     "V5"

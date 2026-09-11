@@ -1,5 +1,9 @@
 {
   "id": "captcha-audio_2",
+  "user_group": "hearing",
+  "subgroup_ids": [
+    "H-S1"
+  ],
   "category": "captcha",
   "need_ids": [
     "H5"

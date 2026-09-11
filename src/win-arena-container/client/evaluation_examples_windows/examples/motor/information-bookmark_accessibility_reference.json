@@ -1,5 +1,7 @@
 {
   "id": "information-bookmark_accessibility_reference",
+  "user_group": "motor",
+  "subgroup_ids": ["M-S2"],
   "category": "information",
   "need_ids": [
     "M4"

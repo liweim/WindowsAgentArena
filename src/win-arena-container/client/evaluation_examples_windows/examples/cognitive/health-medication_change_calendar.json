@@ -1,5 +1,7 @@
 {
   "id": "health-medication_change_calendar",
+  "user_group": "cognitive",
+  "subgroup_ids": ["C-S2", "C-S4"],
   "category": "health",
   "need_ids": [
     "C3",

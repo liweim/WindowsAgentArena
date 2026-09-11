@@ -1,6 +1,10 @@
 {
   "id": "access-windows_audio_flash_window",
   "manually_evaluated": false,
+  "user_group": "hearing",
+  "subgroup_ids": [
+    "H-S1"
+  ],
   "category": "access",
   "need_ids": [
     "H3"

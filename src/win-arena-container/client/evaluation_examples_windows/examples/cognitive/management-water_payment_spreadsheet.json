@@ -1,5 +1,7 @@
 {
   "id": "management-water_payment_spreadsheet",
+  "user_group": "cognitive",
+  "subgroup_ids": ["C-S2", "C-S3", "C-S4"],
   "category": "management",
   "need_ids": [
     "C4",

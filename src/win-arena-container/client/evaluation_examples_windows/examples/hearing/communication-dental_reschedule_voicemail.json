@@ -1,5 +1,9 @@
 {
   "id": "communication-dental_reschedule_voicemail",
+  "user_group": "hearing",
+  "subgroup_ids": [
+    "H-S1"
+  ],
   "category": "communication",
   "need_ids": [
     "H1"

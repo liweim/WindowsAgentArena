@@ -1,5 +1,9 @@
 {
   "id": "consumption-sony_alpha",
+  "user_group": "hearing",
+  "subgroup_ids": [
+    "H-S1"
+  ],
   "category": "consumption",
   "need_ids": [
     "H1"

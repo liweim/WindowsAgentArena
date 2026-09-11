@@ -1,5 +1,7 @@
 {
   "id": "access-edge_immersive_reader_setup",
+  "user_group": "cognitive",
+  "subgroup_ids": ["C-S1"],
   "category": "access",
   "need_ids": [
     "C1"

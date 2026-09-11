@@ -1,5 +1,7 @@
 {
   "id": "information-emergency_kit_checklist",
+  "user_group": "cognitive",
+  "subgroup_ids": ["C-S1", "C-S2"],
   "category": "information",
   "need_ids": [
     "C1",

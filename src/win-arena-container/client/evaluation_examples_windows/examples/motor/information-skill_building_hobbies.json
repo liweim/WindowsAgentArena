@@ -2,6 +2,8 @@
   "id": "information-skill_building_hobbies",
   "_comment": "",
   "manually_evaluated": true,
+  "user_group": "motor",
+  "subgroup_ids": ["M-S1"],
   "category": "information",
   "need_ids": [
     "M1"

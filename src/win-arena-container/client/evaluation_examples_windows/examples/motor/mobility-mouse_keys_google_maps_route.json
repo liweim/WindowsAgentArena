@@ -1,5 +1,7 @@
 {
   "id": "mobility-mouse_keys_google_maps_route",
+  "user_group": "motor",
+  "subgroup_ids": ["M-S2"],
   "category": "mobility",
   "need_ids": [
     "M4"

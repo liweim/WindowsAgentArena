@@ -1,6 +1,8 @@
 {
   "id": "access-windows_magnifier_open",
   "_comment": "",
+  "user_group": "visual",
+  "subgroup_ids": ["V-S2"],
   "category": "access",
   "need_ids": [
     "V2"

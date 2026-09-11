@@ -1,5 +1,9 @@
 {
   "id": "mobility-driving_route_fish_market",
+  "user_group": "hearing",
+  "subgroup_ids": [
+    "H-S1"
+  ],
   "category": "mobility",
   "need_ids": [
     "H1"

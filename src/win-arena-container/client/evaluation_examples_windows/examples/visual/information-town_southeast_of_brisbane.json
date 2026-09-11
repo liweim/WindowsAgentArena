@@ -1,5 +1,7 @@
 {
   "id": "information-town_southeast_of_brisbane",
+  "user_group": "visual",
+  "subgroup_ids": ["V-S1", "V-S2"],
   "category": "information",
   "need_ids": [
     "V5"

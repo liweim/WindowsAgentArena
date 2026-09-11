@@ -1,5 +1,7 @@
 {
   "id": "communication-osk_referral_email",
+  "user_group": "motor",
+  "subgroup_ids": ["M-S1"],
   "category": "communication",
   "need_ids": [
     "M1"

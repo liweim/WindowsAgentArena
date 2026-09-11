@@ -1,6 +1,10 @@
 {
   "id": "communication-community_class_registration",
   "manually_evaluated": true,
+  "user_group": "hearing",
+  "subgroup_ids": [
+    "H-S1"
+  ],
   "category": "communication",
   "need_ids": [
     "H1"

@@ -1,6 +1,8 @@
 {
   "id": "consumption-shopping_list_cart",
   "_comment": "",
+  "user_group": "motor",
+  "subgroup_ids": ["M-S3"],
   "category": "consumption",
   "need_ids": [
     "M3"

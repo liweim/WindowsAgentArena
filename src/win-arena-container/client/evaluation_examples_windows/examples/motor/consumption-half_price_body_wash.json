@@ -2,6 +2,8 @@
   "id": "consumption-half_price_body_wash",
   "_comment": "You need to specify how to connect the products; in other words, use `\n` to separate them.",
   "manually_evaluated": false,
+  "user_group": "motor",
+  "subgroup_ids": ["M-S1"],
   "category": "consumption",
   "need_ids": [
     "M2"

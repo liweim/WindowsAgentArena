@@ -1,5 +1,9 @@
 {
   "id": "mobility-walking_route_alhambra",
+  "user_group": "hearing",
+  "subgroup_ids": [
+    "H-S1"
+  ],
   "category": "mobility",
   "need_ids": [
     "H1"

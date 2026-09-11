@@ -1,6 +1,8 @@
 {
   "id": "access-high_contrast_aquatic_7news",
   "_comment": "High Contrast mode does not need to open url.",
+  "user_group": "visual",
+  "subgroup_ids": ["V-S2"],
   "category": "access",
   "need_ids": [
     "V3"
