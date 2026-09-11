@@ -1,7 +1,11 @@
 {
   "id": "service-cfpb_stop_automatic_payments",
-  "snapshot": "msedge",
   "category": "service",
+  "need_ids": [
+    "C1",
+    "C4",
+    "C6"
+  ],
   "difficulty": "medium",
   "instruction": "Write the CFPB's steps for stopping automatic payments from a bank account in `answer.txt` on the Desktop, using the page's original wording and Immersive Reader to read the guidance.",
   "source": "https://www.consumerfinance.gov/ask-cfpb/how-do-i-stop-automatic-payments-from-my-bank-account-en-2023/",
@@ -28,7 +32,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "msedge",
     "notepad"
@@ -76,7 +79,6 @@
       }
     ]
   },
-  "proxy": false,
-  "fixed_ip": false,
+  "proxy": true,
   "possibility_of_env_change": "low"
 }

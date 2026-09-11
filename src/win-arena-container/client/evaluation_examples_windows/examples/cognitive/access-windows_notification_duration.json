@@ -1,8 +1,10 @@
 {
   "id": "access-windows_notification_duration",
   "manually_evaluated": false,
-  "snapshot": "base_setup",
   "category": "access",
+  "need_ids": [
+    "C3"
+  ],
   "difficulty": "easy",
   "instruction": "Set Windows notifications to stay on screen for 5 minutes.",
   "source": "synthetic",
@@ -13,7 +15,6 @@
     "Set `Dismiss notifications after this amount of time` to `5 minutes`."
   ],
   "config": [],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "settings"
   ],
@@ -30,6 +31,5 @@
     }
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

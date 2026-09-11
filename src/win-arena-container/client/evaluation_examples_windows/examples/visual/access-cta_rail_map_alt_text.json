@@ -1,6 +1,9 @@
 {
   "id": "access-cta_rail_map_alt_text",
   "category": "access",
+  "need_ids": [
+    "V5"
+  ],
   "difficulty": "hard",
   "instruction": "Turn on Windows Narrator and use it while editing the provided accessibility-review DOCX. On page 2, use the CTA rail map to add missing alternative text that describes the O'Hare-to-Midway rail connection. The description must mention the origin airport, its CTA line, the downtown transfer station, the onward CTA line, and the destination airport. Wording, punctuation, and order may vary. Keep Narrator running and save the completed document as `answer.docx` on the Desktop in Word format.",
   "source": "synthetic",
@@ -83,6 +86,5 @@
     ]
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

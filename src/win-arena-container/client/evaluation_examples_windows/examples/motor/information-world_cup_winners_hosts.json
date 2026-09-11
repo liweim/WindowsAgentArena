@@ -2,8 +2,10 @@
   "id": "information-world_cup_winners_hosts",
   "_comment": "",
   "manually_evaluated": false,
-  "snapshot": "chrome",
   "category": "information",
+  "need_ids": [
+    "M1"
+  ],
   "difficulty": "hard",
   "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Save the FIFA World Cup winner and final-match host country for 2026, 2022, and 2018 to `answer.txt` on the Desktop in six lines ordered by year from 2026 to 2018, with the winner before the host country for each year. Use `Winner {Year}: {Winner}` and `Host Country {Year}: {Host Country}`.",
   "source": "synthetic",
@@ -38,7 +40,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "on_screen_keyboard",
     "chrome",
@@ -84,6 +85,5 @@
     ]
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "medium"
 }

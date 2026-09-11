@@ -1,8 +1,10 @@
 {
   "id": "access-windows_magnifier_open",
   "_comment": "",
-  "snapshot": "base_setup",
   "category": "access",
+  "need_ids": [
+    "V2"
+  ],
   "difficulty": "easy",
   "instruction": "Open Windows Magnifier and leave it open.",
   "source": "synthetic",
@@ -11,7 +13,6 @@
     "Leave Magnifier open."
   ],
   "config": [],
-  "trajectory": "trajectories/",
   "related_apps": [
     "magnifier"
   ],
@@ -26,6 +27,5 @@
     }
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

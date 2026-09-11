@@ -1,6 +1,9 @@
 {
   "id": "mobility-mouse_keys_google_maps_route",
   "category": "mobility",
+  "need_ids": [
+    "M4"
+  ],
   "difficulty": "easy",
   "instruction": "Enable Windows Mouse Keys and keep them enabled. Use Google Maps to leave walking directions from London Victoria Station to Westminster Abbey visible.",
   "source": "synthetic",
@@ -102,7 +105,6 @@
       }
     ]
   },
-  "proxy": false,
-  "fixed_ip": false,
+  "proxy": true,
   "possibility_of_env_change": "low"
 }

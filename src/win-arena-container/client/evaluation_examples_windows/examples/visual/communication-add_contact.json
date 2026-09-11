@@ -2,8 +2,10 @@
   "id": "communication-add_contact",
   "_comment": "",
   "manually_evaluated": false,
-  "snapshot": "windows",
   "category": "communication",
+  "need_ids": [
+    "V2"
+  ],
   "difficulty": "easy",
   "instruction": "Enable Windows Magnifier and keep it enabled. Add `Olivia Bennett` with email `olivia.bennett@example.com` to the contact list in the provided `Contacts.odt`, then save the updated file as `answer.odt` on the Desktop.",
   "source": "synthetic",
@@ -46,7 +48,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "magnifier",
     "libreoffice_writer"
@@ -74,6 +75,5 @@
     }
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

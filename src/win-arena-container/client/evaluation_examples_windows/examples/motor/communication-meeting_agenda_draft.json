@@ -2,8 +2,10 @@
   "id": "communication-meeting_agenda_draft",
   "_comment": "",
   "manually_evaluated": false,
-  "snapshot": "windows",
   "category": "communication",
+  "need_ids": [
+    "M1"
+  ],
   "difficulty": "hard",
   "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Draft, but do not send, a Thunderbird email to `alice@example.com` with subject `Meeting Agenda`, using `MeetingAgenda.odt` to include the meeting date, time, location, all four agenda items, and the preparation requirement.",
   "source": "synthetic",
@@ -77,7 +79,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "on_screen_keyboard",
     "libreoffice_writer",
@@ -159,7 +160,6 @@
       }
     ]
   },
-  "proxy": false,
-  "fixed_ip": false,
+  "proxy": true,
   "possibility_of_env_change": "low"
 }

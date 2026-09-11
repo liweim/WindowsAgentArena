@@ -1,8 +1,10 @@
 {
   "id": "information-invitation_image_alt_text",
   "_comment": "I suggest to use existing webpage with image.",
-  "snapshot": "libreoffice_writer",
   "category": "information",
+  "need_ids": [
+    "V5"
+  ],
   "difficulty": "hard",
   "instruction": "Add descriptive alt text to the invitation image in the provided DOCX file. Include the restaurant name, grand-opening purpose, date, time, full address, and RSVP phone number, then save the completed file as `answer.docx` on the Desktop in Word format.",
   "source": "synthetic",
@@ -32,7 +34,6 @@
       }
     }
   ],
-  "trajectory": "trajectories/",
   "related_apps": [
     "libreoffice_writer"
   ],
@@ -91,6 +92,5 @@
     }
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

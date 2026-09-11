@@ -1,8 +1,10 @@
 {
   "id": "consumption-toothbrush_price_comparison",
   "_comment": "",
-  "snapshot": "chrome",
   "category": "consumption",
+  "need_ids": [
+    "V1"
+  ],
   "difficulty": "hard",
   "instruction": "Turn on Windows Narrator. Using the provided oral-care catalogue, identify the cheaper of the two six-count toothbrush products and add exactly one unit of it to the shopping cart. Leave the cart page open.",
   "source": "synthetic",
@@ -70,7 +72,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "narrator",
     "chrome"
@@ -122,6 +123,5 @@
     ]
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

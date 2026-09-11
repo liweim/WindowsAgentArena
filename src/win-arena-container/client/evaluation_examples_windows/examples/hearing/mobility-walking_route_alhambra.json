@@ -1,7 +1,9 @@
 {
   "id": "mobility-walking_route_alhambra",
-  "snapshot": "chrome",
   "category": "mobility",
+  "need_ids": [
+    "H1"
+  ],
   "difficulty": "medium",
   "instruction": "Turn on captions in the opened YouTube video, identify the destination, then show a walking route in Google Maps from Granada Train Station to that destination.",
   "source": "https://www.youtube.com/watch?v=iEseJViidy8",
@@ -49,7 +51,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "chrome"
   ],
@@ -94,5 +95,6 @@
         }
       }
     ]
-  }
+  },
+  "proxy": true
 }

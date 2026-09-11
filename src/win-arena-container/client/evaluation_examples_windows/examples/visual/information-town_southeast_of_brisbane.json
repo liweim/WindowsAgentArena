@@ -1,7 +1,9 @@
 {
   "id": "information-town_southeast_of_brisbane",
-  "snapshot": "chrome",
   "category": "information",
+  "need_ids": [
+    "V5"
+  ],
   "difficulty": "hard",
   "instruction": "Turn on Windows Narrator. On the Australia map PDF already open in Chrome, identify the city/town label immediately adjacent to Brisbane on its southeast side in the map's displayed layout. Save that label in `answer.txt` on the Desktop.",
   "source": "synthetic",
@@ -59,7 +61,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "narrator",
     "chrome",
@@ -99,6 +100,5 @@
     ]
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

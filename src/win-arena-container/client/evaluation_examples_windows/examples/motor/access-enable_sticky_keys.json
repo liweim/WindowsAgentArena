@@ -1,8 +1,10 @@
 {
   "id": "access-enable_sticky_keys",
   "manually_evaluated": true,
-  "snapshot": "windows",
   "category": "access",
+  "need_ids": [
+    "M2"
+  ],
   "difficulty": "easy",
   "instruction": "Enable Sticky Keys and leave it enabled.",
   "source": "synthetic",
@@ -13,7 +15,6 @@
     "Keep the Sticky Keys enabled."
   ],
   "config": [],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "settings"
   ],
@@ -37,6 +38,5 @@
     }
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

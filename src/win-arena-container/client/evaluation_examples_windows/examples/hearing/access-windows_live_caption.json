@@ -1,8 +1,10 @@
 {
   "id": "access-windows_live_caption",
   "manually_evaluated": false,
-  "snapshot": "base_setup",
   "category": "access",
+  "need_ids": [
+    "H1"
+  ],
   "difficulty": "easy",
   "instruction": "Turn on Windows Live captions.",
   "source": "synthetic",
@@ -12,7 +14,6 @@
     "Wait for the initial configuration."
   ],
   "config": [],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "settings"
   ],
@@ -35,5 +36,6 @@
         ]
       }
     }
-  }
+  },
+  "proxy": false
 }

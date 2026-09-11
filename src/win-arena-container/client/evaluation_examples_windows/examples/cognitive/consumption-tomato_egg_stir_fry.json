@@ -1,18 +1,27 @@
 {
   "id": "consumption-tomato_egg_stir_fry",
-  "snapshot": "chrome",
   "category": "consumption",
+  "need_ids": [
+    "C2",
+    "C4"
+  ],
   "difficulty": "medium",
-  "instruction": "Add only the core ingredients needed for tomato-and-egg stir-fry to the shopping cart, assuming the seasonings and pantry staples are already available.",
+  "instruction": "Use the meal shopping note on the Desktop to add only the still-needed ingredients to the cart.",
   "source": "http://host.docker.internal:7770",
   "gt_steps": [
+    "Open `meal_shopping_note.txt` and determine which ingredients are still needed.",
     "Open the self-hosted shopping website.",
-    "Find an ordinary chicken egg product.",
-    "Add the egg product to the shopping cart.",
-    "Find a plain tomato product suitable for tomato-and-egg stir-fry.",
-    "Add the tomato product to the shopping cart."
+    "Add an ordinary chicken egg product to the cart.",
+    "Add a plain tomato product suitable for the dish to the cart."
   ],
   "config": [
+    {
+      "type": "execute",
+      "parameters": {
+        "command": "powershell -NoProfile -Command \"Set-Content -Path (Join-Path $env:USERPROFILE 'Desktop\\meal_shopping_note.txt') -Value @('Dinner: tomato-and-egg stir-fry','Already have: cooking oil, salt, sugar, and other seasonings','Still need the two core fresh ingredients.')\"",
+        "shell": true
+      }
+    },
     {
       "type": "launch",
       "parameters": {
@@ -52,9 +61,9 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
-    "chrome"
+    "chrome",
+    "notepad"
   ],
   "evaluator": {
     "func": "is_page_contains_items",
@@ -87,6 +96,5 @@
     }
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

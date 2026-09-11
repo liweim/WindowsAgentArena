@@ -1,9 +1,11 @@
 {
   "id": "access-spotify_install",
-  "snapshot": "base_setup",
   "category": "access",
+  "need_ids": [
+    "C4"
+  ],
   "difficulty": "medium",
-  "instruction": "Install Spotify on this Windows PC.",
+  "instruction": "Set up Spotify on this Windows PC so it is installed and ready to launch.",
   "source": "https://www.spotify.com/download/windows/",
   "gt_steps": [
     "Open Google Chrome.",
@@ -13,7 +15,6 @@
     "Complete the Spotify installation."
   ],
   "config": [],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "chrome"
   ],
@@ -36,7 +37,6 @@
       }
     }
   },
-  "proxy": false,
-  "fixed_ip": false,
+  "proxy": true,
   "possibility_of_env_change": "high"
 }

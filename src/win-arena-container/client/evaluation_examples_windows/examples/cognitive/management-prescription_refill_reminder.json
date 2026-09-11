@@ -1,7 +1,9 @@
 {
   "id": "management-prescription_refill_reminder",
-  "snapshot": "base_setup",
   "category": "management",
+  "need_ids": [
+    "C3"
+  ],
   "difficulty": "medium",
   "instruction": "Create an all-day Thunderbird Calendar reminder titled `Refill medication` for the refill deadline in the pharmacy message on the Desktop.",
   "source": "synthetic",
@@ -48,7 +50,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "notepad",
     "thunderbird"
@@ -70,7 +71,6 @@
       }
     }
   },
-  "proxy": false,
-  "fixed_ip": false,
+  "proxy": true,
   "possibility_of_env_change": "low"
 }

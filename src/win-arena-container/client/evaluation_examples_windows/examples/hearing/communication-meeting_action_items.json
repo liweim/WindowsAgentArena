@@ -1,7 +1,9 @@
 {
   "id": "communication-meeting_action_items",
-  "snapshot": "chrome",
   "category": "communication",
+  "need_ids": [
+    "H1"
+  ],
   "difficulty": "medium",
   "source": "synthetic",
   "instruction": "Use Chrome Live Caption to identify the three operational warnings in the cloud-cluster meeting audio, then record them in a Sticky Note.",
@@ -80,7 +82,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "chrome",
     "sticky_notes"
@@ -164,6 +165,5 @@
     ]
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

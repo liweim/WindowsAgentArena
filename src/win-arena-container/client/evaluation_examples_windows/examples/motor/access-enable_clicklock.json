@@ -1,8 +1,10 @@
 {
   "id": "access-enable_clicklock",
   "manually_evaluated": true,
-  "snapshot": "windows",
   "category": "access",
+  "need_ids": [
+    "M5"
+  ],
   "difficulty": "easy",
   "instruction": "Enable Mouse ClickLock and leave it enabled.",
   "source": "synthetic",
@@ -16,7 +18,6 @@
     "Leave ClickLock enabled."
   ],
   "config": [],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "settings"
   ],
@@ -40,6 +41,5 @@
     }
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

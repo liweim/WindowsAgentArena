@@ -1,8 +1,10 @@
 {
   "id": "access-windows_color_filter_grayscale_inverted",
   "_comment": "",
-  "snapshot": "base_setup",
   "category": "access",
+  "need_ids": [
+    "V3"
+  ],
   "difficulty": "easy",
   "instruction": "Set the Windows color filter to Grayscale inverted.",
   "source": "synthetic",
@@ -13,7 +15,6 @@
     "Turn on color filters and choose Grayscale Inverted."
   ],
   "config": [],
-  "trajectory": "trajectories/",
   "related_apps": [
     "settings"
   ],
@@ -57,6 +58,5 @@
     ]
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

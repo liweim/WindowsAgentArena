@@ -1,6 +1,9 @@
 {
   "id": "communication-dental_reschedule_voicemail",
   "category": "communication",
+  "need_ids": [
+    "H1"
+  ],
   "difficulty": "medium",
   "instruction": "Use Chrome Live Caption to read the dental voicemail on the Desktop. Choose the earlier of the two offered appointments and draft a Thunderbird email to `appointments@example.com` with subject `Dental reschedule`, including the chosen date, time, and confirmation code. Do not send it.",
   "source": "synthetic",
@@ -147,7 +150,6 @@
       }
     ]
   },
-  "proxy": false,
-  "fixed_ip": false,
+  "proxy": true,
   "possibility_of_env_change": "low"
 }

@@ -1,0 +1,335 @@
+{
+  "version": "2026-09-11-v2",
+  "sources": {
+    "webaim_sr10": {
+      "title": "WebAIM Screen Reader User Survey #10 Results",
+      "url": "https://webaim.org/projects/screenreadersurvey10/"
+    },
+    "webaim_lv2": {
+      "title": "WebAIM Survey of Users with Low Vision #2 Results",
+      "url": "https://webaim.org/projects/lowvisionsurvey2/"
+    },
+    "w3c_visual": {
+      "title": "W3C WAI: Visual Disabilities — Abilities and Barriers",
+      "url": "https://www.w3.org/WAI/people-use-web/abilities-barriers/visual/"
+    },
+    "w3c_nontext": {
+      "title": "W3C WCAG Understanding 1.1.1 Non-text Content",
+      "url": "https://www.w3.org/WAI/WCAG21/Understanding/non-text-content"
+    },
+    "w3c_resize": {
+      "title": "W3C WCAG Understanding 1.4.4 Resize Text",
+      "url": "https://www.w3.org/WAI/WCAG22/Understanding/resize-text"
+    },
+    "w3c_color": {
+      "title": "W3C WCAG Understanding 1.4.1 Use of Color",
+      "url": "https://www.w3.org/WAI/WCAG22/Understanding/use-of-color"
+    },
+    "ms_color": {
+      "title": "Microsoft: Use color and contrast for accessibility",
+      "url": "https://support.microsoft.com/en-US/accessibility/windows/use-color-and-contrast-for-accessibility-in-microsoft-365"
+    },
+    "w3c_media": {
+      "title": "W3C WAI: Making Audio and Video Media Accessible",
+      "url": "https://www.w3.org/WAI/media/av/"
+    },
+    "afb_ai_captions": {
+      "title": "American Foundation for the Blind: Innovation for Access — AI Captions",
+      "url": "https://www.afb.org/research-and-initiatives/ai-series/innovation-access"
+    },
+    "acma_captioning": {
+      "title": "ACMA: Use and experience of captioning consumer research",
+      "url": "https://www.acma.gov.au/publications/2023-05/report/use-and-experience-captioning-consumer-research-support-acmas-captioning-quality-standard-review"
+    },
+    "ms_hearing": {
+      "title": "Microsoft: Make Windows easier to hear",
+      "url": "https://support.microsoft.com/en-us/accessibility/windows/make-windows-easier-to-hear"
+    },
+    "webaim_motor": {
+      "title": "WebAIM Survey of Users with Motor Disabilities",
+      "url": "https://webaim.org/projects/motordisabilitysurvey/"
+    },
+    "ms_mobility": {
+      "title": "Microsoft: Accessibility tools for mobility",
+      "url": "https://support.microsoft.com/en-US/accessibility/accessibility-tools-for-mobility"
+    },
+    "w3c_dragging": {
+      "title": "W3C WCAG Understanding 2.5.7 Dragging Movements",
+      "url": "https://www.w3.org/WAI/WCAG22/Understanding/dragging-movements.html"
+    },
+    "w3c_coga_overview": {
+      "title": "W3C WAI: Cognitive Accessibility",
+      "url": "https://www.w3.org/WAI/cognitive/"
+    },
+    "coga_simplify": {
+      "title": "W3C COGA: Support Simplification",
+      "url": "https://www.w3.org/WAI/WCAG2/supplemental/patterns/o8p03-complexity/"
+    },
+    "coga_memory_calc": {
+      "title": "W3C COGA: Do Not Rely on Users Calculations or Memorizing Information",
+      "url": "https://www.w3.org/WAI/WCAG2/supplemental/patterns/o6p05-low-cognition/"
+    },
+    "coga_reminders": {
+      "title": "W3C COGA: Provide Reminders",
+      "url": "https://www.w3.org/WAI/WCAG2/supplemental/patterns/o7p07-reminders/"
+    },
+    "coga_steps": {
+      "title": "W3C COGA: Make Each Step Clear / Use Clear Step-by-step Instructions",
+      "url": "https://www.w3.org/WAI/WCAG2/supplemental/patterns/o1p04-clear-steps/"
+    },
+    "coga_task_expectations": {
+      "title": "W3C COGA: Provide Information So a User Can Complete and Prepare for a Task",
+      "url": "https://www.w3.org/WAI/WCAG2/supplemental/patterns/o5p04-task-expectations/"
+    },
+    "coga_choice": {
+      "title": "W3C COGA: Clearly State Results and Disadvantages of Choices",
+      "url": "https://www.w3.org/WAI/WCAG2/supplemental/patterns/o7p03-supported-choice/"
+    },
+    "coga_important": {
+      "title": "W3C COGA: Make Important Tasks and Information Easy to Find",
+      "url": "https://www.w3.org/WAI/WCAG2/supplemental/patterns/o2p01-site-important/"
+    },
+    "coga_feedback": {
+      "title": "W3C COGA: Provide Feedback",
+      "url": "https://www.w3.org/WAI/WCAG2/supplemental/patterns/o4p10-status-feedback/"
+    },
+    "coga_errors": {
+      "title": "W3C COGA: Design Forms to Prevent Mistakes",
+      "url": "https://www.w3.org/WAI/WCAG2/supplemental/patterns/o4p04-supportive-forms/"
+    },
+    "pew_setup": {
+      "title": "Pew Research Center: Navigating technological challenges",
+      "url": "https://www.pewresearch.org/internet/2021/09/01/navigating-technological-challenges/"
+    }
+  },
+  "taxonomy": {
+    "V1": {
+      "group": "visual",
+      "name": "Non-visual access to digital text and interface content",
+      "definition": "Use screen readers or equivalent non-visual representations to read, navigate, and act on digital text, controls, documents, and web content.",
+      "sources": [
+        "webaim_sr10",
+        "w3c_visual"
+      ]
+    },
+    "V2": {
+      "group": "visual",
+      "name": "Magnification and text enlargement",
+      "definition": "Enlarge text, controls, or the screen through zoom, text sizing, or magnification so content is perceivable and usable.",
+      "sources": [
+        "webaim_lv2",
+        "w3c_resize"
+      ]
+    },
+    "V3": {
+      "group": "visual",
+      "name": "Contrast and display-palette customization",
+      "definition": "Adjust contrast, foreground/background presentation, inversion, or display palette to improve visual readability.",
+      "sources": [
+        "webaim_lv2",
+        "w3c_visual",
+        "ms_color"
+      ]
+    },
+    "V4": {
+      "group": "visual",
+      "name": "Color-vision differentiation support",
+      "definition": "Use color filters or non-color cues when color differences are difficult or impossible to distinguish.",
+      "sources": [
+        "w3c_color",
+        "ms_color"
+      ]
+    },
+    "V5": {
+      "group": "visual",
+      "name": "Access to non-text visual information",
+      "definition": "Obtain equivalent information from images, maps, charts, infographics, scanned documents, labels, and other visual-only or poorly described content.",
+      "sources": [
+        "webaim_sr10",
+        "w3c_nontext"
+      ]
+    },
+    "V6": {
+      "group": "visual",
+      "name": "Accessible CAPTCHA and verification",
+      "definition": "Complete verification without depending on inaccessible visual perception, including use of alternative modalities or delegated assistance.",
+      "sources": [
+        "webaim_sr10",
+        "w3c_nontext"
+      ]
+    },
+    "H1": {
+      "group": "hearing",
+      "name": "Speech-to-text access through captions or transcripts",
+      "definition": "Access spoken and relevant non-speech audio information through captions, live captions, or transcripts.",
+      "sources": [
+        "w3c_media",
+        "afb_ai_captions",
+        "acma_captioning"
+      ]
+    },
+    "H2": {
+      "group": "hearing",
+      "name": "Caption readability and language customization",
+      "definition": "Configure caption language and visual presentation so caption text is readable and appropriate for the media being consumed.",
+      "sources": [
+        "ms_hearing",
+        "acma_captioning"
+      ]
+    },
+    "H3": {
+      "group": "hearing",
+      "name": "Visual and persistent alternatives to auditory notifications",
+      "definition": "Receive alerts visually rather than by sound alone and keep visual notifications available long enough to notice and read.",
+      "sources": [
+        "ms_hearing"
+      ]
+    },
+    "H4": {
+      "group": "hearing",
+      "name": "Single-channel access to stereo audio",
+      "definition": "Combine stereo channels so information is not missed when a user hears through one channel or one headphone.",
+      "sources": [
+        "ms_hearing"
+      ]
+    },
+    "H5": {
+      "group": "hearing",
+      "name": "Verification without relying on hearing",
+      "definition": "Complete CAPTCHA or verification when the presented challenge depends on auditory perception, using a non-auditory alternative or delegated assistance.",
+      "sources": [
+        "w3c_nontext"
+      ]
+    },
+    "M1": {
+      "group": "motor",
+      "name": "Alternative text entry without a physical keyboard",
+      "definition": "Enter text through an on-screen keyboard or other alternative input when physical keyboard use is difficult.",
+      "sources": [
+        "webaim_motor",
+        "ms_mobility"
+      ]
+    },
+    "M2": {
+      "group": "motor",
+      "name": "Sequential modifier-key input",
+      "definition": "Use multi-key commands one key at a time instead of holding multiple keys simultaneously.",
+      "sources": [
+        "ms_mobility"
+      ]
+    },
+    "M3": {
+      "group": "motor",
+      "name": "Keystroke filtering and sensitivity control",
+      "definition": "Reduce accidental repeated or brief key presses by adjusting keyboard sensitivity/filtering.",
+      "sources": [
+        "ms_mobility"
+      ]
+    },
+    "M4": {
+      "group": "motor",
+      "name": "Alternative pointer control or delegated pointing",
+      "definition": "Use keyboard, speech/other alternative input, or delegated pointer activation when conventional mouse use is difficult.",
+      "sources": [
+        "ms_mobility",
+        "webaim_motor"
+      ]
+    },
+    "M5": {
+      "group": "motor",
+      "name": "Reduced press-hold and dragging demand",
+      "definition": "Avoid or reduce sustained press-hold-drag-release movements that require dexterity or sustained pointer control.",
+      "sources": [
+        "w3c_dragging"
+      ]
+    },
+    "M6": {
+      "group": "motor",
+      "name": "Mouse-button and handedness customization",
+      "definition": "Configure the primary mouse button or equivalent pointer settings to match reach, strength, dexterity, or unilateral motor needs.",
+      "sources": [
+        "ms_mobility"
+      ]
+    },
+    "M7": {
+      "group": "motor",
+      "name": "Reduced pointer precision, repetition, and timing demand",
+      "definition": "Avoid or delegate interactions requiring repeated precise target acquisition, tightly timed pointer actions, or fine motor control.",
+      "sources": [
+        "webaim_motor",
+        "w3c_dragging"
+      ]
+    },
+    "C1": {
+      "group": "cognitive",
+      "name": "Focus, readability, and simplification",
+      "definition": "Reduce distraction, visual/cognitive clutter, or reading load so attention, language processing, and comprehension are easier to sustain.",
+      "sources": [
+        "w3c_coga_overview",
+        "coga_simplify"
+      ]
+    },
+    "C2": {
+      "group": "cognitive",
+      "name": "Memory externalization and short-term retention support",
+      "definition": "Reduce reliance on working memory or short-term retention by using notes, checklists, persistent cues, or delegated assistance.",
+      "sources": [
+        "coga_memory_calc"
+      ]
+    },
+    "C3": {
+      "group": "cognitive",
+      "name": "Time and prospective-memory support",
+      "definition": "Use reminders, calendars, timers, and persistent time-based cues to manage appointments, deadlines, intervals, and future actions.",
+      "sources": [
+        "coga_reminders"
+      ]
+    },
+    "C4": {
+      "group": "cognitive",
+      "name": "Planning, sequencing, task-state tracking, and completion recognition",
+      "definition": "Reduce the burden of unfamiliar or multi-step workflows, maintaining context, tracking progress, recovering after distraction, and recognizing successful completion.",
+      "sources": [
+        "coga_steps",
+        "coga_task_expectations",
+        "coga_feedback",
+        "pew_setup"
+      ]
+    },
+    "C5": {
+      "group": "cognitive",
+      "name": "Decision and choice support",
+      "definition": "Help compare alternatives, apply constraints, understand consequences, and select an appropriate option.",
+      "sources": [
+        "coga_choice"
+      ]
+    },
+    "C6": {
+      "group": "cognitive",
+      "name": "Important-information extraction and prioritization",
+      "definition": "Identify and preserve the small set of important facts or actions from dense, mixed, or distracting information.",
+      "sources": [
+        "coga_important",
+        "coga_simplify"
+      ]
+    },
+    "C7": {
+      "group": "cognitive",
+      "name": "Calculation, counting, copying, and cross-source reconciliation support",
+      "definition": "Reduce reliance on arithmetic/counting, copying, short-term retention, or reconciling information across sources and steps.",
+      "sources": [
+        "coga_memory_calc"
+      ]
+    },
+    "C8": {
+      "group": "cognitive",
+      "name": "Error prevention and safety-critical guidance",
+      "definition": "Make risky actions, scams, health/safety guidance, and error-prone choices easier to understand and act on correctly.",
+      "sources": [
+        "coga_errors",
+        "coga_choice",
+        "coga_important"
+      ]
+    }
+  }
+}

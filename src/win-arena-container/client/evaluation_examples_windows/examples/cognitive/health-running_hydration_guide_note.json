@@ -1,6 +1,10 @@
 {
   "id": "health-running_hydration_guide_note",
   "category": "health",
+  "need_ids": [
+    "C1",
+    "C2"
+  ],
   "difficulty": "medium",
   "instruction": "Create a Sticky Note containing all three distance-based water-intake recommendations from the SELF article, using Microsoft Edge Immersive Reader to read the article. Keep one recommendation per line.",
   "source": "https://www.self.com/gallery/best-hydration-packs",
@@ -132,7 +136,6 @@
       }
     ]
   },
-  "proxy": false,
-  "fixed_ip": false,
+  "proxy": true,
   "possibility_of_env_change": "low"
 }

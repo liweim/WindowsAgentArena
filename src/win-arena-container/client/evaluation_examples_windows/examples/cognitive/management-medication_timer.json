@@ -1,7 +1,9 @@
 {
   "id": "management-medication_timer",
-  "snapshot": "base_setup",
   "category": "management",
+  "need_ids": [
+    "C3"
+  ],
   "difficulty": "easy",
   "instruction": "Read the waiting interval between the eye drops from the caregiver note on the Desktop, start a timer for that amount of time on vclock.com, and leave it running where it can be seen.",
   "source": "synthetic",
@@ -29,7 +31,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "notepad",
     "chrome"
@@ -48,7 +49,6 @@
       }
     }
   },
-  "proxy": false,
-  "fixed_ip": false,
+  "proxy": true,
   "possibility_of_env_change": "low"
 }

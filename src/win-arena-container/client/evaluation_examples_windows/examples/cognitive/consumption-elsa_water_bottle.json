@@ -1,18 +1,27 @@
 {
   "id": "consumption-elsa_water_bottle",
-  "snapshot": "chrome",
   "category": "consumption",
+  "need_ids": [
+    "C2",
+    "C6"
+  ],
   "difficulty": "easy",
-  "instruction": "I'm looking for a Disney Frozen 2 Elsa water bottle. Find the matching product on the shopping site and add it to the cart.",
+  "instruction": "Use the shopping reminder on the Desktop to add the matching water bottle to the cart.",
   "source": "http://host.docker.internal:7770",
   "gt_steps": [
+    "Open `water_bottle_reminder.txt` on the Desktop and identify the requested product details.",
     "Open the self-hosted shopping website.",
-    "Search for an Elsa water bottle.",
-    "Identify `Disney Frozen 2 Elsa 24 oz. Tritan Water Bottle` as the product that matches the requirements.",
-    "Open `Disney Frozen 2 Elsa 24 oz. Tritan Water Bottle`.",
-    "Add the product to the shopping cart."
+    "Find `Disney Frozen 2 Elsa 24 oz. Tritan Water Bottle`.",
+    "Add the matching product to the shopping cart."
   ],
   "config": [
+    {
+      "type": "execute",
+      "parameters": {
+        "command": "powershell -NoProfile -Command \"Set-Content -Path (Join-Path $env:USERPROFILE 'Desktop\\water_bottle_reminder.txt') -Value @('School bottle reminder:','- Disney Frozen 2','- Elsa','- 24 oz','- Tritan')\"",
+        "shell": true
+      }
+    },
     {
       "type": "launch",
       "parameters": {
@@ -52,9 +61,9 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
-    "chrome"
+    "chrome",
+    "notepad"
   ],
   "evaluator": {
     "func": "is_page_contains_items",
@@ -73,6 +82,5 @@
     }
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

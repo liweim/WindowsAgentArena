@@ -1,6 +1,9 @@
 {
   "id": "service-interpreter_request_audio",
   "category": "service",
+  "need_ids": [
+    "H1"
+  ],
   "difficulty": "medium",
   "instruction": "Turn on Windows Live captions and use them to read the service-access audio on the Desktop. Save the exact form name, minimum lead time, fallback phone number, and service code to `answer.txt` on the Desktop, one item per line.",
   "source": "synthetic",
@@ -121,6 +124,5 @@
     ]
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

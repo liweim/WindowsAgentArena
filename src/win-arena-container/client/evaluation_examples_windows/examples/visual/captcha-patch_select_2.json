@@ -1,7 +1,9 @@
 {
   "id": "captcha-patch_select_2",
-  "snapshot": "msedge",
   "category": "captcha",
+  "need_ids": [
+    "V6"
+  ],
   "difficulty": "medium",
   "instruction": "Complete the patch-select CAPTCHA verification in Microsoft Edge.",
   "source": "synthetic",
@@ -20,7 +22,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "msedge"
   ],
@@ -39,6 +40,5 @@
     }
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

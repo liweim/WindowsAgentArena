@@ -2,8 +2,10 @@
   "id": "mobility-walking_route_opera_house",
   "comment": "Try to use places outside Australia",
   "manually_evaluated": false,
-  "snapshot": "chrome",
   "category": "mobility",
+  "need_ids": [
+    "V1"
+  ],
   "difficulty": "medium",
   "instruction": "Turn on Windows Narrator. Use it to navigate Google Maps and find walking directions from Circular Quay Station to the Sydney Opera House. Leave the walking directions open.",
   "source": "synthetic",
@@ -53,7 +55,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "narrator",
     "chrome"
@@ -95,7 +96,6 @@
       }
     ]
   },
-  "proxy": false,
-  "fixed_ip": false,
+  "proxy": true,
   "possibility_of_env_change": "medium"
 }

@@ -2,8 +2,10 @@
   "id": "consumption-cheapest_polisher",
   "_comment": "You need to specify how to connect the name and price; in other words, use \n to separate them.",
   "manually_evaluated": false,
-  "snapshot": "chrome",
   "category": "consumption",
+  "need_ids": [
+    "M1"
+  ],
   "difficulty": "medium",
   "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Find the cheapest polisher in the provided Harbor Freight catalogue and save its full product name exactly as shown on the first line and its price on the second line of `answer.txt` on the Desktop.",
   "source": "synthetic",
@@ -63,7 +65,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "settings",
     "on_screen_keyboard",
@@ -110,6 +111,5 @@
     ]
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

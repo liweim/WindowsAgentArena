@@ -2,8 +2,10 @@
   "id": "health-insulin_storage_temperature",
   "manually_evaluated": false,
   "_comment": "The insulin storage PDF is stored locally in the task's assets folder, uploaded to the Windows VM during initialization, and opened directly in Chrome.",
-  "snapshot": "chrome",
   "category": "health",
+  "need_ids": [
+    "M1"
+  ],
   "difficulty": "medium",
   "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Save only the recommended refrigerated temperature range for unopened insulin from the provided insulin-storage PDF in `answer.txt` on the Desktop.",
   "source": "synthetic",
@@ -59,7 +61,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "on_screen_keyboard",
     "chrome",
@@ -110,6 +111,5 @@
     ]
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

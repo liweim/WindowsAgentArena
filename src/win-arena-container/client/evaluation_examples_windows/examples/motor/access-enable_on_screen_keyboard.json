@@ -1,8 +1,10 @@
 {
   "id": "access-enable_on_screen_keyboard",
   "manually_evaluated": true,
-  "snapshot": "windows",
   "category": "access",
+  "need_ids": [
+    "M1"
+  ],
   "difficulty": "easy",
   "instruction": "Enable the Windows On-Screen Keyboard and keep it open.",
   "source": "synthetic",
@@ -13,7 +15,6 @@
     "Keep the On-Screen Keyboard open."
   ],
   "config": [],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "settings",
     "on_screen_keyboard"
@@ -38,6 +39,5 @@
     }
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

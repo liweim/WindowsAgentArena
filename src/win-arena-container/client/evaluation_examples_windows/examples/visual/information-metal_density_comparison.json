@@ -1,8 +1,10 @@
 {
   "id": "information-metal_density_comparison",
   "_comment": "",
-  "snapshot": "chrome",
   "category": "information",
+  "need_ids": [
+    "V1"
+  ],
   "difficulty": "medium",
   "instruction": "Turn on Windows Narrator. Compare the densities of gold and aluminium using the two Wikipedia pages already open in Chrome. Save `answer.txt` on the Desktop with the denser metal name on the first line and its density value on the second line.",
   "source": [
@@ -54,7 +56,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "narrator",
     "chrome",
@@ -101,6 +102,5 @@
     ]
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

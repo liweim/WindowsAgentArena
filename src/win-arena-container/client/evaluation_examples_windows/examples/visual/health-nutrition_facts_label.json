@@ -1,6 +1,9 @@
 {
   "id": "health-nutrition_facts_label",
   "category": "health",
+  "need_ids": [
+    "V5"
+  ],
   "difficulty": "medium",
   "instruction": "Use the original FDA Nutrition Facts label image on the Desktop and save `answer.txt` with the serving size, calories, sodium, and added sugars, one item per line in that order.",
   "source": "https://www.fda.gov/files/nutrition-facts-label-download-image2.jpg",
@@ -101,6 +104,5 @@
     }
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

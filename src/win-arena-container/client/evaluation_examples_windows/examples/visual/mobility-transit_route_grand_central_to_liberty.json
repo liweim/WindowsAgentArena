@@ -2,8 +2,10 @@
   "id": "mobility-transit_route_grand_central_to_liberty",
   "_comment": "",
   "manually_evaluated": false,
-  "snapshot": "chrome",
   "category": "mobility",
+  "need_ids": [
+    "V1"
+  ],
   "difficulty": "medium",
   "instruction": "Turn on Windows Narrator. Use it to navigate Google Maps and find public transit directions from Grand Central Terminal to the Statue of Liberty Ferry Terminal. Leave the public transit directions open.",
   "source": "synthetic",
@@ -53,7 +55,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "narrator",
     "chrome"
@@ -97,7 +98,6 @@
       }
     ]
   },
-  "proxy": false,
-  "fixed_ip": false,
+  "proxy": true,
   "possibility_of_env_change": "low"
 }

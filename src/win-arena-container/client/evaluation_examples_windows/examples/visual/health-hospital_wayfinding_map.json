@@ -1,6 +1,9 @@
 {
   "id": "health-hospital_wayfinding_map",
   "category": "health",
+  "need_ids": [
+    "V5"
+  ],
   "difficulty": "hard",
   "instruction": "Use the original Queen Elizabeth Hospital site map PDF on the Desktop and save `answer.txt` with the zone and level for Outpatient Pharmacy, MRI Scanner, Outpatients Department (OPD), and Radiology (X-ray and CT scanning), one service-location pair per line in that order.",
   "source": "https://www.gatesheadhealth.nhs.uk/wp-content/uploads/2026/04/QEH00-Z-Website-Site-Map.pdf",
@@ -109,6 +112,5 @@
     }
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

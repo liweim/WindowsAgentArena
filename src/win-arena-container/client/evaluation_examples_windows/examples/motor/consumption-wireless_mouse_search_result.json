@@ -2,8 +2,10 @@
   "id": "consumption-wireless_mouse_search_result",
   "_comment": "The evaluator needs to verify the number of units added. Alternatively, you can simply remove the phrase “one unit.”",
   "manually_evaluated": false,
-  "snapshot": "chrome",
   "category": "consumption",
+  "need_ids": [
+    "M2"
+  ],
   "difficulty": "easy",
   "instruction": "Enable Windows Sticky Keys and keep them enabled. Add exactly one unit of the first OneStopShop search result for `wireless mouse` to the shopping cart.",
   "source": "http://host.docker.internal:7770",
@@ -53,7 +55,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "settings",
     "chrome"
@@ -102,6 +103,5 @@
     ]
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

@@ -1,7 +1,9 @@
 {
   "id": "information-fake_job_bank_account",
-  "snapshot": "chrome",
   "category": "information",
+  "need_ids": [
+    "H1"
+  ],
   "difficulty": "medium",
   "instruction": "Turn on captions in the opened YouTube video, identify the personal financial information requested in the fake job opportunity example, then save the answer in `answer.txt` on the Desktop.",
   "source": "https://www.youtube.com/watch?v=3LvMO5UMCl8",
@@ -47,7 +49,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "chrome",
     "notepad"
@@ -90,5 +91,6 @@
         }
       }
     ]
-  }
+  },
+  "proxy": true
 }

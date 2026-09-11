@@ -1,7 +1,10 @@
 {
   "id": "consumption-movie_night_shopping",
-  "snapshot": "chrome",
   "category": "consumption",
+  "need_ids": [
+    "C2",
+    "C4"
+  ],
   "difficulty": "hard",
   "instruction": "Use the movie-night shopping reminder on the Desktop to add everything still needed to the shopping cart.",
   "source": "http://host.docker.internal:7770",
@@ -62,7 +65,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "chrome",
     "notepad"
@@ -172,6 +174,5 @@
     }
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

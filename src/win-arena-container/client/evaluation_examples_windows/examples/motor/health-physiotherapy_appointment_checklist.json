@@ -2,8 +2,10 @@
   "id": "health-physiotherapy_appointment_checklist",
   "manually_evaluated": false,
   "_comment": "You need to download the file locally so that the evaluator can verify whether the local file and the file in the VM are exactly identical. The current evaluator is too weak.",
-  "snapshot": "windows",
   "category": "health",
+  "need_ids": [
+    "M1"
+  ],
   "difficulty": "hard",
   "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Create a 1-hour Thunderbird Calendar event for 10:00 AM tomorrow titled `Physiotherapy Appointment`, with every item from the provided webpage's `Common Mistakes to Avoid` section copied exactly into the description.",
   "source": "https://inclinehealth.com.au/how-to-prepare-for-first-appointment/",
@@ -81,7 +83,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "on_screen_keyboard",
     "chrome",
@@ -142,7 +143,6 @@
       }
     ]
   },
-  "proxy": false,
-  "fixed_ip": false,
+  "proxy": true,
   "possibility_of_env_change": "low"
 }

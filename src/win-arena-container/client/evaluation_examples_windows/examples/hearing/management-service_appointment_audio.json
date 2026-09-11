@@ -1,6 +1,9 @@
 {
   "id": "management-service_appointment_audio",
   "category": "management",
+  "need_ids": [
+    "H1"
+  ],
   "difficulty": "medium",
   "instruction": "Turn on Windows Live captions and use them to read the service appointment recording on the Desktop. Create a 45-minute Thunderbird Calendar event titled `Home support assessment` at the stated date and time.",
   "source": "synthetic",
@@ -143,7 +146,6 @@
       }
     ]
   },
-  "proxy": false,
-  "fixed_ip": false,
+  "proxy": true,
   "possibility_of_env_change": "low"
 }

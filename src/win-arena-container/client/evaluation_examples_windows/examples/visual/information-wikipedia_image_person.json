@@ -1,8 +1,10 @@
 {
   "id": "information-wikipedia_image_person",
   "_comment": "",
-  "snapshot": "chrome",
   "category": "information",
+  "need_ids": [
+    "V5"
+  ],
   "difficulty": "medium",
   "instruction": "Turn on Windows Narrator. Use the Wikipedia page already open in Chrome to identify the person shown in the first image, open that person's Wikipedia page, and leave it open.",
   "source": "http://host.docker.internal:8888/wikipedia_en_all_maxi_2022-05/A/I_Have_a_Dream",
@@ -51,7 +53,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "narrator",
     "chrome"
@@ -86,6 +87,5 @@
     ]
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

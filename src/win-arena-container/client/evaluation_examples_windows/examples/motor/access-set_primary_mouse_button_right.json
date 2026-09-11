@@ -1,8 +1,10 @@
 {
   "id": "access-set_primary_mouse_button_right",
   "manually_evaluated": true,
-  "snapshot": "windows",
   "category": "access",
+  "need_ids": [
+    "M6"
+  ],
   "difficulty": "easy",
   "instruction": "Set the primary mouse button to Right and leave it set that way.",
   "source": "synthetic",
@@ -14,7 +16,6 @@
     "Leave Right selected as the primary mouse button."
   ],
   "config": [],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "settings"
   ],
@@ -38,6 +39,5 @@
     }
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

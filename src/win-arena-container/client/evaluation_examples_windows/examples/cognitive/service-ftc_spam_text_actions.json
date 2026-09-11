@@ -1,7 +1,11 @@
 {
   "id": "service-ftc_spam_text_actions",
-  "snapshot": "msedge",
   "category": "service",
+  "need_ids": [
+    "C1",
+    "C6",
+    "C8"
+  ],
   "difficulty": "medium",
   "instruction": "Create a Sticky Note containing the two relevant action headings from the FTC scam guidance exactly as written, using Immersive Reader to read the page.",
   "source": "https://consumer.ftc.gov/articles/how-recognize-and-report-spam-text-messages",
@@ -39,7 +43,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "msedge",
     "sticky_notes"
@@ -82,7 +85,6 @@
       }
     ]
   },
-  "proxy": false,
-  "fixed_ip": false,
+  "proxy": true,
   "possibility_of_env_change": "medium"
 }

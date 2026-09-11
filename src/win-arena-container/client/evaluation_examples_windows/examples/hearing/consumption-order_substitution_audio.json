@@ -1,6 +1,9 @@
 {
   "id": "consumption-order_substitution_audio",
   "category": "consumption",
+  "need_ids": [
+    "H1"
+  ],
   "difficulty": "medium",
   "instruction": "Use Chrome Live Caption to read the grocery order recording on the Desktop. Create a Sticky Note containing the unavailable item, approved substitute, price limit, and pickup code.",
   "source": "synthetic",
@@ -129,6 +132,5 @@
     ]
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

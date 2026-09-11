@@ -1,8 +1,10 @@
 {
   "id": "consumption-shopping_list_cart",
   "_comment": "",
-  "snapshot": "windows",
   "category": "consumption",
+  "need_ids": [
+    "M3"
+  ],
   "difficulty": "hard",
   "instruction": "Enable Windows Filter Keys and keep them enabled. Add the products and quantities listed in the provided `ShoppingList.ods` to the OneStopMarket cart, with no additional products.",
   "source": "synthetic",
@@ -70,7 +72,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "settings",
     "libreoffice_calc",
@@ -137,6 +138,5 @@
     ]
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

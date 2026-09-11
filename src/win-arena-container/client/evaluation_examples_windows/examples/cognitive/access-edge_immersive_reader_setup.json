@@ -1,7 +1,9 @@
 {
   "id": "access-edge_immersive_reader_setup",
-  "snapshot": "msedge",
   "category": "access",
+  "need_ids": [
+    "C1"
+  ],
   "difficulty": "medium",
   "instruction": "Set up the Guardian entertainment guide in Microsoft Edge for reading in Immersive Reader with one-line focus turned on.",
   "source": "https://www.theguardian.com/culture/2026/jun/27/entertainment-guide-week-ahead-supergirl-silo-jackass-life-larry-pursuit-unhappiness",
@@ -24,7 +26,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "msedge"
   ],
@@ -43,7 +44,6 @@
       }
     }
   },
-  "proxy": false,
-  "fixed_ip": false,
+  "proxy": true,
   "possibility_of_env_change": "low"
 }

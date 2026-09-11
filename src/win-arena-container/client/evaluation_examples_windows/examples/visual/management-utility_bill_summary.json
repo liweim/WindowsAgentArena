@@ -2,8 +2,10 @@
   "id": "management-utility_bill_summary",
   "_comment": "",
   "manually_evaluated": false,
-  "snapshot": "windows",
   "category": "management",
+  "need_ids": [
+    "V1"
+  ],
   "difficulty": "hard",
   "instruction": "Enable Windows Narrator and keep it enabled. Populate the provided `BillSummary.ods` with the provider, due date, and total amount due from each of the three provided utility bills, then save the spreadsheet as `answer.ods` on the Desktop.",
   "source": "synthetic",
@@ -66,7 +68,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "narrator",
     "msedge",
@@ -122,6 +123,5 @@
     ]
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

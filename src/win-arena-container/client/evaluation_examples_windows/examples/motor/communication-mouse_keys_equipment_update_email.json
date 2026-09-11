@@ -1,6 +1,9 @@
 {
   "id": "communication-mouse_keys_equipment_update_email",
   "category": "communication",
+  "need_ids": [
+    "M4"
+  ],
   "difficulty": "medium",
   "instruction": "Enable Windows Mouse Keys and keep them enabled. Use the official Quantum 600E owner’s manual saved on the Desktop to draft a Thunderbird email to `equipmentdesk@example.org` with subject `Quantum 600E charging guidance`. Include the battery type and voltage, the required charger, and the extension-cord warning. Do not send it.",
   "source": "https://www.quantumrehab.com/pdf/owners-manuals/us_q600e_om.pdf",
@@ -157,7 +160,6 @@
       }
     ]
   },
-  "proxy": false,
-  "fixed_ip": false,
+  "proxy": true,
   "possibility_of_env_change": "low"
 }

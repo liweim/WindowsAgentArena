@@ -1,8 +1,10 @@
 {
   "id": "communication-community_class_registration",
   "manually_evaluated": true,
-  "snapshot": "chrome",
   "category": "communication",
+  "need_ids": [
+    "H1"
+  ],
   "difficulty": "medium",
   "instruction": "Use Chrome Live Caption to identify the free class, its start date, and the required registration card in the community-center audio, then compose a new Thunderbird email to register@communitycenter.org with subject `Free Workshop Registration` and include those three details in the body. Do not send it.",
   "source": "synthetic",
@@ -88,7 +90,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "chrome",
     "thunderbird"
@@ -139,7 +140,6 @@
       }
     ]
   },
-  "proxy": false,
-  "fixed_ip": false,
+  "proxy": true,
   "possibility_of_env_change": "low"
 }

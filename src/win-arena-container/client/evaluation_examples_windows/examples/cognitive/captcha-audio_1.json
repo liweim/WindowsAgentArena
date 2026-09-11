@@ -1,12 +1,15 @@
 {
   "id": "captcha-audio_1",
-  "snapshot": "chrome",
   "category": "captcha",
+  "need_ids": [
+    "C2",
+    "C7"
+  ],
   "difficulty": "easy",
   "instruction": "Complete the audio CAPTCHA open in Chrome.",
   "source": "synthetic",
   "gt_steps": [
-    "Listen to the audio CAPTCHA and type the five-digit verification code."
+    "Listen to the five-digit verification code, retain/copy it, and submit it."
   ],
   "config": [
     {
@@ -20,7 +23,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "chrome"
   ],
@@ -39,6 +41,5 @@
     }
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

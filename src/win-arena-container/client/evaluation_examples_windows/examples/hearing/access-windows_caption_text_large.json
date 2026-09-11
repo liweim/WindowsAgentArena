@@ -1,8 +1,10 @@
 {
   "id": "access-windows_caption_text_large",
   "manually_evaluated": false,
-  "snapshot": "base_setup",
   "category": "access",
+  "need_ids": [
+    "H2"
+  ],
   "difficulty": "easy",
   "instruction": "Set the caption style in Windows to Large text.",
   "source": "synthetic",
@@ -12,7 +14,6 @@
     "Set Caption style to Large text."
   ],
   "config": [],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "settings"
   ],
@@ -27,5 +28,6 @@
         "expected": "Large text"
       }
     }
-  }
+  },
+  "proxy": false
 }

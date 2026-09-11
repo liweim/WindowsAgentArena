@@ -2,8 +2,10 @@
   "id": "consumption-cheapest_bathroom_accessory",
   "_comment": "The evaluator needs to verify the number of units added. Alternatively, you can simply remove the phrase “one unit.”",
   "manually_evaluated": false,
-  "snapshot": "chrome",
   "category": "consumption",
+  "need_ids": [
+    "M1"
+  ],
   "difficulty": "medium",
   "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Add exactly one unit of the cheapest item in OneStopShop's `Bathroom Accessories` category to the shopping cart.",
   "source": "http://host.docker.internal:7770",
@@ -56,7 +58,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "settings",
     "chrome",
@@ -106,6 +107,5 @@
     ]
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

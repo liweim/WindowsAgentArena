@@ -2,8 +2,10 @@
   "id": "management-monthly_expenses_total",
   "_comment": "You should put the answer to gt_steps",
   "manually_evaluated": false,
-  "snapshot": "windows",
   "category": "management",
+  "need_ids": [
+    "M3"
+  ],
   "difficulty": "medium",
   "instruction": "Enable Windows Filter Keys and keep them enabled. In the provided `MonthlyBills.ods`, use a formula in cell B12 to calculate the total amount due for all bills with status `Unpaid`, then save the spreadsheet as `answer.ods` on the Desktop.",
   "source": "synthetic",
@@ -40,7 +42,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "settings",
     "libreoffice_calc"
@@ -90,6 +91,5 @@
     ]
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

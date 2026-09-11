@@ -1,7 +1,9 @@
 {
   "id": "mobility-driving_route_fish_market",
-  "snapshot": "chrome",
   "category": "mobility",
+  "need_ids": [
+    "H1"
+  ],
   "difficulty": "medium",
   "instruction": "Turn on captions in the opened YouTube video, identify the destination, then show a driving route in Google Maps from Sydney Central Station to that destination.",
   "source": "https://www.youtube.com/watch?v=M06i_wiKzYU",
@@ -49,7 +51,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "chrome"
   ],
@@ -92,5 +93,6 @@
         }
       }
     ]
-  }
+  },
+  "proxy": true
 }

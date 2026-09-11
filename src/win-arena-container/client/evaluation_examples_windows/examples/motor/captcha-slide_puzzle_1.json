@@ -1,7 +1,10 @@
 {
   "id": "captcha-slide_puzzle_1",
-  "snapshot": "msedge",
   "category": "captcha",
+  "need_ids": [
+    "M5",
+    "M7"
+  ],
   "difficulty": "easy",
   "instruction": "Complete the puzzle slider CAPTCHA verification in Microsoft Edge.",
   "source": "synthetic",
@@ -20,7 +23,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "msedge"
   ],
@@ -39,6 +41,5 @@
     }
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

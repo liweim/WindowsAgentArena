@@ -1,7 +1,9 @@
 {
   "id": "management-mixer_rest_timer",
-  "snapshot": "chrome",
   "category": "management",
+  "need_ids": [
+    "H1"
+  ],
   "difficulty": "medium",
   "instruction": "Turn on captions in the opened YouTube video, determine how long the stand mixer should rest after the first kneading period, then use https://vclock.com to create a timer for that duration. Leave the timer visible in the browser.",
   "source": "https://www.youtube.com/watch?v=52TNfrsSMuA",
@@ -48,7 +50,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "chrome"
   ],
@@ -83,5 +84,6 @@
         }
       }
     ]
-  }
+  },
+  "proxy": true
 }

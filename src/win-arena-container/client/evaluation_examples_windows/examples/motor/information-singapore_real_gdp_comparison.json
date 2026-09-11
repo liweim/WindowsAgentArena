@@ -2,8 +2,10 @@
   "id": "information-singapore_real_gdp_comparison",
   "_comment": "The instruction is too explicit; it essentially spells out all the steps. Your evaluator is too strict; it should only require the response to fully contain the correct answer. The same applies to other similar tasks.",
   "manually_evaluated": false,
-  "snapshot": "chrome",
   "category": "information",
+  "need_ids": [
+    "M3"
+  ],
   "difficulty": "hard",
   "instruction": "Enable Windows Filter Keys as a motor accessibility aid and keep it enabled throughout the task. Compare Singapore’s Real GDP growth percentages in the provided 2024 and 2025 reports. Calculate the absolute numeric difference between the two percentages. Save only that numeric difference followed by `%` in `answer.txt` on the Desktop.",
   "source": "synthetic",
@@ -55,7 +57,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "settings",
     "chrome",
@@ -107,6 +108,5 @@
     ]
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

@@ -1,8 +1,10 @@
 {
   "id": "mobility-nearest_passport_office_gwagwalada",
   "_comment": "The category should be mobility?",
-  "snapshot": "windows",
   "category": "mobility",
+  "need_ids": [
+    "M3"
+  ],
   "difficulty": "hard",
   "instruction": "Enable Windows Filter Keys and keep them enabled. From El Rufai Park Bus Stop, Gwagwalada 902101, Federal Capital Territory, Nigeria, compare only the passport offices listed in the provided Nigeria Immigration Service directory. Using Google Maps driving distance, choose the office with the shortest route from that start point (if distances tie, choose the shorter driving time), and leave Google Maps driving directions to that office visible.",
   "source": "https://immigration.gov.ng/",
@@ -64,7 +66,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "settings",
     "chrome"
@@ -121,7 +122,6 @@
       }
     ]
   },
-  "proxy": false,
-  "fixed_ip": false,
+  "proxy": true,
   "possibility_of_env_change": "low"
 }

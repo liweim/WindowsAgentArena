@@ -2,8 +2,10 @@
   "id": "service-passport_application_post_office",
   "_comment": "",
   "manually_evaluated": true,
-  "snapshot": "chrome",
   "category": "service",
+  "need_ids": [
+    "M1"
+  ],
   "difficulty": "medium",
   "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Using the comments on the Reddit post titled `Passport Application Locations?`, determine whether passport registration or application can be completed through a post office and save only `Yes` or `No` in `answer.txt` on the Desktop.",
   "source": "http://host.docker.internal:9999",
@@ -65,7 +67,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "settings",
     "chrome",
@@ -117,6 +118,5 @@
     ]
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

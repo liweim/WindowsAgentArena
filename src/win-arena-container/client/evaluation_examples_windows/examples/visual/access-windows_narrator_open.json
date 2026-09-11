@@ -1,8 +1,10 @@
 {
   "id": "access-windows_narrator_open",
   "_comment": "",
-  "snapshot": "base_setup",
   "category": "access",
+  "need_ids": [
+    "V1"
+  ],
   "difficulty": "easy",
   "instruction": "Turn on Windows Narrator and keep it running.",
   "source": "synthetic",
@@ -11,7 +13,6 @@
     "Keep Narrator running."
   ],
   "config": [],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "narrator"
   ],
@@ -24,5 +25,6 @@
       "type": "rule",
       "rules": {}
     }
-  }
+  },
+  "proxy": false
 }

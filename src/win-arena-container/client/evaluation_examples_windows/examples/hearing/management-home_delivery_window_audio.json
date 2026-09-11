@@ -1,6 +1,9 @@
 {
   "id": "management-home_delivery_window_audio",
   "category": "management",
+  "need_ids": [
+    "H1"
+  ],
   "difficulty": "medium",
   "instruction": "Use Chrome Live Caption to read the delivery reminder on the Desktop. Create a Sticky Note containing the delivery date, arrival window, preparation instruction, and delivery reference.",
   "source": "synthetic",
@@ -134,6 +137,5 @@
     ]
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

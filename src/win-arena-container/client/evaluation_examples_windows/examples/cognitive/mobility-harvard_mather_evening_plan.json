@@ -1,0 +1,74 @@
+{
+  "id": "mobility-harvard_mather_evening_plan",
+  "category": "mobility",
+  "need_ids": [
+    "C2",
+    "C3",
+    "C4"
+  ],
+  "difficulty": "medium",
+  "instruction": "Use the Harvard Shuttle printable schedule open in Microsoft Edge. On a weekday evening, you are at Mather House at 9:15 pm and want the first shuttle to Lamont Library. Create a Sticky Note with four ordered checkpoints: the Mather House departure time, the Quad time, the Law School time, and the Lamont Library arrival time.",
+  "source": "https://prod-transportation.drupalsites.harvard.edu/sites/g/files/omnuum12016/files/2025-08/All%20Shuttle%20Routes.pdf",
+  "gt_steps": [
+    "Find the evening Mather–Crimson–Overnight timetable in the Harvard Shuttle PDF.",
+    "Find the first Mather House departure after 9:15 pm: 9:20 pm.",
+    "Follow the same row to the Quad at 9:40 pm, the Law School at 9:45 pm, and Lamont Library at 9:53 pm.",
+    "Create a Sticky Note containing the four checkpoints in order."
+  ],
+  "config": [
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "cmd",
+          "/c",
+          "start msedge https://prod-transportation.drupalsites.harvard.edu/sites/g/files/omnuum12016/files/2025-08/All%20Shuttle%20Routes.pdf"
+        ]
+      }
+    }
+  ],
+  "related_apps": [
+    "msedge",
+    "sticky_notes"
+  ],
+  "evaluator": {
+    "func": "check_text_points",
+    "result": {
+      "type": "sticky_notes_content"
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "ignore_case": true,
+        "points": [
+          {
+            "all_of": [
+              ["Mather House", "Mather"],
+              ["9:20 pm", "9:20pm", "21:20"]
+            ]
+          },
+          {
+            "all_of": [
+              ["Quad"],
+              ["9:40 pm", "9:40pm", "21:40"]
+            ]
+          },
+          {
+            "all_of": [
+              ["Law School", "Law"],
+              ["9:45 pm", "9:45pm", "21:45"]
+            ]
+          },
+          {
+            "all_of": [
+              ["Lamont Library", "Lamont"],
+              ["9:53 pm", "9:53pm", "21:53"]
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "proxy": true,
+  "possibility_of_env_change": "medium"
+}

@@ -1,6 +1,9 @@
 {
   "id": "service-accessible_transport_request",
   "category": "service",
+  "need_ids": [
+    "M1"
+  ],
   "difficulty": "medium",
   "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Complete the accessible transport request template on the Desktop using the supplied request details, then save the completed form as `answer.txt` on the Desktop.",
   "source": "synthetic",
@@ -82,6 +85,5 @@
     ]
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

@@ -1,8 +1,10 @@
 {
   "id": "access-windows_font_size_140",
   "_comment": "",
-  "snapshot": "base_setup",
   "category": "access",
+  "need_ids": [
+    "V2"
+  ],
   "difficulty": "easy",
   "instruction": "Set the Windows text size to 140% and apply the change.",
   "source": "synthetic",
@@ -13,7 +15,6 @@
     "Change it to 140% and apply."
   ],
   "config": [],
-  "trajectory": "trajectories/",
   "related_apps": [
     "settings"
   ],
@@ -35,6 +36,5 @@
     }
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

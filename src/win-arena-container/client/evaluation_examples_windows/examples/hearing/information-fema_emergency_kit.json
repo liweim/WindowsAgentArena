@@ -1,7 +1,9 @@
 {
   "id": "information-fema_emergency_kit",
-  "snapshot": "chrome",
   "category": "information",
+  "need_ids": [
+    "H1"
+  ],
   "difficulty": "hard",
   "instruction": "Turn on captions in the opened YouTube video, identify each emergency preparedness item and household consideration mentioned in the captions, then record them in a Sticky Note.",
   "source": "https://www.youtube.com/watch?v=o4enqHGluLI",
@@ -59,7 +61,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "chrome",
     "sticky_notes"
@@ -151,5 +152,6 @@
         }
       }
     ]
-  }
+  },
+  "proxy": true
 }

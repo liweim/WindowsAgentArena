@@ -1,7 +1,9 @@
 {
   "id": "mobility-rottnest_island_map",
-  "snapshot": "chrome",
   "category": "mobility",
+  "need_ids": [
+    "H1"
+  ],
   "difficulty": "easy",
   "instruction": "Turn on captions in the opened YouTube video, identify the island shown there, then open its location in Google Maps.",
   "source": "https://www.youtube.com/watch?v=Js4BR1Qz0Hs",
@@ -46,7 +48,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "chrome"
   ],
@@ -83,5 +84,6 @@
         }
       }
     ]
-  }
+  },
+  "proxy": true
 }

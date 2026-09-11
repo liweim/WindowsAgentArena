@@ -1,6 +1,9 @@
 {
   "id": "service-medicare_card_sample",
   "category": "service",
+  "need_ids": [
+    "V5"
+  ],
   "difficulty": "medium",
   "instruction": "Use the original sample Medicare card image on the Desktop and save `answer.txt` with the sample name, Medicare Number, Part A coverage type and start date, and Part B coverage type and start date, one item per line in that order.",
   "source": "https://www.medicare.gov/sites/default/files/Medicare_card_new.jpg",
@@ -104,6 +107,5 @@
     }
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

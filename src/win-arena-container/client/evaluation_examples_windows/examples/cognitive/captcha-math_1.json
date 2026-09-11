@@ -1,7 +1,9 @@
 {
   "id": "captcha-math_1",
-  "snapshot": "chrome",
   "category": "captcha",
+  "need_ids": [
+    "C7"
+  ],
   "difficulty": "easy",
   "instruction": "Complete the math CAPTCHA open in Chrome.",
   "source": "synthetic",
@@ -20,7 +22,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "chrome"
   ],
@@ -39,6 +40,5 @@
     }
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

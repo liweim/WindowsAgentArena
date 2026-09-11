@@ -1,0 +1,78 @@
+{
+  "id": "mobility-wmata_a49_morning_plan",
+  "category": "mobility",
+  "need_ids": [
+    "C2",
+    "C3",
+    "C4"
+  ],
+  "difficulty": "medium",
+  "instruction": "Use the WMATA A49 weekday timetable open in Microsoft Edge. You are at Glen Carlyn Dr + Vista Dr at 7:05 am and need the first eastbound bus toward Metro Center. Create `answer.txt` on the Desktop with four lines: the departure time from Glen Carlyn Dr + Vista Dr, the time at Columbia Pike + George Mason Dr, the time at 18 St + C St NW, and the arrival time at Metro Center.",
+  "source": "https://www.wmata.com/content/dam/wmata-com/Timetables/A49_timetable.pdf",
+  "gt_steps": [
+    "Read the A49 weekday eastbound timetable.",
+    "Find the first Glen Carlyn Dr + Vista Dr departure after 7:05 am: 7:20 am.",
+    "Follow that row to Columbia Pike + George Mason Dr at 7:35 am, 18 St + C St NW at 8:07 am, and Metro Center at 8:29 am.",
+    "Open Notepad and enter the four requested checkpoints, one per line.",
+    "Save the file as `answer.txt` on the Desktop."
+  ],
+  "config": [
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "cmd",
+          "/c",
+          "start msedge https://www.wmata.com/content/dam/wmata-com/Timetables/A49_timetable.pdf"
+        ]
+      }
+    }
+  ],
+  "related_apps": [
+    "msedge",
+    "notepad"
+  ],
+  "evaluator": {
+    "func": "check_text_points",
+    "result": {
+      "type": "desktop_file_text",
+      "filename": "answer.txt"
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "ignore_case": true,
+        "ordered": true,
+        "line_based": true,
+        "points": [
+          {
+            "all_of": [
+              ["Glen Carlyn", "Vista Dr", "Vista Drive"],
+              ["7:20 am", "7:20am", "07:20"]
+            ]
+          },
+          {
+            "all_of": [
+              ["George Mason", "Columbia Pike"],
+              ["7:35 am", "7:35am", "07:35"]
+            ]
+          },
+          {
+            "all_of": [
+              ["18 St", "18th St", "C St NW"],
+              ["8:07 am", "8:07am", "08:07"]
+            ]
+          },
+          {
+            "all_of": [
+              ["Metro Center", "13 St", "G St NW"],
+              ["8:29 am", "8:29am", "08:29"]
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "proxy": true,
+  "possibility_of_env_change": "medium"
+}

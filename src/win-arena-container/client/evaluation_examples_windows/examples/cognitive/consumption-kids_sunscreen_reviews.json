@@ -1,17 +1,19 @@
 {
   "id": "consumption-kids_sunscreen_reviews",
-  "snapshot": "chrome",
   "category": "consumption",
+  "need_ids": [
+    "C5",
+    "C6"
+  ],
   "difficulty": "hard",
-  "instruction": "Check the OneStopShop customer reviews for kids sunscreens. A product qualifies only if the reviews explicitly support both criteria: it does not sting and it does not feel sticky. Add the qualifying product to the cart. If more than one product qualifies, choose the one with the greater number of review statements supporting those two criteria; if still tied, choose the lower-priced product.",
+  "instruction": "Find a kids sunscreen that is SPF 50, mineral, sold as a foam twin pack, and whose customer reviews support that it does not sting and does not feel sticky. Add the matching product to the cart.",
   "source": "http://host.docker.internal:7770",
   "gt_steps": [
-    "Open the self-hosted shopping website.",
-    "Search for kids sunscreen products.",
-    "Compare the customer reviews for stinging and sticky-feel feedback.",
-    "Identify `Banana Boat Kids Vanishing Color, Amazing Apple and Berry Blast Reef Frienfly Broad Spectrum Mineral Sunscreen Foam Twin Pack (Apple & Berry), SPF 50, 4oz. Each` as the standard answer.",
-    "Open the standard-answer product.",
-    "Add the product to the shopping cart."
+    "Open the self-hosted shopping website and search for kids sunscreen.",
+    "Use product details to narrow to SPF 50 mineral foam twin packs.",
+    "Check customer reviews for non-stinging and non-sticky feedback.",
+    "Identify the Banana Boat Kids Vanishing Color mineral sunscreen foam twin pack as the matching product.",
+    "Add the matching product to the shopping cart."
   ],
   "config": [
     {
@@ -53,7 +55,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "chrome"
   ],
@@ -74,6 +75,5 @@
     }
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

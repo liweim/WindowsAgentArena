@@ -1,6 +1,10 @@
 {
   "id": "communication-library_program_reply",
   "category": "communication",
+  "need_ids": [
+    "C3",
+    "C5"
+  ],
   "difficulty": "medium",
   "instruction": "Use the library program notice on the Desktop to choose the memory-support workshop that is on Thursday and starts after 1:00 PM. Draft a Thunderbird email to `programs@example.org` with subject `Workshop confirmation` confirming one place and including the selected event date, time, room, and confirmation code. Do not send it.",
   "source": "synthetic",
@@ -106,7 +110,6 @@
       }
     }
   },
-  "proxy": false,
-  "fixed_ip": false,
+  "proxy": true,
   "possibility_of_env_change": "low"
 }

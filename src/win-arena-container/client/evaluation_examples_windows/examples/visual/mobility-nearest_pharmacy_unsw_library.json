@@ -2,8 +2,10 @@
   "id": "mobility-nearest_pharmacy_unsw_library",
   "_comment": "Allow personal data like UNSW",
   "manually_evaluated": false,
-  "snapshot": "chrome",
   "category": "mobility",
+  "need_ids": [
+    "V1"
+  ],
   "difficulty": "medium",
   "instruction": "Turn on Windows Narrator. Use Google Maps with UNSW Main Library as the fixed start point and search for pharmacies. Choose the pharmacy with the shortest displayed walking distance from the library; if distances tie, choose the shorter walking time. Open that pharmacy's place details and leave them open.",
   "source": "synthetic",
@@ -51,7 +53,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "narrator",
     "chrome"
@@ -89,7 +90,6 @@
       }
     ]
   },
-  "proxy": false,
-  "fixed_ip": false,
+  "proxy": true,
   "possibility_of_env_change": "low"
 }

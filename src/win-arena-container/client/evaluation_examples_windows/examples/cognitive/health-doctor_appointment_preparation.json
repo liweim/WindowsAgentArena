@@ -1,7 +1,11 @@
 {
   "id": "health-doctor_appointment_preparation",
-  "snapshot": "msedge",
   "category": "health",
+  "need_ids": [
+    "C1",
+    "C2",
+    "C3"
+  ],
   "difficulty": "hard",
   "instruction": "Create a 2-hour Thunderbird Calendar event titled `Doctor appointment` for tomorrow at 9:00 AM. Use Immersive Reader to read the appointment-preparation article, and include the article's exact wording for the items to bring or prepare in the event description.",
   "source": "https://apnews.com/article/3fcde5b5c927734429818bd0ed1c6680",
@@ -65,7 +69,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "msedge",
     "thunderbird"
@@ -122,7 +125,6 @@
       }
     ]
   },
-  "proxy": false,
-  "fixed_ip": false,
+  "proxy": true,
   "possibility_of_env_change": "low"
 }

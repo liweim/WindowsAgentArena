@@ -1,7 +1,9 @@
 {
   "id": "management-double_dough_timer",
-  "snapshot": "chrome",
   "category": "management",
+  "need_ids": [
+    "H1"
+  ],
   "difficulty": "medium",
   "instruction": "Turn on captions in the opened YouTube video, determine about how long the pita dough should take to double in size, then use https://vclock.com to create a timer for that duration. Leave the timer visible in the browser.",
   "source": "https://www.youtube.com/watch?v=NPiA69p4gqE",
@@ -48,7 +50,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "chrome"
   ],
@@ -83,5 +84,6 @@
         }
       }
     ]
-  }
+  },
+  "proxy": true
 }

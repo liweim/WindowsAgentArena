@@ -1,7 +1,9 @@
 {
   "id": "health-anaphylaxis_medicine",
-  "snapshot": "chrome",
   "category": "health",
+  "need_ids": [
+    "H1"
+  ],
   "difficulty": "medium",
   "instruction": "Turn on captions in the opened YouTube video, identify the medicine needed for anaphylaxis, then save the answer in `answer.txt` on the Desktop.",
   "source": "https://youtu.be/1YrKVobZnNg",
@@ -47,7 +49,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "chrome",
     "notepad"
@@ -88,5 +89,6 @@
         }
       }
     ]
-  }
+  },
+  "proxy": true
 }
