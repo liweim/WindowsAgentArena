@@ -116,13 +116,25 @@
             [
               "School Phone Number"
             ],
-            [
-              "Special needs",
-              "medical conditions",
-              "allergies",
-              "important information"
-            ]
-          ]
+            {
+              "all_of": [
+                [
+                  "Special needs"
+                ],
+                [
+                  "medical conditions"
+                ],
+                [
+                  "allergies"
+                ],
+                [
+                  "important information"
+                ]
+              ]
+            }
+          ],
+          "ordered": true,
+          "line_based": true
         }
       }
     ]

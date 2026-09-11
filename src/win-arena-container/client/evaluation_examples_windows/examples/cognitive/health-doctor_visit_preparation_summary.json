@@ -28,16 +28,14 @@
   ],
   "evaluator": {
     "func": [
-      "exact_match",
+      "check_text_points",
       "check_edge_immersive_reader_state"
     ],
     "conj": "and",
     "result": [
       {
-        "type": "is_file_saved_desktop",
-        "filename": "answer.txt",
-        "textcontent": "Bring a list of symptoms and questions\nfamily medical history is critical\nname and dose\nvitamins and supplements\nrecent lab tests, hospitalizations or visits to other health providers",
-        "exact": true
+        "type": "desktop_file_text",
+        "filename": "answer.txt"
       },
       {
         "type": "edge_immersive_reader_state",
@@ -48,7 +46,67 @@
       {
         "type": "rule",
         "rules": {
-          "expected": "true"
+          "ignore_case": true,
+          "ordered": true,
+          "line_based": true,
+          "points": [
+            {
+              "any_of": [
+                "Bring a list of symptoms and questions",
+                "list of symptoms and questions"
+              ]
+            },
+            {
+              "all_of": [
+                [
+                  "family medical history",
+                  "family history"
+                ],
+                [
+                  "critical",
+                  "important"
+                ]
+              ]
+            },
+            {
+              "all_of": [
+                [
+                  "name"
+                ],
+                [
+                  "dose",
+                  "dosage"
+                ]
+              ]
+            },
+            {
+              "all_of": [
+                [
+                  "vitamins"
+                ],
+                [
+                  "supplements"
+                ]
+              ]
+            },
+            {
+              "all_of": [
+                [
+                  "recent lab tests",
+                  "recent labs"
+                ],
+                [
+                  "hospitalizations",
+                  "hospital stays"
+                ],
+                [
+                  "other health providers",
+                  "other healthcare providers",
+                  "other doctors"
+                ]
+              ]
+            }
+          ]
         }
       },
       {

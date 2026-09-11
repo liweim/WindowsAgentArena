@@ -35,6 +35,13 @@ def get_are_files_sorted_by_modified_time(env, config: dict) -> bool:
         return False
     return env.controller.get_vm_are_files_sorted_by_modified_time(config["directory"])
 
+
+def get_desktop_file_text(env, config) -> str:
+    """Return a Desktop text file verbatim for semantic/structured scoring."""
+    desktop_path = env.controller.get_vm_desktop_path()
+    file_name = config["filename"]
+    return env.controller.get_file_as_text(desktop_path + "\\" + file_name)
+
 def get_is_file_saved_desktop(env, config) -> str:
     desktop_path = env.controller.get_vm_desktop_path()
     file_name = config["filename"]

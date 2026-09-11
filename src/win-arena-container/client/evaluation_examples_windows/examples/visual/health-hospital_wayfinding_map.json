@@ -36,17 +36,75 @@
     "notepad"
   ],
   "evaluator": {
-    "func": "exact_match",
+    "func": "check_text_points",
     "result": {
-      "type": "is_file_saved_desktop",
-      "filename": "answer.txt",
-      "textcontent": "Outpatient Pharmacy: Blue Zone - Level 2\nMRI Scanner: Purple Zone - Level 2\nOutpatients Department (OPD): Orange Zone - Level 3\nRadiology (X-ray and CT scanning): Orange Zone - Level 3",
-      "exact": true
+      "type": "desktop_file_text",
+      "filename": "answer.txt"
     },
     "expected": {
       "type": "rule",
       "rules": {
-        "expected": "true"
+        "ignore_case": true,
+        "ordered": true,
+        "line_based": true,
+        "points": [
+          {
+            "all_of": [
+              [
+                "Outpatient Pharmacy"
+              ],
+              [
+                "Blue Zone"
+              ],
+              [
+                "Level 2"
+              ]
+            ]
+          },
+          {
+            "all_of": [
+              [
+                "MRI Scanner",
+                "MRI"
+              ],
+              [
+                "Purple Zone"
+              ],
+              [
+                "Level 2"
+              ]
+            ]
+          },
+          {
+            "all_of": [
+              [
+                "Outpatients Department",
+                "OPD"
+              ],
+              [
+                "Orange Zone"
+              ],
+              [
+                "Level 3"
+              ]
+            ]
+          },
+          {
+            "all_of": [
+              [
+                "Radiology",
+                "X-ray",
+                "CT scanning"
+              ],
+              [
+                "Orange Zone"
+              ],
+              [
+                "Level 3"
+              ]
+            ]
+          }
+        ]
       }
     }
   },

@@ -56,7 +56,7 @@
   "evaluator": {
     "func": [
       "exact_match",
-      "exact_match"
+      "check_text_points"
     ],
     "conj": "and",
     "result": [
@@ -64,9 +64,8 @@
         "type": "live_caption_enabled"
       },
       {
-        "type": "is_file_saved_desktop",
-        "filename": "answer.txt",
-        "textcontent": "antihistamines"
+        "type": "desktop_file_text",
+        "filename": "answer.txt"
       }
     ],
     "expected": [
@@ -79,7 +78,14 @@
       {
         "type": "rule",
         "rules": {
-          "expected": "true"
+          "ignore_case": true,
+          "points": [
+            [
+              "antihistamine",
+              "antihistamines",
+              "antihistamine medication"
+            ]
+          ]
         }
       }
     ]

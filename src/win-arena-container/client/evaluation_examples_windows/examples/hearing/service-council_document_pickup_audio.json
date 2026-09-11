@@ -74,7 +74,7 @@
   "evaluator": {
     "func": [
       "check_include_exclude",
-      "exact_match"
+      "check_text_points"
     ],
     "conj": "and",
     "result": [
@@ -88,10 +88,8 @@
         ]
       },
       {
-        "type": "is_file_saved_desktop",
-        "filename": "answer.txt",
-        "textcontent": "Civic Service Centre, counter 4\n9:00 AM-4:30 PM\nPhoto ID\nPS-482",
-        "exact": true
+        "type": "desktop_file_text",
+        "filename": "answer.txt"
       }
     ],
     "expected": [
@@ -109,7 +107,36 @@
       {
         "type": "rule",
         "rules": {
-          "expected": "true"
+          "ignore_case": true,
+          "ordered": true,
+          "line_based": true,
+          "points": [
+            {
+              "all_of": [
+                [
+                  "Civic Service Centre",
+                  "Civic Service Center"
+                ],
+                [
+                  "counter 4",
+                  "counter four"
+                ]
+              ]
+            },
+            {
+              "regex": [
+                "\\b9(?::00)?\\s*(?:am)?\\s*(?:-|to)\\s*4:30\\s*pm\\b"
+              ]
+            },
+            [
+              "Photo ID",
+              "photo identification"
+            ],
+            [
+              "PS-482",
+              "PS 482"
+            ]
+          ]
         }
       }
     ]

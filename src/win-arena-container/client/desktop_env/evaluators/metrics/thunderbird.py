@@ -9,10 +9,12 @@ from zoneinfo import ZoneInfo
 from email.header import decode_header, make_header
 from email.message import Message
 from email import policy
+from email.utils import getaddresses
 from typing import Iterable, List, Pattern, Dict, Match
 from typing import Union, Any, TypeVar, Callable
 
 from .utils import _match_record
+from .general import check_text_points
 from .utils import _match_value_to_rule as _match_pref
 
 logger = logging.getLogger("desktopenv.metric.thunderbird")
@@ -252,25 +254,28 @@ def _iter_messages(path: str) -> Iterable[Message]:
 
 
 def _message_score(message: Message, rules: Dict[str, Any]) -> float:
-    expected_to = _normalize_email_text(rules.get("to", ""))
+    expected_to = str(rules.get("to", "") or "")
     expected_subject = _normalize_email_text(rules.get("subject", ""))
-    actual_to = _normalize_email_text(_decode_header_value(message.get("to")))
+    actual_to = _decode_header_value(message.get("to"))
     actual_subject = _normalize_email_text(_decode_header_value(message.get("subject")))
 
-    if expected_to not in actual_to or actual_subject != expected_subject:
+    expected_addresses = {addr.casefold() for _, addr in getaddresses([expected_to]) if addr}
+    actual_addresses = {addr.casefold() for _, addr in getaddresses([actual_to]) if addr}
+    allow_extra = bool(rules.get("allow_extra_recipients", False))
+    recipient_match = (expected_addresses <= actual_addresses) if allow_extra else (expected_addresses == actual_addresses)
+    if not recipient_match or actual_subject != expected_subject:
         return 0.
 
-    body = _normalize_email_text(_message_body(message)).lower()
-    body_points: List[List[str]] = rules.get("body_points", [])
+    body_points = rules.get("body_points", [])
     if not body_points:
         return 1.
-
-    matched = 0
-    for variants in body_points:
-        if any(_normalize_email_text(variant).lower() in body for variant in variants):
-            matched += 1
-
-    return matched / len(body_points)
+    body_rules = {
+        "ignore_case": rules.get("ignore_case", True),
+        "points": body_points,
+        "ordered": rules.get("body_ordered", False),
+        "line_based": rules.get("body_line_based", False),
+    }
+    return check_text_points(_message_body(message), body_rules)
 
 
 
@@ -376,6 +381,19 @@ def _calendar_event_text(event: Dict[str, Any]) -> str:
         if isinstance(value, str):
             parts.append(value)
     return _normalize_email_text(" ".join(parts)).lower()
+
+
+def _calendar_event_title_text(event: Dict[str, Any]) -> str:
+    """Extract the event title/summary field without leaking description text."""
+    preferred = ("title", "summary")
+    records = [event] + [item for item in event.get("related", []) if isinstance(item, dict)]
+    for wanted in preferred:
+        for record in records:
+            for key, value in record.items():
+                key_norm = str(key).lower()
+                if isinstance(value, str) and (key_norm == wanted or key_norm.endswith("_" + wanted)):
+                    return _normalize_email_text(value)
+    return ""
 
 
 def _calendar_event_description_text(event: Dict[str, Any]) -> str:
@@ -602,18 +620,20 @@ def check_thunderbird_calendar_event(result: Dict[str, Any], rules: Dict[str, An
         if expected_all_day is not None and not _calendar_event_all_day_matches(event, expected_all_day):
             continue
 
-        event_text = _calendar_event_text(event)
-        if expected_title and _normalize_email_text(expected_title).lower() not in event_text:
+        actual_title = _calendar_event_title_text(event)
+        if expected_title and _normalize_email_text(expected_title).casefold() != actual_title.casefold():
             continue
 
         if not body_points:
             return 1.
 
         text = _calendar_event_description_text(event)
-        matched = 0
-        for variants in body_points:
-            if any(_normalize_email_text(variant).lower() in text for variant in variants):
-                matched += 1
-        best_score = max(best_score, matched / len(body_points))
+        body_rules = {
+            "ignore_case": rules.get("ignore_case", True),
+            "points": body_points,
+            "ordered": rules.get("body_ordered", False),
+            "line_based": rules.get("body_line_based", False),
+        }
+        best_score = max(best_score, check_text_points(text, body_rules))
 
     return best_score

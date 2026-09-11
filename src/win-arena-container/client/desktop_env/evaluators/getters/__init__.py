@@ -52,7 +52,8 @@ from .fileexplorer import (
     get_is_file_desktop,
     get_vm_library_folders,
     get_is_files_moved_downloads,
-    get_is_file_saved_desktop
+    get_is_file_saved_desktop,
+    get_desktop_file_text
 )
 from .general import get_vm_command_line, get_vm_terminal_output, get_vm_command_error, get_sticky_notes_content
 from .gimp import get_gimp_config_file

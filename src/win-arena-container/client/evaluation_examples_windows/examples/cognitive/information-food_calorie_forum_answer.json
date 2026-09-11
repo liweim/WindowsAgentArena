@@ -52,8 +52,13 @@
         "ignore_case": true,
         "points": [
           [
-            "don't know",
-            "do not know"
+            "don't know exactly",
+            "do not know exactly",
+            "cannot know exactly",
+            "can't know exactly",
+            "they estimate",
+            "they calculate an estimate",
+            "not known exactly"
           ]
         ]
       }

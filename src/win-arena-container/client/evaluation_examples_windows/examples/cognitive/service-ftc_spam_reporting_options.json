@@ -30,16 +30,14 @@
   ],
   "evaluator": {
     "func": [
-      "exact_match",
+      "check_text_points",
       "check_edge_immersive_reader_state"
     ],
     "conj": "and",
     "result": [
       {
-        "type": "is_file_saved_desktop",
-        "filename": "answer.txt",
-        "textcontent": "forward it to 7726 (SPAM)\nReport it on the messaging app you use\nReport it to the FTC at ReportFraud.ftc.gov",
-        "exact": true
+        "type": "desktop_file_text",
+        "filename": "answer.txt"
       },
       {
         "type": "edge_immersive_reader_state",
@@ -50,7 +48,51 @@
       {
         "type": "rule",
         "rules": {
-          "expected": "true"
+          "ignore_case": true,
+          "ordered": true,
+          "line_based": true,
+          "points": [
+            {
+              "all_of": [
+                [
+                  "forward",
+                  "send"
+                ],
+                [
+                  "7726"
+                ],
+                [
+                  "SPAM"
+                ]
+              ]
+            },
+            {
+              "all_of": [
+                [
+                  "report"
+                ],
+                [
+                  "messaging app",
+                  "messages app",
+                  "message app"
+                ]
+              ]
+            },
+            {
+              "all_of": [
+                [
+                  "report"
+                ],
+                [
+                  "FTC"
+                ],
+                [
+                  "ReportFraud.ftc.gov",
+                  "ReportFraud"
+                ]
+              ]
+            }
+          ]
         }
       },
       {

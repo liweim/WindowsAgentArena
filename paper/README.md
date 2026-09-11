@@ -26,6 +26,16 @@ Each task should be grounded in the access needs of one primary disability group
 
 Task scenarios may involve visual, auditory, physical, speech, cognitive, language, learning, or neurological access needs, but the relevant access need should be clear from the scenario.
 
+### Agent–User Handoff and the Role of Assistive Technology
+
+The benchmark evaluates whether a computer-use agent can solve a user's task **for the user** while leaving the resulting computer state usable, inspectable, and continuable by that user. Assistive technology (AT) and accessibility settings are therefore primarily **user-facing handoff state**, not restrictions that force the agent to imitate how a person with a disability operates the computer.
+
+Unless a task explicitly defines an interaction constraint, the agent may use its normal computer-use capabilities, including visual perception, mouse input, keyboard input, and supported structured observations. The agent is not expected to simulate a disability or reproduce a human AT interaction trajectory. Instead, it should complete the user's goal and, when required, preserve or configure the relevant accessibility state so the user can monitor the result, inspect it, continue the workflow, or take control afterward.
+
+This design creates a meaningful distinction from ordinary GUI automation in two ways. First, some tasks require an accessibility feature or support state as part of successful completion, and the evaluator verifies that state in addition to the task result. Second, tasks are grounded in access needs that differ across user groups, enabling analysis of where current agents succeed or fail for visual, hearing, motor, and cognitive accessibility scenarios.
+
+Accordingly, evaluators should score the **user-facing outcome and required accessibility state**, not whether the agent followed the same interaction strategy as the target user group. Studies that constrain an agent to keyboard-only, magnified, or screen-reader-mediated interaction answer a complementary question about AT-constrained agent behavior; this benchmark instead focuses on whether the agent can reliably complete accessibility-oriented user goals and hand control back in an appropriate state.
+
 ### Task Categories
 
 Use one of the following exact lowercase category labels:
@@ -214,7 +224,7 @@ Cognitive-access tasks on Windows are not limited to Microsoft Edge Immersive Re
 
 Appropriate scenarios include older adults with memory, attention, processing-speed, or planning difficulties; users with dyslexia or reading difficulties; users with ADHD or distractibility; and users who need help turning dense information into short actionable output.
 
-Age alone is not sufficient to classify a task as cognitive. However, ordinary multi-step digital workflows can qualify when they place meaningful demands on planning, sequencing, working memory, attention, information processing, decision-making, maintaining task context, or recognizing successful completion. Software installation and setup tasks are valid examples when the user must independently manage those demands; they do not need to use a dedicated accessibility feature.
+Age alone is not sufficient to classify a task as cognitive. Task complexity alone is also not sufficient: an ordinary multi-step workflow should not be labeled cognitive merely because it requires planning, sequencing, working memory, attention, or decision-making. A cognitive-access task should make the agent's assistance materially reduce one of those barriers for the user—for example by externalizing memory into a reminder or checklist, simplifying dense information into an actionable form, reconciling multiple pieces of information, reducing time pressure, preserving task state, or producing a structured artifact that makes the next user action easier. Generic software installation, product lookup, shopping, or administrative data-entry tasks without such a cognitive-support outcome should be reassigned, redesigned, or removed.
 
 A cognitive task should make at least one of the following central to the scenario:
 
@@ -277,6 +287,19 @@ Use the following workflow:
 7. Build a deterministic evaluator covering all graded requirements.
 8. Manually verify that setup does not solve the task and that the task is realistic, executable, and repeatable.
 
+### Human / Expert Task Validation
+
+Before benchmark release, validate the task set with reviewers who have accessibility expertise and, where feasible, people with lived experience of the represented access needs. Source grounding establishes that a scenario is plausible, but it does not by itself establish that the adapted GUI task is a valid or useful representation of an accessibility-oriented user goal.
+
+The validation protocol should assess at least four dimensions:
+
+1. **Realism:** whether the task resembles a plausible real-world computer-use need.
+2. **Accessibility relevance:** whether the stated access need or support materially changes the user goal, required final state, information modality, or handoff requirement rather than serving only as superficial framing.
+3. **Clarity and determinacy:** whether the instruction has a well-defined success condition without unintended ambiguity.
+4. **Support appropriateness:** whether the selected assistive feature, accessibility setting, note, reminder, checklist, captioning workflow, route constraint, or other support is appropriate for the intended user need.
+
+Use at least two independent reviewers per validated task or task sample when practical. Record ratings, disagreements, adjudication decisions, and any resulting task revisions. Revise, reassign, or remove tasks that fall below the pre-defined acceptance threshold. Paper-level reporting and analysis of this validation are maintained in `中文论文框架.md`.
+
 ## 3. Task JSON Specification
 
 ### Required / Supported Fields
@@ -324,7 +347,7 @@ management-onscreen_keyboard_reminder.json
 
 ### Evaluator Rules
 
-Prefer deterministic state checks over subjective grading.
+Prefer deterministic state checks over subjective grading. The evaluator should judge whether the agent achieved the task goal, not whether it reproduced one arbitrary surface form of a correct answer.
 
 Inside `evaluator`:
 
@@ -344,7 +367,140 @@ Evaluators may check:
 
 The evaluator should cover every requirement that is necessary for task success. Do not ask for a field, accessibility feature, or output in the instruction and then omit it from evaluation when it can be checked deterministically.
 
-Expected outputs should be short, stable, and unambiguous. Avoid tasks that depend on current news, changing rankings, personalized recommendations, or volatile page layouts unless the source is pinned, cached, or self-hosted.
+#### Evaluation Design Principles
+
+Use the following priorities when designing or reviewing an evaluator:
+
+1. **Make the task answer unique at the semantic level.** A task should have one well-defined target state or set of facts. If the source permits multiple equally valid recommendations, rankings, interpretations, or summaries, add a deterministic selection criterion, pin the source state, or rewrite the task.
+2. **Accept semantically equivalent natural-language answers.** Do not reject a correct answer because of capitalization, harmless whitespace, hyphenation, equivalent numeric formatting, or an accepted synonym.
+3. **Require all essential facts.** Semantic tolerance must not make the evaluator permissive enough to accept an incomplete answer. Split an answer into atomic facts and require every fact that is necessary for correctness.
+4. **Evaluate state structurally whenever possible.** Check recipients as addresses, calendar titles as titles, dates as dates, URLs as URLs, quantities as numbers, and application settings as settings rather than searching for those values anywhere in a large text dump.
+5. **Use exact matching only when exact representation is part of the task.** Examples include text explicitly requested `exactly as shown`, a fixed template, a canonical filename, a specific URL, a required subject/title, or another field whose literal value is itself graded.
+6. **Keep evaluation deterministic and reproducible.** Rule-based evaluators are preferred over LLM judges for benchmark scoring. LLM-based semantic judging should be reserved for tasks that cannot reasonably be reduced to stable facts or structured state.
+
+#### Natural-Language Content Evaluation
+
+For ordinary natural-language answers, avoid whole-answer `exact_match` or literal equality. Instead, decompose the expected answer into independently scoreable semantic points.
+
+The compact text-rule notation is:
+
+```text
+"text"                 = this required expression must match
+["a", "b", "c"]      = any_of: any one equivalent expression may match
+{"all_of": [A, B]}    = all child rules A and B must match
+{"regex": "..."}      = match a constrained pattern when literal variants are unsuitable
+```
+
+Lists deliberately serve as the compact `any_of` form so task JSON does not become dominated by repetitive wrapper objects. Dictionaries are reserved for explicit operators such as `all_of` and `regex`.
+
+For example:
+
+```json
+"body_points": [
+  {
+    "all_of": [
+      ["two", "2"],
+      ["batteries", "battery"]
+    ]
+  },
+  ["12-volt", "12 volt"],
+  ["deep-cycle", "deep cycle"],
+  "sealed",
+  ["maintenance free", "maintenance-free"],
+  [
+    "supplied off-board battery charger",
+    "supplied charger",
+    "off-board battery charger"
+  ],
+  [
+    "never use an extension cord",
+    "do not use an extension cord",
+    "no extension cord"
+  ]
+]
+```
+
+The first point means `(two OR 2) AND (batteries OR battery)`. This prevents a partial answer containing only `2` or only `battery` from receiving credit for the complete fact. The remaining list-valued points accept alternative surface forms of the same fact.
+
+A point should represent one semantic fact. Do not place independent required facts in the same `any_of` list, because that changes an intended `AND` into an `OR`. Conversely, do not create separate required points for two phrases that are merely synonyms of each other.
+
+For a task with several required facts, score coverage over the required points:
+
+```text
+score = matched_required_points / total_required_points
+```
+
+Use a stricter all-or-nothing state evaluator when partial completion is not meaningful. When text-point coverage is combined with other requirements such as the correct file, recipient, event date, or accessibility setting, combine those requirements explicitly rather than relying on text content to imply them.
+
+#### Text Normalization
+
+Text matching should normalize harmless presentation differences while preserving distinctions that affect meaning. Appropriate normalization includes:
+
+- Unicode normalization;
+- case-insensitive comparison unless capitalization is explicitly significant;
+- trimming and collapsing repeated whitespace;
+- treating common hyphen/dash variants consistently when they do not change meaning;
+- accepting equivalent numeric formatting where appropriate, such as `0.6%` and `0.60%`;
+- using boundaries for short numbers or tokens so that `20` does not accidentally match `2026`.
+
+Do not globally strip arbitrary punctuation or units if doing so could change meaning. Dates, times, percentages, phone numbers, medication amounts, prices, and similar values should preferably use structured or constrained matching rather than loose substring checks.
+
+#### When Exact Matching Is Appropriate
+
+Whole-file or literal exact matching is appropriate when the instruction makes the representation itself part of the goal, for example:
+
+```text
+Copy the full product name exactly as shown.
+```
+
+or when the output follows a fixed canonical template. It is usually inappropriate for a fact-retrieval answer such as `gluten-free diet`, where `gluten free diet` is semantically identical, or for a short prose answer where labels such as `Start:` are not requested by the task.
+
+Before using `exact_match`, ask: **Would a human consider a differently formatted but semantically identical answer wrong under the instruction?** If not, use semantic points or a structured evaluator instead.
+
+#### Structured Artifact Rules
+
+For email, calendar, file, and similar artifact tasks, evaluate each field according to its semantics rather than searching the entire serialized artifact.
+
+- **Email recipients:** compare parsed addresses, not recipient-name substrings.
+- **Email subject:** use exact or normalized equality when the instruction specifies a subject.
+- **Email body:** use semantic points unless exact wording is requested.
+- **Draft-only email tasks:** evaluate that the required draft exists with the correct fields/content. Do not add a Sent-folder absence check merely because the instruction says to save the message as a draft.
+- **Calendar title:** compare against the event title/summary field, not arbitrary event text.
+- **Calendar date/time:** compare parsed date/time values and relevant all-day/time-zone semantics.
+- **Files:** separately check the correct path/name and the required content.
+- **Spreadsheets:** prefer cell-, row-, or column-level values over whole-workbook textual comparison.
+- **Browser/system settings:** use the underlying stable setting/state when available instead of visual text that may vary across versions.
+
+#### Avoiding False Positives and False Negatives
+
+Common false-negative patterns include:
+
+- exact matching a natural-language answer;
+- requiring an evaluator-invented label or punctuation that the instruction never requested;
+- rejecting accepted synonyms or equivalent number/date formatting;
+- coupling semantic correctness to irrelevant line wrapping or whitespace.
+
+Common false-positive patterns include:
+
+- treating several required components as alternatives;
+- using loose substring matching for short numbers, dates, or addresses;
+- checking a title, recipient, or field value anywhere in the full artifact instead of in the correct field;
+- giving full credit for one fragment of a multi-part fact;
+- accepting an answer selected by subjective preference when the task does not define a tie-break rule.
+
+Every evaluator should therefore be tested with at least:
+
+1. the canonical correct answer;
+2. one or more semantically equivalent correct variants;
+3. an answer missing each major required fact;
+4. a plausible near-match that should be rejected;
+5. formatting variants relevant to the task, such as case, whitespace, hyphens, dates, units, or numeric precision.
+
+#### Expected-Answer Stability
+
+Expected outputs should be short, stable, and unambiguous. Avoid tasks that depend on current news, changing rankings, personalized recommendations, volatile page layouts, or subjective review interpretation unless the source is pinned, cached, self-hosted, or the instruction defines a deterministic selection rule.
+
+If multiple natural-language realizations are valid, encode those alternatives in the evaluator rather than forcing the task author to invent one canonical sentence. Determinism should come from the required facts and final state, not from arbitrary wording.
 
 ## 4. Windows Apps and Deterministic Services
 
@@ -457,9 +613,7 @@ bash run_captcha_service.sh
 
 Use deterministic challenge URLs generated by `src/win-arena-container/client/captcha_service.py` or the provided task examples.
 
-## 5. Examples and Benchmark Positioning
-
-### Example Tasks
+## 5. Task Examples
 
 | Disability Group | Category | Platform | Example Task |
 | --- | --- | --- | --- |
@@ -468,24 +622,7 @@ Use deterministic challenge URLs generated by `src/win-arena-container/client/ca
 | Motor impairment | Access / Management | Windows | Use the On-Screen Keyboard to enter required text |
 | Cognitive impairment | Information / Management | Windows | Turn dense information into a short note, checklist, reminder, or calendar item using an appropriate cognitive support |
 
-### Benchmark Comparison
-
-| Category | Benchmark | Scale | Real OS / Interactive Env. | Text Input | Video Input | Audio Input | Accessibility-Oriented | Daily-Life Tasks | Multi-Scenario | End-to-End GUI Execution |
-| --- | --- | ---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| Web GUI Agents | WebArena | 812 tasks | ◐ | ✓ | ✗ | ✗ | ✗ | ◐ | ✓ | ✓ |
-| Web GUI Agents | VisualWebArena | 910 tasks | ◐ | ✓ | ✗ | ✗ | ✗ | ◐ | ✓ | ✓ |
-| OS / Mobile Computer Use | OSWorld | 369 tasks | ✓ | ✓ | ✗ | ✗ | ✗ | ◐ | ✓ | ✓ |
-| OS / Mobile Computer Use | AndroidWorld | 116 task types | ✓ | ✓ | ✗ | ✗ | ✗ | ✓ | ✓ | ✓ |
-| Multimodal / Video-Aware GUI Agents | VideoWebArena | 2,021 tasks | ◐ | ✓ | ✓ | ◐ | ✗ | ◐ | ✓ | ✓ |
-| Multimodal / Video-Aware GUI Agents | VideoGUI | 86 tasks / 463 subtasks | ◐ | ✓ | ✓ | ✗ | ✗ | ✗ | ✓ | ◐ |
-| Multimodal / Video-Aware GUI Agents | OmniGUI | 709 episodes / 2,579 steps | ✓ | ✓ | ✓ | ✓ | ✗ | ◐ | ✓ | ◐ |
-| Accessibility / User Assistance | A11y-CUA | 60 tasks | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ◐ | ✗ |
-| Accessibility / User Assistance | GUIDE | 67.5h videos / 120 users | ◐ | ✓ | ✓ | ✓ | ✗ | ✗ | ✓ | ✗ |
-| **Ours** | **Ours** | **200 tasks** | **✓** | **✓** | **✓** | **✓** | **✓** | **✓** | **✓, 8 scenarios** | **✓** |
-
-**Symbols:** ✓ = supported; ✗ = not supported; ◐ = partially supported or limited setting.
-
-Our benchmark is designed specifically for accessibility-oriented GUI-agent evaluation. It combines real OS/mobile interactive environments, multimodal inputs, daily-life accessibility scenarios, and end-to-end GUI execution with deterministic evaluators.
+These examples illustrate task-construction patterns only. Benchmark positioning, comparisons with prior work, research questions, experimental plans, and paper-level claims are maintained separately in `中文论文框架.md`.
 
 ## 6. Environment Maintenance
 
@@ -543,7 +680,7 @@ $py310 = "$env:LOCALAPPDATA\Programs\Python\Python310\python.exe"
 
 | Disability Group | Assignee |
 | --- | --- |
-| Visual impairment | chaw |
+| Visual impairment | chaw & kaung |
 | Hearing impairment | weiming |
-| Motor impairment | kaung |
+| Motor impairment | chaw & kaung |
 | Cognitive impairment | weiming |

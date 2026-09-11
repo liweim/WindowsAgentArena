@@ -3,7 +3,7 @@
   "snapshot": "chrome",
   "category": "consumption",
   "difficulty": "medium",
-  "instruction": "I'm looking for a ginger ale that's less sweet, has a noticeable ginger flavor, and tastes good on its own rather than just as a mixer. Check the OneStopShop reviews and tell me if this one fits. Write only `yes` or `no` in `answer.txt` on the Desktop.",
+  "instruction": "On the already-open Q Mixers Premium Ginger Ale page, use only the customer-review text. Count each preference as satisfied only when at least one review explicitly supports it: (1) less sweet/not overly sweet, (2) noticeable ginger flavor, and (3) enjoyable on its own/straight rather than only as a mixer. Write only `yes` if all three are supported; otherwise write only `no` in `answer.txt` on the Desktop.",
   "source": "http://host.docker.internal:7770/q-mixers-premium-ginger-ale-real-ingredients-less-sweet-6-7-fl-oz-24-bottles.html",
   "gt_steps": [
     "Review the customer reviews on the already-open Q Mixers Premium Ginger Ale product page.",

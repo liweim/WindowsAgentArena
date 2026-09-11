@@ -86,20 +86,40 @@
           "ignore_case": true,
           "points": [
             [
-              "warm water"
+              "warm water",
+              "warm running water"
             ],
             [
               "soap"
             ],
+            {
+              "all_of": [
+                [
+                  "front",
+                  "fronts"
+                ],
+                [
+                  "back",
+                  "backs"
+                ]
+              ]
+            },
             [
-              "front and back"
+              "between your fingers",
+              "between fingers"
             ],
-            [
-              "between your fingers"
-            ],
-            [
-              "rinse and dry"
-            ]
+            {
+              "all_of": [
+                [
+                  "rinse",
+                  "rinsing"
+                ],
+                [
+                  "dry",
+                  "drying"
+                ]
+              ]
+            }
           ]
         }
       },

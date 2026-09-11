@@ -3,7 +3,7 @@
   "snapshot": "chrome",
   "category": "consumption",
   "difficulty": "hard",
-  "instruction": "I'm looking for a kids sunscreen that doesn't sting and doesn't feel sticky. Check the OneStopShop customer reviews and add the matching product to the cart.",
+  "instruction": "Check the OneStopShop customer reviews for kids sunscreens. A product qualifies only if the reviews explicitly support both criteria: it does not sting and it does not feel sticky. Add the qualifying product to the cart. If more than one product qualifies, choose the one with the greater number of review statements supporting those two criteria; if still tied, choose the lower-priced product.",
   "source": "http://host.docker.internal:7770",
   "gt_steps": [
     "Open the self-hosted shopping website.",

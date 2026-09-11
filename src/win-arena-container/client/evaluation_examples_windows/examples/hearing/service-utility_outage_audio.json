@@ -72,16 +72,14 @@
   ],
   "evaluator": {
     "func": [
-      "exact_match",
+      "check_text_points",
       "exact_match"
     ],
     "conj": "and",
     "result": [
       {
-        "type": "is_file_saved_desktop",
-        "filename": "answer.txt",
-        "textcontent": "North Harbour zone\n6:45 PM\n555-017-3088\nUT-641",
-        "exact": true
+        "type": "desktop_file_text",
+        "filename": "answer.txt"
       },
       {
         "type": "live_caption_enabled"
@@ -91,7 +89,28 @@
       {
         "type": "rule",
         "rules": {
-          "expected": "true"
+          "ignore_case": true,
+          "ordered": true,
+          "line_based": true,
+          "points": [
+            [
+              "North Harbour zone",
+              "North Harbour"
+            ],
+            [
+              "6:45 PM",
+              "18:45"
+            ],
+            {
+              "regex": [
+                "\\b555\\s*-?\\s*017\\s*-?\\s*3088\\b"
+              ]
+            },
+            [
+              "UT-641",
+              "UT 641"
+            ]
+          ]
         }
       },
       {

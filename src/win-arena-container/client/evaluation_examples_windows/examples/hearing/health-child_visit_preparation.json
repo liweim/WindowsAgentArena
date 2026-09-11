@@ -98,13 +98,15 @@
               "breastfeeding"
             ],
             [
-              "favourite toy"
+              "favourite toy",
+              "favorite toy"
             ],
             [
               "music"
             ],
             [
-              "book"
+              "book",
+              "books"
             ],
             [
               "bandage"
@@ -113,7 +115,10 @@
               "reward"
             ],
             [
-              "vaccination record"
+              "vaccination record",
+              "vaccine record",
+              "immunization record",
+              "immunisation record"
             ],
             [
               "15 minutes"

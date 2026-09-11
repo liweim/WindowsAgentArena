@@ -123,7 +123,8 @@
           "body_points": [
             [
               "Project 31",
-              "31"
+              "Project #31",
+              "project number 31"
             ],
             [
               "Campground Cleanup"
@@ -147,8 +148,10 @@
               "09/12/2026"
             ],
             [
-              "20",
-              "20 volunteers"
+              "20 volunteers",
+              "maximum 20 volunteers",
+              "up to 20 volunteers",
+              "max 20 volunteers"
             ]
           ]
         }

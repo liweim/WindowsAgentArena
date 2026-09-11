@@ -63,23 +63,65 @@
         "rules": {
           "ignore_case": true,
           "points": [
-            [
-              "Short distance (2 to 5 miles): 12 to 20 ounces via a handheld or belt"
-            ],
-            [
-              "Medium distance (5 to 10 miles): 20 to 50 ounces (0.5 to 1.5 liters) via a small pack or vest for medium-length runs, hot weather, or adventures with a dog"
-            ],
-            [
-              "Long distances (10+ miles): 50 to 100 ounces (1.5 to 3 liters)"
-            ],
-            [
-              "via a larger vest or day pack for longer runs in hot weather"
-            ],
-            [
-              "if there isn't water restock available",
-              "if there isn’t water restock available"
-            ]
-          ]
+            {
+              "all_of": [
+                [
+                  "2 to 5 miles",
+                  "2-5 miles"
+                ],
+                [
+                  "12 to 20 ounces",
+                  "12-20 ounces"
+                ],
+                [
+                  "handheld",
+                  "belt"
+                ]
+              ]
+            },
+            {
+              "all_of": [
+                [
+                  "5 to 10 miles",
+                  "5-10 miles"
+                ],
+                [
+                  "20 to 50 ounces",
+                  "20-50 ounces",
+                  "0.5 to 1.5 liters"
+                ],
+                [
+                  "small pack",
+                  "vest"
+                ]
+              ]
+            },
+            {
+              "all_of": [
+                [
+                  "10+ miles",
+                  "10 plus miles",
+                  "over 10 miles"
+                ],
+                [
+                  "50 to 100 ounces",
+                  "50-100 ounces",
+                  "1.5 to 3 liters"
+                ],
+                [
+                  "larger vest",
+                  "day pack"
+                ],
+                [
+                  "hot weather",
+                  "water restock",
+                  "water refill"
+                ]
+              ]
+            }
+          ],
+          "ordered": true,
+          "line_based": true
         }
       },
       {

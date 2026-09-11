@@ -36,17 +36,78 @@
     "notepad"
   ],
   "evaluator": {
-    "func": "exact_match",
+    "func": "check_text_points",
     "result": {
-      "type": "is_file_saved_desktop",
-      "filename": "answer.txt",
-      "textcontent": "Woodside Park entrance\nNorthern line southbound (Morden via Bank branch)\nEuston - platform 6\nVictoria line southbound\nGreen Park - exit via lifts",
-      "exact": true
+      "type": "desktop_file_text",
+      "filename": "answer.txt"
     },
     "expected": {
       "type": "rule",
       "rules": {
-        "expected": "true"
+        "ignore_case": true,
+        "ordered": true,
+        "line_based": true,
+        "points": [
+          {
+            "all_of": [
+              [
+                "Woodside Park"
+              ],
+              [
+                "entrance"
+              ]
+            ]
+          },
+          {
+            "all_of": [
+              [
+                "Northern line"
+              ],
+              [
+                "southbound"
+              ],
+              [
+                "Morden via Bank",
+                "via Bank"
+              ]
+            ]
+          },
+          {
+            "all_of": [
+              [
+                "Euston"
+              ],
+              [
+                "platform 6",
+                "platform six"
+              ]
+            ]
+          },
+          {
+            "all_of": [
+              [
+                "Victoria line"
+              ],
+              [
+                "southbound"
+              ]
+            ]
+          },
+          {
+            "all_of": [
+              [
+                "Green Park"
+              ],
+              [
+                "exit"
+              ],
+              [
+                "lift",
+                "lifts"
+              ]
+            ]
+          }
+        ]
       }
     }
   },

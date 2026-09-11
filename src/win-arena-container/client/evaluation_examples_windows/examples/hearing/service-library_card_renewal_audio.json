@@ -74,7 +74,7 @@
   "evaluator": {
     "func": [
       "check_include_exclude",
-      "exact_match"
+      "check_text_points"
     ],
     "conj": "and",
     "result": [
@@ -88,10 +88,8 @@
         ]
       },
       {
-        "type": "is_file_saved_desktop",
-        "filename": "answer.txt",
-        "textcontent": "30 September 2026\nMembership Desk\nPhoto ID\nProof of address\nLR-904",
-        "exact": true
+        "type": "desktop_file_text",
+        "filename": "answer.txt"
       }
     ],
     "expected": [
@@ -109,7 +107,32 @@
       {
         "type": "rule",
         "rules": {
-          "expected": "true"
+          "ignore_case": true,
+          "ordered": true,
+          "line_based": true,
+          "points": [
+            [
+              "30 September 2026",
+              "September 30, 2026",
+              "30 Sep 2026",
+              "2026-09-30"
+            ],
+            [
+              "Membership Desk"
+            ],
+            [
+              "Photo ID",
+              "photo identification"
+            ],
+            [
+              "Proof of address",
+              "address proof"
+            ],
+            [
+              "LR-904",
+              "LR 904"
+            ]
+          ]
         }
       }
     ]

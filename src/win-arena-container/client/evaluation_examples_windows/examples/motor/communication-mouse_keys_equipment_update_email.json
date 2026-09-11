@@ -115,10 +115,18 @@
           "to": "equipmentdesk@example.org",
           "subject": "Quantum 600E charging guidance",
           "body_points": [
-            [
-              "two",
-              "2"
-            ],
+            {
+              "all_of": [
+                [
+                  "two",
+                  "2"
+                ],
+                [
+                  "batteries",
+                  "battery"
+                ]
+              ]
+            },
             [
               "12-volt",
               "12 volt"

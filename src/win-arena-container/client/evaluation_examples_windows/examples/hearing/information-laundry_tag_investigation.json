@@ -107,20 +107,55 @@
         "rules": {
           "ignore_case": true,
           "points": [
-            [
-              "Never put it in the washing machine",
-              "Do not put it in the washing machine",
-              "Don't put it in the washing machine"
-            ],
-            [
-              "Do not use standard bleach",
-              "Don't use standard bleach"
-            ],
-            [
-              "Never hang it vertically",
-              "Do not hang it vertically",
-              "Don't hang it vertically"
-            ]
+            {
+              "all_of": [
+                [
+                  "do not",
+                  "don't",
+                  "never",
+                  "prohibited",
+                  "must not"
+                ],
+                [
+                  "machine wash",
+                  "machine washing",
+                  "washing machine"
+                ]
+              ]
+            },
+            {
+              "all_of": [
+                [
+                  "do not",
+                  "don't",
+                  "never",
+                  "no",
+                  "prohibited",
+                  "must not"
+                ],
+                [
+                  "standard bleach",
+                  "chlorine bleach",
+                  "bleach"
+                ]
+              ]
+            },
+            {
+              "all_of": [
+                [
+                  "do not",
+                  "don't",
+                  "never",
+                  "prohibited",
+                  "must not"
+                ],
+                [
+                  "hang vertically",
+                  "hang it vertically",
+                  "vertical hanging"
+                ]
+              ]
+            }
           ]
         }
       },

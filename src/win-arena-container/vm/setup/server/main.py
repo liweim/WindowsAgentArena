@@ -1,5 +1,6 @@
 import sys
 import os
+import re
 import logging
 import glob
 from send2trash import send2trash
@@ -470,6 +471,18 @@ _accessibility_ns_map = { "st": "uri:deskat:state.at-spi.gnome.org"
                         }
 
 
+# XML 1.0 permits tab, newline, carriage return, and the character ranges
+# below. Windows controls can expose other C0 control characters (or isolated
+# UTF-16 surrogates) through UI Automation, which lxml refuses to serialize.
+_invalid_xml_char_re = re.compile(
+    "[^\x09\x0A\x0D\x20-\uD7FF\uE000-\uFFFD\U00010000-\U0010FFFF]"
+)
+
+
+def _sanitize_xml_text(value: Any) -> str:
+    return _invalid_xml_char_re.sub("", "" if value is None else str(value))
+
+
 def _create_atspi_node(node: Accessible, depth: int = 0, flag: Optional[str] = None) -> _Element:
     #  function _create_atspi_node {{{ # 
     if node.getRoleName() == "document spreadsheet":
@@ -852,6 +865,14 @@ def _create_pywinauto_node(node: BaseWrapper, depth: int = 0, flag: Optional[str
         node_role_name = "unknown"
     if not node_role_name[0].isalpha():
         node_role_name = "tag" + node_role_name
+
+    # Sanitize values at the serialization boundary so every dynamic value
+    # obtained from pywinauto is safe, including names, text, and control
+    # values returned by application-specific wrappers.
+    attribute_dict = {
+        key: _sanitize_xml_text(value) for key, value in attribute_dict.items()
+    }
+    text = _sanitize_xml_text(text)
 
     xml_node = lxml.etree.Element(
         node_role_name,
@@ -1398,8 +1419,9 @@ def activate_window():
             if windows:
                 return windows
 
-            # LibreOffice versions use different title separators. Fall back
-            # to the document name while retaining the application check.
+            # LibreOffice releases differ in whether their title uses a hyphen,
+            # en dash, or em dash.  Fall back to the document name so a pinned
+            # version change does not make WAA's activate_window setup race/fail.
             document_name = window_name
             for separator in (" — ", " – ", " - "):
                 if separator in document_name:
@@ -1436,8 +1458,8 @@ def activate_window():
                 time.sleep(0.5)
             window.activate()
         except Exception:
-            # SetForegroundWindow can be denied; minimize/restore is a useful
-            # fallback for bringing the window to the foreground.
+            # SetForegroundWindow can be denied by Windows.  The old
+            # minimize/restore path is a useful fallback in that case.
             window.minimize()
             time.sleep(0.5)
             window.restore()
