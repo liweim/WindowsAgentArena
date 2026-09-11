@@ -1,0 +1,65 @@
+{
+  "id": "mobility-nih_after_hours_entry_note",
+  "category": "mobility",
+  "need_ids": [
+    "C2",
+    "C3",
+    "C4"
+  ],
+  "difficulty": "medium",
+  "instruction": "Use the NIH Clinical Center Patient Handbook open in Microsoft Edge. A patient family will arrive by car at 10:30 pm. Create a Sticky Note that records the vehicle entrance they should use at that time, the hours that entrance is used, and its location on Rockville Pike.",
+  "source": "https://www.cc.nih.gov/sites/default/files/internet-files/participate/_pdf/pthandbook.pdf",
+  "gt_steps": [
+    "Find the Patient Entry section of the NIH Clinical Center Patient Handbook.",
+    "Note that the regular West Drive-Main Patient/Family Entrance is open daily from 6 am to 10 pm.",
+    "Because the arrival is at 10:30 pm, identify the after-hours vehicle entrance as the Commercial Vehicle Inspection Facility (CVIF).",
+    "Record its hours as 10 pm to 6 am and its location on Rockville Pike (Route 355) between North Drive and Wilson Drive.",
+    "Create a Sticky Note with the entrance, hours, and location."
+  ],
+  "config": [
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "cmd",
+          "/c",
+          "start msedge https://www.cc.nih.gov/sites/default/files/internet-files/participate/_pdf/pthandbook.pdf"
+        ]
+      }
+    }
+  ],
+  "related_apps": [
+    "msedge",
+    "sticky_notes"
+  ],
+  "evaluator": {
+    "func": "check_text_points",
+    "result": {
+      "type": "sticky_notes_content"
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "ignore_case": true,
+        "points": [
+          ["Commercial Vehicle Inspection Facility", "CVIF"],
+          {
+            "all_of": [
+              ["10 pm", "10:00 pm", "22:00"],
+              ["6 am", "6:00 am", "06:00"]
+            ]
+          },
+          {
+            "all_of": [
+              ["Rockville Pike", "Route 355", "Rte 355"],
+              ["North Drive", "North Dr"],
+              ["Wilson Drive", "Wilson Dr"]
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "proxy": true,
+  "possibility_of_env_change": "medium"
+}

@@ -1,8 +1,10 @@
 {
   "id": "access-chrome_live_caption",
   "manually_evaluated": true,
-  "snapshot": "chrome",
   "category": "access",
+  "need_ids": [
+    "H1"
+  ],
   "difficulty": "easy",
   "instruction": "Turn on Live Caption in Chrome.",
   "source": "synthetic",
@@ -32,7 +34,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "chrome"
   ],
@@ -47,5 +48,6 @@
         "expected": "true"
       }
     }
-  }
+  },
+  "proxy": false
 }

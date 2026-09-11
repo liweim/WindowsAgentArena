@@ -2,8 +2,10 @@
   "id": "service-bank_investigation_period",
   "_comment": "",
   "manually_evaluated": false,
-  "snapshot": "chrome",
   "category": "service",
+  "need_ids": [
+    "M2"
+  ],
   "difficulty": "medium",
   "instruction": "Enable Windows Sticky Keys and keep them enabled. Save only the maximum investigation period for a complaint or question from the provided bank statement PDF in `answer.txt` on the Desktop.",
   "source": "https://www.carsonbank.com/",
@@ -60,7 +62,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "settings",
     "chrome",
@@ -111,6 +112,5 @@
     ]
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

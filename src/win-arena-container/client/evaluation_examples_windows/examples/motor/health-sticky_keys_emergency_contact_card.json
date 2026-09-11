@@ -1,6 +1,9 @@
 {
   "id": "health-sticky_keys_emergency_contact_card",
   "category": "health",
+  "need_ids": [
+    "M2"
+  ],
   "difficulty": "medium",
   "instruction": "Enable Windows Sticky Keys and keep them enabled. Use the CDC Backpack Emergency Card saved on the Desktop to create one Sticky Note listing the seven fields shown in the child-information section, in the same order as the form. Keep the completed note saved.",
   "source": "https://stacks.cdc.gov/view/cdc/139829/cdc_139829_DS1.pdf",
@@ -140,6 +143,5 @@
     ]
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

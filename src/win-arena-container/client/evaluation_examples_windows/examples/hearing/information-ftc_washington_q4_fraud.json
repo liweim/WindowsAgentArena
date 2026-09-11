@@ -1,7 +1,9 @@
 {
   "id": "information-ftc_washington_q4_fraud",
-  "snapshot": "chrome",
   "category": "information",
+  "need_ids": [
+    "H1"
+  ],
   "difficulty": "hard",
   "instruction": "Turn on captions in the opened YouTube video, then use the FTC Explore Data tool shown in the video to find the top fraud category in Washington state for quarter 4 of 2024. Save the answer in `answer.txt` on the Desktop.",
   "source": "https://www.youtube.com/watch?v=F2wQGBjKiaM",
@@ -52,7 +54,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "chrome",
     "notepad"
@@ -95,5 +96,6 @@
         }
       }
     ]
-  }
+  },
+  "proxy": true
 }

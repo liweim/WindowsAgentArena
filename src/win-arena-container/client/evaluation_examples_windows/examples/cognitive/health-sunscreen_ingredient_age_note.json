@@ -1,6 +1,10 @@
 {
   "id": "health-sunscreen_ingredient_age_note",
   "category": "health",
+  "need_ids": [
+    "C1",
+    "C6"
+  ],
   "difficulty": "medium",
   "instruction": "Use Microsoft Edge Immersive Reader to read the AP News sunscreen article. Save `answer.txt` on the Desktop with the newly approved ingredient, minimum age guidance, initial U.S. brand name, and the ultraviolet rays it protects against, one item per line in that order.",
   "source": "https://apnews.com/article/9b9c7e04b418b3c9c1fbaa7ddabade25",
@@ -80,7 +84,6 @@
       }
     ]
   },
-  "proxy": false,
-  "fixed_ip": false,
+  "proxy": true,
   "possibility_of_env_change": "low"
 }

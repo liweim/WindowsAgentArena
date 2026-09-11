@@ -1,6 +1,9 @@
 {
   "id": "communication-osk_referral_email",
   "category": "communication",
+  "need_ids": [
+    "M1"
+  ],
   "difficulty": "medium",
   "instruction": "Open the Windows On-Screen Keyboard and keep it open. Use the National Library of Medicine patient referral form saved on the Desktop to draft a Thunderbird email to `accessdesk@example.org` with subject `Northwestern referral details`. Include the Northwestern University clinic manager, clinic name, street address, room number, and phone number shown on the form. Do not send it.",
   "source": "https://www.nlm.nih.gov/exhibition/forallthepeople/img/1527.pdf",
@@ -148,7 +151,6 @@
       }
     ]
   },
-  "proxy": false,
-  "fixed_ip": false,
+  "proxy": true,
   "possibility_of_env_change": "low"
 }

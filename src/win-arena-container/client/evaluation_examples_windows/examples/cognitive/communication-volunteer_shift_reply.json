@@ -1,6 +1,10 @@
 {
   "id": "communication-volunteer_shift_reply",
   "category": "communication",
+  "need_ids": [
+    "C4",
+    "C5"
+  ],
   "difficulty": "hard",
   "instruction": "Use the availability note and volunteer shift options on the Desktop to choose the compatible shift. Draft a Thunderbird email to `volunteer@example.org` with subject `Volunteer shift confirmation` and include the chosen day, date, start time, and end time. Do not send it.",
   "source": "synthetic",
@@ -101,7 +105,6 @@
       }
     }
   },
-  "proxy": false,
-  "fixed_ip": false,
+  "proxy": true,
   "possibility_of_env_change": "low"
 }

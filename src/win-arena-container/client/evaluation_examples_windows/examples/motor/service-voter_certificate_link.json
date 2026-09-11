@@ -1,8 +1,10 @@
 {
   "id": "service-voter_certificate_link",
   "_comment": "Put the answer to the `gt_steps`.",
-  "snapshot": "chrome",
   "category": "service",
+  "need_ids": [
+    "M1"
+  ],
   "difficulty": "easy",
   "instruction": "Enable the Windows On-Screen Keyboard and keep it open. The PDF is already open in Chrome. Open the website link for the voter authority certificate application from the PDF in a new Chrome tab, leave that tab open, and leave the On-Screen Keyboard open.",
   "source": "synthetic",
@@ -54,7 +56,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "settings",
     "on_screen_keyboard",
@@ -95,7 +96,6 @@
       }
     ]
   },
-  "proxy": false,
-  "fixed_ip": false,
+  "proxy": true,
   "possibility_of_env_change": "low"
 }

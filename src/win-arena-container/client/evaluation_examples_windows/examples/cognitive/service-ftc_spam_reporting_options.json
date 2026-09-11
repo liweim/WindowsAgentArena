@@ -1,6 +1,11 @@
 {
   "id": "service-ftc_spam_reporting_options",
   "category": "service",
+  "need_ids": [
+    "C1",
+    "C6",
+    "C8"
+  ],
   "difficulty": "medium",
   "instruction": "Use Microsoft Edge Immersive Reader to read the FTC spam-text reporting section. Save the action phrase from each of the three reporting bullets to `answer.txt` on the Desktop, one phrase per line and in webpage order.",
   "source": "https://consumer.ftc.gov/articles/how-recognize-and-report-spam-text-messages",
@@ -103,7 +108,6 @@
       }
     ]
   },
-  "proxy": false,
-  "fixed_ip": false,
+  "proxy": true,
   "possibility_of_env_change": "low"
 }

@@ -1,0 +1,78 @@
+{
+  "id": "mobility-babson_bow_shuttle_plan",
+  "category": "mobility",
+  "need_ids": [
+    "C2",
+    "C3",
+    "C4"
+  ],
+  "difficulty": "medium",
+  "instruction": "Use the Babson–Olin–Wellesley shuttle schedule open in Microsoft Edge. On a weekday, you are at Olin College East Hall at 8:45 am and want the first shuttle that will take you to Wellesley College Campus Center. Create `answer.txt` on the Desktop with four lines: the Olin departure time, the time at Babson College Hollister Parking Lot, the time at Founders Parking Lot Gates, and the arrival time at Wellesley College Campus Center.",
+  "source": "https://www.babson.edu/media/babson/assets/isss/AY-2025-2026-BOW-Shuttle-Schedule.pdf",
+  "gt_steps": [
+    "Read the weekday Babson–Olin–Wellesley shuttle timetable.",
+    "Find the first Olin College East Hall departure after 8:45 am: 8:52 am.",
+    "Follow the same timetable row to Babson College Hollister Parking Lot at 8:55 am, Founders Parking Lot Gates at 9:05 am, and Wellesley College Campus Center at 9:07 am.",
+    "Open Notepad and enter the four requested items, one per line.",
+    "Save the file as `answer.txt` on the Desktop."
+  ],
+  "config": [
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "cmd",
+          "/c",
+          "start msedge https://www.babson.edu/media/babson/assets/isss/AY-2025-2026-BOW-Shuttle-Schedule.pdf"
+        ]
+      }
+    }
+  ],
+  "related_apps": [
+    "msedge",
+    "notepad"
+  ],
+  "evaluator": {
+    "func": "check_text_points",
+    "result": {
+      "type": "desktop_file_text",
+      "filename": "answer.txt"
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "ignore_case": true,
+        "ordered": true,
+        "line_based": true,
+        "points": [
+          {
+            "all_of": [
+              ["Olin", "East Hall"],
+              ["8:52 am", "8:52am", "08:52"]
+            ]
+          },
+          {
+            "all_of": [
+              ["Babson", "Hollister"],
+              ["8:55 am", "8:55am", "08:55"]
+            ]
+          },
+          {
+            "all_of": [
+              ["Founders", "Founders Parking Lot Gates"],
+              ["9:05 am", "9:05am", "09:05"]
+            ]
+          },
+          {
+            "all_of": [
+              ["Wellesley", "Campus Center"],
+              ["9:07 am", "9:07am", "09:07"]
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "proxy": true,
+  "possibility_of_env_change": "medium"
+}

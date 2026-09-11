@@ -1,7 +1,9 @@
 {
   "id": "health-cholesterol_medication_avoid",
-  "snapshot": "chrome",
   "category": "health",
+  "need_ids": [
+    "H1"
+  ],
   "difficulty": "medium",
   "instruction": "Turn on captions in the opened YouTube video, identify what should not be eaten or drunk while taking cholesterol-lowering medicine, then save the answer in `answer.txt` on the Desktop.",
   "source": "https://www.youtube.com/watch?v=Jy6ShnLDBWg",
@@ -47,7 +49,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "chrome",
     "notepad"
@@ -88,5 +89,6 @@
         }
       }
     ]
-  }
+  },
+  "proxy": true
 }

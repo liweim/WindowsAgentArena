@@ -84,7 +84,7 @@ OpenCaptchaWorld-derived types use copied local image assets and ground-truth me
 Each task should include:
 
 1. A realistic app, browser, media, document, or system-settings scenario.
-2. A clearly grounded accessibility need, support strategy, or disability-relevant interaction challenge.
+2. A clearly grounded accessibility need, support strategy, or disability-relevant interaction challenge mapped to the Documented User Need Taxonomy below.
 3. A concrete user goal whose completion depends on accessible information, controls, feedback, or meaningful cognitive demands such as planning, sequencing, working memory, attention, decision-making, or maintaining task context.
 4. An initial state that prepares the relevant app, page, file, media, message, or setting without completing the task.
 5. A measurable final output or system state.
@@ -110,6 +110,102 @@ Useful sources include:
 | Chrome reading and caption documentation | Reading mode, captions, translation, and web content consumption |
 
 The task `source` should point to the concrete webpage, document, support article, app documentation, file, or media page used by the task whenever possible.
+
+### Documented User Need Taxonomy and Annotation
+
+Every task must map to at least one **documented user need**: a reusable accessibility barrier or support requirement that is explicitly supported by user surveys/research, W3C accessibility user requirements/design patterns, or official accessibility documentation. The exact task topic does **not** need to appear in a survey. For example, a specific shopping item can instantiate a documented need for screen-reader access or decision support; the evidence must support the access need, not that particular product.
+
+`paper/documented_user_need_taxonomy.json` is the machine-readable source of truth for need definitions, evidence-source IDs, and source URLs. Do not invent a new need for one task if an existing need already captures the underlying barrier. If no existing need defensibly fits, mark the task for review rather than forcing a mapping.
+
+The user-group directory (`visual/`, `hearing/`, `motor/`, `cognitive/`) remains the authoritative primary group label. Do not duplicate it with a `user_group` JSON field. Workflow `category` remains orthogonal to user group.
+
+#### Visual
+
+| ID | Documented user need | Definition | Evidence |
+| --- | --- | --- | --- |
+| `V1` | Non-visual access to digital text and interface content | Use screen readers or equivalent non-visual representations to read, navigate, and act on digital text, controls, documents, and web content. | WebAIM Screen Reader Survey #10; W3C Visual Disabilities |
+| `V2` | Magnification and text enlargement | Enlarge text, controls, or the screen through zoom, text sizing, or magnification so content is perceivable and usable. | WebAIM Low Vision Survey #2; WCAG 1.4.4 Resize Text |
+| `V3` | Contrast and display-palette customization | Adjust contrast, foreground/background presentation, inversion, or display palette to improve visual readability. | WebAIM Low Vision Survey #2; W3C Visual Disabilities; Microsoft color/contrast docs |
+| `V4` | Color-vision differentiation support | Use color filters or non-color cues when color differences are difficult or impossible to distinguish. | WCAG 1.4.1 Use of Color; Microsoft color-filter docs |
+| `V5` | Access to non-text visual information | Obtain equivalent information from images, maps, charts, infographics, scans, labels, and other visual-only or poorly described content. | WebAIM Screen Reader Survey #10; WCAG 1.1.1 Non-text Content |
+| `V6` | Accessible CAPTCHA and verification | Complete verification without depending on inaccessible visual perception, including alternative modalities or delegated assistance. | WebAIM Screen Reader Survey #10; WCAG 1.1.1 Non-text Content |
+
+#### Hearing
+
+| ID | Documented user need | Definition | Evidence |
+| --- | --- | --- | --- |
+| `H1` | Speech-to-text access through captions or transcripts | Access spoken and relevant non-speech audio information through captions, live captions, or transcripts. | W3C media accessibility guidance; ACMA captioning research; AFB caption survey analysis |
+| `H2` | Caption readability and language customization | Configure caption language and visual presentation so caption text is readable and appropriate for the media. | Microsoft hearing-access docs; ACMA captioning research |
+| `H3` | Visual and persistent alternatives to auditory notifications | Receive alerts visually rather than by sound alone and keep visual notifications available long enough to notice and read. | Microsoft hearing-access docs |
+| `H4` | Single-channel access to stereo audio | Combine stereo channels so information is not missed when a user hears through one channel or one headphone. | Microsoft hearing-access docs |
+| `H5` | Verification without relying on hearing | Complete verification when the challenge depends on auditory perception, using a non-auditory alternative or delegated assistance. | WCAG 1.1.1 Non-text Content |
+
+#### Motor
+
+| ID | Documented user need | Definition | Evidence |
+| --- | --- | --- | --- |
+| `M1` | Alternative text entry without a physical keyboard | Enter text through an on-screen keyboard or other alternative input when physical keyboard use is difficult. | WebAIM Motor Disability Survey; Microsoft mobility docs |
+| `M2` | Sequential modifier-key input | Use multi-key commands one key at a time instead of holding multiple keys simultaneously. | Microsoft mobility docs / Sticky Keys |
+| `M3` | Keystroke filtering and sensitivity control | Reduce accidental repeated or brief key presses by adjusting keyboard sensitivity/filtering. | Microsoft mobility docs / Filter Keys |
+| `M4` | Alternative pointer control or delegated pointing | Use keyboard, speech/other alternative input, or delegated pointer activation when conventional mouse use is difficult. | Microsoft mobility docs; WebAIM Motor Disability Survey |
+| `M5` | Reduced press-hold and dragging demand | Avoid or reduce sustained press-hold-drag-release movements that require dexterity or sustained pointer control. | WCAG 2.5.7 Dragging Movements |
+| `M6` | Mouse-button and handedness customization | Configure the primary mouse button or equivalent pointer settings to match reach, strength, dexterity, or unilateral motor needs. | Microsoft mobility docs |
+| `M7` | Reduced pointer precision, repetition, and timing demand | Avoid or delegate repeated precise target acquisition, tightly timed pointer actions, or fine motor control. | WebAIM Motor Disability Survey; WCAG 2.5.7 |
+
+#### Cognitive
+
+| ID | Documented user need | Definition | Evidence |
+| --- | --- | --- | --- |
+| `C1` | Focus, readability, and simplification | Reduce distraction, visual/cognitive clutter, or reading load so attention, language processing, and comprehension are easier to sustain. | W3C Cognitive Accessibility; COGA Support Simplification |
+| `C2` | Memory externalization and short-term retention support | Reduce reliance on working memory or short-term retention through notes, checklists, persistent cues, or delegated assistance. | COGA memory/calculation pattern |
+| `C3` | Time and prospective-memory support | Use reminders, calendars, timers, and persistent time-based cues to manage appointments, deadlines, intervals, and future actions. | COGA Provide Reminders |
+| `C4` | Planning, sequencing, task-state tracking, and completion recognition | Reduce the burden of unfamiliar or multi-step workflows, maintaining context, recovering after distraction, tracking progress, and recognizing successful completion. | COGA clear-steps/task-expectations/feedback patterns; Pew setup evidence only as supplementary age-related evidence |
+| `C5` | Decision and choice support | Help compare alternatives, apply constraints, understand consequences, and select an appropriate option. | COGA Supported Choice |
+| `C6` | Important-information extraction and prioritization | Identify and preserve the small set of important facts/actions from dense, mixed, or distracting information. | COGA Important Information; Support Simplification |
+| `C7` | Calculation, counting, copying, and cross-source reconciliation support | Reduce reliance on arithmetic/counting, copying, short-term retention, or reconciliation across sources and steps. | COGA memory/calculation pattern |
+| `C8` | Error prevention and safety-critical guidance | Make risky actions, scams, health/safety guidance, and error-prone choices easier to understand and act on correctly. | COGA error prevention; Supported Choice; Important Information |
+
+#### Evidence source registry
+
+| Source ID | Evidence source | Construction use |
+| --- | --- | --- |
+| `webaim_sr10` | [WebAIM Screen Reader User Survey #10 Results](https://webaim.org/projects/screenreadersurvey10/) | Screen-reader use, information finding, web/shopping use, alt-text and CAPTCHA barriers. 1,539 valid responses; WebAIM explicitly notes the sample was uncontrolled. |
+| `webaim_lv2` | [WebAIM Survey of Users with Low Vision #2](https://webaim.org/projects/lowvisionsurvey2/) | Magnification, browser zoom, text sizing, high contrast, custom colors, reader settings. |
+| `w3c_visual` | [W3C Visual Disabilities — Abilities and Barriers](https://www.w3.org/WAI/people-use-web/abilities-barriers/visual/) | Construct definitions for non-visual access, resizing, contrast, custom presentation, and navigation barriers. |
+| `w3c_nontext` | [WCAG Understanding 1.1.1 Non-text Content](https://www.w3.org/WAI/WCAG21/Understanding/non-text-content) | Text alternatives and sensory alternatives for CAPTCHA/non-text content. |
+| `w3c_resize` | [WCAG Understanding 1.4.4 Resize Text](https://www.w3.org/WAI/WCAG22/Understanding/resize-text) | Need for enlarged text/content. |
+| `w3c_color` | [WCAG Understanding 1.4.1 Use of Color](https://www.w3.org/WAI/WCAG22/Understanding/use-of-color) | Barriers when information depends on color perception. |
+| `ms_color` | [Microsoft: Use color and contrast for accessibility](https://support.microsoft.com/en-US/accessibility/windows/use-color-and-contrast-for-accessibility-in-microsoft-365) | Intended accessibility purpose of Windows/Microsoft color and contrast supports. |
+| `w3c_media` | [W3C: Making Audio and Video Media Accessible](https://www.w3.org/WAI/media/av/) | Captions/transcripts as access to speech and relevant non-speech audio for Deaf and hard-of-hearing users. |
+| `afb_ai_captions` | [AFB: Innovation for Access](https://www.afb.org/research-and-initiatives/ai-series/innovation-access) | 2026 report analyzing a 2025 survey; includes real caption-use patterns among D/HH participants. |
+| `acma_captioning` | [ACMA: Use and experience of captioning consumer research](https://www.acma.gov.au/publications/2023-05/report/use-and-experience-captioning-consumer-research-support-acmas-captioning-quality-standard-review) | Deaf/HoH consumer use and expectations for captions across live, prerecorded, broadcast, and streaming media. |
+| `ms_hearing` | [Microsoft: Make Windows easier to hear](https://support.microsoft.com/en-us/accessibility/windows/make-windows-easier-to-hear) | Mono audio, visual audio alerts, persistent notifications, live captions, and caption display customization. |
+| `webaim_motor` | [WebAIM Survey of Users with Motor Disabilities](https://webaim.org/projects/motordisabilitysurvey/) | Alternative input, OS settings, speech input, on-screen keyboards, pointer modifications. The 46-response convenience sample is evidence that needs exist, not prevalence evidence. |
+| `ms_mobility` | [Microsoft: Accessibility tools for mobility](https://support.microsoft.com/en-US/accessibility/accessibility-tools-for-mobility) | Sticky Keys, Filter Keys, Mouse Keys, on-screen keyboard, voice access, and eye control for limited reach/strength/dexterity. |
+| `w3c_dragging` | [WCAG Understanding 2.5.7 Dragging Movements](https://www.w3.org/WAI/WCAG22/Understanding/dragging-movements.html) | Documents dexterity barriers in press-hold-drag-release interaction and the need for alternatives. |
+| `w3c_coga_overview` | [W3C Cognitive Accessibility](https://www.w3.org/WAI/cognitive/) | High-level cognitive/learning access needs involving memory, attention, language, problem solving, and comprehension. |
+| `coga_simplify` | [COGA: Support Simplification](https://www.w3.org/WAI/WCAG2/supplemental/patterns/o8p03-complexity/) | Reduced content complexity and cognitive overload. |
+| `coga_memory_calc` | [COGA: Do Not Rely on Users Calculations or Memorizing Information](https://www.w3.org/WAI/WCAG2/supplemental/patterns/o6p05-low-cognition/) | Memory, calculation, copying, executive-function, and cross-step recall burdens. |
+| `coga_reminders` | [COGA: Provide Reminders](https://www.w3.org/WAI/WCAG2/supplemental/patterns/o7p07-reminders/) | Appointment/deadline reminders and time-management support. |
+| `coga_steps` | [COGA: Make Each Step Clear](https://www.w3.org/WAI/WCAG2/supplemental/patterns/o1p04-clear-steps/) | Orientation, step/progress awareness, and recovery after distraction in multi-step processes. |
+| `coga_task_expectations` | [COGA: Provide Information So a User Can Complete and Prepare for a Task](https://www.w3.org/WAI/WCAG2/supplemental/patterns/o5p04-task-expectations/) | Planning, working-memory load, process overview, and completion recognition. |
+| `coga_choice` | [COGA: Clearly State Results and Disadvantages of Choices](https://www.w3.org/WAI/WCAG2/supplemental/patterns/o7p03-supported-choice/) | Understanding alternatives, risks, consequences, and selections. |
+| `coga_important` | [COGA: Make Important Tasks and Information Easy to Find](https://www.w3.org/WAI/WCAG2/supplemental/patterns/o2p01-site-important/) | Locating and prioritizing important information under executive-function/memory limitations. |
+| `coga_feedback` | [COGA: Provide Feedback](https://www.w3.org/WAI/WCAG2/supplemental/patterns/o4p10-status-feedback/) | Status/completion feedback and reduced uncertainty/memory burden. |
+| `coga_errors` | [COGA: Design Forms to Prevent Mistakes](https://www.w3.org/WAI/WCAG2/supplemental/patterns/o4p04-supportive-forms/) | Error-prevention support for cognitive and learning disabilities. |
+| `pew_setup` | [Pew Research Center: Navigating technological challenges](https://www.pewresearch.org/internet/2021/09/01/navigating-technological-challenges/) | Supplementary evidence for age-related/new-technology setup and learning support. **Do not use this as evidence that age itself is a cognitive disability.** |
+
+#### Annotation rules
+
+Each task JSON adds **one field only**:
+
+- `need_ids`: one or more IDs from `paper/documented_user_need_taxonomy.json` (for example, `C2`, `M4`, `V6`). `[]` may be used only during drafting to flag an unresolved mapping; a released task must have at least one defensible need ID. Do not add ad-hoc status, naturalness, or free-text review fields to released task JSON.
+
+The mapping question is: **Which documented accessibility barrier or support need does this task instantiate for its directory user group?** The exact task topic does not need to appear in the evidence source. Do not force a mapping merely to pass the schema: an unresolved task should be revised or withheld from release. Naturalness and task–need fit should still be reviewed during curation, but those judgments belong in review notes/checklists rather than released task metadata.
+
+For CAPTCHA tasks, inspect the actual challenge rather than inferring the barrier from the word “CAPTCHA.” An audio-only challenge can directly instantiate `H5`; a visual CAPTCHA can instantiate `V6`; sustained press/hold or dragging can instantiate `M5`; and an otherwise ordinary pointer activation can instantiate `M4` when the relevant motor need is alternative/delegated pointing rather than fine precision.
+
+Do not use survey percentages as population prevalence unless the survey design supports that inference. In particular, WebAIM explicitly describes Screen Reader Survey #10 as uncontrolled, and its Motor Disability Survey has a small convenience sample. These sources are used here to establish the existence and character of needs, not population-level rates.
 
 ### Instruction Writing Style
 
@@ -278,14 +374,17 @@ Expected answers should be complete continuous caption phrases. Avoid broad sing
 
 Use the following workflow:
 
-1. Collect a realistic accessibility scenario from credible sources.
-2. Derive an executable task from the scenario and source material.
-3. Adapt it to the target platform and available applications.
-4. Define the user-facing goal and measurable final state.
-5. Write a concise, direct, goal-oriented instruction.
-6. Write reproducible `gt_steps` where they add value, using one executable action per step and embedding any deterministic canonical value only in the action that uses it.
-7. Build a deterministic evaluator covering all graded requirements.
-8. Manually verify that setup does not solve the task and that the task is realistic, executable, and repeatable.
+1. Identify the primary user-group directory and at least one documented user need from the taxonomy above; record the supporting evidence source(s).
+2. Collect or adapt a realistic scenario that naturally instantiates that need. Do not force a generic workflow into a disability group merely because a related accessibility citation exists.
+3. Derive an executable task from the scenario and source material.
+4. Adapt it to the target platform and available applications.
+5. Define the user-facing goal and measurable final state.
+6. Write a concise, direct, goal-oriented instruction.
+7. Write reproducible `gt_steps` where they add value, using one executable action per step and embedding any deterministic canonical value only in the action that uses it.
+8. Build a deterministic evaluator covering all graded requirements.
+9. Annotate only `need_ids` using IDs from `paper/documented_user_need_taxonomy.json`; use `[]` only when no defensible mapping exists and flag that task in the separate construction review.
+10. Set `proxy: true` whenever task setup or execution needs a public Internet resource. Do not infer this from `source` alone: a task that uses a locally saved copy of an externally sourced PDF/image remains `proxy: false`. `host.docker.internal` services are local benchmark infrastructure and remain `false`.
+10. Manually verify that setup does not solve the task and that the task is realistic, executable, repeatable, and natural for the intended access-need group.
 
 ### Human / Expert Task Validation
 
@@ -298,7 +397,7 @@ The validation protocol should assess at least four dimensions:
 3. **Clarity and determinacy:** whether the instruction has a well-defined success condition without unintended ambiguity.
 4. **Support appropriateness:** whether the selected assistive feature, accessibility setting, note, reminder, checklist, captioning workflow, route constraint, or other support is appropriate for the intended user need.
 
-Use at least two independent reviewers per validated task or task sample when practical. Record ratings, disagreements, adjudication decisions, and any resulting task revisions. Revise, reassign, or remove tasks that fall below the pre-defined acceptance threshold. Paper-level reporting and analysis of this validation are maintained in `中文论文框架.md`.
+Use at least two independent reviewers per validated task or task sample when practical. Record ratings, disagreements, adjudication decisions, and any resulting task revisions. Revise, reassign, or remove tasks that fall below the pre-defined acceptance threshold. Paper-level framing, construct-validity claims, and reporting guidance are maintained in `paper_structure.md`.
 
 ## 3. Task JSON Specification
 
@@ -310,6 +409,7 @@ Each task JSON may use the following fields:
 | --- | --- |
 | `id` | Unique task identifier. Must match the JSON filename without `.json`. |
 | `category` | One approved lowercase category label. |
+| `need_ids` | IDs from `paper/documented_user_need_taxonomy.json` that capture the documented access barrier/support need instantiated by the task. Keep this key immediately after `category`; use `[]` if no defensible mapping has been established. |
 | `difficulty` | Estimated task complexity. |
 | `instruction` | Direct user-facing task command. Follow the instruction style above. |
 | `source` | Concrete source used to ground the task. |
@@ -317,8 +417,7 @@ Each task JSON may use the following fields:
 | `config` | Environment setup actions. Setup must prepare but not complete the task. |
 | `related_apps` | Applications the agent actually interacts with while completing the task. Use the benchmark's existing canonical app identifiers; omit setup-only components and unrelated alternatives. |
 | `evaluator` | Deterministic completion logic. |
-| `snapshot` | Legacy field for the base environment/application context; no longer used for new tasks. |
-| `trajectory` | Legacy field for trace/log storage; no longer used for new tasks. |
+| `proxy` | Whether task setup or execution requires access to a public Internet resource. Set `true` for real external sites/services/downloads (including external setup downloads); set `false` for local files, synthetic pages, and services under `host.docker.internal`. A public URL recorded only as provenance in `source` does not by itself make the task proxied when the task uses a local copy. |
 
 ### Naming Rules
 
@@ -622,7 +721,7 @@ Use deterministic challenge URLs generated by `src/win-arena-container/client/ca
 | Motor impairment | Access / Management | Windows | Use the On-Screen Keyboard to enter required text |
 | Cognitive impairment | Information / Management | Windows | Turn dense information into a short note, checklist, reminder, or calendar item using an appropriate cognitive support |
 
-These examples illustrate task-construction patterns only. Benchmark positioning, comparisons with prior work, research questions, experimental plans, and paper-level claims are maintained separately in `中文论文框架.md`.
+These examples illustrate task-construction patterns only. Benchmark positioning, comparisons with prior work, research questions, experimental plans, and paper-level claims are maintained separately in `paper_structure.md`.
 
 ## 6. Environment Maintenance
 

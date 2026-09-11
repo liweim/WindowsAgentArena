@@ -1,7 +1,9 @@
 {
   "id": "access-chrome_immersive_reader_extension",
-  "snapshot": "chrome",
   "category": "access",
+  "need_ids": [
+    "C1"
+  ],
   "difficulty": "medium",
   "instruction": "Install the Immersive Reader extension in Chrome.",
   "source": "https://chromewebstore.google.com/detail/immersive-reader/cccnhdbjafjobcppogeaaabofifbpdho",
@@ -22,7 +24,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "chrome"
   ],
@@ -60,7 +61,6 @@
       }
     }
   },
-  "proxy": false,
-  "fixed_ip": false,
+  "proxy": true,
   "possibility_of_env_change": "medium"
 }

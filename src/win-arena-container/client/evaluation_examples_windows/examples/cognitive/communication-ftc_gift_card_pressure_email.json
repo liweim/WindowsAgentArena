@@ -1,6 +1,11 @@
 {
   "id": "communication-ftc_gift_card_pressure_email",
   "category": "communication",
+  "need_ids": [
+    "C1",
+    "C6",
+    "C8"
+  ],
   "difficulty": "medium",
   "instruction": "Draft a Thunderbird email to `relative@example.org` with subject `Gift card pressure tactics` using Microsoft Edge Immersive Reader to read the FTC guidance. Include the three scam-pressure phrases exactly as written on the page and save the draft without sending it.",
   "source": "https://consumer.ftc.gov/articles/avoiding-and-reporting-gift-card-scams",
@@ -100,7 +105,6 @@
       }
     ]
   },
-  "proxy": false,
-  "fixed_ip": false,
+  "proxy": true,
   "possibility_of_env_change": "low"
 }

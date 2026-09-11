@@ -1,7 +1,11 @@
 {
   "id": "service-passport_renewal_options",
-  "snapshot": "chrome",
   "category": "service",
+  "need_ids": [
+    "C2",
+    "C5",
+    "C6"
+  ],
   "difficulty": "medium",
   "instruction": "Create a Sticky Note containing the three passport renewal option names exactly as written on the State Department renewal page.",
   "source": "https://travel.state.gov/content/travel/en/passports/have-passport/renew.html",
@@ -39,7 +43,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "chrome",
     "sticky_notes"
@@ -67,7 +70,6 @@
       }
     }
   },
-  "proxy": false,
-  "fixed_ip": false,
+  "proxy": true,
   "possibility_of_env_change": "medium"
 }

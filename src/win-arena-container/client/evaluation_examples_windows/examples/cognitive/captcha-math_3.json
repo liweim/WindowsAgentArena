@@ -1,0 +1,44 @@
+{
+  "id": "captcha-math_3",
+  "category": "captcha",
+  "need_ids": [
+    "C7"
+  ],
+  "difficulty": "medium",
+  "instruction": "Complete the math CAPTCHA open in Chrome.",
+  "source": "synthetic",
+  "gt_steps": [
+    "Solve the arithmetic expression and enter the result."
+  ],
+  "config": [
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "cmd",
+          "/c",
+          "start chrome http://host.docker.internal:8765/captcha?type=math^&seed=access-math-003^&session=access-captcha-math"
+        ]
+      }
+    }
+  ],
+  "related_apps": [
+    "chrome"
+  ],
+  "evaluator": {
+    "func": "is_expected_url_pattern_match",
+    "result": {
+      "type": "active_tab_info_simple"
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "expected": [
+          "https?://host\\.docker\\.internal:8765/success\\?type=math&seed=access-math-003&session=access-captcha-math"
+        ]
+      }
+    }
+  },
+  "proxy": false,
+  "possibility_of_env_change": "low"
+}

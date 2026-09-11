@@ -1,8 +1,10 @@
 {
   "id": "communication-equipment_reimbursement_email",
   "manually_evaluated": true,
-  "snapshot": "chrome",
   "category": "communication",
+  "need_ids": [
+    "H1"
+  ],
   "difficulty": "medium",
   "instruction": "Use Chrome Live Caption to identify the application deadline and the two required documents in the reimbursement audio, then compose a new Thunderbird email to hr@company.com with subject `Equipment Reimbursement Request` and include those three details in the body. Do not send it.",
   "source": "synthetic",
@@ -88,7 +90,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "chrome",
     "thunderbird"
@@ -141,7 +142,6 @@
       }
     ]
   },
-  "proxy": false,
-  "fixed_ip": false,
+  "proxy": true,
   "possibility_of_env_change": "low"
 }

@@ -1,8 +1,10 @@
 {
   "id": "information-apartment_maintenance",
   "manually_evaluated": true,
-  "snapshot": "chrome",
   "category": "information",
+  "need_ids": [
+    "H1"
+  ],
   "difficulty": "medium",
   "instruction": "Use Chrome Live Caption to identify the two items that must be turned off and the deadline in the apartment maintenance audio, then record all three details in a Sticky Note.",
   "source": "synthetic",
@@ -81,7 +83,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "chrome",
     "sticky_notes"
@@ -130,6 +131,5 @@
     ]
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

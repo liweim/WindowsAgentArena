@@ -1,6 +1,11 @@
 {
   "id": "communication-ftc_spam_text_safety_email",
   "category": "communication",
+  "need_ids": [
+    "C1",
+    "C6",
+    "C8"
+  ],
   "difficulty": "medium",
   "instruction": "Draft a Thunderbird email to `family@example.org` with subject `Spam text safety` using Microsoft Edge Immersive Reader to read the FTC guidance. Include the three safety phrases exactly as written on the page and save the draft without sending it.",
   "source": "https://consumer.ftc.gov/articles/how-recognize-and-report-spam-text-messages",
@@ -100,7 +105,6 @@
       }
     ]
   },
-  "proxy": false,
-  "fixed_ip": false,
+  "proxy": true,
   "possibility_of_env_change": "low"
 }

@@ -1,20 +1,27 @@
 {
   "id": "consumption-lowest_price_white_mouse",
-  "snapshot": "chrome",
   "category": "consumption",
+  "need_ids": [
+    "C2",
+    "C5"
+  ],
   "difficulty": "medium",
-  "instruction": "Find the lowest-priced standalone white wireless mouse on the shopping site and add it to the cart.",
+  "instruction": "Use the mouse shopping reminder on the Desktop to choose the matching product and add it to the cart.",
   "source": "http://host.docker.internal:7770",
   "gt_steps": [
-    "Open the self-hosted shopping website.",
-    "Search for wireless mouse products.",
-    "Compare prices among standalone wireless mouse products that offer a `White` color option.",
-    "Identify `Wireless Mouse, 3 Adjustable DPI Innovative Stylish Portable Gaming Mouse, Suitable for Notebook, PC, Computer Office Home Work` as the standard lowest-priced match.",
-    "Open the standard-answer product.",
-    "Select the `White` color option.",
-    "Add the product to the shopping cart."
+    "Open `mouse_shopping_reminder.txt` and read the requirements.",
+    "Search the shopping site for wireless mouse products.",
+    "Compare standalone white options and choose the lowest-priced match.",
+    "Select the White option and add the matching mouse to the cart."
   ],
   "config": [
+    {
+      "type": "execute",
+      "parameters": {
+        "command": "powershell -NoProfile -Command \"Set-Content -Path (Join-Path $env:USERPROFILE 'Desktop\\mouse_shopping_reminder.txt') -Value @('Mouse requirements:','- wireless','- white','- standalone mouse, not a bundle','- choose the lowest-priced match')\"",
+        "shell": true
+      }
+    },
     {
       "type": "launch",
       "parameters": {
@@ -54,9 +61,9 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
-    "chrome"
+    "chrome",
+    "notepad"
   ],
   "evaluator": {
     "func": "is_page_contains_items",
@@ -80,6 +87,5 @@
     }
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

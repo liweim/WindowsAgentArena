@@ -1,6 +1,9 @@
 {
   "id": "health-drug_facts_package",
   "category": "health",
+  "need_ids": [
+    "V5"
+  ],
   "difficulty": "medium",
   "instruction": "Use the original Drug Facts carton image on the Desktop to create a Sticky Note containing both active ingredients with their amounts and the acetaminophen warning shown on the carton.",
   "source": "https://dailymed.nlm.nih.gov/dailymed/image.cfm?name=aceta-ibu-fig2.jpg&setid=b39fb93f-c140-40ab-8247-9559ef6df50a",
@@ -96,6 +99,5 @@
     }
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

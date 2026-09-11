@@ -1,8 +1,10 @@
 {
   "id": "information-second_gold_rush",
   "_comment": "",
-  "snapshot": "chrome",
   "category": "information",
+  "need_ids": [
+    "V1"
+  ],
   "difficulty": "medium",
   "instruction": "Turn on Windows Narrator. On the Gold rush Wikipedia page already open in Chrome, use the gold-rush examples in the order presented on that page, identify the second listed gold rush, open that gold rush's linked Wikipedia page, and leave it open.",
   "source": "http://host.docker.internal:8888/wikipedia_en_all_maxi_2022-05/A/Gold_rush",
@@ -49,7 +51,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "narrator",
     "chrome"
@@ -84,6 +85,5 @@
     ]
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

@@ -1,7 +1,10 @@
 {
   "id": "captcha-count_chars_1",
-  "snapshot": "chrome",
   "category": "captcha",
+  "need_ids": [
+    "C1",
+    "C7"
+  ],
   "difficulty": "easy",
   "instruction": "Complete the character-count CAPTCHA open in Chrome.",
   "source": "synthetic",
@@ -20,7 +23,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "chrome"
   ],
@@ -39,6 +41,5 @@
     }
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

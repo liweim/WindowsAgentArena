@@ -1,7 +1,9 @@
 {
   "id": "service-identity_theft_report_site",
-  "snapshot": "chrome",
   "category": "service",
+  "need_ids": [
+    "H1"
+  ],
   "difficulty": "easy",
   "instruction": "Turn on captions in the opened YouTube video, then open the website the video says to use for reporting identity theft in Chrome.",
   "source": "https://www.youtube.com/watch?v=0GGDKL7TVPo",
@@ -45,7 +47,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "chrome"
   ],
@@ -80,5 +81,6 @@
         }
       }
     ]
-  }
+  },
+  "proxy": true
 }

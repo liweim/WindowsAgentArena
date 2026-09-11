@@ -1,6 +1,10 @@
 {
   "id": "mobility-victoria_train_interchange_note",
   "category": "mobility",
+  "need_ids": [
+    "C4",
+    "C5"
+  ],
   "difficulty": "medium",
   "instruction": "Use the Victorian train network map saved locally on the Desktop to plan a one-change trip from Frankston to Pakenham that stays southeast of the CBD. Create a Sticky Note with the starting line, the interchange station where the Frankston and Pakenham corridors meet, the onward line, and the destination.",
   "source": "https://edge.sitecorecloud.io/stategovernc45d-cftw-production-c9ca/media/Project/TransportWebsite/Forms/Vic-Train-Network-Map-Aug-2026.pdf",
@@ -63,6 +67,5 @@
     }
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "medium"
 }

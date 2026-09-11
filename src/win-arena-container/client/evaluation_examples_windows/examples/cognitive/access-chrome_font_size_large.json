@@ -1,7 +1,9 @@
 {
   "id": "access-chrome_font_size_large",
-  "snapshot": "chrome",
   "category": "access",
+  "need_ids": [
+    "C1"
+  ],
   "difficulty": "easy",
   "instruction": "Set Chrome's default font size to Large.",
   "source": "synthetic",
@@ -34,7 +36,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "chrome"
   ],
@@ -78,6 +79,5 @@
     }
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

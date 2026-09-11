@@ -1,24 +1,31 @@
 {
   "id": "consumption-ginger_ale_note",
-  "snapshot": "chrome",
   "category": "consumption",
+  "need_ids": [
+    "C2",
+    "C5",
+    "C6"
+  ],
   "difficulty": "medium",
-  "instruction": "On the already-open Q Mixers Premium Ginger Ale page, use only the customer-review text. Count each preference as satisfied only when at least one review explicitly supports it: (1) less sweet/not overly sweet, (2) noticeable ginger flavor, and (3) enjoyable on its own/straight rather than only as a mixer. Write only `yes` if all three are supported; otherwise write only `no` in `answer.txt` on the Desktop.",
+  "instruction": "Use the drink-preference note on the Desktop and the customer reviews on the already-open Q Mixers Premium Ginger Ale page to decide whether it is a good fit. If it fits all the preferences, add it to the cart.",
   "source": "http://host.docker.internal:7770/q-mixers-premium-ginger-ale-real-ingredients-less-sweet-6-7-fl-oz-24-bottles.html",
   "gt_steps": [
-    "Review the customer reviews on the already-open Q Mixers Premium Ginger Ale product page.",
-    "Determine that the standard answer is `yes` because the reviews support the stated preferences.",
-    "Open Notepad.",
-    "Enter only `yes`.",
-    "Save the file as `answer.txt` on the Desktop."
+    "Open `drink_preferences.txt` and read the three preferences.",
+    "Review the customer-review text on the already-open Q Mixers Premium Ginger Ale page.",
+    "Determine that the reviews support all three preferences.",
+    "Add Q Mixers Premium Ginger Ale to the shopping cart."
   ],
   "config": [
     {
       "type": "execute",
       "parameters": {
-        "command": "powershell -NoProfile -Command \"$p=Join-Path $env:USERPROFILE 'Desktop\\answer.txt'; if(Test-Path $p){Remove-Item $p -Force}\"",
+        "command": "powershell -NoProfile -Command \"Set-Content -Path (Join-Path $env:USERPROFILE 'Desktop\\drink_preferences.txt') -Value @('Ginger ale preferences:','- less sweet / not overly sweet','- noticeable ginger flavor','- enjoyable on its own, not only as a mixer')\"",
         "shell": true
       }
+    },
+    {
+      "type": "reset_shopping_cart",
+      "parameters": {}
     },
     {
       "type": "launch",
@@ -31,31 +38,26 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "chrome",
     "notepad"
   ],
   "evaluator": {
-    "func": "check_text_points",
+    "func": "is_page_contains_items",
     "result": {
-      "type": "vm_command_line",
-      "command": "powershell -NoProfile -Command \"$p=Join-Path $env:USERPROFILE 'Desktop\\answer.txt'; if(Test-Path $p){$v=(Get-Content $p -Raw).Trim(); if($v -ieq 'yes'){Write-Output 'EXACT_YES'}}\"",
-      "shell": true
+      "type": "page_info",
+      "url": "http://host.docker.internal:7770/checkout/cart/",
+      "load_state": "networkidle"
     },
     "expected": {
       "type": "rule",
       "rules": {
-        "ignore_case": false,
-        "points": [
-          [
-            "EXACT_YES"
-          ]
+        "items": [
+          "B071KC37VD"
         ]
       }
     }
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

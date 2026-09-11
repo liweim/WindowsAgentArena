@@ -1,8 +1,10 @@
 {
   "id": "consumption-swingset_price_filter",
   "_comment": "",
-  "snapshot": "chrome",
   "category": "consumption",
+  "need_ids": [
+    "V1"
+  ],
   "difficulty": "easy",
   "instruction": "Turn on Windows Narrator. In Chrome, open https://www.smythstoys.com/, find swing sets priced at no more than £49.99, and leave the filtered results page open.",
   "source": "https://www.smythstoys.com/",
@@ -42,7 +44,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "narrator",
     "chrome"
@@ -77,5 +78,6 @@
         }
       }
     ]
-  }
+  },
+  "proxy": true
 }

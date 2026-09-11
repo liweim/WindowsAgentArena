@@ -1,7 +1,11 @@
 {
   "id": "information-passport_renewal_checklist",
-  "snapshot": "msedge",
   "category": "information",
+  "need_ids": [
+    "C1",
+    "C2",
+    "C4"
+  ],
   "difficulty": "medium",
   "instruction": "Create Sticky Notes listing the online passport renewal eligibility requirements using the article's wording rather than paraphrasing, and use Immersive Reader to read the eligibility rules.",
   "source": "https://apnews.com/article/70fbd31bdc1a519701c83a177ed3ef95",
@@ -41,7 +45,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "msedge",
     "sticky_notes"
@@ -90,7 +93,6 @@
       }
     ]
   },
-  "proxy": false,
-  "fixed_ip": false,
+  "proxy": true,
   "possibility_of_env_change": "low"
 }

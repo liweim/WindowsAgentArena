@@ -1,8 +1,10 @@
 {
   "id": "access-high_contrast_aquatic_7news",
   "_comment": "High Contrast mode does not need to open url.",
-  "snapshot": "windows",
   "category": "access",
+  "need_ids": [
+    "V3"
+  ],
   "difficulty": "easy",
   "instruction": "Set the Windows contrast theme to Aquatic, open https://7news.com.au/ in Chrome, and leave the 7News homepage open with the Aquatic theme enabled.",
   "source": "https://7news.com.au/",
@@ -39,7 +41,6 @@
       }
     }
   ],
-  "trajectory": "trajectories/",
   "related_apps": [
     "settings",
     "chrome"
@@ -95,7 +96,6 @@
       }
     ]
   },
-  "proxy": false,
-  "fixed_ip": false,
+  "proxy": true,
   "possibility_of_env_change": "low"
 }

@@ -1,6 +1,9 @@
 {
   "id": "communication-pharmacy_pickup_voicemail",
   "category": "communication",
+  "need_ids": [
+    "H1"
+  ],
   "difficulty": "medium",
   "instruction": "Use Chrome Live Caption to read the pharmacy voicemail on the Desktop. Draft a Thunderbird email to `pharmacy@example.com` with subject `Pickup confirmation` confirming the pickup date and window and including the locker code and order reference. Do not send it.",
   "source": "synthetic",
@@ -153,7 +156,6 @@
       }
     ]
   },
-  "proxy": false,
-  "fixed_ip": false,
+  "proxy": true,
   "possibility_of_env_change": "low"
 }

@@ -2,8 +2,10 @@
   "id": "consumption-half_price_body_wash",
   "_comment": "You need to specify how to connect the products; in other words, use `\n` to separate them.",
   "manually_evaluated": false,
-  "snapshot": "chrome",
   "category": "consumption",
+  "need_ids": [
+    "M2"
+  ],
   "difficulty": "hard",
   "instruction": "Enable Windows Sticky Keys and keep them enabled. From the provided Coles catalogue, save every product whose full name contains `Body Wash` and costs less than $9 to `answer.txt` on the Desktop, one exact product name per line in catalogue order.",
   "source": "synthetic",
@@ -65,7 +67,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "settings",
     "chrome",
@@ -111,6 +112,5 @@
     ]
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

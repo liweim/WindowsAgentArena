@@ -1,8 +1,10 @@
 {
   "id": "consumption-marshmallow_bunnies",
   "_comment": "",
-  "snapshot": "chrome",
   "category": "consumption",
+  "need_ids": [
+    "V1"
+  ],
   "difficulty": "medium",
   "instruction": "Turn on Windows Narrator. Identify the requested product from the provided shopping reminder PDF and add exactly one matching unit to the shopping cart. Leave the cart page open.",
   "source": "synthetic",
@@ -66,7 +68,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "narrator",
     "chrome"
@@ -118,6 +119,5 @@
     ]
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

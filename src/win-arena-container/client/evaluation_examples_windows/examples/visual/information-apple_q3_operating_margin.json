@@ -1,8 +1,11 @@
 {
   "id": "information-apple_q3_operating_margin",
   "_comment": "",
-  "snapshot": "chrome",
   "category": "information",
+  "need_ids": [
+    "V1",
+    "V5"
+  ],
   "difficulty": "hard",
   "instruction": "Turn on Windows Narrator. Use the opened Apple financial report PDF to find the Q3 2025 Operating Margin in the Margin and Efficiency Analysis chart. Save the exact percentage in `answer.txt` on the Desktop and leave the report open.",
   "source": "synthetic",
@@ -60,7 +63,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "narrator",
     "chrome",
@@ -97,6 +99,5 @@
     ]
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

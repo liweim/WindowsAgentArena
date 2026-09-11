@@ -1,8 +1,10 @@
 {
   "id": "information-unsw_comp2521_prerequisites",
   "_comment": "Never disclose personal information such as the school, nationality or location.",
-  "snapshot": "chrome",
   "category": "information",
+  "need_ids": [
+    "M1"
+  ],
   "difficulty": "hard",
   "instruction": "Enable the Windows On-Screen Keyboard and keep it open. In the 2025 UNSW Handbook version of undergraduate program 3778, find the complete prerequisite expression for COMP2521 under the Computer Science disciplinary component and write it in a sticky note exactly as shown, including every `or` between course codes.",
   "source": "https://www.handbook.unsw.edu.au/undergraduate/programs/2022/3778",
@@ -60,7 +62,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "chrome",
     "sticky_notes",
@@ -103,5 +104,6 @@
         }
       }
     ]
-  }
+  },
+  "proxy": true
 }

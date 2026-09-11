@@ -1,6 +1,10 @@
 {
   "id": "health-doctor_visit_preparation_summary",
   "category": "health",
+  "need_ids": [
+    "C1",
+    "C6"
+  ],
   "difficulty": "medium",
   "instruction": "Use Microsoft Edge Immersive Reader to read the AP News article about preparing for a doctor appointment. Save `answer.txt` on the Desktop with five preparation details in webpage wording: the top tip for the start of the visit, the family-history requirement, what to check on medicine bottles, the nonprescription items not to forget, and the recent records to verify were received. Put one item per line in that order.",
   "source": "https://apnews.com/article/3fcde5b5c927734429818bd0ed1c6680",
@@ -117,7 +121,6 @@
       }
     ]
   },
-  "proxy": false,
-  "fixed_ip": false,
+  "proxy": true,
   "possibility_of_env_change": "low"
 }

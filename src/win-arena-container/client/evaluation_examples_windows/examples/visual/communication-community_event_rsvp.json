@@ -1,6 +1,10 @@
 {
   "id": "communication-community_event_rsvp",
   "category": "communication",
+  "need_ids": [
+    "V1",
+    "V2"
+  ],
   "difficulty": "medium",
   "instruction": "Turn on Windows Narrator and keep it enabled. Read the community workshop invitation on the Desktop, then draft a Thunderbird email to `rsvp@example.org` with subject `Workshop RSVP` confirming attendance and including the event date, start time, venue, and a request for a large-print handout. Do not send it.",
   "source": "synthetic",
@@ -145,7 +149,6 @@
       }
     ]
   },
-  "proxy": false,
-  "fixed_ip": false,
+  "proxy": true,
   "possibility_of_env_change": "low"
 }

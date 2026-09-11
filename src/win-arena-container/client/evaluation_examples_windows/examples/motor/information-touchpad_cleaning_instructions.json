@@ -2,8 +2,10 @@
   "id": "information-touchpad_cleaning_instructions",
   "_comment": "You need to put the answer in the `gt_steps`. You also need to specify how multiple lines should be connected; in other words, use \n to separate them.",
   "manually_evaluated": false,
-  "snapshot": "chrome",
   "category": "information",
+  "need_ids": [
+    "M1"
+  ],
   "difficulty": "medium",
   "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Copy the touchpad-cleaning instructions from the provided Dell User's Guide exactly as written into `answer.txt` on the Desktop.",
   "source": "synthetic",
@@ -60,7 +62,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "settings",
     "on_screen_keyboard",
@@ -107,6 +108,5 @@
     ]
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

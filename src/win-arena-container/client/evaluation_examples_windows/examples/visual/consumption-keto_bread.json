@@ -1,8 +1,10 @@
 {
   "id": "consumption-keto_bread",
   "_comment": "",
-  "snapshot": "chrome",
   "category": "consumption",
+  "need_ids": [
+    "V1"
+  ],
   "difficulty": "easy",
   "instruction": "Turn on Windows Narrator. Use it to read the provided shopping note in Chrome and identify the requested product. Find that product on the opened shopping website, open its product page, and leave the page open.",
   "source": "synthetic",
@@ -64,7 +66,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "narrator",
     "chrome"
@@ -99,6 +100,5 @@
     ]
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

@@ -1,8 +1,10 @@
 {
   "id": "access-windows_magnifier_200",
   "_comment": "",
-  "snapshot": "base_setup",
   "category": "access",
+  "need_ids": [
+    "V2"
+  ],
   "difficulty": "easy",
   "instruction": "Open Windows Magnifier, set the zoom level to 200%, and leave Magnifier open.",
   "source": "synthetic",
@@ -12,7 +14,6 @@
     "Leave Magnifier open."
   ],
   "config": [],
-  "trajectory": "trajectories/",
   "related_apps": [
     "magnifier"
   ],
@@ -48,6 +49,5 @@
     ]
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

@@ -1,7 +1,9 @@
 {
   "id": "information-maricopa_census_search",
-  "snapshot": "chrome",
   "category": "information",
+  "need_ids": [
+    "H1"
+  ],
   "difficulty": "medium",
   "instruction": "Turn on captions in the opened YouTube video, identify the area demonstrated there, then search for that area on the Census data website.",
   "source": "https://www.youtube.com/watch?v=6eqpPRLndPk",
@@ -49,7 +51,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "chrome"
   ],
@@ -84,5 +85,6 @@
         }
       }
     ]
-  }
+  },
+  "proxy": true
 }

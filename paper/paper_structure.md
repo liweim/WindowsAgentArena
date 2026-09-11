@@ -242,22 +242,81 @@ Introduction 建议形成 5 段递进，而不是一开始介绍任务数量。
 
 工程细节放 README / Appendix，正文只描述原则和统计。
 
-### 6.3 Taxonomy 与 access-need annotation
+### 6.3 Documented User Need Taxonomy 与 task-level annotation
 
-当前任务目录已经按四个 user groups（visual / hearing / motor / cognitive）清晰划分，因此**不需要在每个 JSON 中重复加入 `user_group` 字段**。实验分析时直接以目录层级作为一级分组的 authoritative label，避免目录与 JSON metadata 不一致。
+当前任务目录按四个 primary user groups（visual / hearing / motor / cognitive）组织，因此**目录层级仍是一级 user-group label 的 authoritative source**，不在 JSON 中重复增加 `user_group` 字段。`category` 与 user group 正交：`category` 描述 workflow（如 `access`、`mobility`、`health`、`consumption`），user group 描述任务主要面向的 access-need slice。因此应保留 cognitive × mobility、cognitive × access 等交叉覆盖，而不能用 workflow category 代替 disability/access-need taxonomy。
 
-`category` 与 user group 保持正交：前者描述 workflow 类型（如 `access`、`mobility`、`health`、`consumption`），后者描述任务主要面向的 accessibility user group。因此应保留 cognitive × mobility、cognitive × access 等交叉覆盖，而不是把 category 当成 disability taxonomy。
+为了回答 reviewer 最关键的 construct-validity 问题——“这些 benchmark tasks 为什么能够代表真实 accessibility needs？”——本文不要求每个具体任务主题都在 survey 中逐字出现，而是建立一个**可复用的 Documented User Need Taxonomy**。这里的 documented user need 指已有用户调查、用户研究、W3C accessibility user requirements / design patterns、或官方 accessibility documentation 明确记录的 access barrier 或 support requirement。每个 task 再映射到一个或多个 documented needs。也就是说，证据需要证明的是“用户确实存在这种 access barrier/support need”，而不是证明某个具体商品、地点或网页本身是残障用户特有的需求。
 
-如果后续需要更细粒度的机制分析，可以增加一个**可选的** `access_need` annotation，或单独维护 analysis metadata，而不必强制写入所有任务 JSON。例如：
+证据按三层使用：**(1) empirical user evidence**，优先使用 WebAIM、ACMA、AFB、Pew 等 survey / user research；**(2) accessibility user requirements**，使用 W3C WAI / COGA 对具体 barriers 和 user needs 的规范化描述；**(3) platform documentation**，使用 Microsoft 等官方文档确认具体 accessibility feature 与其服务的 access need。三类证据承担不同作用：survey/user research 说明需求在真实用户中存在，W3C requirements 提供可操作的 construct 定义，platform documentation 说明 benchmark 中具体 support state 的 intended accessibility purpose。
 
-- visual：text visibility / non-visual information access / magnification / screen-reader handoff；
-- hearing：caption access / audio-to-text information access；
-- motor：keyboard assistance / reduced pointer precision / alternative input；
-- cognitive：memory / prospective memory / attention / information processing / planning-sequencing / task-state tracking / completion recognition / error recovery。
+#### Visual needs
 
-其余可直接从现有字段或执行日志派生的分析维度包括 `category`、modality、`related_apps` / number of apps、是否要求 accessibility feature、feature type、handoff type、difficulty、single-app / cross-app，以及 information retrieval / state change / artifact creation / mixed。
+| ID | Documented user need | Operational definition | Primary evidence |
+| --- | --- | --- | --- |
+| `V1` | Non-visual access to digital text and interface content | 通过 screen reader 或等价的非视觉表示读取、导航并操作网页、文档、文本和控件。 | WebAIM Screen Reader Survey #10; W3C Visual Disabilities — Abilities and Barriers |
+| `V2` | Magnification and text enlargement | 通过 browser zoom、text sizing 或 screen magnification 放大文本、控件或整个显示内容，使其可感知和可操作。 | WebAIM Low Vision Survey #2; WCAG 2.2 Understanding 1.4.4 Resize Text |
+| `V3` | Contrast and display-palette customization | 调整高对比度、前景/背景、反色或显示配色，以提高低视力用户的可读性。 | WebAIM Low Vision Survey #2; W3C Visual Disabilities; Microsoft color/contrast accessibility documentation |
+| `V4` | Color-vision differentiation support | 当颜色差异难以区分时，使用 color filters 或非颜色线索来获取信息。 | WCAG 2.2 Understanding 1.4.1 Use of Color; Microsoft color-filter documentation |
+| `V5` | Access to non-text visual information | 获得图片、地图、图表、扫描件、标签等 visual-only / poorly-described content 的等价信息。 | WebAIM Screen Reader Survey #10; WCAG Understanding 1.1.1 Non-text Content |
+| `V6` | Accessible CAPTCHA and verification | 在 verification 依赖视觉感知时，通过替代 modality 或 delegated assistance 完成验证。 | WebAIM Screen Reader Survey #10; WCAG Understanding 1.1.1 Non-text Content |
 
-原则是：**只增加真正支撑论文分析、且不能可靠从目录或现有 task schema 推导出的 metadata。**
+#### Hearing needs
+
+| ID | Documented user need | Operational definition | Primary evidence |
+| --- | --- | --- | --- |
+| `H1` | Speech-to-text access through captions or transcripts | 通过 captions、live captions 或 transcript 获取 speech 和相关 non-speech audio 信息。 | W3C Making Audio and Video Media Accessible; ACMA captioning consumer research; AFB *Innovation for Access* caption survey analysis |
+| `H2` | Caption readability and language customization | 调整 caption 的语言和视觉呈现，使字幕适合当前媒体且可读。 | Microsoft Make Windows easier to hear; ACMA captioning consumer research |
+| `H3` | Visual and persistent alternatives to auditory notifications | 用视觉提示替代仅声音提醒，并让 notification 保留足够时间供用户察觉和阅读。 | Microsoft Make Windows easier to hear |
+| `H4` | Single-channel access to stereo audio | 将 stereo channels 合并为 mono，避免使用单侧听力/单耳设备时遗漏某一声道的信息。 | Microsoft Make Windows easier to hear |
+| `H5` | Verification without relying on hearing | 当 verification 依赖听觉感知时，使用非听觉替代方式或 delegated assistance。 | WCAG Understanding 1.1.1 Non-text Content |
+
+#### Motor needs
+
+| ID | Documented user need | Operational definition | Primary evidence |
+| --- | --- | --- | --- |
+| `M1` | Alternative text entry without a physical keyboard | 当 physical keyboard 难以操作时，通过 on-screen keyboard 或其他 alternative input 输入文本。 | WebAIM Motor Disability Survey; Microsoft Accessibility tools for mobility |
+| `M2` | Sequential modifier-key input | 将需要同时按下多个键的 shortcut 改为逐键输入。 | Microsoft Accessibility tools for mobility (Sticky Keys) |
+| `M3` | Keystroke filtering and sensitivity control | 过滤意外重复/短促按键并调整键盘灵敏度。 | Microsoft Accessibility tools for mobility (Filter Keys) |
+| `M4` | Alternative pointer control or delegated pointing | 当传统鼠标操作困难时，用 keyboard、speech/其他 alternative input，或由 agent 代理完成 pointer activation。 | Microsoft Accessibility tools for mobility; WebAIM Motor Disability Survey |
+| `M5` | Reduced press-hold and dragging demand | 避免或减少要求持续按住、拖动并精确释放的动作。 | WCAG 2.2 Understanding 2.5.7 Dragging Movements |
+| `M6` | Mouse-button and handedness customization | 根据 reach、strength、dexterity 或单侧运动需求调整 primary mouse button 等 pointer settings。 | Microsoft Accessibility tools for mobility |
+| `M7` | Reduced pointer precision, repetition, and timing demand | 避免/代理反复精确 target acquisition、严格 timing 或 fine-motor pointer 操作。 | WebAIM Motor Disability Survey; WCAG 2.2 Understanding 2.5.7 |
+
+#### Cognitive needs
+
+| ID | Documented user need | Operational definition | Primary evidence |
+| --- | --- | --- | --- |
+| `C1` | Focus, readability, and simplification | 降低 distraction、visual/cognitive clutter 或 reading load，使 attention、language processing 和 comprehension 更容易持续。 | W3C Cognitive Accessibility; COGA Support Simplification |
+| `C2` | Memory externalization and short-term retention support | 通过 notes、checklists、persistent cues 或 delegated assistance，减少对 working memory / short-term retention 的依赖。 | COGA Do Not Rely on Users Calculations or Memorizing Information |
+| `C3` | Time and prospective-memory support | 使用 reminders、calendar、timer 和 persistent time cues 管理 appointment、deadline、interval 和 future action。 | COGA Provide Reminders |
+| `C4` | Planning, sequencing, task-state tracking, and completion recognition | 降低 unfamiliar / multi-step workflow、维持 context、受打断后恢复、progress tracking 和识别 completion 的负担。 | COGA Make Each Step Clear; COGA Task Expectations; COGA Provide Feedback; Pew technology-setup evidence（仅作补充） |
+| `C5` | Decision and choice support | 帮助比较 alternatives、应用约束、理解 consequences 并选择合适 option。 | COGA Clearly State Results and Disadvantages of Choices |
+| `C6` | Important-information extraction and prioritization | 从 dense / mixed / distracting information 中找出并保留少量重要事实或 actions。 | COGA Make Important Tasks and Information Easy to Find; COGA Support Simplification |
+| `C7` | Calculation, counting, copying, and cross-source reconciliation support | 减少 arithmetic/counting、copying、短期保持信息以及跨 source/step reconciliation 的需求。 | COGA Do Not Rely on Users Calculations or Memorizing Information |
+| `C8` | Error prevention and safety-critical guidance | 让高风险操作、scam、health/safety guidance 和易错 choices 更容易理解并正确执行。 | COGA Design Forms to Prevent Mistakes; COGA Supported Choice; COGA Important Information |
+
+每个 task JSON **只新增 `need_ids`**，保存一个或多个 taxonomy ID。`[]` 只允许在构建阶段暂时表示 unresolved mapping；正式发布任务必须至少有一个可辩护的 need ID，否则应继续重写或暂缓纳入。task–need fit 和“目标 user group 是否会自然提出这种请求”仍然是构建阶段必须人工审核的问题，但应保存在单独的 review checklist / curation notes 中，而不是成为 benchmark runtime metadata。这样可以避免把主观、会随任务修改而变化的审核状态固化进任务定义。
+
+论文中的核心 claim 应写成：**tasks are grounded in documented accessibility user needs**，而不是在没有 target-user study 时声称 “the benchmark satisfies users' real needs”。WebAIM Screen Reader Survey #10 明确说明样本未受控，WebAIM Motor Disability Survey 也只有 46 个 convenience-sample respondents，因此这些数据用于证明某类 barrier/support need 的存在和合理性，而不是估计 population prevalence。W3C / Microsoft documentation 同样是 construct / feature-purpose evidence，而不是 prevalence evidence。Direct target-user validation 如果无法完成，应作为 limitation / future validation 诚实说明，并用 expert review、task-level need mapping 与 naturalness curation 加强 construct validity。
+
+**主要 evidence sources（写论文时优先引用）：**
+
+- WebAIM, *Screen Reader User Survey #10 Results* (2024): https://webaim.org/projects/screenreadersurvey10/
+- WebAIM, *Survey of Users with Low Vision #2 Results* (2018): https://webaim.org/projects/lowvisionsurvey2/
+- WebAIM, *Survey of Users with Motor Disabilities* (2013): https://webaim.org/projects/motordisabilitysurvey/
+- W3C WAI, *Visual Disabilities — Abilities and Barriers*: https://www.w3.org/WAI/people-use-web/abilities-barriers/visual/
+- W3C WAI, *Making Audio and Video Media Accessible*: https://www.w3.org/WAI/media/av/
+- W3C WAI, *Cognitive Accessibility*: https://www.w3.org/WAI/cognitive/
+- W3C COGA supplemental design patterns: https://www.w3.org/WAI/WCAG2/supplemental/patterns/
+- W3C WCAG 2.2 Understanding documents, especially Non-text Content, Resize Text, Use of Color, and Dragging Movements: https://www.w3.org/WAI/WCAG22/Understanding/
+- Microsoft, *Make Windows easier to hear*: https://support.microsoft.com/en-us/accessibility/windows/make-windows-easier-to-hear
+- Microsoft, *Accessibility tools for mobility*: https://support.microsoft.com/en-US/accessibility/accessibility-tools-for-mobility
+- ACMA, *Use and experience of captioning: consumer research* (2023): https://www.acma.gov.au/publications/2023-05/report/use-and-experience-captioning-consumer-research-support-acmas-captioning-quality-standard-review
+- American Foundation for the Blind, *Innovation for Access* (2026; analysis of a 2025 survey): https://www.afb.org/research-and-initiatives/ai-series/innovation-access
+- Pew Research Center, *Navigating technological challenges* (2021): https://www.pewresearch.org/internet/2021/09/01/navigating-technological-challenges/
+
+`paper/documented_user_need_taxonomy.json` 作为 taxonomy 和 source registry 的 machine-readable source of truth；正文只保留压缩后的 taxonomy、evidence hierarchy 和 representative statistics，完整 mapping / source registry 可放 Appendix 或 supplement。
 
 ### 6.4 Deterministic Evaluation
 
@@ -511,7 +570,7 @@ Failure taxonomy 应由真实 trajectories 归纳，而不是预先硬套 A11y-C
 | 现有 CUA 对 accessibility-oriented user goals 能力不足 | 多个强 baseline 的总体 success rate；不能只挑弱模型 |
 | 不同 user groups 面临不同程度/类型的困难 | group-wise results + significance/CI + failure breakdown |
 | 这不是普通 GUI difficulty 的简单复现 | task-factor analysis；如果有 matched tasks 更强 |
-| benchmark task 真正具有 accessibility relevance | source grounding + human/expert validation |
+| benchmark task 真正具有 accessibility relevance | documented-user-need taxonomy + task-level mapping/naturalness curation + source grounding + human/expert validation |
 | evaluator 合理且不会因为表面措辞错杀正确答案 | evaluator validity study |
 | accessible handoff 是额外真实难点 | TaskOutcome vs FullSuccess 对比，或 feature-state failure 统计 |
 | 本文方法解决了 benchmark 揭示的机制 | targeted slice gains + failure reduction + ablation |
@@ -538,7 +597,7 @@ Introduction 必须早说，否则 reviewer 很容易误解。
 
 ### Concern C：cognitive tasks 是否只是普通 long-horizon tasks 套了 disability label？
 
-回答：严格 task curation + human/expert validation；只有明确降低 memory/attention/planning/information-processing burden 的任务保留在 cognitive group。
+回答：用 `C1–C8` documented cognitive needs 做 task-level mapping，released task JSON 只保存 `need_ids`；task–need fit 与 naturalness 在构建阶段通过独立 review checklist 审核。只有能自然 operationalize reading simplification、memory externalization、prospective-memory/time support、planning/task-state、decision support、important-information extraction、cross-source reconciliation 或 error-prevention 等 documented needs 的任务保留在 cognitive group，再用 human/expert validation 做第二层 construct-validity check。
 
 ### Concern D：自然语言 evaluator 是否太 brittle 或太宽松？
 
@@ -558,41 +617,18 @@ Introduction 必须早说，否则 reviewer 很容易误解。
 
 ---
 
-## 13. Benchmark curation：投稿前内部 TODO
+## 13. Benchmark curation：当前 task-need review 结论
 
-### 建议直接替换的 cognitive tasks
+第一轮 task-level grounding 曾标出 15 个 `weak` 和 8 个 `unsupported` task。重新检查实际 task implementation 后，不应机械地按旧标签删任务，而应区分“旧 review 判断过严”和“任务本身确实需要重写”。当前处理原则如下：
 
-当前已识别出以下任务 accessibility relevance 较弱，容易被 reviewer 看成普通 GUI task：
+- **保留但重新论证的任务**：`access-docker_install` / `access-spotify_install` 归入 `C4`，其依据是 unfamiliar multi-step setup / completion-recognition burden；Pew 的 older-adult setup-help 数据只作为 tech-readiness 的补充证据，不能写成“年龄 = cognitive disability”。`service-cms_product_record` 归入 `C2+C7`，因为 task 本身要求用 spreadsheet checklist 外化并跨 CMS/表格复制、核对多个字段。
+- **cognitive CAPTCHA 重构**：保留 audio-code、click-sequence、character-count 等能自然实例化 short-term retention、sequencing、focus/counting burden 的 challenge；原 cognitive slice 中以 distorted visual perception、image recognition、patch selection 为核心的 3 个 challenge 已替换为 `captcha-math_3`、`captcha-click_sequence_4`、`captcha-count_chars_3`。CAPTCHA 仍作为 stress-test category，但 task-level need mapping 必须根据 challenge 的实际 interaction demand，而不是根据 CAPTCHA 名称推断。
+- **consumption task 重构**：generic exact-product lookup 改为从 persistent shopping reminder 恢复需求；review-heavy 商品选择删除“数 supporting statements + 多级 tie-break”这类 benchmark-engineered rule，改成用户可自然表达的 product constraints / preferences，再由 agent 完成 comparison/choice。
+- **information task 重构**：forum task 明确要求把长讨论压缩为 one-sentence plain-language takeaway；Wikipedia task 的输出定位为 persistent reference artifact，而不是单纯 search-and-copy。
+- **cognitive × mobility 保留，但改变 construct**：保留 mobility workflow coverage，但任务核心改为把复杂 station/route information 压缩成可跟随的短 transfer note / step sequence；不再把 step-free、mobility-aid access 本身当成 cognitive need。
+- **旧 review 的 false positives**：`visual/captcha-hold_button_2`、`visual/captcha-robot_checkbox_2` 和 `motor/captcha-robot_checkbox_1` 不再因为 challenge 看起来“更像 motor/visual”就判错配。visual slice 的核心是 blind/non-visual user 的 verification delegation (`V6`)；motor robot-checkbox 对应 conventional pointer use 困难时的 alternative/delegated pointing (`M4`)。
 
-- `access-docker_install`
-- `access-spotify_install`
-- `consumption-elsa_water_bottle`
-- `consumption-lowest_price_white_mouse`
-- `consumption-tomato_egg_stir_fry`
-- `service-cms_product_record`
-
-### 建议重写，否则替换
-
-- `information-food_calorie_forum_answer`
-- `information-wikipedia_accessibility_definition`
-
-重写方向：让输出真正降低 cognitive burden，例如将复杂讨论压缩成有限、明确、可执行的信息 artifact，而不是普通 QA/copy-paste。
-
-### 建议重新分组
-
-- `access-chrome_font_size_large`：更接近 visual；
-- `mobility-accessible_station_transfer_note`：更接近 motor / physical mobility accessibility；
-- `mobility-flinders_street_tram_connection_note`：更接近 motor；
-- `mobility-southern_cross_accessible_transfer_note`：更接近 motor；
-- `mobility-step_free_tube_journey_note`：更接近 motor。
-
-`mobility-victoria_train_interchange_note` 如果任务核心确实是降低 planning burden，可以继续作为 cognitive。
-
-### CAPTCHA
-
-CAPTCHA 建议始终作为独立 stress-test slice 分析，不混入四类 user-group 主结果。即使文件组织上暂时属于某个 assignee，也不要据此归入 cognitive/visual/motor/hearing 的 aggregate score。
-
----
+当前 released 200 tasks 均应具有非空 `need_ids`；若后续新 task 无法自然映射到 taxonomy，应在构建阶段重写或暂缓发布，而不是强行给一个 need ID。
 
 ## 14. Abstract 写作模板
 

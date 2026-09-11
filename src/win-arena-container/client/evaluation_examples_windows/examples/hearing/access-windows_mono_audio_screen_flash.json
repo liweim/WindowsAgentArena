@@ -1,8 +1,11 @@
 {
   "id": "access-windows_mono_audio_screen_flash",
   "manually_evaluated": false,
-  "snapshot": "base_setup",
   "category": "access",
+  "need_ids": [
+    "H4",
+    "H3"
+  ],
   "difficulty": "easy",
   "instruction": "Enable Mono audio and set visual audio alerts to Flash the entire screen in Windows.",
   "source": "synthetic",
@@ -13,7 +16,6 @@
     "Set Flash my screen during audio notifications to Flash the entire screen."
   ],
   "config": [],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "settings"
   ],
@@ -45,5 +47,6 @@
         "type": "visual_audio_alerts"
       }
     ]
-  }
+  },
+  "proxy": false
 }

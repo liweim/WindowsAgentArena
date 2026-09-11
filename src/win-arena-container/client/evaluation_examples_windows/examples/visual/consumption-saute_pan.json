@@ -1,8 +1,10 @@
 {
   "id": "consumption-saute_pan",
   "_comment": "",
-  "snapshot": "chrome",
   "category": "consumption",
+  "need_ids": [
+    "V1"
+  ],
   "difficulty": "medium",
   "instruction": "Turn on Windows Narrator. Using the provided kitchen catalogue, identify the featured cookware by brand and capacity and add exactly one unit of the matching product to the shopping cart. Leave the cart page open.",
   "source": "synthetic",
@@ -67,7 +69,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "narrator",
     "chrome"
@@ -119,6 +120,5 @@
     ]
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

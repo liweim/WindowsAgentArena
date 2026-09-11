@@ -1,7 +1,11 @@
 {
   "id": "communication-ftc_gift_card_scam_email",
-  "snapshot": "msedge",
   "category": "communication",
+  "need_ids": [
+    "C1",
+    "C6",
+    "C8"
+  ],
   "difficulty": "hard",
   "instruction": "Draft a warning email in Thunderbird to `parent@example.com` with the subject `Gift card payment warning`, based on the FTC gift card scam guidance viewed in Microsoft Edge with Immersive Reader. Use the FTC's exact wording to state whether a government payment demand by gift card is legitimate, what to do with the gift card company, and where to report the scam. Save the draft without sending it.",
   "source": "https://consumer.ftc.gov/articles/avoiding-and-reporting-gift-card-scams",
@@ -57,7 +61,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "msedge",
     "thunderbird"
@@ -106,7 +109,6 @@
       }
     ]
   },
-  "proxy": false,
-  "fixed_ip": false,
+  "proxy": true,
   "possibility_of_env_change": "low"
 }

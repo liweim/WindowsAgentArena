@@ -2,8 +2,10 @@
   "id": "health-allied_health_form_download",
   "manually_evaluated": false,
   "_comment": "You need to download the file locally so that the evaluator can verify whether the local file and the file in the VM are exactly identical. The current evaluator is too weak.",
-  "snapshot": "windows",
   "category": "health",
+  "need_ids": [
+    "M4"
+  ],
   "difficulty": "medium",
   "instruction": "Enable Windows Mouse Keys and keep them enabled. Download the Allied Health Treatment Request form from the SIRA website and save the PDF on the Desktop as `answer.pdf`.",
   "source": "https://www.sira.nsw.gov.au/",
@@ -49,7 +51,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "settings",
     "chrome"
@@ -99,7 +100,6 @@
       }
     ]
   },
-  "proxy": false,
-  "fixed_ip": false,
+  "proxy": true,
   "possibility_of_env_change": "medium"
 }

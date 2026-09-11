@@ -2,8 +2,10 @@
   "id": "management-package_delivery_calendar",
   "_comment": "",
   "manually_evaluated": false,
-  "snapshot": "windows",
   "category": "management",
+  "need_ids": [
+    "V5"
+  ],
   "difficulty": "medium",
   "instruction": "Turn on Windows Narrator and keep it enabled. Using `DeliveryConfirmation.jpg`, create a Thunderbird Calendar all-day event on the expected delivery date titled `Package Delivery - ` followed by the tracking number, with the same tracking number in the event description.",
   "source": "synthetic",
@@ -75,7 +77,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "narrator",
     "paint",
@@ -127,7 +128,6 @@
       }
     ]
   },
-  "proxy": false,
-  "fixed_ip": false,
+  "proxy": true,
   "possibility_of_env_change": "low"
 }

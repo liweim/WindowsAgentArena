@@ -1,6 +1,9 @@
 {
   "id": "service-utility_outage_audio",
   "category": "service",
+  "need_ids": [
+    "H1"
+  ],
   "difficulty": "medium",
   "instruction": "Use Chrome Live Caption to read the utility outage recording on the Desktop. Save the outage area, restoration estimate, support phone number, and incident code to `answer.txt`, one item per line.",
   "source": "synthetic",
@@ -122,6 +125,5 @@
     ]
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

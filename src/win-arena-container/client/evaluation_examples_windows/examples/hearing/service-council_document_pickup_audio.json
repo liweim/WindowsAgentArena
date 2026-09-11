@@ -1,6 +1,9 @@
 {
   "id": "service-council_document_pickup_audio",
   "category": "service",
+  "need_ids": [
+    "H1"
+  ],
   "difficulty": "medium",
   "instruction": "Turn on Windows Live captions and use them to read the council service recording on the Desktop. Save the pickup location, collection hours, item to bring, and reference number to `answer.txt`, one item per line.",
   "source": "synthetic",
@@ -142,6 +145,5 @@
     ]
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

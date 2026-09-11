@@ -1,6 +1,10 @@
 {
   "id": "service-accessible_parking_renewal_notice",
   "category": "service",
+  "need_ids": [
+    "V2",
+    "V5"
+  ],
   "difficulty": "medium",
   "instruction": "Enable Windows Magnifier and keep it open. Read the small-print accessible-parking renewal notice image on the Desktop and save the permit reference, renewal deadline, and help-line phone number to `answer.txt` on the Desktop, one item per line in that order.",
   "source": "synthetic",
@@ -96,6 +100,5 @@
     ]
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

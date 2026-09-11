@@ -214,7 +214,7 @@ compute-config.yml
 **/*.img
 **/*.iso
 **/storage_local/*
-**/storage_*/*
+**/storage*/*
 **/storage_azure_gold/*
 **/task-storage*
 

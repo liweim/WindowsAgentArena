@@ -1,7 +1,9 @@
 {
   "id": "service-ftc_report_fraud_site",
-  "snapshot": "chrome",
   "category": "service",
+  "need_ids": [
+    "H1"
+  ],
   "difficulty": "easy",
   "instruction": "Turn on captions in the opened YouTube video, then watch it and open the complaint website it mentions in Chrome.",
   "source": "https://www.youtube.com/watch?v=3LvMO5UMCl8",
@@ -45,7 +47,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "chrome"
   ],
@@ -80,5 +81,6 @@
         }
       }
     ]
-  }
+  },
+  "proxy": true
 }

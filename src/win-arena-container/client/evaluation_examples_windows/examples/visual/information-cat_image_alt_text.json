@@ -1,8 +1,10 @@
 {
   "id": "information-cat_image_alt_text",
   "_comment": "The evaluator `points` list contains redundant entries and I suggest to use existing webpage with image.",
-  "snapshot": "libreoffice_writer",
   "category": "information",
+  "need_ids": [
+    "V5"
+  ],
   "difficulty": "medium",
   "instruction": "Add descriptive alt text to the image in the provided DOCX file so it describes the visible scene, then save the completed file as `answer.docx` on the Desktop in Word format.",
   "source": "synthetic",
@@ -30,7 +32,6 @@
       }
     }
   ],
-  "trajectory": "trajectories/",
   "related_apps": [
     "libreoffice_writer"
   ],
@@ -67,6 +68,5 @@
     }
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

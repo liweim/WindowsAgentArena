@@ -1,7 +1,9 @@
 {
   "id": "information-ftc_florida_fraud_data",
-  "snapshot": "chrome",
   "category": "information",
+  "need_ids": [
+    "H1"
+  ],
   "difficulty": "medium",
   "instruction": "Turn on captions in the opened YouTube video, then use the tool shown in the video to view Florida's fraud and identity theft combined state data.",
   "source": "https://www.youtube.com/watch?v=F2wQGBjKiaM",
@@ -49,7 +51,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "chrome"
   ],
@@ -84,5 +85,6 @@
         }
       }
     ]
-  }
+  },
+  "proxy": true
 }

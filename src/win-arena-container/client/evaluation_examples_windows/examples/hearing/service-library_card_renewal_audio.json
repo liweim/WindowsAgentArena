@@ -1,6 +1,9 @@
 {
   "id": "service-library_card_renewal_audio",
   "category": "service",
+  "need_ids": [
+    "H1"
+  ],
   "difficulty": "medium",
   "instruction": "Turn on Windows Live captions and use them to read the library renewal recording on the Desktop. Save the renewal deadline, service desk, two documents to bring, and renewal code to `answer.txt`, one item per line.",
   "source": "synthetic",
@@ -138,6 +141,5 @@
     ]
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

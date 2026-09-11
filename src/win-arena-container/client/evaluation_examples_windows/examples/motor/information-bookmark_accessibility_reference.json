@@ -1,6 +1,9 @@
 {
   "id": "information-bookmark_accessibility_reference",
   "category": "information",
+  "need_ids": [
+    "M4"
+  ],
   "difficulty": "easy",
   "instruction": "Enable Windows Mouse Keys and keep them enabled. Add the opened local Wikipedia `Accessibility` article to Chrome's bookmark bar.",
   "source": "http://host.docker.internal:8888/wikipedia_en_all_maxi_2022-05/A/Accessibility",
@@ -85,6 +88,5 @@
     ]
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

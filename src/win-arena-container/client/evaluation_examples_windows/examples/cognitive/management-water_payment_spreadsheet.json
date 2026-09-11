@@ -1,6 +1,10 @@
 {
   "id": "management-water_payment_spreadsheet",
   "category": "management",
+  "need_ids": [
+    "C4",
+    "C7"
+  ],
   "difficulty": "medium",
   "instruction": "Compare the payment activity on the Desktop with the bill tracker. Update the one bill that is still marked `Unpaid` in the tracker but has a `Completed` payment in the activity list. Record its payment date, leave the other bill rows unchanged, and save the spreadsheet as `answer.ods` on the Desktop.",
   "source": "synthetic",
@@ -75,6 +79,5 @@
     }
   },
   "proxy": false,
-  "fixed_ip": false,
   "possibility_of_env_change": "low"
 }

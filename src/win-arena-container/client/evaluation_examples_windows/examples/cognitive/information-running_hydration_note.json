@@ -1,7 +1,10 @@
 {
   "id": "information-running_hydration_note",
-  "snapshot": "msedge",
   "category": "information",
+  "need_ids": [
+    "C1",
+    "C2"
+  ],
   "difficulty": "medium",
   "instruction": "Copy the article's short-distance water-intake advice exactly into Sticky Notes, using Immersive Reader to read the article.",
   "source": "https://www.self.com/gallery/best-hydration-packs",
@@ -38,7 +41,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "msedge",
     "sticky_notes"
@@ -78,7 +80,6 @@
       }
     ]
   },
-  "proxy": false,
-  "fixed_ip": false,
+  "proxy": true,
   "possibility_of_env_change": "medium"
 }

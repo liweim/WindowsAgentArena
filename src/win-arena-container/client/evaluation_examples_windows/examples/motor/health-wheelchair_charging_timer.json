@@ -2,8 +2,10 @@
   "id": "health-wheelchair_charging_timer",
   "_comment": "",
   "manually_evaluated": false,
-  "snapshot": "windows",
   "category": "health",
+  "need_ids": [
+    "M3"
+  ],
   "difficulty": "medium",
   "instruction": "Enable Windows Filter Keys and keep them enabled. Determine the minimum recommended daily-use battery charging time from the provided electric wheelchair manual, start a timer for that duration on https://vclock.com, and leave the running timer visible.",
   "source": "synthetic",
@@ -63,7 +65,6 @@
       }
     }
   ],
-  "trajectory": "trajectories\\",
   "related_apps": [
     "settings",
     "chrome"
@@ -106,7 +107,6 @@
       }
     ]
   },
-  "proxy": false,
-  "fixed_ip": false,
+  "proxy": true,
   "possibility_of_env_change": "low"
 }
