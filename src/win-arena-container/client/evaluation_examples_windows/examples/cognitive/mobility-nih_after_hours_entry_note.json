@@ -18,12 +18,22 @@
   ],
   "config": [
     {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/mobility-nih_after_hours_entry_note.pdf",
+            "path": "C:\\Users\\Docker\\Desktop\\NIH_Patient_Handbook.pdf"
+          }
+        ]
+      }
+    },
+    {
       "type": "launch",
       "parameters": {
         "command": [
-          "cmd",
-          "/c",
-          "start msedge https://www.cc.nih.gov/sites/default/files/internet-files/participate/_pdf/pthandbook.pdf"
+          "msedge",
+          "file:///C:/Users/Docker/Desktop/NIH_Patient_Handbook.pdf"
         ]
       }
     }
@@ -42,24 +52,45 @@
       "rules": {
         "ignore_case": true,
         "points": [
-          ["Commercial Vehicle Inspection Facility", "CVIF"],
+          [
+            "Commercial Vehicle Inspection Facility",
+            "CVIF"
+          ],
           {
             "all_of": [
-              ["10 pm", "10:00 pm", "22:00"],
-              ["6 am", "6:00 am", "06:00"]
+              [
+                "10 pm",
+                "10:00 pm",
+                "22:00"
+              ],
+              [
+                "6 am",
+                "6:00 am",
+                "06:00"
+              ]
             ]
           },
           {
             "all_of": [
-              ["Rockville Pike", "Route 355", "Rte 355"],
-              ["North Drive", "North Dr"],
-              ["Wilson Drive", "Wilson Dr"]
+              [
+                "Rockville Pike",
+                "Route 355",
+                "Rte 355"
+              ],
+              [
+                "North Drive",
+                "North Dr"
+              ],
+              [
+                "Wilson Drive",
+                "Wilson Dr"
+              ]
             ]
           }
         ]
       }
     }
   },
-  "proxy": true,
+  "proxy": false,
   "possibility_of_env_change": "medium"
 }
