@@ -1,6 +1,8 @@
 {
   "id": "information-metal_density_comparison",
   "_comment": "",
+  "user_group": "visual",
+  "subgroup_ids": ["V-S1"],
   "category": "information",
   "need_ids": [
     "V1"

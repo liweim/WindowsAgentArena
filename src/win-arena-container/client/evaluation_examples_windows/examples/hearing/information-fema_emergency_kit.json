@@ -1,5 +1,9 @@
 {
   "id": "information-fema_emergency_kit",
+  "user_group": "hearing",
+  "subgroup_ids": [
+    "H-S1"
+  ],
   "category": "information",
   "need_ids": [
     "H1"

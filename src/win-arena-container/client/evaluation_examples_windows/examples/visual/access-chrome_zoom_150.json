@@ -1,6 +1,8 @@
 {
   "id": "access-chrome_zoom_150",
   "_comment": "The URL should be opened during initialization. The instruction can simply say, “Increase the page zoom level to 150%.” The evaluator can skip checking the URL, since opening it isn’t the main point of this task.",
+  "user_group": "visual",
+  "subgroup_ids": ["V-S2"],
   "category": "access",
   "need_ids": [
     "V2"

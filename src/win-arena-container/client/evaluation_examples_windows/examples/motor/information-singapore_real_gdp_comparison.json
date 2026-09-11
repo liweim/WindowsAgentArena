@@ -2,6 +2,8 @@
   "id": "information-singapore_real_gdp_comparison",
   "_comment": "The instruction is too explicit; it essentially spells out all the steps. Your evaluator is too strict; it should only require the response to fully contain the correct answer. The same applies to other similar tasks.",
   "manually_evaluated": false,
+  "user_group": "motor",
+  "subgroup_ids": ["M-S3"],
   "category": "information",
   "need_ids": [
     "M3"

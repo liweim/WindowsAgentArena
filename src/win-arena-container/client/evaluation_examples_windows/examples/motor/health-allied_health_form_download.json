@@ -2,6 +2,8 @@
   "id": "health-allied_health_form_download",
   "manually_evaluated": false,
   "_comment": "You need to download the file locally so that the evaluator can verify whether the local file and the file in the VM are exactly identical. The current evaluator is too weak.",
+  "user_group": "motor",
+  "subgroup_ids": ["M-S2"],
   "category": "health",
   "need_ids": [
     "M4"

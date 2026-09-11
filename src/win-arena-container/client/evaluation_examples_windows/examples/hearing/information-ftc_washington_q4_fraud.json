@@ -1,5 +1,9 @@
 {
   "id": "information-ftc_washington_q4_fraud",
+  "user_group": "hearing",
+  "subgroup_ids": [
+    "H-S1"
+  ],
   "category": "information",
   "need_ids": [
     "H1"

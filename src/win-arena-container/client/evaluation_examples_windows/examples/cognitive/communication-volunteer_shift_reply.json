@@ -1,5 +1,7 @@
 {
   "id": "communication-volunteer_shift_reply",
+  "user_group": "cognitive",
+  "subgroup_ids": ["C-S3"],
   "category": "communication",
   "need_ids": [
     "C4",

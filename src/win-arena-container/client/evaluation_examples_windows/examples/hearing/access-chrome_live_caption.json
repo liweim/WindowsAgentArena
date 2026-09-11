@@ -1,6 +1,10 @@
 {
   "id": "access-chrome_live_caption",
   "manually_evaluated": true,
+  "user_group": "hearing",
+  "subgroup_ids": [
+    "H-S1"
+  ],
   "category": "access",
   "need_ids": [
     "H1"

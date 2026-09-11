@@ -244,11 +244,30 @@ Introduction 建议形成 5 段递进，而不是一开始介绍任务数量。
 
 ### 6.3 Documented User Need Taxonomy 与 task-level annotation
 
-当前任务目录按四个 primary user groups（visual / hearing / motor / cognitive）组织，因此**目录层级仍是一级 user-group label 的 authoritative source**，不在 JSON 中重复增加 `user_group` 字段。`category` 与 user group 正交：`category` 描述 workflow（如 `access`、`mobility`、`health`、`consumption`），user group 描述任务主要面向的 access-need slice。因此应保留 cognitive × mobility、cognitive × access 等交叉覆盖，而不能用 workflow category 代替 disability/access-need taxonomy。
+当前 benchmark 使用三层 accessibility annotation：**`user_group` → `subgroup_ids` → `need_ids`**。`user_group` 是四个一级群体（visual / hearing / motor / cognitive），每个 task 恰好一个；`subgroup_ids` 是粗粒度、允许重叠的人群切片；`need_ids` 是最细的 documented accessibility needs。task 目录仍应与 `user_group` 一致，但 JSON 也显式保存 `user_group`，便于自包含的数据分析和导出。`category` 与这三层均正交，只描述 workflow（如 `access`、`mobility`、`health`、`consumption`），因此不能用 workflow category 替代 disability/access-need taxonomy。
 
 为了回答 reviewer 最关键的 construct-validity 问题——“这些 benchmark tasks 为什么能够代表真实 accessibility needs？”——本文不要求每个具体任务主题都在 survey 中逐字出现，而是建立一个**可复用的 Documented User Need Taxonomy**。这里的 documented user need 指已有用户调查、用户研究、W3C accessibility user requirements / design patterns、或官方 accessibility documentation 明确记录的 access barrier 或 support requirement。每个 task 再映射到一个或多个 documented needs。也就是说，证据需要证明的是“用户确实存在这种 access barrier/support need”，而不是证明某个具体商品、地点或网页本身是残障用户特有的需求。
 
 证据按三层使用：**(1) empirical user evidence**，优先使用 WebAIM、ACMA、AFB、Pew 等 survey / user research；**(2) accessibility user requirements**，使用 W3C WAI / COGA 对具体 barriers 和 user needs 的规范化描述；**(3) platform documentation**，使用 Microsoft 等官方文档确认具体 accessibility feature 与其服务的 access need。三类证据承担不同作用：survey/user research 说明需求在真实用户中存在，W3C requirements 提供可操作的 construct 定义，platform documentation 说明 benchmark 中具体 support state 的 intended accessibility purpose。
+
+#### Broad user subgroups
+
+为了避免把 subgroup taxonomy 做得过碎，正文只保留 **10 个 broad subgroups**。这些 subgroup 是用于 benchmark slicing 的 functional/population labels，不应写成互斥的医学诊断；同一个 task 可以同时属于多个 subgroup，但只有在 benchmark 任务确实支持有意义的细分时才拆开。Hearing 当前不再区分 Deafness 与 Hard of hearing，因为现有任务大多共同依赖 captions、visual alerts、transcripts 或其他 non-auditory access，强行拆分会制造缺乏 task-level 依据的标签。
+
+| User group | ID | Broad subgroup | Mapped need IDs |
+| --- | --- | --- | --- |
+| visual | `V-S1` | Blindness | `V1`, `V5`, `V6` |
+| visual | `V-S2` | Low vision / visual perception difficulty | `V2`, `V3`, `V4`, `V5`, `V6` |
+| hearing | `H-S1` | Deaf or hard of hearing | `H1`, `H2`, `H3`, `H4`, `H5` |
+| motor | `M-S1` | Keyboard input difficulty | `M1`, `M2` |
+| motor | `M-S2` | Pointer / fine-motor control difficulty | `M4`, `M5`, `M6`, `M7` |
+| motor | `M-S3` | Involuntary input / timing difficulty | `M3`, `M7` |
+| cognitive | `C-S1` | Attention / information-processing difficulty | `C1`, `C6` |
+| cognitive | `C-S2` | Memory / time-management difficulty | `C2`, `C3`, `C7` |
+| cognitive | `C-S3` | Executive function / decision-making difficulty | `C4`, `C5`, `C8` |
+| cognitive | `C-S4` | Numerical / reconciliation difficulty | `C7` |
+
+论文里应明确：`subgroup_ids` **允许 multi-label，但不是为了多标签而多标签**。例如 `M7` 同时落入 pointer/fine-motor 与 timing 两个 subgroup，`C7` 同时落入 memory/time-management 与 numerical/reconciliation 两个 subgroup；而 hearing 当前所有任务只使用一个 `H-S1`。因此 subgroup-level success rate 的分母在部分 user group 中可以重叠，各 subgroup 的 task counts 不应机械相加后解释为 benchmark 总任务数。
 
 #### Visual needs
 
@@ -296,7 +315,7 @@ Introduction 建议形成 5 段递进，而不是一开始介绍任务数量。
 | `C7` | Calculation, counting, copying, and cross-source reconciliation support | 减少 arithmetic/counting、copying、短期保持信息以及跨 source/step reconciliation 的需求。 | COGA Do Not Rely on Users Calculations or Memorizing Information |
 | `C8` | Error prevention and safety-critical guidance | 让高风险操作、scam、health/safety guidance 和易错 choices 更容易理解并正确执行。 | COGA Design Forms to Prevent Mistakes; COGA Supported Choice; COGA Important Information |
 
-每个 task JSON **只新增 `need_ids`**，保存一个或多个 taxonomy ID。`[]` 只允许在构建阶段暂时表示 unresolved mapping；正式发布任务必须至少有一个可辩护的 need ID，否则应继续重写或暂缓纳入。task–need fit 和“目标 user group 是否会自然提出这种请求”仍然是构建阶段必须人工审核的问题，但应保存在单独的 review checklist / curation notes 中，而不是成为 benchmark runtime metadata。这样可以避免把主观、会随任务修改而变化的审核状态固化进任务定义。
+每个 task JSON 显式保存 `user_group`、`subgroup_ids` 和 `need_ids`。`user_group` 为单值，`subgroup_ids` 与 `need_ids` 都允许多值；构建 benchmark 时使用固定 mapping table 根据 `need_ids` 一致地赋予 `subgroup_ids`，必要时可由校验脚本生成，但这不是 runtime 自动推断。`need_ids: []` 只允许在构建阶段暂时表示 unresolved mapping；正式发布任务必须至少有一个可辩护的 need ID，否则应继续重写或暂缓纳入。task–need fit 和“目标 user group 是否会自然提出这种请求”仍然是构建阶段必须人工审核的问题，但主观 review status 不进入 runtime metadata。
 
 论文中的核心 claim 应写成：**tasks are grounded in documented accessibility user needs**，而不是在没有 target-user study 时声称 “the benchmark satisfies users' real needs”。WebAIM Screen Reader Survey #10 明确说明样本未受控，WebAIM Motor Disability Survey 也只有 46 个 convenience-sample respondents，因此这些数据用于证明某类 barrier/support need 的存在和合理性，而不是估计 population prevalence。W3C / Microsoft documentation 同样是 construct / feature-purpose evidence，而不是 prevalence evidence。Direct target-user validation 如果无法完成，应作为 limitation / future validation 诚实说明，并用 expert review、task-level need mapping 与 naturalness curation 加强 construct validity。
 
@@ -420,6 +439,7 @@ Introduction 建议形成 5 段递进，而不是一开始介绍任务数量。
 
 - overall；
 - user group；
+- broad subgroup（multi-label，分母可重叠）；
 - category；
 - modality；
 - accessibility feature required / not required；
@@ -529,7 +549,7 @@ Failure taxonomy 应由真实 trajectories 归纳，而不是预先硬套 A11y-C
 
 ### Table 2：Benchmark statistics
 
-按 user group、category、modality、apps、feature requirement、single/cross-app 展示 task 数。
+按 user group、broad subgroup、category、modality、apps、feature requirement、single/cross-app 展示 task 数。subgroup 采用 multi-label 统计，表注中明确 subgroup counts 不要求相加等于总 task 数。
 
 ### Table 3：Main baseline results
 

@@ -1,5 +1,7 @@
 {
   "id": "health-doctor_visit_preparation_summary",
+  "user_group": "cognitive",
+  "subgroup_ids": ["C-S1"],
   "category": "health",
   "need_ids": [
     "C1",

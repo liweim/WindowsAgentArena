@@ -1,5 +1,7 @@
 {
   "id": "consumption-kids_sunscreen_reviews",
+  "user_group": "cognitive",
+  "subgroup_ids": ["C-S1", "C-S3"],
   "category": "consumption",
   "need_ids": [
     "C5",

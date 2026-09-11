@@ -2,6 +2,8 @@
   "id": "consumption-cheapest_bathroom_accessory",
   "_comment": "The evaluator needs to verify the number of units added. Alternatively, you can simply remove the phrase “one unit.”",
   "manually_evaluated": false,
+  "user_group": "motor",
+  "subgroup_ids": ["M-S1"],
   "category": "consumption",
   "need_ids": [
     "M1"

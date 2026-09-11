@@ -1,5 +1,7 @@
 {
   "id": "communication-ftc_gift_card_pressure_email",
+  "user_group": "cognitive",
+  "subgroup_ids": ["C-S1", "C-S3"],
   "category": "communication",
   "need_ids": [
     "C1",

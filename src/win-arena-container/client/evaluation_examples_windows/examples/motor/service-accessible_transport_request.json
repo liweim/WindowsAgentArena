@@ -1,5 +1,7 @@
 {
   "id": "service-accessible_transport_request",
+  "user_group": "motor",
+  "subgroup_ids": ["M-S1"],
   "category": "service",
   "need_ids": [
     "M1"

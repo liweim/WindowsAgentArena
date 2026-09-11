@@ -2,6 +2,8 @@
   "id": "information-ucla_economics_premajor_gpa",
   "_comment": "The tasks are becoming too homogeneous. Avoid always extracting information from PDFs, and introduce more variety and novel task designs.",
   "manually_evaluated": false,
+  "user_group": "motor",
+  "subgroup_ids": ["M-S1"],
   "category": "information",
   "need_ids": [
     "M2"

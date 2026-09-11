@@ -2,6 +2,8 @@
   "id": "mobility-nearest_pharmacy_unsw_library",
   "_comment": "Allow personal data like UNSW",
   "manually_evaluated": false,
+  "user_group": "visual",
+  "subgroup_ids": ["V-S1"],
   "category": "mobility",
   "need_ids": [
     "V1"

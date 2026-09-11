@@ -1,5 +1,9 @@
 {
   "id": "information-fake_job_bank_account",
+  "user_group": "hearing",
+  "subgroup_ids": [
+    "H-S1"
+  ],
   "category": "information",
   "need_ids": [
     "H1"

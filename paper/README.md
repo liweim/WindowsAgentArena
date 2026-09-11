@@ -15,7 +15,7 @@ The benchmark supports platform-specific implementations while following shared 
 
 ### Disability Groups and Assistive Tools
 
-Each task should be grounded in the access needs of one primary disability group.
+Each task has exactly one primary `user_group` (`visual`, `hearing`, `motor`, or `cognitive`) and one or more coarse `subgroup_ids`. Subgroups are intentionally broad and non-mutually-exclusive; they support benchmark slicing without replacing the finer-grained `need_ids` taxonomy.
 
 | Disability Group | Windows Tools / Supports | Android Tools / Supports |
 | --- | --- | --- |
@@ -117,7 +117,26 @@ Every task must map to at least one **documented user need**: a reusable accessi
 
 `paper/documented_user_need_taxonomy.json` is the machine-readable source of truth for need definitions, evidence-source IDs, and source URLs. Do not invent a new need for one task if an existing need already captures the underlying barrier. If no existing need defensibly fits, mark the task for review rather than forcing a mapping.
 
-The user-group directory (`visual/`, `hearing/`, `motor/`, `cognitive/`) remains the authoritative primary group label. Do not duplicate it with a `user_group` JSON field. Workflow `category` remains orthogonal to user group.
+Each released task stores three accessibility annotation layers directly in JSON: `user_group` for the four primary groups, `subgroup_ids` for coarse user subgroups, and `need_ids` for specific documented access needs. The directory must agree with `user_group`; `category` remains orthogonal and describes the workflow rather than the disability/access taxonomy.
+
+`paper/documented_user_subgroup_taxonomy.json` is the machine-readable source of truth for subgroup definitions and the curation mapping from `need_ids` to `subgroup_ids`. Subgroups are coarse functional/population slices, not clinical diagnoses. They may overlap when that distinction is useful; a user group can also have only one subgroup when the current tasks do not support a meaningful finer split.
+
+#### Broad user subgroups
+
+| User group | Subgroup ID | Broad subgroup | Need IDs that map here |
+| --- | --- | --- | --- |
+| visual | `V-S1` | Blindness | `V1`, `V5`, `V6` |
+| visual | `V-S2` | Low vision / visual perception difficulty | `V2`, `V3`, `V4`, `V5`, `V6` |
+| hearing | `H-S1` | Deaf or hard of hearing | `H1`, `H2`, `H3`, `H4`, `H5` |
+| motor | `M-S1` | Keyboard input difficulty | `M1`, `M2` |
+| motor | `M-S2` | Pointer / fine-motor control difficulty | `M4`, `M5`, `M6`, `M7` |
+| motor | `M-S3` | Involuntary input / timing difficulty | `M3`, `M7` |
+| cognitive | `C-S1` | Attention / information-processing difficulty | `C1`, `C6` |
+| cognitive | `C-S2` | Memory / time-management difficulty | `C2`, `C3`, `C7` |
+| cognitive | `C-S3` | Executive function / decision-making difficulty | `C4`, `C5`, `C8` |
+| cognitive | `C-S4` | Numerical / reconciliation difficulty | `C7` |
+
+During benchmark curation, a task receives the union of subgroup IDs associated with its `need_ids`. Therefore a task may have multiple subgroup labels when the broad populations genuinely overlap. For example, a motor task with `need_ids: ["M7"]` maps to both `M-S2` and `M-S3`; a cognitive task with `need_ids: ["C7"]` maps to both `C-S2` and `C-S4`. Hearing currently uses a single broad subgroup (`H-S1`) because the benchmark tasks do not support a reliable Deaf-versus-hard-of-hearing split.
 
 #### Visual
 
@@ -197,11 +216,15 @@ The user-group directory (`visual/`, `hearing/`, `motor/`, `cognitive/`) remains
 
 #### Annotation rules
 
-Each task JSON adds **one field only**:
+Each released task JSON carries these accessibility fields immediately before `category` / `need_ids`:
 
-- `need_ids`: one or more IDs from `paper/documented_user_need_taxonomy.json` (for example, `C2`, `M4`, `V6`). `[]` may be used only during drafting to flag an unresolved mapping; a released task must have at least one defensible need ID. Do not add ad-hoc status, naturalness, or free-text review fields to released task JSON.
+- `user_group`: exactly one of `visual`, `hearing`, `motor`, or `cognitive`; it must match the task directory.
+- `subgroup_ids`: one or more IDs from `paper/documented_user_subgroup_taxonomy.json`. Multiple IDs are expected when a task serves overlapping subgroups.
+- `need_ids`: one or more IDs from `paper/documented_user_need_taxonomy.json` (for example, `C2`, `M4`, `V6`). `[]` may be used only during drafting to flag an unresolved mapping; a released task must have at least one defensible need ID.
 
-The mapping question is: **Which documented accessibility barrier or support need does this task instantiate for its directory user group?** The exact task topic does not need to appear in the evidence source. Do not force a mapping merely to pass the schema: an unresolved task should be revised or withheld from release. Naturalness and task–need fit should still be reviewed during curation, but those judgments belong in review notes/checklists rather than released task metadata.
+`subgroup_ids` should be assigned consistently during curation using the `need_id_to_subgroup_ids` table in the subgroup taxonomy file. This mapping can be applied by a validation script, but it is not a runtime derivation step. The purpose is to keep broad subgroup analysis reproducible while `need_ids` retain the more precise accessibility construct.
+
+The mapping question for `need_ids` remains: **Which documented accessibility barrier or support need does this task instantiate for its user group?** The exact task topic does not need to appear in the evidence source. Do not force a mapping merely to pass the schema: an unresolved task should be revised or withheld from release. Naturalness and task–need fit should still be reviewed during curation, but those judgments belong in review notes/checklists rather than released task metadata.
 
 For CAPTCHA tasks, inspect the actual challenge rather than inferring the barrier from the word “CAPTCHA.” An audio-only challenge can directly instantiate `H5`; a visual CAPTCHA can instantiate `V6`; sustained press/hold or dragging can instantiate `M5`; and an otherwise ordinary pointer activation can instantiate `M4` when the relevant motor need is alternative/delegated pointing rather than fine precision.
 
@@ -408,8 +431,10 @@ Each task JSON may use the following fields:
 | Field | Purpose |
 | --- | --- |
 | `id` | Unique task identifier. Must match the JSON filename without `.json`. |
-| `category` | One approved lowercase category label. |
-| `need_ids` | IDs from `paper/documented_user_need_taxonomy.json` that capture the documented access barrier/support need instantiated by the task. Keep this key immediately after `category`; use `[]` if no defensible mapping has been established. |
+| `user_group` | Exactly one of `visual`, `hearing`, `motor`, or `cognitive`; must match the containing user-group directory. Keep this key before `category`. |
+| `subgroup_ids` | One or more broad subgroup IDs from `paper/documented_user_subgroup_taxonomy.json`; multiple values are allowed and expected for overlapping populations. Keep this key before `category`. |
+| `category` | One approved lowercase workflow category label; orthogonal to accessibility user group/subgroup. |
+| `need_ids` | IDs from `paper/documented_user_need_taxonomy.json` that capture the documented access barrier/support need instantiated by the task. Keep this key immediately after `category`; use `[]` only during drafting if no defensible mapping has been established. |
 | `difficulty` | Estimated task complexity. |
 | `instruction` | Direct user-facing task command. Follow the instruction style above. |
 | `source` | Concrete source used to ground the task. |

@@ -1,6 +1,8 @@
 {
   "id": "access-windows_color_filter_protanopia",
   "_comment": "",
+  "user_group": "visual",
+  "subgroup_ids": ["V-S2"],
   "category": "access",
   "need_ids": [
     "V4"

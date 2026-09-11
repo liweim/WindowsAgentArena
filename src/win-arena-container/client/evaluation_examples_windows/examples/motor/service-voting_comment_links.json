@@ -1,6 +1,8 @@
 {
   "id": "service-voting_comment_links",
   "_comment": "",
+  "user_group": "motor",
+  "subgroup_ids": ["M-S2"],
   "category": "service",
   "need_ids": [
     "M4"

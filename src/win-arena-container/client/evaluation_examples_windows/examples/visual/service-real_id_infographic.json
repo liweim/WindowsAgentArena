@@ -1,5 +1,7 @@
 {
   "id": "service-real_id_infographic",
+  "user_group": "visual",
+  "subgroup_ids": ["V-S1", "V-S2"],
   "category": "service",
   "need_ids": [
     "V5"

@@ -1,6 +1,10 @@
 {
   "id": "access-windows_mono_audio_screen_flash",
   "manually_evaluated": false,
+  "user_group": "hearing",
+  "subgroup_ids": [
+    "H-S1"
+  ],
   "category": "access",
   "need_ids": [
     "H4",

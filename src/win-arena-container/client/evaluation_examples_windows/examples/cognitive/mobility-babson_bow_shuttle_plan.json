@@ -1,5 +1,7 @@
 {
   "id": "mobility-babson_bow_shuttle_plan",
+  "user_group": "cognitive",
+  "subgroup_ids": ["C-S2", "C-S3"],
   "category": "mobility",
   "need_ids": [
     "C2",

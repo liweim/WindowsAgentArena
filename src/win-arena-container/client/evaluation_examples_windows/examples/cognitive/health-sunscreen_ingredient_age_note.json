@@ -1,5 +1,7 @@
 {
   "id": "health-sunscreen_ingredient_age_note",
+  "user_group": "cognitive",
+  "subgroup_ids": ["C-S1"],
   "category": "health",
   "need_ids": [
     "C1",

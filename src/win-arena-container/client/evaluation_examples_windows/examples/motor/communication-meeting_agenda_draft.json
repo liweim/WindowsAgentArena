@@ -2,6 +2,8 @@
   "id": "communication-meeting_agenda_draft",
   "_comment": "",
   "manually_evaluated": false,
+  "user_group": "motor",
+  "subgroup_ids": ["M-S1"],
   "category": "communication",
   "need_ids": [
     "M1"

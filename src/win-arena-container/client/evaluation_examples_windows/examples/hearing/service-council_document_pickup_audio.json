@@ -1,5 +1,9 @@
 {
   "id": "service-council_document_pickup_audio",
+  "user_group": "hearing",
+  "subgroup_ids": [
+    "H-S1"
+  ],
   "category": "service",
   "need_ids": [
     "H1"

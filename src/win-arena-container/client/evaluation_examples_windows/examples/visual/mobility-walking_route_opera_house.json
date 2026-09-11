@@ -2,6 +2,8 @@
   "id": "mobility-walking_route_opera_house",
   "comment": "Try to use places outside Australia",
   "manually_evaluated": false,
+  "user_group": "visual",
+  "subgroup_ids": ["V-S1"],
   "category": "mobility",
   "need_ids": [
     "V1"

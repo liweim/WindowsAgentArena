@@ -1,5 +1,7 @@
 {
   "id": "captcha-hold_button_1",
+  "user_group": "motor",
+  "subgroup_ids": ["M-S2"],
   "category": "captcha",
   "need_ids": [
     "M5"

@@ -1,0 +1,145 @@
+{
+  "version": "2026-09-11-v2",
+  "design": {
+    "user_group": "Exactly one of visual, hearing, motor, cognitive. It is duplicated in task JSON for self-contained analysis even though the directory also encodes the group.",
+    "subgroup_ids": "One or more broad, non-mutually-exclusive functional/population subgroups. These are intentionally coarse and should not be treated as diagnoses or prevalence categories. A user group may have only one broad subgroup when the benchmark tasks do not support a meaningful finer split.",
+    "need_ids": "One or more finer-grained documented accessibility needs from documented_user_need_taxonomy.json.",
+    "relationship": "During benchmark curation, subgroup_ids are assigned consistently from need_ids using need_id_to_subgroup_ids. This is a metadata construction rule, not a runtime inference requirement; a task may belong to multiple subgroups when the broad groups genuinely overlap."
+  },
+  "taxonomy": {
+    "V-S1": {
+      "group": "visual",
+      "name": "Blindness",
+      "definition": "Tasks relevant to users who require non-visual access to interface/content or alternatives to visual-only information and verification."
+    },
+    "V-S2": {
+      "group": "visual",
+      "name": "Low vision / visual perception difficulty",
+      "definition": "Tasks relevant to users who benefit from magnification, contrast/palette/color support, or assistance perceiving visual content."
+    },
+    "H-S1": {
+      "group": "hearing",
+      "name": "Deaf or hard of hearing",
+      "definition": "Tasks relevant to users who need or benefit from non-auditory access to speech, alerts, media, verification, or other sound-dependent information."
+    },
+    "M-S1": {
+      "group": "motor",
+      "name": "Keyboard input difficulty",
+      "definition": "Tasks relevant to users who have difficulty using a physical keyboard or simultaneous modifier-key input."
+    },
+    "M-S2": {
+      "group": "motor",
+      "name": "Pointer / fine-motor control difficulty",
+      "definition": "Tasks relevant to users who have difficulty with conventional pointing, dragging, target precision, mouse-button use, or sustained fine-motor control."
+    },
+    "M-S3": {
+      "group": "motor",
+      "name": "Involuntary input / timing difficulty",
+      "definition": "Tasks relevant to users affected by accidental/repeated input or tightly timed input demands."
+    },
+    "C-S1": {
+      "group": "cognitive",
+      "name": "Attention / information-processing difficulty",
+      "definition": "Tasks relevant to users who benefit from reduced distraction, simplification, prioritization, or help extracting important information."
+    },
+    "C-S2": {
+      "group": "cognitive",
+      "name": "Memory / time-management difficulty",
+      "definition": "Tasks relevant to users who benefit from external memory support, reminders, time cues, or reduced short-term retention burden."
+    },
+    "C-S3": {
+      "group": "cognitive",
+      "name": "Executive function / decision-making difficulty",
+      "definition": "Tasks relevant to users who benefit from planning, sequencing, task-state tracking, choice support, or error prevention."
+    },
+    "C-S4": {
+      "group": "cognitive",
+      "name": "Numerical / reconciliation difficulty",
+      "definition": "Tasks relevant to users who benefit from assistance with calculation, counting, copying, or reconciling information across sources."
+    }
+  },
+  "need_id_to_subgroup_ids": {
+    "V1": [
+      "V-S1"
+    ],
+    "V2": [
+      "V-S2"
+    ],
+    "V3": [
+      "V-S2"
+    ],
+    "V4": [
+      "V-S2"
+    ],
+    "V5": [
+      "V-S1",
+      "V-S2"
+    ],
+    "V6": [
+      "V-S1",
+      "V-S2"
+    ],
+    "H1": [
+      "H-S1"
+    ],
+    "H2": [
+      "H-S1"
+    ],
+    "H3": [
+      "H-S1"
+    ],
+    "H4": [
+      "H-S1"
+    ],
+    "H5": [
+      "H-S1"
+    ],
+    "M1": [
+      "M-S1"
+    ],
+    "M2": [
+      "M-S1"
+    ],
+    "M3": [
+      "M-S3"
+    ],
+    "M4": [
+      "M-S2"
+    ],
+    "M5": [
+      "M-S2"
+    ],
+    "M6": [
+      "M-S2"
+    ],
+    "M7": [
+      "M-S2",
+      "M-S3"
+    ],
+    "C1": [
+      "C-S1"
+    ],
+    "C2": [
+      "C-S2"
+    ],
+    "C3": [
+      "C-S2"
+    ],
+    "C4": [
+      "C-S3"
+    ],
+    "C5": [
+      "C-S3"
+    ],
+    "C6": [
+      "C-S1"
+    ],
+    "C7": [
+      "C-S2",
+      "C-S4"
+    ],
+    "C8": [
+      "C-S3"
+    ]
+  }
+}

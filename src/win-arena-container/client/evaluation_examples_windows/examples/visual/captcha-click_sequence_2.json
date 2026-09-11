@@ -1,5 +1,7 @@
 {
   "id": "captcha-click_sequence_2",
+  "user_group": "visual",
+  "subgroup_ids": ["V-S1", "V-S2"],
   "category": "captcha",
   "need_ids": [
     "V6"

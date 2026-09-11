@@ -1,5 +1,7 @@
 {
   "id": "communication-webinar_flyer_email",
+  "user_group": "visual",
+  "subgroup_ids": ["V-S1", "V-S2"],
   "category": "communication",
   "need_ids": [
     "V5"

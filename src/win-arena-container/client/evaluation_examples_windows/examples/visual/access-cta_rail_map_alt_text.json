@@ -1,5 +1,7 @@
 {
   "id": "access-cta_rail_map_alt_text",
+  "user_group": "visual",
+  "subgroup_ids": ["V-S1", "V-S2"],
   "category": "access",
   "need_ids": [
     "V5"

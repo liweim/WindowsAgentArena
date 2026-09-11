@@ -1,5 +1,9 @@
 {
   "id": "health-ibuprofen_acetaminophen_together",
+  "user_group": "hearing",
+  "subgroup_ids": [
+    "H-S1"
+  ],
   "category": "health",
   "need_ids": [
     "H1"

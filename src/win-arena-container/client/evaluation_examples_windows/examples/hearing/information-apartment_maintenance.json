@@ -1,6 +1,10 @@
 {
   "id": "information-apartment_maintenance",
   "manually_evaluated": true,
+  "user_group": "hearing",
+  "subgroup_ids": [
+    "H-S1"
+  ],
   "category": "information",
   "need_ids": [
     "H1"

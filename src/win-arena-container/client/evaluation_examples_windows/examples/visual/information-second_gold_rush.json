@@ -1,6 +1,8 @@
 {
   "id": "information-second_gold_rush",
   "_comment": "",
+  "user_group": "visual",
+  "subgroup_ids": ["V-S1"],
   "category": "information",
   "need_ids": [
     "V1"

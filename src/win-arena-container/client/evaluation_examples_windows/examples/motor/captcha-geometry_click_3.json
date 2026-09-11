@@ -1,5 +1,7 @@
 {
   "id": "captcha-geometry_click_3",
+  "user_group": "motor",
+  "subgroup_ids": ["M-S2", "M-S3"],
   "category": "captcha",
   "need_ids": [
     "M7"

@@ -2,6 +2,8 @@
   "id": "health-insulin_storage_temperature",
   "manually_evaluated": false,
   "_comment": "The insulin storage PDF is stored locally in the task's assets folder, uploaded to the Windows VM during initialization, and opened directly in Chrome.",
+  "user_group": "motor",
+  "subgroup_ids": ["M-S1"],
   "category": "health",
   "need_ids": [
     "M1"

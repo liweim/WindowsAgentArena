@@ -1,5 +1,7 @@
 {
   "id": "information-wikipedia_accessibility_definition",
+  "user_group": "cognitive",
+  "subgroup_ids": ["C-S1", "C-S2"],
   "category": "information",
   "need_ids": [
     "C2",

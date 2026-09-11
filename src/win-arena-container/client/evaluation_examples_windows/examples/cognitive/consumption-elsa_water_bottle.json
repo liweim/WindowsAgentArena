@@ -1,5 +1,7 @@
 {
   "id": "consumption-elsa_water_bottle",
+  "user_group": "cognitive",
+  "subgroup_ids": ["C-S1", "C-S2"],
   "category": "consumption",
   "need_ids": [
     "C2",

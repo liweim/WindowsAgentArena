@@ -2,6 +2,8 @@
   "id": "information-psychology_coursework_upload_limit",
   "_comment": "Put the correct answer to `gt_steps`.",
   "manually_evaluated": false,
+  "user_group": "motor",
+  "subgroup_ids": ["M-S3"],
   "category": "information",
   "need_ids": [
     "M3"

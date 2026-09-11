@@ -1,5 +1,7 @@
 {
   "id": "information-food_calorie_forum_answer",
+  "user_group": "cognitive",
+  "subgroup_ids": ["C-S1"],
   "category": "information",
   "need_ids": [
     "C1",

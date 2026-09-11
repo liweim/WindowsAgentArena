@@ -1,6 +1,8 @@
 {
   "id": "health-parkinsons_medication_reminders",
   "_comment": "",
+  "user_group": "motor",
+  "subgroup_ids": ["M-S1"],
   "category": "health",
   "need_ids": [
     "M2"

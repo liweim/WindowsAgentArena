@@ -1,5 +1,7 @@
 {
   "id": "information-passport_renewal_checklist",
+  "user_group": "cognitive",
+  "subgroup_ids": ["C-S1", "C-S2", "C-S3"],
   "category": "information",
   "need_ids": [
     "C1",

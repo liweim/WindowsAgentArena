@@ -2,6 +2,8 @@
   "id": "consumption-running_shoe_release_comparison",
   "_comment": "",
   "manually_evaluated": false,
+  "user_group": "motor",
+  "subgroup_ids": ["M-S3"],
   "category": "consumption",
   "need_ids": [
     "M3"
