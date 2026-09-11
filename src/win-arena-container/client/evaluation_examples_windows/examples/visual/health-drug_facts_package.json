@@ -15,7 +15,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/health-drug_facts_package.jpg",
+            "local_path": "assets/health-drug_facts_package.jpeg",
             "path": "C:\\Users\\Docker\\Desktop\\DrugFactsPackage.jpg"
           }
         ]
@@ -45,24 +45,51 @@
       "rules": {
         "ignore_case": true,
         "points": [
-          [
-            "Acetaminophen",
-            "250 mg"
-          ],
-          [
-            "Ibuprofen",
-            "125 mg"
-          ],
+          {
+            "all_of": [
+              [
+                "Acetaminophen"
+              ],
+              [
+                "250 mg",
+                "250mg"
+              ]
+            ]
+          },
+          {
+            "all_of": [
+              [
+                "Ibuprofen"
+              ],
+              [
+                "125 mg",
+                "125mg"
+              ]
+            ]
+          },
           [
             "NSAID"
           ],
+          {
+            "all_of": [
+              [
+                "do not use",
+                "avoid using",
+                "do not take"
+              ],
+              [
+                "other medicines",
+                "other medications",
+                "other drugs"
+              ],
+              [
+                "acetaminophen"
+              ]
+            ]
+          },
           [
-            "do not use",
-            "other medicines",
-            "acetaminophen"
-          ],
-          [
-            "liver damage"
+            "liver damage",
+            "liver injury"
           ]
         ]
       }

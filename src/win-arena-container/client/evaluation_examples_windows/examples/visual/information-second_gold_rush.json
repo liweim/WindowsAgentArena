@@ -4,7 +4,7 @@
   "snapshot": "chrome",
   "category": "information",
   "difficulty": "medium",
-  "instruction": "Turn on Windows Narrator. Use it to read the Gold rush Wikipedia page already open in Chrome, identify the second gold rush in history, open that gold rush's linked Wikipedia page, and leave it open.",
+  "instruction": "Turn on Windows Narrator. On the Gold rush Wikipedia page already open in Chrome, use the gold-rush examples in the order presented on that page, identify the second listed gold rush, open that gold rush's linked Wikipedia page, and leave it open.",
   "source": "http://host.docker.internal:8888/wikipedia_en_all_maxi_2022-05/A/Gold_rush",
   "gt_steps": [
     "Turn on Windows Narrator.",

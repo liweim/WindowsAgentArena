@@ -36,17 +36,70 @@
     "notepad"
   ],
   "evaluator": {
-    "func": "exact_match",
+    "func": "check_text_points",
     "result": {
-      "type": "is_file_saved_desktop",
-      "filename": "answer.txt",
-      "textcontent": "Name: JOHN L SMITH\nMedicare Number: 1EG4-TE5-MK72\nPart A: HOSPITAL - 03-01-2016\nPart B: MEDICAL - 03-01-2016",
-      "exact": true
+      "type": "desktop_file_text",
+      "filename": "answer.txt"
     },
     "expected": {
       "type": "rule",
       "rules": {
-        "expected": "true"
+        "ignore_case": true,
+        "ordered": true,
+        "line_based": true,
+        "points": [
+          {
+            "all_of": [
+              [
+                "JOHN L SMITH",
+                "John L. Smith",
+                "John L Smith"
+              ]
+            ]
+          },
+          {
+            "all_of": [
+              [
+                "1EG4-TE5-MK72",
+                "1EG4 TE5 MK72"
+              ]
+            ]
+          },
+          {
+            "all_of": [
+              [
+                "Part A"
+              ],
+              [
+                "HOSPITAL",
+                "hospital coverage"
+              ],
+              [
+                "03-01-2016",
+                "03/01/2016",
+                "March 1, 2016",
+                "1 March 2016"
+              ]
+            ]
+          },
+          {
+            "all_of": [
+              [
+                "Part B"
+              ],
+              [
+                "MEDICAL",
+                "medical coverage"
+              ],
+              [
+                "03-01-2016",
+                "03/01/2016",
+                "March 1, 2016",
+                "1 March 2016"
+              ]
+            ]
+          }
+        ]
       }
     }
   },

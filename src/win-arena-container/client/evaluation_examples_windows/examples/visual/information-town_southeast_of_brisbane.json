@@ -3,7 +3,7 @@
   "snapshot": "chrome",
   "category": "information",
   "difficulty": "hard",
-  "instruction": "Turn on Windows Narrator. Use the Australia map PDF already open in Chrome to identify the town immediately southeast of Brisbane. Save the town name in `answer.txt` on the Desktop.",
+  "instruction": "Turn on Windows Narrator. On the Australia map PDF already open in Chrome, identify the city/town label immediately adjacent to Brisbane on its southeast side in the map's displayed layout. Save that label in `answer.txt` on the Desktop.",
   "source": "synthetic",
   "gt_steps": [
     "Turn on Windows Narrator.",
@@ -68,7 +68,7 @@
   "evaluator": {
     "func": [
       "check_narrator_enabled",
-      "exact_match"
+      "check_text_points"
     ],
     "conj": "and",
     "result": [
@@ -76,10 +76,8 @@
         "type": "narrator_status"
       },
       {
-        "type": "is_file_saved_desktop",
-        "filename": "answer.txt",
-        "textcontent": "Gold Coast",
-        "exact": true
+        "type": "desktop_file_text",
+        "filename": "answer.txt"
       }
     ],
     "expected": [
@@ -90,7 +88,12 @@
       {
         "type": "rule",
         "rules": {
-          "expected": "true"
+          "ignore_case": true,
+          "points": [
+            [
+              "Gold Coast"
+            ]
+          ]
         }
       }
     ]

@@ -125,25 +125,144 @@ def compare_emergency_kit_items_xlsx(result: str, rules: Dict[str, Any]) -> floa
 
 
 def check_text_points(result: str, rules: Dict[str, Any]) -> float:
+    """Score free-form text by atomic semantic facts.
+
+    Point syntax is backward compatible:
+      * ["A", "B"] or "A": any listed surface form may match.
+      * {"any_of": ["A", "B"]}: explicit aliases / paraphrases.
+      * {"all_of": [["A", "A-alt"], ["B"]]}: every component of one fact
+        must be present; each component can itself have aliases.
+      * {"regex": [r"..."]}: normalized-text regular-expression variants.
+      * {"none_of": ["forbidden"]}: reject the point when a forbidden phrase
+        is present.
+
+    Rule flags:
+      * ordered: points must occur in configured order.
+      * line_based: each point must match a distinct non-empty line. Combined
+        with ordered this is suitable for "one item per line, in this order".
+
+    Text normalization intentionally handles presentation differences (Unicode
+    compatibility, curly quotes, dash variants, case, repeated whitespace) but
+    does not remove semantic tokens. Numeric-only aliases are matched with digit
+    boundaries so e.g. `20` does not accidentally match `2026`.
+    """
     if result is None:
         return 0.
 
-    points: List[List[str]] = rules.get("points", [])
+    points = rules.get("points", [])
     if not points:
         return 0.
 
     ignore_case = rules.get("ignore_case", True)
+    ordered = rules.get("ordered", False)
+    line_based = rules.get("line_based", False)
+
+    import unicodedata
 
     def normalize_text(value: Any) -> str:
-        text = " ".join(str(value or "").split())
-        return text.lower() if ignore_case else text
+        text = unicodedata.normalize("NFKC", str(value or ""))
+        text = (text.replace("\u2018", "'").replace("\u2019", "'")
+                    .replace("\u201c", '"').replace("\u201d", '"')
+                    .replace("\u2013", "-").replace("\u2014", "-")
+                    .replace("\u2212", "-"))
+        text = " ".join(text.split())
+        return text.casefold() if ignore_case else text
+
+    def literal_span(actual: str, variant: Any):
+        needle = normalize_text(variant)
+        if not needle:
+            return None
+        if re.fullmatch(r"[+-]?(?:\d+(?:\.\d+)?|\.\d+)", needle):
+            m = re.search(rf"(?<![\d.]){re.escape(needle)}(?![\d.])", actual)
+            return (m.start(), m.end()) if m else None
+        pos = actual.find(needle)
+        return (pos, pos + len(needle)) if pos >= 0 else None
+
+    def regex_span(actual: str, patterns: Any):
+        if isinstance(patterns, str):
+            patterns = [patterns]
+        best = None
+        for pattern in patterns or []:
+            try:
+                m = re.search(pattern, actual)
+            except re.error:
+                continue
+            if m and (best is None or m.start() < best[0]):
+                best = (m.start(), m.end())
+        return best
+
+    def variants_span(actual: str, variants: Any):
+        if isinstance(variants, str):
+            variants = [variants]
+        best = None
+        for variant in variants or []:
+            if isinstance(variant, dict):
+                span = requirement_span(actual, variant)
+            else:
+                span = literal_span(actual, variant)
+            if span is not None and (best is None or span[0] < best[0]):
+                best = span
+        return best
+
+    def requirement_span(actual: str, requirement: Any):
+        if isinstance(requirement, (str, list, tuple)):
+            return variants_span(actual, requirement)
+        if not isinstance(requirement, dict):
+            return None
+
+        spans = []
+        if "any_of" in requirement:
+            span = variants_span(actual, requirement["any_of"])
+            if span is None:
+                return None
+            spans.append(span)
+        if "regex" in requirement:
+            span = regex_span(actual, requirement["regex"])
+            if span is None:
+                return None
+            spans.append(span)
+        for component in requirement.get("all_of", []):
+            span = requirement_span(actual, component)
+            if span is None:
+                return None
+            spans.append(span)
+        for forbidden in requirement.get("none_of", []):
+            if requirement_span(actual, forbidden) is not None:
+                return None
+        if not spans:
+            return None
+        return min(x[0] for x in spans), max(x[1] for x in spans)
+
+    if line_based:
+        lines = [normalize_text(line) for line in str(result).splitlines() if normalize_text(line)]
+        matched = 0
+        next_line = 0
+        used = set()
+        for point in points:
+            candidates = range(next_line, len(lines)) if ordered else range(len(lines))
+            found = None
+            for idx in candidates:
+                if idx in used:
+                    continue
+                if requirement_span(lines[idx], point) is not None:
+                    found = idx
+                    break
+            if found is not None:
+                matched += 1
+                used.add(found)
+                if ordered:
+                    next_line = found + 1
+        return matched / len(points)
 
     actual = normalize_text(result)
     matched = 0
-    for variants in points:
-        if any(normalize_text(variant) in actual for variant in variants):
+    previous_end = 0
+    for point in points:
+        span = requirement_span(actual, point)
+        if span is not None and (not ordered or span[0] >= previous_end):
             matched += 1
-
+            if ordered:
+                previous_end = span[1]
     return matched / len(points)
 
 

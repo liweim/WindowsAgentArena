@@ -36,17 +36,36 @@
     "notepad"
   ],
   "evaluator": {
-    "func": "exact_match",
+    "func": "check_text_points",
     "result": {
-      "type": "is_file_saved_desktop",
-      "filename": "answer.txt",
-      "textcontent": "Start: O'Hare\nFirst line: Blue Line\nTransfer: Clark/Lake\nSecond line: Orange Line\nDestination: Midway",
-      "exact": true
+      "type": "desktop_file_text",
+      "filename": "answer.txt"
     },
     "expected": {
       "type": "rule",
       "rules": {
-        "expected": "true"
+        "ignore_case": true,
+        "ordered": true,
+        "line_based": true,
+        "points": [
+          [
+            "O'Hare",
+            "O’Hare"
+          ],
+          [
+            "Blue Line"
+          ],
+          [
+            "Clark/Lake",
+            "Clark Lake"
+          ],
+          [
+            "Orange Line"
+          ],
+          [
+            "Midway"
+          ]
+        ]
       }
     }
   },

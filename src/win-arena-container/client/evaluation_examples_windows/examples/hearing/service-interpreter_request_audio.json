@@ -62,7 +62,7 @@
   "evaluator": {
     "func": [
       "check_include_exclude",
-      "exact_match"
+      "check_text_points"
     ],
     "conj": "and",
     "result": [
@@ -76,10 +76,8 @@
         ]
       },
       {
-        "type": "is_file_saved_desktop",
-        "filename": "answer.txt",
-        "textcontent": "Access Accommodation Request Form\nfive business days\n555-014-7720\nASL-5",
-        "exact": true
+        "type": "desktop_file_text",
+        "filename": "answer.txt"
       }
     ],
     "expected": [
@@ -97,7 +95,27 @@
       {
         "type": "rule",
         "rules": {
-          "expected": "true"
+          "ignore_case": true,
+          "ordered": true,
+          "line_based": true,
+          "points": [
+            [
+              "Access Accommodation Request Form"
+            ],
+            [
+              "five business days",
+              "5 business days"
+            ],
+            {
+              "regex": [
+                "\\b555\\s*-?\\s*014\\s*-?\\s*7720\\b"
+              ]
+            },
+            [
+              "ASL-5",
+              "ASL 5"
+            ]
+          ]
         }
       }
     ]

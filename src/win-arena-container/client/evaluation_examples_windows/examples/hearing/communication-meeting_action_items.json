@@ -113,16 +113,45 @@
         "rules": {
           "ignore_case": true,
           "points": [
-            [
-              "Delete the cluster cache"
-            ],
-            [
-              "Bypass the pre-check script"
-            ],
-            [
-              "Hardcode API tokens",
-              "Hardcode any API tokens"
-            ]
+            {
+              "all_of": [
+                [
+                  "delete",
+                  "clear",
+                  "remove"
+                ],
+                [
+                  "cluster cache"
+                ]
+              ]
+            },
+            {
+              "all_of": [
+                [
+                  "bypass",
+                  "skip",
+                  "disable"
+                ],
+                [
+                  "pre-check script",
+                  "precheck script",
+                  "pre-check"
+                ]
+              ]
+            },
+            {
+              "all_of": [
+                [
+                  "hardcode",
+                  "hard-code",
+                  "embed"
+                ],
+                [
+                  "API tokens",
+                  "API token"
+                ]
+              ]
+            }
           ]
         }
       },

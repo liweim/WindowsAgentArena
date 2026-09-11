@@ -42,7 +42,7 @@
   "evaluator": {
     "func": [
       "check_include_exclude",
-      "exact_match"
+      "check_text_points"
     ],
     "conj": "and",
     "result": [
@@ -52,10 +52,8 @@
         "shell": true
       },
       {
-        "type": "is_file_saved_desktop",
-        "filename": "answer.txt",
-        "textcontent": "AP-60428\n30 September 2026\n555-018-4402",
-        "exact": true
+        "type": "desktop_file_text",
+        "filename": "answer.txt"
       }
     ],
     "expected": [
@@ -73,7 +71,26 @@
       {
         "type": "rule",
         "rules": {
-          "expected": "true"
+          "ignore_case": true,
+          "ordered": true,
+          "line_based": true,
+          "points": [
+            [
+              "AP-60428",
+              "AP 60428"
+            ],
+            [
+              "30 September 2026",
+              "September 30, 2026",
+              "30 Sep 2026",
+              "2026-09-30"
+            ],
+            {
+              "regex": [
+                "\\b555\\s*-?\\s*018\\s*-?\\s*4402\\b"
+              ]
+            }
+          ]
         }
       }
     ]

@@ -63,7 +63,7 @@
   "evaluator": {
     "func": [
       "check_narrator_enabled",
-      "exact_match"
+      "check_text_points"
     ],
     "conj": "and",
     "result": [
@@ -71,10 +71,8 @@
         "type": "narrator_status"
       },
       {
-        "type": "is_file_saved_desktop",
-        "filename": "answer.txt",
-        "textcontent": "Gold\n19.3",
-        "exact": true
+        "type": "desktop_file_text",
+        "filename": "answer.txt"
       }
     ],
     "expected": [
@@ -85,7 +83,19 @@
       {
         "type": "rule",
         "rules": {
-          "expected": "true"
+          "ignore_case": true,
+          "ordered": true,
+          "line_based": true,
+          "points": [
+            [
+              "Gold"
+            ],
+            {
+              "regex": [
+                "\\b19\\.3(?:0+)?(?:\\s*g\\s*/\\s*cm(?:\\^?3|³))?\\b"
+              ]
+            }
+          ]
         }
       }
     ]

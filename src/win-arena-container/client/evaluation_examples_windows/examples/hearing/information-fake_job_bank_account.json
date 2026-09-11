@@ -55,7 +55,7 @@
   "evaluator": {
     "func": [
       "exact_match",
-      "exact_match"
+      "check_text_points"
     ],
     "conj": "and",
     "result": [
@@ -64,9 +64,8 @@
         "url": "https://www.youtube.com/watch?v=3LvMO5UMCl8"
       },
       {
-        "type": "is_file_saved_desktop",
-        "filename": "answer.txt",
-        "textcontent": "bank account number"
+        "type": "desktop_file_text",
+        "filename": "answer.txt"
       }
     ],
     "expected": [
@@ -79,7 +78,15 @@
       {
         "type": "rule",
         "rules": {
-          "expected": "true"
+          "ignore_case": true,
+          "points": [
+            [
+              "bank account number",
+              "banking account number",
+              "bank account details",
+              "banking details"
+            ]
+          ]
         }
       }
     ]

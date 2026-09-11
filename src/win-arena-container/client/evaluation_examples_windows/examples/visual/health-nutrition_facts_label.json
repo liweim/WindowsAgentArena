@@ -36,17 +36,67 @@
     "notepad"
   ],
   "evaluator": {
-    "func": "exact_match",
+    "func": "check_text_points",
     "result": {
-      "type": "is_file_saved_desktop",
-      "filename": "answer.txt",
-      "textcontent": "Serving size: 2/3 cup (55g)\nCalories: 230\nSodium: 160mg\nAdded sugars: 10g",
-      "exact": true
+      "type": "desktop_file_text",
+      "filename": "answer.txt"
     },
     "expected": {
       "type": "rule",
       "rules": {
-        "expected": "true"
+        "ignore_case": true,
+        "ordered": true,
+        "line_based": true,
+        "points": [
+          {
+            "all_of": [
+              [
+                "serving size"
+              ],
+              [
+                "2/3 cup",
+                "⅔ cup"
+              ],
+              [
+                "55g",
+                "55 g"
+              ]
+            ]
+          },
+          {
+            "all_of": [
+              [
+                "calories"
+              ],
+              [
+                "230"
+              ]
+            ]
+          },
+          {
+            "all_of": [
+              [
+                "sodium"
+              ],
+              [
+                "160mg",
+                "160 mg"
+              ]
+            ]
+          },
+          {
+            "all_of": [
+              [
+                "added sugars",
+                "added sugar"
+              ],
+              [
+                "10g",
+                "10 g"
+              ]
+            ]
+          }
+        ]
       }
     }
   },

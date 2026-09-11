@@ -45,28 +45,59 @@
       "rules": {
         "ignore_case": true,
         "points": [
-          [
-            "travel",
-            "airplane",
-            "federal facilities"
-          ],
-          [
-            "federally approved",
-            "yes",
-            "do not need",
-            "real id"
-          ],
-          [
-            "federally approved",
-            "no",
-            "will need",
-            "real id"
-          ],
-          [
-            "visit",
-            "DMV office",
-            "required documents"
-          ]
+          {
+            "all_of": [
+              [
+                "air travel",
+                "airplane",
+                "boarding a domestic flight"
+              ],
+              [
+                "federal facilities",
+                "federal facility"
+              ]
+            ]
+          },
+          {
+            "all_of": [
+              [
+                "federally approved document",
+                "federally accepted identification",
+                "approved federal ID"
+              ],
+              [
+                "do not need a REAL ID",
+                "no REAL ID needed",
+                "not need a REAL ID"
+              ]
+            ]
+          },
+          {
+            "all_of": [
+              [
+                "without a federally approved document",
+                "no federally approved document",
+                "do not have a federally approved document"
+              ],
+              [
+                "need a REAL ID",
+                "REAL ID is required"
+              ]
+            ]
+          },
+          {
+            "all_of": [
+              [
+                "DMV office",
+                "DMV"
+              ],
+              [
+                "required documents",
+                "required documentation",
+                "documents"
+              ]
+            ]
+          }
         ]
       }
     }

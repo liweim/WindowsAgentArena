@@ -69,7 +69,7 @@
   "evaluator": {
     "func": [
       "check_include_exclude",
-      "exact_match"
+      "check_text_points"
     ],
     "conj": "and",
     "result": [
@@ -79,10 +79,8 @@
         "shell": true
       },
       {
-        "type": "is_file_saved_desktop",
-        "filename": "answer.txt",
-        "textcontent": "90 days",
-        "exact": true
+        "type": "desktop_file_text",
+        "filename": "answer.txt"
       }
     ],
     "expected": [
@@ -100,7 +98,14 @@
       {
         "type": "rule",
         "rules": {
-          "expected": "true"
+          "ignore_case": true,
+          "points": [
+            {
+              "regex": [
+                "^90\\s*days?$"
+              ]
+            }
+          ]
         }
       }
     ]

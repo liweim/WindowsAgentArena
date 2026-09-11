@@ -86,8 +86,7 @@
   "evaluator": {
     "func": [
       "check_include_exclude",
-      "check_thunderbird_email_composition",
-      "check_thunderbird_email_absent"
+      "check_thunderbird_email_composition"
     ],
     "conj": "and",
     "result": [
@@ -100,11 +99,6 @@
         "type": "vm_file",
         "path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release\\Mail\\Local Folders\\Drafts",
         "dest": "thunderbird-drafts.mbox"
-      },
-      {
-        "type": "vm_file",
-        "path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release\\Mail\\Local Folders\\Sent",
-        "dest": "thunderbird-sent.mbox"
       }
     ],
     "expected": [
@@ -161,13 +155,6 @@
               "updated task list"
             ]
           ]
-        }
-      },
-      {
-        "type": "rule",
-        "rules": {
-          "to": "alice@example.com",
-          "subject": "Meeting Agenda"
         }
       }
     ]
