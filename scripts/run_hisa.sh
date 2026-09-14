@@ -29,7 +29,7 @@ nohup setsid env \
     --clean-results false \
     --worker-id 0 \
     --num-workers 1 \
-    --ephemeral-vm-storage true \
+    --isolate-tasks true \
     --container-name a11yarena-hisa \
     --browser-port 18117 \
     --rdp-port 13396 \

@@ -31,7 +31,7 @@ nohup setsid env \
     --clean-results false \
     --worker-id 0 \
     --num-workers 1 \
-    --ephemeral-vm-storage true \
+    --isolate-tasks true \
     --container-name a11yarena-coact \
     --browser-port 18115 \
     --rdp-port 13394 \

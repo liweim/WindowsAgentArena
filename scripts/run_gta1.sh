@@ -27,7 +27,7 @@ nohup setsid env \
     --clean-results false \
     --worker-id 0 \
     --num-workers 1 \
-    --ephemeral-vm-storage true \
+    --isolate-tasks true \
     --container-name a11yarena-gta1 \
     --browser-port 18116 \
     --rdp-port 13395 \
