@@ -1,6 +1,6 @@
 {
   "id": "service-voter_certificate_link",
-  "_comment": "Put the answer to the `gt_steps`.",
+  "_comment": "",
   "user_group": "motor",
   "subgroup_ids": ["M-S1"],
   "category": "service",
