@@ -287,6 +287,21 @@ with open(output_path, "w", encoding="utf-8") as output_file:
 PY
 }
 
+summarize_batch() {
+    local batch_json=$1
+    echo "Batch finished. Summarizing all tasks from the original task list..."
+    # Reuse the client dependencies without starting another Windows VM.
+    docker run --rm --network none --entrypoint python3 \
+        --user "${LOCALLSTC_HOST_UID:-$(id -u)}:${LOCALLSTC_HOST_GID:-$(id -g)}" \
+        -v "$client_mount_path:/client" \
+        -v "$locallstc_root_path:/locallstc" \
+        -v "$batch_json:/winarena-batch.json:ro" \
+        -w /client -e PYTHONPATH=/client:/locallstc \
+        "$winarena_full_image_name:$winarena_image_tag" \
+        -c 'import sys; from mm_agents.utils import summary; summary(sys.argv[1], "/winarena-batch.json")' \
+        "$result_dir"
+}
+
 run_isolated_tasks() {
     local source_json_path manifest_path storage_run_root result_host_dir
     local original_json_name original_storage_mount_path original_clean_results
@@ -347,6 +362,8 @@ PY
     fi
 
     storage_run_root=$(mktemp -d "$SCRIPT_DIR/../src/win-arena-container/vm/task-storage.${container_name}.XXXXXX")
+    cp -- "$source_json_path" "$storage_run_root/batch.json"
+    source_json_path="$storage_run_root/batch.json"
     manifest_path="$storage_run_root/tasks.tsv"
     python3 - "$source_json_path" "$manifest_path" "$result_host_dir" "${LOCALLSTC_EXTRA_ARGS:-}" "${MM_AGENTS_EXTRA_ARGS:-}" "$clean_results" <<'PY'
 import json
@@ -404,9 +421,11 @@ for domain, count in scheduled_by_domain.items():
 PY
     mapfile -t task_entries < "$manifest_path"
     if [ "${#task_entries[@]}" -eq 0 ]; then
-        echo "Task JSON contains no tasks: $source_json_path"
+        echo "No tasks need execution. Summarizing existing results."
+        task_status=0
+        summarize_batch "$source_json_path" || task_status=$?
         rm -rf "$storage_run_root"
-        return 0
+        return "$task_status"
     fi
 
     original_json_name="$json_name"
@@ -482,6 +501,14 @@ PY
     vm_storage_mount_path="$original_storage_mount_path"
     clean_results="$original_clean_results"
     task_json_mount_path=""
+    task_status=0
+    summarize_batch "$source_json_path" || task_status=$?
+    if [ "$task_status" -ne 0 ]; then
+        echo "ERROR: Batch summary failed with status $task_status." >&2
+        if [ "$overall_status" -eq 0 ]; then
+            overall_status=$task_status
+        fi
+    fi
     trap - EXIT INT TERM
     cleanup_isolated_run
     return "$overall_status"

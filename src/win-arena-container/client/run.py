@@ -587,4 +587,5 @@ if __name__ == '__main__':
         test_file_list_worker
     )
     test(args, test_file_list_worker)
-    utils.summary(args.result_dir, test_all_meta)
+    if not os.environ.get("WAA_BATCH_TOTAL"):
+        utils.summary(args.result_dir, test_all_meta)
