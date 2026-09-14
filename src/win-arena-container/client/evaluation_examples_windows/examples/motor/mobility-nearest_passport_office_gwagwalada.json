@@ -1,6 +1,6 @@
 {
   "id": "mobility-nearest_passport_office_gwagwalada",
-  "_comment": "The category should be mobility?",
+  "_comment": "",
   "user_group": "motor",
   "subgroup_ids": ["M-S3"],
   "category": "mobility",
