@@ -25,7 +25,7 @@ nohup setsid env \
     --clean-results false \
     --worker-id 0 \
     --num-workers 1 \
-    --ephemeral-vm-storage true \
+    --isolate-tasks true \
     --container-name a11yarena-tars \
     --browser-port 18118 \
     --rdp-port 13397 \

@@ -13,6 +13,32 @@ cd /home/weimingli/projects/WindowsAgentArena/scripts
 python run_human.py --example ../src/win-arena-container/client/evaluation_examples_windows/examples/cognitive/access-chrome_immersive_reader_extension.json
 ```
 
+## Run tasks with an agent framework
+
+The entry scripts for different agent frameworks are located at:
+
+```text
+scripts/run_*.sh
+```
+
+For example, run the LocalLSTC framework with:
+
+```bash
+bash scripts/run_locallstc.sh
+```
+
+Its log is written to:
+
+```text
+nohup_locallstc.out
+```
+
+To monitor task results in real time, run:
+
+```bash
+watch -n 1 python -m src.win-arena-container.client.mm_agents.utils
+```
+
 # Client side
 ## Connect remotely using Windows App
 

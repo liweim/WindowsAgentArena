@@ -183,12 +183,19 @@ invoke_docker_container() {
     docker_command="docker run"
     if [ "$interactive" = true ] && [ -t 1 ]; then docker_command+=" -it"; fi
     docker_command+=" -p ${browser_port}:8006 -p ${rdp_port}:3389 --name $container_name --platform linux/amd64"
-    if [ "$remove_container" = true ]; then docker_command+=" --rm"; fi
+    if [ "$remove_container" = true ] && [ "$interactive" = true ]; then docker_command+=" --rm"; fi
     if [ "$interactive" != true ]; then docker_command+=" -d"; fi
     if [ "$use_kvm" = true ]; then docker_command+=" --device=/dev/kvm"; else docker_command+=" -e KVM=N"; fi
     docker_command+=" -e RAM_SIZE=$ram_size -e CPU_CORES=$cpu_cores"
     if [ "$prepare_image" = true ]; then docker_command+=" --mount type=bind,source=${vm_setup_image_path}/setup.iso,target=/custom.iso"; fi
     if [ "$mount_vm_storage" = true ]; then docker_command+=" -v ${vm_storage_mount_path}/.:/storage"; fi
+    if [ "$isolate_tasks" = true ]; then
+        docker_command+=" -e WAA_BATCH_TOTAL=${#task_entries[@]} -e WAA_BATCH_INDEX=$((index + 1))"
+        # Keep the backing filename identical on host and guest. Mount only the
+        # disk read-only; firmware and TPM files belong to each task's storage.
+        printf -v backing_mount '%q' "$vm_storage_base_path/data.img:$vm_storage_base_path/data.img:ro"
+        docker_command+=" -v $backing_mount -e DISK_FMT=qcow2 -e ALLOCATE=N -e DISK_SIZE=${golden_disk_kib}K"
+    fi
     if [ -n "$task_json_mount_path" ]; then docker_command+=" -v ${task_json_mount_path}:/winarena-task.json:ro"; fi
     if [ "$mount_server" = true ]; then docker_command+=" -v ${server_mount_path}/.:/shared"; fi
     if [ "$mount_client" = true ]; then docker_command+=" -v ${client_mount_path}/.:/client"; fi
@@ -209,7 +216,7 @@ invoke_docker_container() {
         if [ -n "$AZURE_ENDPOINT" ]; then docker_command+=" -e AZURE_ENDPOINT=$AZURE_ENDPOINT"; fi
     fi
     docker_command+=" $winarena_full_image_name:$winarena_image_tag"
-    entrypoint_args=" -c './entry.sh --prepare-image $prepare_image --start-client $start_client --agent $agent --model $model --temperature $temperature --seed $seed --top-p $top_p --top-k $top_k --som-origin $som_origin --a11y-backend $a11y_backend --clean-results $clean_results --worker-id $worker_id --num-workers $num_workers --result-dir $result_dir --json-name $json_name --diff-lvl $diff_lvl; status=\$?; if [ -n "\${LOCALLSTC_HOST_UID:-}" ] && [ -n "\${LOCALLSTC_HOST_GID:-}" ] && [ -d "$result_dir" ]; then chown -R \"\$LOCALLSTC_HOST_UID:\$LOCALLSTC_HOST_GID\" "$result_dir"; fi; exit \$status'"
+    entrypoint_args=" -c 'bash /entry.sh --prepare-image $prepare_image --start-client $start_client --agent $agent --model $model --temperature $temperature --seed $seed --top-p $top_p --top-k $top_k --som-origin $som_origin --a11y-backend $a11y_backend --clean-results $clean_results --worker-id $worker_id --num-workers $num_workers --result-dir $result_dir --json-name $json_name --diff-lvl $diff_lvl; status=\$?; if [ -n "\${LOCALLSTC_HOST_UID:-}" ] && [ -n "\${LOCALLSTC_HOST_GID:-}" ] && [ -d "$result_dir" ]; then chown -R \"\$LOCALLSTC_HOST_UID:\$LOCALLSTC_HOST_GID\" "$result_dir"; fi; exit \$status'"
     if [ "$interactive" = true ]; then entrypoint_args=""; fi
     docker_command+=$entrypoint_args
     echo "Invoking Docker Container with the command:"
@@ -222,12 +229,11 @@ invoke_docker_container() {
     container_id=$(eval $docker_command)
     echo "Started container: $container_id"
 
-    docker logs -f --tail 0 "$container_name" &
+    docker logs -f "$container_name" &
     log_pid=$!
 
     wait_status=0
     status=$(docker wait "$container_name") || wait_status=$?
-    kill "$log_pid" >/dev/null 2>&1 || true
     wait "$log_pid" >/dev/null 2>&1 || true
 
     if [ $wait_status -ne 0 ] || ! [[ "$status" =~ ^[0-9]+$ ]]; then
@@ -235,6 +241,9 @@ invoke_docker_container() {
     fi
 
     echo "Container $container_name exited with status $status."
+    if [ "$remove_container" = true ] && [ "$isolate_tasks" != true ]; then
+        docker rm "$container_name" >/dev/null
+    fi
     return "$status"
 }
 
@@ -251,14 +260,14 @@ fi
 
 if [ "$skip_build" = false ]; then build_container_image; fi
 
-prepare_storage_copy() {
+prepare_task_storage() {
     local destination=$1
     local started_at finished_at
 
     mkdir -p "$destination"
     started_at=$(date +%s)
     echo "Preparing isolated VM storage: $destination"
-    cp -a --reflink=auto --sparse=always "$vm_storage_base_path/." "$destination/"
+    "$SCRIPT_DIR/prepare-task-overlay.sh" "$vm_storage_base_path" "$destination"
     finished_at=$(date +%s)
     echo "Prepared isolated VM storage in $((finished_at - started_at)) seconds: $destination"
 }
@@ -294,9 +303,30 @@ run_isolated_tasks() {
     if [ "$num_workers" -ne 1 ]; then
         log_error_exit "--isolate-tasks currently requires --num-workers 1."
     fi
+    if [ "$worker_id" -ne 0 ]; then
+        log_error_exit "--isolate-tasks requires --worker-id 0 with --num-workers 1."
+    fi
+    if docker container inspect "$container_name" >/dev/null 2>&1; then
+        log_error_exit "Container $container_name already exists; choose another --container-name or stop it explicitly."
+    fi
     if [ ! -f "$vm_storage_base_path/data.img" ]; then
         log_error_exit "Golden VM storage is missing data.img: $vm_storage_base_path"
     fi
+    command -v qemu-img >/dev/null || log_error_exit "Task isolation requires qemu-img on the host (qemu-utils)."
+    golden_disk_kib=$(python3 - "$vm_storage_base_path/data.img" <<'PY'
+import json
+import subprocess
+import sys
+
+info = json.loads(subprocess.check_output(["qemu-img", "info", "--output=json", sys.argv[1]]))
+if info["format"] != "raw":
+    raise SystemExit("Task isolation requires a raw data.img baseline.")
+size = info["virtual-size"]
+if size < 100 * 1024 * 1024 or size % 1024:
+    raise SystemExit("Baseline must be at least 100 MiB and aligned to 1 KiB.")
+print(size // 1024)
+PY
+    )
 
     if [[ "$json_name" = /* ]]; then
         source_json_path="$json_name"
@@ -318,16 +348,16 @@ run_isolated_tasks() {
 
     storage_run_root=$(mktemp -d "$SCRIPT_DIR/../src/win-arena-container/vm/task-storage.${container_name}.XXXXXX")
     manifest_path="$storage_run_root/tasks.tsv"
-    python3 - "$source_json_path" "$manifest_path" "$result_host_dir" "${LOCALLSTC_EXTRA_ARGS:-}" <<'PY'
+    python3 - "$source_json_path" "$manifest_path" "$result_host_dir" "${LOCALLSTC_EXTRA_ARGS:-}" "${MM_AGENTS_EXTRA_ARGS:-}" "$clean_results" <<'PY'
 import json
 import os
 import shlex
 import sys
 
-source_path, manifest_path, result_dir, extra_args = sys.argv[1:]
-extra_argv = shlex.split(extra_args)
-rerun = "--rerun" in extra_argv
-rerun_fail = "--rerun_fail" in extra_argv
+source_path, manifest_path, result_dir, legacy_args, method_args, clean_results = sys.argv[1:]
+extra_argv = shlex.split(legacy_args) + shlex.split(method_args)
+rerun = "--rerun" in extra_argv or clean_results == "true"
+rerun_fail = "--rerun_fail" in extra_argv or "--rerun-fail" in extra_argv
 
 def should_run(domain, example_id):
     if not result_dir or rerun:
@@ -349,6 +379,7 @@ with open(source_path, "r", encoding="utf-8") as source_file:
 total_task_count = sum(len(example_ids) for example_ids in tasks.values())
 scheduled_task_count = 0
 removed_result_count = 0
+scheduled_by_domain = {}
 with open(manifest_path, "w", encoding="utf-8") as manifest_file:
     for domain, example_ids in tasks.items():
         for example_id in example_ids:
@@ -356,6 +387,7 @@ with open(manifest_path, "w", encoding="utf-8") as manifest_file:
                 raise ValueError("Task domain and ID cannot contain tabs or newlines")
             if should_run(domain, example_id):
                 scheduled_task_count += 1
+                scheduled_by_domain[domain] = scheduled_by_domain.get(domain, 0) + 1
                 if result_dir:
                     result_path = os.path.join(result_dir, domain, example_id, "result.txt")
                     if os.path.exists(result_path):
@@ -366,6 +398,9 @@ print(
     f"Task plan: total={total_task_count}, scheduled={scheduled_task_count}, "
     f"removed_result_files={removed_result_count}"
 )
+print(f"Left tasks (batch): {scheduled_task_count}")
+for domain, count in scheduled_by_domain.items():
+    print(f"  {domain}: {count}")
 PY
     mapfile -t task_entries < "$manifest_path"
     if [ "${#task_entries[@]}" -eq 0 ]; then
@@ -395,7 +430,7 @@ PY
     trap 'cleanup_isolated_run; exit 143' TERM
 
     current_storage="$storage_run_root/storage-0"
-    prepare_storage_copy "$current_storage"
+    prepare_task_storage "$current_storage"
 
     for ((index = 0; index < ${#task_entries[@]}; index++)); do
         line=${task_entries[$index]}
@@ -406,7 +441,7 @@ PY
         next_index=$((index + 1))
         if [ "$next_index" -lt "${#task_entries[@]}" ]; then
             next_storage="$storage_run_root/storage-$next_index"
-            prepare_storage_copy "$next_storage" &
+            prepare_task_storage "$next_storage" &
             copy_pid=$!
             echo "Preparing task $((next_index + 1)) storage in background (PID $copy_pid)."
         fi

@@ -539,7 +539,17 @@ if __name__ == '__main__':
     left_info = ""
     for domain in test_file_list:
         left_info += f"{domain}: {len(test_file_list[domain])}\n"
-    logger.info(f"Left tasks:\n{left_info}")
+    batch_total = os.environ.get("WAA_BATCH_TOTAL")
+    batch_index = os.environ.get("WAA_BATCH_INDEX")
+    if batch_total is not None and batch_index is not None:
+        remaining = int(batch_total) - int(batch_index) + 1
+        logger.info(
+            "Left tasks (batch, including current): %s; current task: %s/%s\n"
+            "Tasks assigned to this isolated container:\n%s",
+            remaining, batch_index, batch_total, left_info,
+        )
+    else:
+        logger.info(f"Left tasks:\n{left_info}")
 
     # distribute tasks among workers
         # Flatten your dict into a list of tasks  

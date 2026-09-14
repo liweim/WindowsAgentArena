@@ -48,7 +48,7 @@ done
 
 # Starts the VM and blocks until the Windows Arena Server is ready
 echo "Starting VM..."
-./entry_setup.sh
+bash /entry_setup.sh || exit $?
 echo "VM started, server ready"
 
 if [ "$prepare_image" = "true" ]; then
@@ -66,7 +66,7 @@ else
     # Start the client script
     if [ "$start_client" = "true" ]; then
         echo "Starting client..."
-        ./start_client.sh --agent "$agent" --model "$model" --temperature "$temperature" --seed "$seed" --top-p "$top_p" --top-k "$top_k" --som-origin "$som_origin" --a11y-backend "$a11y_backend" --clean-results "$clean_results" --worker-id "$worker_id" --num-workers "$num_workers" --result-dir "$result_dir" --json-name "$json_name" --diff-lvl "$diff_lvl" "${client_extra_args[@]}"
+        bash /start_client.sh --agent "$agent" --model "$model" --temperature "$temperature" --seed "$seed" --top-p "$top_p" --top-k "$top_k" --som-origin "$som_origin" --a11y-backend "$a11y_backend" --clean-results "$clean_results" --worker-id "$worker_id" --num-workers "$num_workers" --result-dir "$result_dir" --json-name "$json_name" --diff-lvl "$diff_lvl" "${client_extra_args[@]}"
         client_status=$?
         echo "Client exited with status $client_status"
         exit "$client_status"

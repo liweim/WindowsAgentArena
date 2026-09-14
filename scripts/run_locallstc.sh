@@ -31,12 +31,12 @@ nohup setsid env \
     --clean-results false \
     --worker-id 0 \
     --num-workers 1 \
-    --ephemeral-vm-storage true \
+    --isolate-tasks true \
     --container-name a11yarena-locallstc \
     --browser-port 18113 \
     --rdp-port 13392 \
     --result-dir /locallstc/projects/WindowsAgentArena/results/locallstc_qwen3.5-9b \
-    --json-name evaluation_examples_windows/test_one.json \
+    --json-name evaluation_examples_windows/test_small.json \
     --remove-container true \
     --rerun_fail \
     "$@" >"$LOG_FILE" 2>&1 < /dev/null &
