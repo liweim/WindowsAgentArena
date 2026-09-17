@@ -1,6 +1,5 @@
 import email
 import datetime
-import html
 import json
 import logging
 import mailbox
@@ -14,7 +13,7 @@ from typing import Iterable, List, Pattern, Dict, Match
 from typing import Union, Any, TypeVar, Callable
 
 from .utils import _match_record
-from .general import check_text_points
+from .general import check_text_points, normalize_text
 from .utils import _match_value_to_rule as _match_pref
 
 logger = logging.getLogger("desktopenv.metric.thunderbird")
@@ -187,10 +186,7 @@ def check_thunderbird_folder(result: Union[str, List[str]], reference: Union[str
 
 
 def _normalize_email_text(value: str) -> str:
-    value = html.unescape(value or "")
-    value = re.sub(r"<[^>]+>", " ", value)
-    value = re.sub(r"[^A-Za-z0-9@.$]+", " ", value)
-    return " ".join(value.split())
+    return normalize_text(value, ignore_case=False)
 
 
 def _decode_header_value(value: Any) -> str:
@@ -409,7 +405,9 @@ def _calendar_event_description_text(event: Dict[str, Any]) -> str:
         related_key_text = " ".join(str(key).lower() for key in related.keys())
         if any(token in related_key_text or token in related_text.lower() for token in ["description", "descr", "notes"]):
             parts.append(related_text)
-    return _normalize_email_text(" ".join(parts)).lower()
+    # Keep the extracted description intact. check_text_points applies the
+    # shared normalization pipeline to both it and every expected variant.
+    return " ".join(parts)
 
 
 def _calendar_event_datetime(event: Dict[str, Any], preferred_keys: List[str], fallback_name: str) -> Union[datetime.datetime, None]:

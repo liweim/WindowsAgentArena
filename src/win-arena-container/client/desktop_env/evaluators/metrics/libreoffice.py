@@ -67,7 +67,7 @@ def check_docx_image_alt_text(result, rule):
         if not descriptions:
             return 0.0
 
-        alt_text = " ".join(descriptions).lower()
+        alt_text = " ".join(descriptions)
         return check_text_points(alt_text, rule)
 
     except Exception as e:

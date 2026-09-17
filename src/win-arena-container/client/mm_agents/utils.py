@@ -752,26 +752,22 @@ def calculate_resolution_token_increase(result_dir: str) -> Dict[str, float]:
     print(f"Average tokens per task: {avg_tokens_per_task/1e3:,.2f}")
 
 def summary(result_dir, test_all_meta):
-    """
-    Generate summary from test results.
-    
-    Args:
-        result_dir: Path to results directory
-        test_all_meta: Can be:
-            - str: Path to JSON file
-            - dict: {domain: [example_id, ...]}
-            - list: [(domain, example_id), ...]
+    """Generate aggregate result statistics.
+
+    For AccessCUA runs, each completed task may contain ``evaluation.json`` with
+    ``task_outcome``, ``access_requirement`` and ``success_rate``. ``result.txt``
+    remains the backward-compatible source for the traditional success rate.
+    Legacy result directories without ``evaluation.json`` are treated as
+    coincident tasks, so all three metrics fall back to the value in result.txt.
     """
     if not os.path.exists(result_dir):
         print(f"Result directory not found: {result_dir}")
         return
 
-    # Handle different input types
     if type(test_all_meta) == str:
         with open(test_all_meta, "r", encoding="utf-8") as f:
             test_all_meta = json.load(f)
     elif type(test_all_meta) == list:
-        # Convert list of tuples to dict
         meta_dict = {}
         for domain, example_id in test_all_meta:
             if domain not in meta_dict:
@@ -779,26 +775,26 @@ def summary(result_dir, test_all_meta):
             meta_dict[domain].append(example_id)
         test_all_meta = meta_dict
 
-    all_scores = []
-    all_scores_15 = []
-    all_scores_50 = []
+    all_task_outcomes = []
+    all_access_requirements = []
+    all_success_rates = []
+    all_success_rates_15 = []
+    all_success_rates_50 = []
     all_costs = []
     all_prompt_tokens = []
     all_completion_tokens = []
     all_image_counts = []
     all_execution_times = []
     stats = {}
-    global_model_usage = {}  # Track usage across all models
-    count_remain = 0  # Tasks without result.txt
-    count_errors = 0  # Tasks with err_reason.txt
+    global_model_usage = {}
+    count_remain = 0
+    count_errors = 0
 
     def get_task_result_dir(domain, task_name):
         task_dir = os.path.join(result_dir, domain, task_name)
         if os.path.isdir(task_dir):
             return task_dir
 
-        # AndroidWorld stores instances as <domain>/<task_name>_<instance_id>.
-        # The JSON contains the task name without that runtime suffix.
         instance_dirs = []
         prefix = f"{task_name}_"
         domain_dir = os.path.join(result_dir, domain)
@@ -812,12 +808,35 @@ def summary(result_dir, test_all_meta):
                     instance_dirs.append((int(instance_id), candidate))
         if instance_dirs:
             return min(instance_dirs)[1]
-
         return task_dir
+
+    def read_evaluation(task_result_dir, fallback_success_rate):
+        evaluation_file = os.path.join(task_result_dir, "evaluation.json")
+        if not os.path.exists(evaluation_file):
+            return fallback_success_rate, fallback_success_rate, fallback_success_rate
+        try:
+            with open(evaluation_file, "r", encoding="utf-8") as f:
+                evaluation = json.load(f)
+            success_rate = float(
+                evaluation.get(
+                    "success_rate",
+                    evaluation.get("full_success", fallback_success_rate),
+                )
+            ) * 100
+            task_outcome = float(evaluation.get("task_outcome", success_rate / 100)) * 100
+            access_requirement = float(
+                evaluation.get("access_requirement", success_rate / 100)
+            ) * 100
+            return task_outcome, access_requirement, success_rate
+        except Exception as e:
+            print(f"Warning: could not read {evaluation_file}: {e}")
+            return fallback_success_rate, fallback_success_rate, fallback_success_rate
 
     for domain in test_all_meta:
         stats[domain] = {
-            "score": [],
+            "task_outcome": [],
+            "access_requirement": [],
+            "success_rate": [],
             "cost": [],
             "gui_steps": [],
             "api_steps": [],
@@ -833,63 +852,58 @@ def summary(result_dir, test_all_meta):
         for ex_id in test_all_meta[domain]:
             task_result_dir = get_task_result_dir(domain, ex_id)
             score_file = os.path.join(task_result_dir, "result.txt")
-            execution_log_file = os.path.join(
-                task_result_dir, "execution_log.json"
-            )
+            execution_log_file = os.path.join(task_result_dir, "execution_log.json")
             error_file = os.path.join(task_result_dir, "err_reason.txt")
 
-            # --- 1. Get Score ---
             has_completed_score = os.path.exists(score_file)
             if has_completed_score:
                 with open(score_file, "r") as f:
                     try:
-                        score = eval(f.read()) * 100
-                    except:
-                        score = 0
+                        result_success_rate = float(eval(f.read())) * 100
+                    except Exception:
+                        result_success_rate = 0.0
             else:
-                # Missing result file means the task has not completed yet.
-                score = 0
-            if score > 0 and os.path.exists(error_file):
+                result_success_rate = 0.0
+
+            task_outcome, access_requirement, success_rate = read_evaluation(
+                task_result_dir, result_success_rate
+            )
+
+            if success_rate > 0 and os.path.exists(error_file):
                 os.remove(error_file)
-            if not os.path.exists(score_file) or os.path.exists(error_file):
+            if not has_completed_score or os.path.exists(error_file):
                 count_remain += 1
 
-            score_15 = 0
-            score_50 = 0
+            success_rate_15 = 0.0
+            success_rate_50 = 0.0
             if has_completed_score:
-                all_scores.append(score)
-                stats[domain]["score"].append(score)
+                all_task_outcomes.append(task_outcome)
+                all_access_requirements.append(access_requirement)
+                all_success_rates.append(success_rate)
+                stats[domain]["task_outcome"].append(task_outcome)
+                stats[domain]["access_requirement"].append(access_requirement)
+                stats[domain]["success_rate"].append(success_rate)
 
-            # --- 2. Check for Errors ---
-            # If an error file exists, skip statistics and fail logging after recording the score.
-            # This ensures we don't record cost/tokens or add it to 'fails'.
             if os.path.exists(error_file):
                 print(f"Error file exists: {error_file}")
-                assert score == 0, f"Score is not 0 when error file exists: {error_file}"
+                assert success_rate == 0, f"Success rate is not 0 when error file exists: {error_file}"
                 count_errors += 1
-                all_scores_15.append(score_15)
-                all_scores_50.append(score_50)
-                continue 
+                all_success_rates_15.append(success_rate_15)
+                all_success_rates_50.append(success_rate_50)
+                continue
 
-            # --- 3. Process Execution Log ---
-            # Logic reaches here only if err_reason.txt does not exist.
-            
             if os.path.exists(execution_log_file):
                 try:
                     with open(execution_log_file, "r", encoding="utf-8") as f:
                         execution_log = json.load(f)
 
                     execution_stats = execution_log.get("statistics", {})
-                    
-                    # Extract basic data
                     cost = execution_stats.get("total_cost", 0)
                     prompt_tokens = execution_stats.get("prompt_tokens", 0) / 1e3
                     completion_tokens = execution_stats.get("completion_tokens", 0) / 1e3
                     image_count = execution_stats.get("image_count", 0)
                     execution_time = execution_stats.get("execution_time", 0)
-                    
-                    # Extract step data. Keep reading legacy logs that used the previous
-                    # software-API step key, while emitting only the current key below.
+
                     legacy_api_steps_key = "m" + "cp_steps"
                     if "total_steps" in execution_stats:
                         total_task_steps = execution_stats.get("total_steps", 0)
@@ -919,26 +933,25 @@ def summary(result_dir, test_all_meta):
                         total_task_steps = gui_steps + api_steps + code_steps
                         other_steps = execution_stats.get("other_steps", 0)
 
-                    # Accumulate Model Usage
                     local_model_usage = execution_stats.get("model_usage", {})
                     for model, usage in local_model_usage.items():
                         if model not in global_model_usage:
                             global_model_usage[model] = {
                                 "model_name": usage.get("model_name", "unknown"),
-                                "cost": 0, "prompt_tokens": 0, "completion_tokens": 0
+                                "cost": 0,
+                                "prompt_tokens": 0,
+                                "completion_tokens": 0,
                             }
                         global_model_usage[model]["cost"] += usage.get("cost", 0)
                         global_model_usage[model]["prompt_tokens"] += usage.get("prompt_tokens", 0) / 1e3
                         global_model_usage[model]["completion_tokens"] += usage.get("completion_tokens", 0) / 1e3
-                    
-                    # --- 4. Record Statistics ---
-                    # Only record these if no error occurred and execution_log exists
+
                     all_costs.append(cost)
                     all_prompt_tokens.append(prompt_tokens)
                     all_completion_tokens.append(completion_tokens)
                     all_image_counts.append(image_count)
                     all_execution_times.append(execution_time)
-                    
+
                     stats[domain]["cost"].append(cost)
                     stats[domain]["gui_steps"].append(gui_steps)
                     stats[domain]["api_steps"].append(api_steps)
@@ -950,56 +963,45 @@ def summary(result_dir, test_all_meta):
                     stats[domain]["completion_tokens"].append(completion_tokens)
                     stats[domain]["image_counts"].append(image_count)
                     if total_task_steps <= 15:
-                        score_15 = score
+                        success_rate_15 = success_rate
                     if total_task_steps <= 50:
-                        score_50 = score
-                    all_scores_15.append(score_15)
-                    all_scores_50.append(score_50)
-                except:
+                        success_rate_50 = success_rate
+                    all_success_rates_15.append(success_rate_15)
+                    all_success_rates_50.append(success_rate_50)
+                except Exception:
                     print(f"error loading execution_log_file: {execution_log_file}")
                     if has_completed_score:
-                        all_scores_15.append(score_15)
-                        all_scores_50.append(score_50)
+                        all_success_rates_15.append(success_rate_15)
+                        all_success_rates_50.append(success_rate_50)
                     continue
             else:
-                if os.path.exists(score_file):
-                    print(f"not found: {execution_log_file}")
                 if has_completed_score:
-                    all_scores_15.append(score_15)
-                    all_scores_50.append(score_50)
+                    print(f"not found: {execution_log_file}")
+                    all_success_rates_15.append(success_rate_15)
+                    all_success_rates_50.append(success_rate_50)
                 continue
 
     num_tasks = sum(len(example_ids) for example_ids in test_all_meta.values())
-    num_completed_scores = len(all_scores)
-    num_tasks_with_log = len(all_costs)  # Number of tasks with execution_log
-    avg_score = np.mean(all_scores) if num_completed_scores > 0 else 0
-    avg_score_15 = np.mean(all_scores_15) if num_completed_scores > 0 else 0
-    avg_score_50 = np.mean(all_scores_50) if num_completed_scores > 0 else 0
+    num_completed_scores = len(all_success_rates)
+    num_tasks_with_log = len(all_costs)
+    avg_task_outcome = np.mean(all_task_outcomes) if num_completed_scores > 0 else 0
+    avg_access_requirement = np.mean(all_access_requirements) if num_completed_scores > 0 else 0
+    avg_success_rate = np.mean(all_success_rates) if num_completed_scores > 0 else 0
+    avg_success_rate_15 = np.mean(all_success_rates_15) if num_completed_scores > 0 else 0
+    avg_success_rate_50 = np.mean(all_success_rates_50) if num_completed_scores > 0 else 0
     total_cost = sum(all_costs)
 
-    # Calculate total operations and tokens
-    total_gui_steps = sum(
-        sum(stats[domain]["gui_steps"]) for domain in stats
-    )
-    total_api_steps = sum(
-        sum(stats[domain]["api_steps"]) for domain in stats
-    )
-    total_code_steps = sum(
-        sum(stats[domain]["code_steps"]) for domain in stats
-    )
-    total_other_steps = sum(
-        sum(stats[domain]["other_steps"]) for domain in stats
-    )
-    total_steps = sum(
-        sum(stats[domain]["total_steps"]) for domain in stats
-    )
+    total_gui_steps = sum(sum(stats[domain]["gui_steps"]) for domain in stats)
+    total_api_steps = sum(sum(stats[domain]["api_steps"]) for domain in stats)
+    total_code_steps = sum(sum(stats[domain]["code_steps"]) for domain in stats)
+    total_other_steps = sum(sum(stats[domain]["other_steps"]) for domain in stats)
+    total_steps = sum(sum(stats[domain]["total_steps"]) for domain in stats)
     total_prompt_tokens = sum(all_prompt_tokens)
     total_completion_tokens = sum(all_completion_tokens)
     total_tokens = total_prompt_tokens + total_completion_tokens
     total_image_counts = sum(all_image_counts)
     total_execution_times = sum(all_execution_times)
-    
-    # Use number of tasks with execution_log to calculate averages
+
     avg_cost = total_cost / num_tasks_with_log if num_tasks_with_log > 0 else 0
     avg_steps = total_steps / num_tasks_with_log if num_tasks_with_log > 0 else 0
     avg_gui_steps = total_gui_steps / num_tasks_with_log if num_tasks_with_log > 0 else 0
@@ -1012,16 +1014,17 @@ def summary(result_dir, test_all_meta):
     avg_image_counts = total_image_counts / num_tasks_with_log if num_tasks_with_log > 0 else 0
     avg_execution_time = total_execution_times / num_tasks_with_log if num_tasks_with_log > 0 else 0
 
-    # Save detailed statistics as JSON
     detailed_stats = {
         "summary": {
-            "score": avg_score,
-            "score_15": avg_score_15,
-            "score_50": avg_score_50,
+            "task_outcome": avg_task_outcome,
+            "access_requirement": avg_access_requirement,
+            "success_rate": avg_success_rate,
+            "success_rate_15": avg_success_rate_15,
+            "success_rate_50": avg_success_rate_50,
             "total_tasks": num_tasks,
             "completed_tasks": num_completed_scores,
-            "left_tasks": count_remain,  # All incomplete tasks
-            "error_tasks": count_errors,  # Only tasks with err_reason.txt
+            "left_tasks": count_remain,
+            "error_tasks": count_errors,
             "total": {
                 "cost": total_cost,
                 "tokens": total_tokens,
@@ -1036,9 +1039,11 @@ def summary(result_dir, test_all_meta):
                 "execution_time": total_execution_times,
             },
             "average": {
-                "score": avg_score,
-                "score_15": avg_score_15,
-                "score_50": avg_score_50,
+                "task_outcome": avg_task_outcome,
+                "access_requirement": avg_access_requirement,
+                "success_rate": avg_success_rate,
+                "success_rate_15": avg_success_rate_15,
+                "success_rate_50": avg_success_rate_50,
                 "cost": avg_cost,
                 "tokens": avg_total_tokens,
                 "prompt_tokens": avg_prompt_tokens,
@@ -1051,31 +1056,35 @@ def summary(result_dir, test_all_meta):
                 "other_steps": avg_other_steps,
                 "execution_time": avg_execution_time,
             },
-            "domain_score": {
-                domain: np.mean(stats[domain]["score"]) if len(stats[domain]["score"]) > 0 else 0
+            "domain_metrics": {
+                domain: {
+                    "task_outcome": np.mean(stats[domain]["task_outcome"]) if stats[domain]["task_outcome"] else 0,
+                    "access_requirement": np.mean(stats[domain]["access_requirement"]) if stats[domain]["access_requirement"] else 0,
+                    "success_rate": np.mean(stats[domain]["success_rate"]) if stats[domain]["success_rate"] else 0,
+                }
                 for domain in test_all_meta
             },
             "model_usage": global_model_usage,
         },
         "domain_breakdown": {
             domain: {
-                "score": np.mean(stats[domain]["score"]) if len(stats[domain]["score"]) > 0 else 0,
-                "cost": np.mean(stats[domain]["cost"]) if len(stats[domain]["cost"]) > 0 else 0,
+                "task_outcome": np.mean(stats[domain]["task_outcome"]) if stats[domain]["task_outcome"] else 0,
+                "access_requirement": np.mean(stats[domain]["access_requirement"]) if stats[domain]["access_requirement"] else 0,
+                "success_rate": np.mean(stats[domain]["success_rate"]) if stats[domain]["success_rate"] else 0,
+                "cost": np.mean(stats[domain]["cost"]) if stats[domain]["cost"] else 0,
                 "tokens": (
                     np.mean(stats[domain]["prompt_tokens"])
                     + np.mean(stats[domain]["completion_tokens"])
-                ) if len(stats[domain]["prompt_tokens"]) > 0 and len(stats[domain]["completion_tokens"]) > 0 else 0,
-                "prompt_tokens": np.mean(stats[domain]["prompt_tokens"]) if len(stats[domain]["prompt_tokens"]) > 0 else 0,
-                "completion_tokens": np.mean(
-                    stats[domain]["completion_tokens"]
-                ) if len(stats[domain]["completion_tokens"]) > 0 else 0,
-                "image_counts": np.mean(stats[domain]["image_counts"]) if len(stats[domain]["image_counts"]) > 0 else 0,
-                "steps": np.mean(stats[domain]["total_steps"]) if len(stats[domain]["total_steps"]) > 0 else 0,
-                "cua_steps": np.mean(stats[domain]["gui_steps"]) if len(stats[domain]["gui_steps"]) > 0 else 0,
-                "api_steps": np.mean(stats[domain]["api_steps"]) if len(stats[domain]["api_steps"]) > 0 else 0,
-                "code_steps": np.mean(stats[domain]["code_steps"]) if len(stats[domain]["code_steps"]) > 0 else 0,
-                "other_steps": np.mean(stats[domain]["other_steps"]) if len(stats[domain]["other_steps"]) > 0 else 0,
-                "execution_time": np.mean(stats[domain]["execution_time"]) if len(stats[domain]["execution_time"]) > 0 else 0,
+                ) if stats[domain]["prompt_tokens"] and stats[domain]["completion_tokens"] else 0,
+                "prompt_tokens": np.mean(stats[domain]["prompt_tokens"]) if stats[domain]["prompt_tokens"] else 0,
+                "completion_tokens": np.mean(stats[domain]["completion_tokens"]) if stats[domain]["completion_tokens"] else 0,
+                "image_counts": np.mean(stats[domain]["image_counts"]) if stats[domain]["image_counts"] else 0,
+                "steps": np.mean(stats[domain]["total_steps"]) if stats[domain]["total_steps"] else 0,
+                "cua_steps": np.mean(stats[domain]["gui_steps"]) if stats[domain]["gui_steps"] else 0,
+                "api_steps": np.mean(stats[domain]["api_steps"]) if stats[domain]["api_steps"] else 0,
+                "code_steps": np.mean(stats[domain]["code_steps"]) if stats[domain]["code_steps"] else 0,
+                "other_steps": np.mean(stats[domain]["other_steps"]) if stats[domain]["other_steps"] else 0,
+                "execution_time": np.mean(stats[domain]["execution_time"]) if stats[domain]["execution_time"] else 0,
             }
             for domain in test_all_meta
         },
@@ -1085,25 +1094,21 @@ def summary(result_dir, test_all_meta):
     with open(summary_path, "w", encoding="utf-8") as f:
         json.dump(detailed_stats, f, indent=2, ensure_ascii=False)
 
-    summary_stats = detailed_stats['summary']
-    # print(json.dumps(summary_stats, indent=2, ensure_ascii=False))
-    total_tasks = summary_stats['total_tasks']
-    left_tasks = summary_stats['left_tasks']
-    error_tasks = summary_stats['error_tasks']
-    avg_score = summary_stats['score']
-    avg_score_15 = summary_stats['score_15']
-    avg_score_50 = summary_stats['score_50']
-    avg_cost = summary_stats['average']['cost']
-    avg_total_tokens = summary_stats['average']['tokens']
-    avg_prompt_tokens = summary_stats['average']['prompt_tokens']
-    avg_completion_tokens = summary_stats['average']['completion_tokens']
-    avg_steps = summary_stats['average']['steps']
-    avg_execution_time = summary_stats['average']['execution_time']
-    
-    print(f"Total tasks: {total_tasks}, Left tasks: {left_tasks}, Error tasks: {error_tasks}")
-    print(f"method, score, score_50, score_15, tokens, prompt_tokens, completion_tokens, steps, execution_time:\n{result_dir},{avg_score:.1f},{avg_score_50:.1f},{avg_score_15:.1f},{avg_total_tokens:.1f},{avg_prompt_tokens:.1f},{avg_completion_tokens:.1f},{avg_steps:.1f},{avg_execution_time:.1f}")
-    print('*'*50)
-    
+    summary_stats = detailed_stats["summary"]
+    print(
+        f"Total tasks: {summary_stats['total_tasks']}, "
+        f"Left tasks: {summary_stats['left_tasks']}, "
+        f"Error tasks: {summary_stats['error_tasks']}"
+    )
+    print(
+        "method, task_outcome, access_requirement, success_rate, success_rate_50, "
+        "success_rate_15, tokens, prompt_tokens, completion_tokens, steps, execution_time:\n"
+        f"{result_dir},{avg_task_outcome:.1f},{avg_access_requirement:.1f},{avg_success_rate:.1f},"
+        f"{avg_success_rate_50:.1f},{avg_success_rate_15:.1f},{avg_total_tokens:.1f},"
+        f"{avg_prompt_tokens:.1f},{avg_completion_tokens:.1f},{avg_steps:.1f},{avg_execution_time:.1f}"
+    )
+    print('*' * 50)
+
     return detailed_stats
 
 def save_detail_results():

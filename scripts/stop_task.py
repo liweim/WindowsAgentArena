@@ -9,7 +9,7 @@ import time
 
 script_dir = Path(__file__).resolve().parent
 parser = argparse.ArgumentParser(description="Stop run_locallstc and let its cleanup remove disposable VM storage.")
-parser.add_argument("--container-name", required=True, help="Container name of the batch to stop")
+parser.add_argument("--container-name", default="a11yarena-locallstc", help="Container name of the batch to stop")
 parser.add_argument("--dry-run", action="store_true", help="Show matching batches without stopping them")
 args = parser.parse_args()
 

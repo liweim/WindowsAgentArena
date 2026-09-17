@@ -39,6 +39,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--cpu-cores", type=str, default="8")
     parser.add_argument("--mode", type=str, default="dev")
     parser.add_argument(
+        "--evaluation-wait",
+        type=float,
+        default=3.0,
+        help="Seconds to wait after human operation before starting evaluation.",
+    )
+    parser.add_argument(
         "--keep-container",
         type=str,
         default="false",
@@ -350,7 +356,7 @@ def main() -> int:
             stderr=subprocess.STDOUT,
         )
 
-        print("Starting fresh WinArena container...", flush=True)
+        print(f"Starting {args.container_name} container...", flush=True)
         wait_for_container(args.container_name, script_dir)
         print("Container started. Starting Windows VM...", flush=True)
         start_vm(args.container_name, script_dir)
@@ -370,7 +376,11 @@ def main() -> int:
             args.container_name,
             "/bin/bash",
             "-lc",
-            f'cd /client && python human_run.py --example "{container_example}"',
+            (
+                f'cd /client && mkdir -p logs && python human_run.py '
+                f'--example "{container_example}" '
+                f'--evaluation-wait {args.evaluation_wait}'
+            ),
         ]
         exec_cmd = [part for part in exec_cmd if part]
         run_command(exec_cmd, cwd=script_dir)

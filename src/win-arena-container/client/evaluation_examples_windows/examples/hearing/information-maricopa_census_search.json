@@ -9,6 +9,7 @@
     "H1"
   ],
   "difficulty": "medium",
+  "operation_time": 0,
   "instruction": "Turn on captions in the opened YouTube video, identify the area demonstrated there, then search for that area on the Census data website.",
   "source": "https://www.youtube.com/watch?v=6eqpPRLndPk",
   "gt_steps": [
@@ -88,7 +89,15 @@
           "expected": "true"
         }
       }
-    ]
+    ],
+    "metric_roles": {
+      "task_outcome": [
+        1
+      ],
+      "access_requirement": [
+        0
+      ]
+    }
   },
   "proxy": true
 }

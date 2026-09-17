@@ -1,14 +1,17 @@
 {
   "id": "mobility-nih_after_hours_entry_note",
   "user_group": "cognitive",
-  "subgroup_ids": ["C-S2", "C-S3"],
+  "subgroup_ids": [
+    "C-S2",
+    "C-S3"
+  ],
   "category": "mobility",
   "need_ids": [
     "C2",
-    "C3",
-    "C4"
+    "C3"
   ],
   "difficulty": "medium",
+  "operation_time": 0,
   "instruction": "Use the NIH Clinical Center Patient Handbook open in Microsoft Edge. A patient family will arrive by car at 10:30 pm. Create a Sticky Note that records the vehicle entrance they should use at that time, the hours that entrance is used, and its location on Rockville Pike.",
   "source": "https://www.cc.nih.gov/sites/default/files/internet-files/participate/_pdf/pthandbook.pdf",
   "gt_steps": [
@@ -91,6 +94,14 @@
           }
         ]
       }
+    },
+    "metric_roles": {
+      "task_outcome": [
+        0
+      ],
+      "access_requirement": [
+        0
+      ]
     }
   },
   "proxy": false,

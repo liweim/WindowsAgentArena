@@ -9,11 +9,12 @@
     "H1"
   ],
   "difficulty": "medium",
-  "instruction": "Use Chrome Live Caption to identify the recommended allergy medication in the opened video, then save the medication name in `answer.txt` on the Desktop.",
+  "operation_time": 0,
+  "instruction": "Use Chrome Live Caption to identify the medication class the opened video recommends for treating allergy symptoms, then save only that class name in `answer.txt` on the Desktop.",
   "source": "https://medlineplus.gov/ency/videos/mov/200094_eng.mp4",
   "gt_steps": [
     "Turn on Chrome Live Caption.",
-    "Play the video and use Live Caption to identify the recommended medication for allergies.",
+    "Play the video and use Live Caption to identify the medication class recommended for treating allergy symptoms.",
     "Open Notepad.",
     "Write `antihistamines`.",
     "Save the file as `answer.txt` on the Desktop."
@@ -93,7 +94,15 @@
           ]
         }
       }
-    ]
+    ],
+    "metric_roles": {
+      "task_outcome": [
+        1
+      ],
+      "access_requirement": [
+        0
+      ]
+    }
   },
   "proxy": true
 }

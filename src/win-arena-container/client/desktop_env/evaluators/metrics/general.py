@@ -1,10 +1,9 @@
 import csv
 import datetime
 import difflib
-import functools
+import html
 import json
 import logging
-import operator
 import os
 import re
 import sqlite3
@@ -27,14 +26,30 @@ from desktop_env.evaluators.metrics.utils import _match_record, _match_value_to_
 logger = logging.getLogger("desktopenv.metric.general")
 
 
+def normalize_text(value: Any, ignore_case: bool = True) -> str:
+    """Normalize actual and expected human-readable text identically."""
+    import unicodedata
+
+    text = html.unescape(str(value or ""))
+    text = re.sub(r"<[^>]+>", " ", text)
+    text = unicodedata.normalize("NFKC", text)
+    text = (text.replace("\u2018", "'").replace("\u2019", "'")
+                .replace("\u201c", '"').replace("\u201d", '"')
+                .replace("\u2013", "-").replace("\u2014", "-")
+                .replace("\u2212", "-"))
+    text = " ".join(text.split())
+    return text.casefold() if ignore_case else text
+
+
 def check_include_exclude(result: str, rules: Dict[str, List[str]]) -> float:
     if result is None:
         return 0.
 
     print(result, rules)
-    include = rules.get("include", [])
-    exclude = rules.get("exclude", [])
-    if all(r in result for r in include) and all(r not in result for r in exclude):
+    actual = normalize_text(result, ignore_case=rules.get("ignore_case", False))
+    include = [normalize_text(r, ignore_case=rules.get("ignore_case", False)) for r in rules.get("include", [])]
+    exclude = [normalize_text(r, ignore_case=rules.get("ignore_case", False)) for r in rules.get("exclude", [])]
+    if all(r in actual for r in include) and all(r not in actual for r in exclude):
         return 1.
     else:
         return 0.
@@ -77,9 +92,6 @@ def compare_xlsx_items(result: str, rules: Dict[str, Any]) -> float:
 
     header_row = rules.get("header_row", 1)
     column_name = rules.get("column_name", "Item")
-
-    def normalize_text(value: Any) -> str:
-        return " ".join(str(value or "").lower().strip().split())
 
     def contains_match(expected: str, actual: str) -> bool:
         return normalize_text(expected) in normalize_text(actual)
@@ -157,19 +169,8 @@ def check_text_points(result: str, rules: Dict[str, Any]) -> float:
     ordered = rules.get("ordered", False)
     line_based = rules.get("line_based", False)
 
-    import unicodedata
-
-    def normalize_text(value: Any) -> str:
-        text = unicodedata.normalize("NFKC", str(value or ""))
-        text = (text.replace("\u2018", "'").replace("\u2019", "'")
-                    .replace("\u201c", '"').replace("\u201d", '"')
-                    .replace("\u2013", "-").replace("\u2014", "-")
-                    .replace("\u2212", "-"))
-        text = " ".join(text.split())
-        return text.casefold() if ignore_case else text
-
     def literal_span(actual: str, variant: Any):
-        needle = normalize_text(variant)
+        needle = normalize_text(variant, ignore_case=ignore_case)
         if not needle:
             return None
         if re.fullmatch(r"[+-]?(?:\d+(?:\.\d+)?|\.\d+)", needle):
@@ -234,7 +235,11 @@ def check_text_points(result: str, rules: Dict[str, Any]) -> float:
         return min(x[0] for x in spans), max(x[1] for x in spans)
 
     if line_based:
-        lines = [normalize_text(line) for line in str(result).splitlines() if normalize_text(line)]
+        lines = [
+            normalize_text(line, ignore_case=ignore_case)
+            for line in str(result).splitlines()
+            if normalize_text(line, ignore_case=ignore_case)
+        ]
         matched = 0
         next_line = 0
         used = set()
@@ -254,7 +259,7 @@ def check_text_points(result: str, rules: Dict[str, Any]) -> float:
                     next_line = found + 1
         return matched / len(points)
 
-    actual = normalize_text(result)
+    actual = normalize_text(result, ignore_case=ignore_case)
     matched = 0
     previous_end = 0
     for point in points:
@@ -282,13 +287,18 @@ def diff_text_file(result: str, expect: str) -> float:
         result_lines: List[str] = f.read().splitlines()
     with open(expect) as f:
         expected_lines: List[str] = f.read().splitlines()
+    result_lines = [normalize_text(line, ignore_case=False) for line in result_lines]
+    expected_lines = [normalize_text(line, ignore_case=False) for line in expected_lines]
     return difflib.SequenceMatcher(a=result_lines, b=expected_lines).ratio()
 
 
 def fuzzy_match(result, rules) -> float:
     expect = rules["expected"]
-
-    return fuzz.ratio(result, expect) / 100.
+    ignore_case = rules.get("ignore_case", False)
+    return fuzz.ratio(
+        normalize_text(result, ignore_case=ignore_case),
+        normalize_text(expect, ignore_case=ignore_case),
+    ) / 100.
 
 
 def fuzzy_place_math(result_file_path, rules) -> float:
@@ -304,7 +314,7 @@ def fuzzy_place_math(result_file_path, rules) -> float:
     for word in words_list:
         max_score = 0
         for ans in expect:
-            score = fuzz.ratio(word, ans) / 100
+            score = fuzz.ratio(normalize_text(word), normalize_text(ans)) / 100
             max_score = max(max_score, score)
         fuzzy_score_list.append(max_score)
     if len(fuzzy_score_list) != 3:
@@ -546,10 +556,16 @@ def check_accessibility_tree(result: str, rules: List[Dict[str, Any]]) -> float:
             return 0.
 
         if "text" in r:
-            match_func: Callable[[str], Number] = functools.partial(operator.eq if r["exact"] \
-                                                                        else (lambda a, b: fuzz.ratio(a, b) / 100.)
-                                                                    , r["text"]
-                                                                    )
+            expected_text = normalize_text(r["text"], ignore_case=r.get("ignore_case", False))
+            if r["exact"]:
+                match_func: Callable[[str], Number] = lambda actual: float(
+                    normalize_text(actual, ignore_case=r.get("ignore_case", False)) == expected_text
+                )
+            else:
+                match_func = lambda actual: fuzz.ratio(
+                    normalize_text(actual, ignore_case=r.get("ignore_case", False)),
+                    expected_text,
+                ) / 100.
             match_score: Number = 0
             for elm in elements:
                 match_score = max(match_score, match_func(elm.text or None))
@@ -731,7 +747,7 @@ def is_gold_text_included_in_pdf(pdf_file_path, gold_text_path):
             text += page.extract_text()
     false_list = []
     for key in gold_json.keys():
-        if gold_json[key] not in text:
+        if normalize_text(gold_json[key]) not in normalize_text(text):
             false_list.append(key)
     if len(false_list) > 0:
         print("false_list: ")
@@ -749,7 +765,7 @@ def file_contains(file_path, config):
         with open(file_path, 'r') as f:
             file_text = f.read()
         for text in config["expected"]:
-            if text not in file_text:
+            if normalize_text(text) not in normalize_text(file_text):
                 logger.debug(f"file_contains: {text} not found in {file_path}")
                 return 0.
     except:

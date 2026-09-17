@@ -18,6 +18,8 @@ from rapidfuzz import fuzz
 from skimage.color import deltaE_ciede2000
 from skimage.color import rgb2lab
 
+from .general import normalize_text
+
 logger = logging.getLogger("desktopenv.metric.docs")
 
 
@@ -127,19 +129,15 @@ def compare_docx_files(file1, file2, **options):
 
     if content_only:
         # Compare the content of the documents
-        text1 = re.sub(r'\s+', ' ', '\n'.join(doc1_paragraphs)).strip()
-        text2 = re.sub(r'\s+', ' ', '\n'.join(doc2_paragraphs)).strip()
-        if ignore_case:
-            text1, text2 = text1.lower(), text2.lower()
+        text1 = normalize_text('\n'.join(doc1_paragraphs), ignore_case=ignore_case)
+        text2 = normalize_text('\n'.join(doc2_paragraphs), ignore_case=ignore_case)
         similarity = fuzz.ratio(text1, text2) / 100.0
         return similarity
 
     # Process and compare documents
     if ignore_blanks:
-        text1 = re.sub(r'\s+', ' ', '\n'.join(doc1_paragraphs)).strip()
-        text2 = re.sub(r'\s+', ' ', '\n'.join(doc2_paragraphs)).strip()
-        if ignore_case:
-            text1, text2 = text1.lower(), text2.lower()
+        text1 = normalize_text('\n'.join(doc1_paragraphs), ignore_case=ignore_case)
+        text2 = normalize_text('\n'.join(doc2_paragraphs), ignore_case=ignore_case)
         if text1 != text2:
             return 0
     else:
@@ -153,8 +151,8 @@ def compare_docx_files(file1, file2, **options):
         print("in compare")
         # Compare each paragraph
         for p1, p2 in zip(doc1_paragraphs, doc2_paragraphs):
-            if ignore_case:
-                p1, p2 = p1.lower(), p2.lower()
+            p1 = normalize_text(p1, ignore_case=ignore_case)
+            p2 = normalize_text(p2, ignore_case=ignore_case)
             if p1 != p2:
                 print(p1)
                 print(p2)
@@ -214,7 +212,7 @@ def compare_docx_tables(docx_file1, docx_file2):
         # Compare each cell
         for i in range(len(table1.rows)):
             for j in range(len(table1.columns)):
-                if table1.cell(i, j).text.strip() != table2.cell(i, j).text.strip():
+                if normalize_text(table1.cell(i, j).text, ignore_case=False) != normalize_text(table2.cell(i, j).text, ignore_case=False):
                     return 0
 
     return 1
@@ -256,7 +254,7 @@ def compare_image_text(image_path, rule):
     result = reader.readtext(image_path)
     extracted_text = ' '.join([entry[1] for entry in result])
     if rule['type'] == 'text':
-        return 1 if rule['text'] in extracted_text else 0
+        return 1 if normalize_text(rule['text']) in normalize_text(extracted_text) else 0
     else:
         raise ValueError("Unsupported rule type")
 
@@ -869,7 +867,7 @@ def compare_references(file1, file2, **options):
     total_similarity = 0
     for r1, r2 in zip(ref1, ref2):
         # fuzzy match the references
-        similarity = fuzz.ratio(r1, r2) / 100.0
+        similarity = fuzz.ratio(normalize_text(r1), normalize_text(r2)) / 100.0
         total_similarity += similarity
 
     result = total_similarity / len(ref1)

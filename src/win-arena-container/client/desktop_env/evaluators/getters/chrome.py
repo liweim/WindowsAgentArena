@@ -43,6 +43,47 @@ WARNING:
 """
 
 
+def _get_windows_chrome_paths(env, *relative_parts: str) -> List[str]:
+    """Return existing Chrome profile paths, newest first.
+
+    WinArena installs Chrome for Testing, while some CDP tasks use an explicit
+    temporary user-data directory. Keep ordinary Chrome in the candidates for
+    compatibility with older images.
+    """
+    script = f"""
+import glob
+import json
+import os
+
+relative_parts = {relative_parts!r}
+local_app_data = os.environ.get("LOCALAPPDATA", "")
+user_data_dirs = glob.glob(os.path.join(local_app_data, "Google", "Chrome*", "User Data"))
+user_data_dirs.extend([
+    r"C:\\Temp\\winarena-chrome-user-data",
+    r"C:\\Temp\\winarena-chrome-debug",
+])
+paths = [os.path.join(root, *relative_parts) for root in dict.fromkeys(user_data_dirs)]
+existing = [path for path in paths if os.path.exists(path)]
+existing.sort(key=os.path.getmtime, reverse=True)
+if not existing:
+    existing = [os.path.join(
+        local_app_data, "Google", "Chrome for Testing", "User Data", *relative_parts
+    )]
+print(json.dumps(existing))
+"""
+    response = env.controller.execute_python_command(script)
+    try:
+        return json.loads(response["output"].strip())
+    except (KeyError, TypeError, json.JSONDecodeError) as exc:
+        logger.error("Failed to discover Windows Chrome profile paths: %s", exc)
+        return []
+
+
+def _get_windows_chrome_path(env, *relative_parts: str) -> str:
+    paths = _get_windows_chrome_paths(env, *relative_parts)
+    return paths[0] if paths else ""
+
+
 def get_info_from_website(env, config: Dict[Any, Any]) -> Any:
     """ Get information from a website. Especially useful when the information may be updated through time.
     Args:
@@ -124,9 +165,7 @@ def get_info_from_website(env, config: Dict[Any, Any]) -> Any:
 def get_default_search_engine(env, config: Dict[str, str]):
     os_type = env.vm_platform
     if os_type == 'Windows':
-        preference_file_path = env.controller.execute_python_command(
-            "import os; print(os.path.join(os.getenv('LOCALAPPDATA'), 'Google/Chrome/User Data/Default/Preferences'))"
-        )['output'].strip()
+        preference_file_path = _get_windows_chrome_path(env, 'Default', 'Preferences')
     elif os_type == 'Darwin':
         preference_file_path = env.controller.execute_python_command(
             "import os; print(os.path.join(os.getenv('HOME'), 'Library/Application Support/Google/Chrome/Default/Preferences'))")[
@@ -182,9 +221,7 @@ def get_cookie_data(env, config: Dict[str, str]):
         )['output'].strip()
     else:
         if os_type == 'Windows':
-            chrome_cookie_file_path = env.controller.execute_python_command(
-                "import os; print(os.path.join(os.getenv('LOCALAPPDATA'), 'Google/Chrome/User Data/Default/Network/Cookies'))"
-            )['output'].strip()
+            chrome_cookie_file_path = _get_windows_chrome_path(env, 'Default', 'Network', 'Cookies')
         elif os_type == 'Darwin':
             chrome_cookie_file_path = env.controller.execute_python_command(
                 "import os; print(os.path.join(os.getenv('HOME'), 'Library/Application Support/Google/Chrome/Default/Cookies'))")[
@@ -221,9 +258,7 @@ def get_cookie_data(env, config: Dict[str, str]):
 def get_history(env, config: Dict[str, str]):
     os_type = env.vm_platform
     if os_type == 'Windows':
-        chrome_history_path = env.controller.execute_python_command(
-            """import os; print(os.path.join(os.getenv('USERPROFILE'), "AppData", "Local", "Google", "Chrome", "User Data", "Default", "History"))""")[
-            'output'].strip()
+        chrome_history_path = _get_windows_chrome_path(env, 'Default', 'History')
     elif os_type == 'Darwin':
         chrome_history_path = env.controller.execute_python_command(
             """import os; print(os.path.join(os.getenv('HOME'), "Library", "Application Support", "Google", "Chrome", "Default", "History"))""")[
@@ -260,9 +295,7 @@ def get_history(env, config: Dict[str, str]):
 def get_enabled_experiments(env, config: Dict[str, str]):
     os_type = env.vm_platform
     if os_type == 'Windows':
-        preference_file_path = env.controller.execute_python_command(
-            "import os; print(os.path.join(os.getenv('LOCALAPPDATA'), 'Google/Chrome/User Data/Local State'))"
-        )['output'].strip()
+        preference_file_path = _get_windows_chrome_path(env, 'Local State')
     elif os_type == 'Darwin':
         preference_file_path = env.controller.execute_python_command(
             "import os; print(os.path.join(os.getenv('HOME'), 'Library/Application Support/Google/Chrome/Local State'))")[
@@ -296,9 +329,7 @@ def get_profile_name(env, config: Dict[str, str]):
     """
     os_type = env.vm_platform
     if os_type == 'Windows':
-        preference_file_path = env.controller.execute_python_command(
-            "import os; print(os.path.join(os.getenv('LOCALAPPDATA'), 'Google/Chrome/User Data/Default/Preferences'))"
-        )['output'].strip()
+        preference_file_path = _get_windows_chrome_path(env, 'Default', 'Preferences')
     elif os_type == 'Darwin':
         preference_file_path = env.controller.execute_python_command(
             "import os; print(os.path.join(os.getenv('HOME'), 'Library/Application Support/Google/Chrome/Default/Preferences'))")[
@@ -328,9 +359,7 @@ def get_profile_name(env, config: Dict[str, str]):
 def get_chrome_language(env, config: Dict[str, str]):
     os_type = env.vm_platform
     if os_type == 'Windows':
-        preference_file_path = env.controller.execute_python_command(
-            "import os; print(os.path.join(os.getenv('LOCALAPPDATA'), 'Google/Chrome/User Data/Local State'))"
-        )['output'].strip()
+        preference_file_path = _get_windows_chrome_path(env, 'Local State')
     elif os_type == 'Darwin':
         preference_file_path = env.controller.execute_python_command(
             "import os; print(os.path.join(os.getenv('HOME'), 'Library/Application Support/Google/Chrome/Local State'))")[
@@ -360,9 +389,7 @@ def get_chrome_language(env, config: Dict[str, str]):
 def get_chrome_font_size(env, config: Dict[str, str]):
     os_type = env.vm_platform
     if os_type == 'Windows':
-        preference_file_path = env.controller.execute_python_command(
-            "import os; print(os.path.join(os.getenv('LOCALAPPDATA'), 'Google/Chrome/User Data/Default/Preferences'))"
-        )['output'].strip()
+        preference_file_path = _get_windows_chrome_path(env, 'Default', 'Preferences')
     elif os_type == 'Darwin':
         preference_file_path = env.controller.execute_python_command(
             "import os; print(os.path.join(os.getenv('HOME'), 'Library/Application Support/Google/Chrome/Default/Preferences'))")[
@@ -399,10 +426,7 @@ def get_chrome_font_size(env, config: Dict[str, str]):
 def get_bookmarks(env, config: Dict[str, str]):
     os_type = env.vm_platform
     if os_type == 'Windows':
-        preference_file_path = env.controller.execute_python_command(
-            "import os; print(os.path.join(os.getenv('LOCALAPPDATA'), 'Google/Chrome/User Data/Default/Bookmarks'))"
-            # "import os; print(os.path.join(os.getenv('LOCALAPPDATA'), 'Google', 'Chrome', 'User Data', 'Default', 'Bookmarks'))"
-        )['output'].strip()
+        preference_file_path = _get_windows_chrome_path(env, 'Default', 'Bookmarks')
     elif os_type == 'Darwin':
         preference_file_path = env.controller.execute_python_command(
             "import os; print(os.path.join(os.getenv('HOME'), 'Library/Application Support/Google/Chrome/Default/Bookmarks'))")[
@@ -430,9 +454,7 @@ def get_extensions_installed_from_shop(env, config: Dict[str, str]):
     """Find the Chrome extensions directory based on the operating system."""
     os_type = env.vm_platform
     if os_type == 'Windows':
-        chrome_extension_dir = env.controller.execute_python_command(
-            "import os; print(os.path.join(os.getenv('LOCALAPPDATA'), 'Google/Chrome/User Data/Default/Extensions/'))"
-        )['output'].strip()
+        chrome_extension_dir = _get_windows_chrome_path(env, 'Default', 'Extensions')
     elif os_type == 'Darwin':  # macOS
         chrome_extension_dir = env.controller.execute_python_command(
             """os.path.expanduser('~') + '/Library/Application Support/Google/Chrome/Default/Extensions/'""")[
@@ -1190,9 +1212,7 @@ def get_googledrive_file(env, config: Dict[str, Any]) -> str:
 def get_enable_do_not_track(env, config: Dict[str, str]):
     os_type = env.vm_platform
     if os_type == 'Windows':
-        preference_file_path = env.controller.execute_python_command(
-            "import os; print(os.path.join(os.getenv('LOCALAPPDATA'), 'Google/Chrome/User Data/Default/Preferences'))"
-        )['output'].strip()
+        preference_file_path = _get_windows_chrome_path(env, 'Default', 'Preferences')
     elif os_type == 'Darwin':
         preference_file_path = env.controller.execute_python_command(
             "import os; print(os.path.join(os.getenv('HOME'), 'Library/Application Support/Google/Chrome/Default/Preferences'))")[
@@ -1224,12 +1244,7 @@ def get_enable_do_not_track(env, config: Dict[str, str]):
 def get_live_caption_enabled(env, config: Dict[str, str]):
     os_type = env.vm_platform
     if os_type == 'Windows':
-        preference_file_paths = [
-            env.controller.execute_python_command(
-                "import os; print(os.path.join(os.getenv('LOCALAPPDATA'), 'Google/Chrome/User Data/Default/Preferences'))"
-            )['output'].strip(),
-            "C:\\Temp\\winarena-chrome-debug\\Default\\Preferences",
-        ]
+        preference_file_paths = _get_windows_chrome_paths(env, 'Default', 'Preferences')
     elif os_type == 'Darwin':
         preference_file_paths = [
             env.controller.execute_python_command(
@@ -1267,18 +1282,8 @@ def get_live_caption_enabled(env, config: Dict[str, str]):
 def get_live_caption_languages(env, config: Dict[str, str]):
     os_type = env.vm_platform
     if os_type == 'Windows':
-        state_file_paths = [
-            env.controller.execute_python_command(
-                "import os; print(os.path.join(os.getenv('LOCALAPPDATA'), 'Google/Chrome/User Data/Local State'))"
-            )['output'].strip(),
-            "C:\\Temp\\winarena-chrome-debug\\Local State",
-        ]
-        preference_file_paths = [
-            env.controller.execute_python_command(
-                "import os; print(os.path.join(os.getenv('LOCALAPPDATA'), 'Google/Chrome/User Data/Default/Preferences'))"
-            )['output'].strip(),
-            "C:\\Temp\\winarena-chrome-debug\\Default\\Preferences",
-        ]
+        state_file_paths = _get_windows_chrome_paths(env, 'Local State')
+        preference_file_paths = _get_windows_chrome_paths(env, 'Default', 'Preferences')
     elif os_type == 'Darwin':
         state_file_paths = [
             env.controller.execute_python_command(
@@ -1339,9 +1344,7 @@ def get_live_caption_languages(env, config: Dict[str, str]):
 def get_enable_enhanced_safety_browsing(env, config: Dict[str, str]):
     os_type = env.vm_platform
     if os_type == 'Windows':
-        preference_file_path = env.controller.execute_python_command(
-            "import os; print(os.path.join(os.getenv('LOCALAPPDATA'), 'Google/Chrome/User Data/Default/Preferences'))"
-        )['output'].strip()
+        preference_file_path = _get_windows_chrome_path(env, 'Default', 'Preferences')
     elif os_type == 'Darwin':
         preference_file_path = env.controller.execute_python_command(
             "import os; print(os.path.join(os.getenv('HOME'), 'Library/Application Support/Google/Chrome/Default/Preferences'))")[
@@ -1373,9 +1376,7 @@ def get_enable_enhanced_safety_browsing(env, config: Dict[str, str]):
 def get_new_startup_page(env, config: Dict[str, str]):
     os_type = env.vm_platform
     if os_type == 'Windows':
-        preference_file_path = env.controller.execute_python_command(
-            "import os; print(os.path.join(os.getenv('LOCALAPPDATA'), 'Google/Chrome/User Data/Default/Preferences'))"
-        )['output'].strip()
+        preference_file_path = _get_windows_chrome_path(env, 'Default', 'Preferences')
     elif os_type == 'Darwin':
         preference_file_path = env.controller.execute_python_command(
             "import os; print(os.path.join(os.getenv('HOME'), 'Library/Application Support/Google/Chrome/Default/Preferences'))")[
@@ -1412,9 +1413,7 @@ def get_new_startup_page(env, config: Dict[str, str]):
 def get_find_unpacked_extension_path(env, config: Dict[str, str]):
     os_type = env.vm_platform
     if os_type == 'Windows':
-        preference_file_path = env.controller.execute_python_command(
-            "import os; print(os.path.join(os.getenv('LOCALAPPDATA'), 'Google/Chrome/User Data/Default/Preferences'))"
-        )['output'].strip()
+        preference_file_path = _get_windows_chrome_path(env, 'Default', 'Preferences')
     elif os_type == 'Darwin':
         preference_file_path = env.controller.execute_python_command(
             "import os; print(os.path.join(os.getenv('HOME'), 'Library/Application Support/Google/Chrome/Default/Preferences'))")[
@@ -1450,9 +1449,7 @@ def get_find_unpacked_extension_path(env, config: Dict[str, str]):
 def get_find_installed_extension_name(env, config: Dict[str, str]):
     os_type = env.vm_platform
     if os_type == 'Windows':
-        preference_file_path = env.controller.execute_python_command(
-            "import os; print(os.path.join(os.getenv('LOCALAPPDATA'), 'Google/Chrome/User Data/Default/Preferences'))"
-        )['output'].strip()
+        preference_file_path = _get_windows_chrome_path(env, 'Default', 'Preferences')
     elif os_type == 'Darwin':
         preference_file_path = env.controller.execute_python_command(
             "import os; print(os.path.join(os.getenv('HOME'), 'Library/Application Support/Google/Chrome/Default/Preferences'))")[
@@ -1480,19 +1477,11 @@ def get_find_installed_extension_name(env, config: Dict[str, str]):
             name = all_extensions[id]["manifest"]["name"]
             all_extensions_name.append(name)
         if os_type == 'Windows':
-            script = r"""
+            extension_dirs = _get_windows_chrome_paths(env, 'Default', 'Extensions')
+            script = "extensions_dirs = " + repr(extension_dirs) + r"""
 import json
 import os
 import re
-
-extensions_dir = os.path.join(
-    os.getenv("LOCALAPPDATA"),
-    "Google",
-    "Chrome",
-    "User Data",
-    "Default",
-    "Extensions",
-)
 
 def resolve_message(root, manifest, value):
     if not isinstance(value, str):
@@ -1512,24 +1501,25 @@ def resolve_message(root, manifest, value):
         return value
 
 names = []
-if os.path.isdir(extensions_dir):
-    for extension_id in os.listdir(extensions_dir):
-        extension_path = os.path.join(extensions_dir, extension_id)
-        if not os.path.isdir(extension_path):
-            continue
-        for version_dir in os.listdir(extension_path):
-            version_path = os.path.join(extension_path, version_dir)
-            manifest_path = os.path.join(version_path, "manifest.json")
-            if not os.path.isfile(manifest_path):
+for extensions_dir in extensions_dirs:
+    if os.path.isdir(extensions_dir):
+        for extension_id in os.listdir(extensions_dir):
+            extension_path = os.path.join(extensions_dir, extension_id)
+            if not os.path.isdir(extension_path):
                 continue
-            try:
-                with open(manifest_path, encoding="utf-8") as file:
-                    manifest = json.load(file)
-                name = resolve_message(version_path, manifest, manifest.get("name"))
-                if name:
-                    names.append(name)
-            except Exception:
-                pass
+            for version_dir in os.listdir(extension_path):
+                version_path = os.path.join(extension_path, version_dir)
+                manifest_path = os.path.join(version_path, "manifest.json")
+                if not os.path.isfile(manifest_path):
+                    continue
+                try:
+                    with open(manifest_path, encoding="utf-8") as file:
+                        manifest = json.load(file)
+                    name = resolve_message(version_path, manifest, manifest.get("name"))
+                    if name:
+                        names.append(name)
+                except Exception:
+                    pass
 print(json.dumps(names))
 """
             response = env.controller.execute_python_command(script)
@@ -1550,9 +1540,7 @@ def get_data_delete_automacally(env, config: Dict[str, str]):
     """
     os_type = env.vm_platform
     if os_type == 'Windows':
-        preference_file_path = env.controller.execute_python_command(
-            "import os; print(os.path.join(os.getenv('LOCALAPPDATA'), 'Google/Chrome/User Data/Default/Preferences'))"
-        )['output'].strip()
+        preference_file_path = _get_windows_chrome_path(env, 'Default', 'Preferences')
     elif os_type == 'Darwin':
         preference_file_path = env.controller.execute_python_command(
             "import os; print(os.path.join(os.getenv('HOME'), 'Library/Application Support/Google/Chrome/Default/Preferences'))")[
@@ -1890,10 +1878,7 @@ def get_chrome_page_zoom_from_preferences(env, config):
 
     os_type = env.vm_platform
     if os_type == "Windows":
-        preference_file_path = env.controller.execute_python_command(
-            "import os; print(os.path.join(os.getenv('LOCALAPPDATA'), "
-            "'Google/Chrome/User Data/Default/Preferences'))"
-        )["output"].strip()
+        preference_file_path = _get_windows_chrome_path(env, 'Default', 'Preferences')
     elif os_type == "Darwin":
         preference_file_path = env.controller.execute_python_command(
             "import os; print(os.path.join(os.getenv('HOME'), "

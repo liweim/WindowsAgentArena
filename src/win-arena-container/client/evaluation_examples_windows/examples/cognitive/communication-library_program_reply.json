@@ -1,14 +1,16 @@
 {
   "id": "communication-library_program_reply",
   "user_group": "cognitive",
-  "subgroup_ids": ["C-S2", "C-S3"],
+  "subgroup_ids": [
+    "C-S3"
+  ],
   "category": "communication",
   "need_ids": [
-    "C3",
-    "C5"
+    "C3"
   ],
-  "difficulty": "medium",
-  "instruction": "Use the library program notice on the Desktop to choose the memory-support workshop that is on Thursday and starts after 1:00 PM. Draft a Thunderbird email to `programs@example.org` with subject `Workshop confirmation` confirming one place and including the selected event date, time, room, and confirmation code. Do not send it.",
+  "difficulty": "hard",
+  "operation_time": 260.67,
+  "instruction": "Use the library program notice on the Desktop to choose the memory-support workshop that is on Thursday. Draft a Thunderbird email to `programs@example.org` with subject `Workshop confirmation` confirming one place and including the selected event date, time, room, and confirmation code. Do not send it. Also add the selected workshop to the Thunderbird calendar as a persistent reminder titled `Memory-support workshop`, using the workshop start and end time. Set the library and room as the event location and put the confirmation code in the event description.",
   "source": "synthetic",
   "gt_steps": [
     "Switch to the open `LibraryProgram.txt` Notepad window.",
@@ -17,7 +19,9 @@
     "Set To to `programs@example.org`.",
     "Set Subject to `Workshop confirmation`.",
     "Enter the following message body:\n`Please confirm one place for the memory-support workshop on Thursday, 24 September 2026 from 1:30 PM to 2:30 PM in Riverside Library, Meeting Room 2. Code: MEM-42.`",
-    "Save the message as a draft without sending it."
+    "Save the message as a draft without sending it.",
+    "Create a Thunderbird calendar event on 24 September 2026 from 1:30 PM to 2:30 PM titled `Memory-support workshop`.",
+    "Set the calendar event location to `Riverside Library, Meeting Room 2` and the description to `Code: MEM-42`."
   ],
   "config": [
     {
@@ -71,45 +75,81 @@
     "thunderbird"
   ],
   "evaluator": {
-    "func": "check_thunderbird_email_composition",
-    "result": {
-      "type": "vm_file",
-      "path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release\\Mail\\Local Folders\\Drafts",
-      "dest": "thunderbird-drafts.mbox"
-    },
-    "expected": {
-      "type": "rule",
-      "rules": {
-        "to": "programs@example.org",
-        "subject": "Workshop confirmation",
-        "body_points": [
-          [
-            "confirm"
-          ],
-          [
-            "24 September 2026",
-            "September 24, 2026"
-          ],
-          [
-            "1:30 PM",
-            "1:30"
-          ],
-          [
-            "2:30 PM",
-            "2:30"
-          ],
-          [
-            "Riverside Library"
-          ],
-          [
-            "Meeting Room 2"
-          ],
-          [
-            "MEM-42",
-            "MEM 42"
-          ]
-        ]
+    "func": [
+      "check_thunderbird_email_composition",
+      "check_thunderbird_calendar_event"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "vm_file",
+        "path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release\\Mail\\Local Folders\\Drafts",
+        "dest": "thunderbird-drafts.mbox"
+      },
+      {
+        "type": "thunderbird_calendar_events",
+        "profile_path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release"
       }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "to": "programs@example.org",
+          "subject": "Workshop confirmation",
+          "body_points": [
+            [
+              "confirm"
+            ],
+            [
+              "24 September 2026",
+              "September 24, 2026"
+            ],
+            [
+              "1:30 PM",
+              "1:30"
+            ],
+            [
+              "2:30 PM",
+              "2:30"
+            ],
+            [
+              "Riverside Library"
+            ],
+            [
+              "Meeting Room 2"
+            ],
+            [
+              "MEM-42",
+              "MEM 42"
+            ]
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "date": "2026-09-24",
+          "hour": 13,
+          "minute": 30,
+          "duration_minutes": 60,
+          "title": "Memory-support workshop",
+          "location": "Riverside Library, Meeting Room 2",
+          "description_points": [
+            [
+              "MEM-42"
+            ]
+          ]
+        }
+      }
+    ],
+    "metric_roles": {
+      "task_outcome": [
+        0
+      ],
+      "access_requirement": [
+        1
+      ]
     }
   },
   "proxy": true,

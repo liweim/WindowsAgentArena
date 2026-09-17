@@ -9,11 +9,12 @@
     "H1"
   ],
   "difficulty": "hard",
-  "instruction": "Turn on captions in the opened YouTube video, identify each emergency preparedness item and household consideration mentioned in the captions, then record them in a Sticky Note.",
+  "operation_time": 0,
+  "instruction": "Turn on captions in the opened YouTube video and create a complete emergency-kit checklist in a Sticky Note. Include every basic supply named in the video and every additional item it names for babies or children, pets, and household medications.",
   "source": "https://www.youtube.com/watch?v=o4enqHGluLI",
   "gt_steps": [
     "Turn on captions in the YouTube player.",
-    "Play the video and use the YouTube captions to identify each emergency preparedness item and household consideration mentioned there.",
+    "Play the video and use the YouTube captions to identify every item in the requested basic-supply, child, pet, and medication categories.",
     "Switch to Sticky Notes.",
     "Write the items and considerations in a sticky note: `water`, `food`, `manual can opener`, `flashlight`, `extra batteries`, `weather radio`, `hand-cranked radio`, `first aid kit`, `diapers`, `infant formula`, `medicine bottles`, `children`, `pets`, `extra food`, `collapsible bowls`, `medicine`, `prescriptions`, `over-the-counter medications`."
   ],
@@ -155,7 +156,15 @@
           "expected": "true"
         }
       }
-    ]
+    ],
+    "metric_roles": {
+      "task_outcome": [
+        0
+      ],
+      "access_requirement": [
+        1
+      ]
+    }
   },
   "proxy": true
 }

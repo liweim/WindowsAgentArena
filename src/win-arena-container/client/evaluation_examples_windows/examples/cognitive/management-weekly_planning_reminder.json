@@ -1,5 +1,5 @@
 {
-  "id": "management-prescription_refill_reminder",
+  "id": "management-weekly_planning_reminder",
   "user_group": "cognitive",
   "subgroup_ids": [
     "C-S3"
@@ -8,18 +8,14 @@
   "need_ids": [
     "C3"
   ],
-  "difficulty": "medium",
+  "difficulty": "easy",
   "operation_time": 0,
-  "instruction": "Create an all-day Thunderbird Calendar reminder titled `Refill medication` for the refill deadline in the pharmacy message on the Desktop.",
+  "instruction": "Create a recurring Thunderbird Calendar event titled `Weekly planning review` starting Monday, September 21, 2026 at 8:00 AM for 30 minutes and repeating weekly. Put `Review calendar`, `Review reminders`, and `Check email` in the event description.",
   "source": "synthetic",
   "gt_steps": [
-    "Open `pharmacy_message.txt` on the Desktop.",
-    "Read the refill deadline `July 20, 2026`.",
-    "Open Thunderbird Calendar.",
-    "Enable the `Home` calendar if it is disabled.",
-    "Create a new all-day event on `July 20, 2026`.",
-    "Set the event title to `Refill medication`.",
-    "Save the calendar event."
+    "Create a Thunderbird calendar event on September 21, 2026 at 8:00 AM for 30 minutes titled `Weekly planning review`.",
+    "Add `Review calendar`, `Review reminders`, and `Check email` to the event description.",
+    "Set the event to repeat weekly and save it."
   ],
   "config": [
     {
@@ -38,13 +34,6 @@
       "parameters": {}
     },
     {
-      "type": "execute",
-      "parameters": {
-        "command": "powershell -NoProfile -Command \"Set-Content -Path (Join-Path $env:USERPROFILE 'Desktop\\pharmacy_message.txt') -Value 'Pharmacy message: Please refill this medication by July 20, 2026.'\"",
-        "shell": true
-      }
-    },
-    {
       "type": "launch",
       "parameters": {
         "command": [
@@ -56,7 +45,6 @@
     }
   ],
   "related_apps": [
-    "notepad",
     "thunderbird"
   ],
   "evaluator": {
@@ -68,11 +56,23 @@
     "expected": {
       "type": "rule",
       "rules": {
-        "hour": 0,
+        "date": "2026-09-21",
+        "hour": 8,
         "minute": 0,
-        "duration_minutes": 1440,
-        "title": "Refill medication",
-        "date": "2026-07-20"
+        "duration_minutes": 30,
+        "title": "Weekly planning review",
+        "body_points": [
+          [
+            "Review calendar"
+          ],
+          [
+            "Review reminders"
+          ],
+          [
+            "Check email"
+          ]
+        ],
+        "recurrence": "WEEKLY"
       }
     },
     "metric_roles": {
@@ -84,6 +84,6 @@
       ]
     }
   },
-  "proxy": true,
+  "proxy": false,
   "possibility_of_env_change": "low"
 }

@@ -10,6 +10,7 @@
     "H1"
   ],
   "difficulty": "easy",
+  "operation_time": 0,
   "instruction": "Turn on Live Caption in Chrome.",
   "source": "synthetic",
   "gt_steps": [
@@ -51,6 +52,14 @@
       "rules": {
         "expected": "true"
       }
+    },
+    "metric_roles": {
+      "task_outcome": [
+        0
+      ],
+      "access_requirement": [
+        0
+      ]
     }
   },
   "proxy": false

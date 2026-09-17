@@ -10,6 +10,7 @@
     "H1"
   ],
   "difficulty": "medium",
+  "operation_time": 0,
   "instruction": "Use Chrome Live Caption to identify the application deadline and the two required documents in the reimbursement audio, then compose a new Thunderbird email to hr@company.com with subject `Equipment Reimbursement Request` and include those three details in the body. Do not send it.",
   "source": "synthetic",
   "transcript": "Hello everyone, this is HR with a quick update on the WFH hardware reimbursement policy for this quarter. To claim your 500-dollar allowance for home office setups, you must submit your formal request via email. There are two required documents you need to attach. First is the original merchant receipt, and the second one is your home internet bill from the same month. Please note, the strict deadline for this quarter's application is October 15th, 2026. Any submissions after October 15th will be automatically rejected. Thank you.",
@@ -144,7 +145,15 @@
           "expected": "true"
         }
       }
-    ]
+    ],
+    "metric_roles": {
+      "task_outcome": [
+        0
+      ],
+      "access_requirement": [
+        1
+      ]
+    }
   },
   "proxy": true,
   "possibility_of_env_change": "low"

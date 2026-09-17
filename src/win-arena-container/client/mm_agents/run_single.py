@@ -481,6 +481,17 @@ def run_single_example(
         ) as f:
             f.write(f"{result}\n")
 
+        evaluation = getattr(env, "last_evaluation", None) or {
+            "task_outcome": float(result),
+            "access_requirement": float(result),
+            "success_rate": float(result),
+            "requirement_relation": "coincident",
+        }
+        with open(
+            os.path.join(example_result_dir, "evaluation.json"), "w", encoding="utf-8"
+        ) as f:
+            json.dump(evaluation, f, indent=2, ensure_ascii=False)
+
         if args.record:
             env.controller.end_recording(
                 os.path.join(example_result_dir, "recording.mp4")
@@ -547,5 +558,24 @@ def run_single_example(
             os.path.join(example_result_dir, "result.txt"), "w", encoding="utf-8"
         ) as f:
             f.write("0.0\n")
+
+        evaluator = getattr(env, "evaluator", {}) or {}
+        metric_roles = evaluator.get("metric_roles") or {}
+        task_indices = metric_roles.get("task_outcome")
+        access_indices = metric_roles.get("access_requirement")
+        requirement_relation = (
+            "distinct"
+            if task_indices is not None and access_indices is not None and task_indices != access_indices
+            else "coincident"
+        )
+        with open(
+            os.path.join(example_result_dir, "evaluation.json"), "w", encoding="utf-8"
+        ) as f:
+            json.dump({
+                "task_outcome": 0.0,
+                "access_requirement": 0.0,
+                "success_rate": 0.0,
+                "requirement_relation": requirement_relation,
+            }, f, indent=2, ensure_ascii=False)
 
         scores.append(0.0)

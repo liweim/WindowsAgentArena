@@ -1,37 +1,41 @@
 {
-  "id": "access-windows_notification_duration",
-  "manually_evaluated": false,
+  "id": "access-windows_text_size_125",
   "user_group": "cognitive",
   "subgroup_ids": [
-    "C-S3"
+    "C-S1"
   ],
   "category": "access",
   "need_ids": [
-    "C3"
+    "C1"
   ],
   "difficulty": "easy",
-  "operation_time": 57.06,
-  "instruction": "Set Windows notifications to stay on screen for 5 minutes.",
+  "operation_time": 34.10,
+  "instruction": "Set the Windows text size to 125%.",
   "source": "synthetic",
   "gt_steps": [
     "Open Windows Settings.",
-    "Open `Accessibility`.",
-    "Open `Visual effects`.",
-    "Set `Dismiss notifications after this amount of time` to `5 minutes`."
+    "Open Accessibility > Text size.",
+    "Set Text size to 125%.",
+    "Select Apply and leave the setting at 125%."
   ],
   "config": [],
   "related_apps": [
     "settings"
   ],
   "evaluator": {
-    "func": "exact_match",
+    "func": "check_include_exclude",
     "result": {
-      "type": "notification_duration"
+      "type": "vm_command_line",
+      "command": "reg query \"HKCU\\Software\\Microsoft\\Accessibility\" /v TextScaleFactor",
+      "shell": true
     },
     "expected": {
       "type": "rule",
       "rules": {
-        "expected": "5 minutes"
+        "include": [
+          "0x7d"
+        ],
+        "exclude": []
       }
     },
     "metric_roles": {

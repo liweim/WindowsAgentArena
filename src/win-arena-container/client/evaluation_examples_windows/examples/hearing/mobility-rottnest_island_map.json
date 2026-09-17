@@ -9,6 +9,7 @@
     "H1"
   ],
   "difficulty": "easy",
+  "operation_time": 0,
   "instruction": "Turn on captions in the opened YouTube video, identify the island shown there, then open its location in Google Maps.",
   "source": "https://www.youtube.com/watch?v=Js4BR1Qz0Hs",
   "gt_steps": [
@@ -87,7 +88,15 @@
           "expected": "true"
         }
       }
-    ]
+    ],
+    "metric_roles": {
+      "task_outcome": [
+        1
+      ],
+      "access_requirement": [
+        0
+      ]
+    }
   },
   "proxy": true
 }

@@ -1,7 +1,11 @@
 {
   "id": "health-doctor_appointment_preparation",
   "user_group": "cognitive",
-  "subgroup_ids": ["C-S1", "C-S2"],
+  "subgroup_ids": [
+    "C-S1",
+    "C-S2",
+    "C-S3"
+  ],
   "category": "health",
   "need_ids": [
     "C1",
@@ -9,23 +13,20 @@
     "C3"
   ],
   "difficulty": "hard",
-  "instruction": "Create a 2-hour Thunderbird Calendar event titled `Doctor appointment` for tomorrow at 9:00 AM. Use Immersive Reader to read the appointment-preparation article, and include the article's exact wording for the items to bring or prepare in the event description.",
+  "operation_time": 74.01,
+  "instruction": "Create a 2-hour Thunderbird Calendar event titled `Doctor appointment` for tomorrow at 9:00 AM. To help prepare for the appointment, use Immersive Reader to read the appointment-preparation article, then add a note to the event description stating, in the article's exact wording, which medicines and related health products should be included when completing paperwork at home.",
   "source": "https://apnews.com/article/3fcde5b5c927734429818bd0ed1c6680",
   "gt_steps": [
     "Open the appointment-preparation AP News article in Microsoft Edge.",
     "Activate Immersive Reader.",
-    "Locate the advice about preparing for a doctor appointment.",
+    "Find the article's advice about which medicines and related health products to include when filling out paperwork at home.",
     "Open Thunderbird Calendar.",
     "Enable the `Home` calendar if it is disabled.",
     "Determine tomorrow's date from the Windows system date.",
     "Create a new calendar event for tomorrow at `9:00 AM`.",
     "Set the event duration to `2 hours`.",
     "Set the event title to `Doctor appointment`.",
-    "Enter `Bring a list of symptoms and questions` in the event description.",
-    "Add `personal medical history` to the event description.",
-    "Add `family medical history is critical` to the event description.",
-    "Add `Include both prescription and over-the-counter medicines, pills or creams - and don't forget vitamins and supplements` to the event description.",
-    "Add `Fill out your paperwork ahead of the visit` to the event description.",
+    "Enter `Include both prescription and over-the-counter medicines, pills or creams — and don’t forget vitamins and supplements.` in the event description.",
     "Save the calendar event."
   ],
   "config": [
@@ -102,19 +103,7 @@
           "title": "Doctor appointment",
           "body_points": [
             [
-              "Bring a list of symptoms and questions"
-            ],
-            [
-              "personal medical history"
-            ],
-            [
-              "family medical history is critical"
-            ],
-            [
-              "Include both prescription and over-the-counter medicines, pills or creams - and don't forget vitamins and supplements"
-            ],
-            [
-              "Fill out your paperwork ahead of the visit"
+              "Include both prescription and over-the-counter medicines, pills or creams — and don’t forget vitamins and supplements."
             ]
           ]
         }
@@ -125,7 +114,16 @@
           "reader_mode_open": true
         }
       }
-    ]
+    ],
+    "metric_roles": {
+      "task_outcome": [
+        0
+      ],
+      "access_requirement": [
+        0,
+        1
+      ]
+    }
   },
   "proxy": true,
   "possibility_of_env_change": "low"

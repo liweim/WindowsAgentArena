@@ -9,6 +9,7 @@
     "H5"
   ],
   "difficulty": "easy",
+  "operation_time": 0,
   "instruction": "Complete the audio CAPTCHA verification in Microsoft Edge.",
   "source": "synthetic",
   "gt_steps": [
@@ -41,6 +42,14 @@
           "https?://host\\.docker\\.internal:8765/success\\?type=audio&seed=access-audio-002&session=access-captcha-audio"
         ]
       }
+    },
+    "metric_roles": {
+      "task_outcome": [
+        0
+      ],
+      "access_requirement": [
+        0
+      ]
     }
   },
   "proxy": false,

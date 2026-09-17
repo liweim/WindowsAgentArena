@@ -80,12 +80,21 @@ def run_single_example(agent, env, example, max_steps, instruction, args, exampl
         step_idx += 1
     
     logger.info("Running evaluator(s)...")
-    result = env.evaluate()
-    logger.info("Result: %.2f", result)
+    evaluation = env.evaluate(return_details=True)
+    result = evaluation["full_success"]
+    logger.info(
+        "Evaluation: TaskOutcome=%s AccessRequirement=%s FullSuccess=%.2f",
+        evaluation.get("task_outcome"),
+        evaluation.get("access_requirement"),
+        result,
+    )
     scores.append(result)
 
     with open(os.path.join(example_result_dir, "result.txt"), "w", encoding="utf-8") as f:
         f.write(f"{result}\n")
+    with open(os.path.join(example_result_dir, "evaluation.json"), "w", encoding="utf-8") as f:
+        json.dump(evaluation, f, indent=2, ensure_ascii=False)
+        f.write("\n")
     
     # Record final results
     recorder.record_end(result, start_time)

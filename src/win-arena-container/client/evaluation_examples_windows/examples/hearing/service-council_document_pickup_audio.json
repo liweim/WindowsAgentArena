@@ -9,6 +9,7 @@
     "H1"
   ],
   "difficulty": "medium",
+  "operation_time": 0,
   "instruction": "Turn on Windows Live captions and use them to read the council service recording on the Desktop. Save the pickup location, collection hours, item to bring, and reference number to `answer.txt`, one item per line.",
   "source": "synthetic",
   "transcript": "Council service update. Your parking permit documents are ready for pickup at the Civic Service Centre, counter 4. Collection hours are 9:00 AM to 4:30 PM. Bring photo ID. Reference number PS-482.",
@@ -146,7 +147,15 @@
           ]
         }
       }
-    ]
+    ],
+    "metric_roles": {
+      "task_outcome": [
+        1
+      ],
+      "access_requirement": [
+        0
+      ]
+    }
   },
   "proxy": false,
   "possibility_of_env_change": "low"

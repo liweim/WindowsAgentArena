@@ -10,6 +10,7 @@
     "H3"
   ],
   "difficulty": "easy",
+  "operation_time": 0,
   "instruction": "Set Windows notifications to stay visible for 5 minutes.",
   "source": "synthetic",
   "gt_steps": [
@@ -32,6 +33,14 @@
       "rules": {
         "expected": "5 minutes"
       }
+    },
+    "metric_roles": {
+      "task_outcome": [
+        0
+      ],
+      "access_requirement": [
+        0
+      ]
     }
   },
   "proxy": false

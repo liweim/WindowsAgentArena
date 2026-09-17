@@ -1,27 +1,38 @@
 {
   "id": "consumption-tomato_egg_stir_fry",
   "user_group": "cognitive",
-  "subgroup_ids": ["C-S2", "C-S3"],
+  "subgroup_ids": [
+    "C-S2"
+  ],
   "category": "consumption",
   "need_ids": [
-    "C2",
-    "C4"
+    "C2"
   ],
   "difficulty": "medium",
-  "instruction": "Use the meal shopping note on the Desktop to add only the still-needed ingredients to the cart.",
-  "source": "http://host.docker.internal:7770",
+  "operation_time": 78.91,
+  "instruction": "Complete the pending ingredients in `tomato_egg_shopping_list.xlsx` on the Desktop. For each item you buy, change its `Status` from `Pending` to `Done`, then save the spreadsheet.",
+  "source": "synthetic",
   "gt_steps": [
-    "Open `meal_shopping_note.txt` and determine which ingredients are still needed.",
-    "Open the self-hosted shopping website.",
-    "Add an ordinary chicken egg product to the cart.",
-    "Add a plain tomato product suitable for the dish to the cart."
+    "Open `tomato_egg_shopping_list.xlsx` and identify the ingredients still marked `Pending`.",
+    "Add one chicken-egg product and one tomato product to the shopping cart.",
+    "Return to the spreadsheet, change the Chicken eggs and Tomatoes rows to `Done`, and save the file."
   ],
   "config": [
     {
-      "type": "execute",
+      "type": "upload_file",
       "parameters": {
-        "command": "powershell -NoProfile -Command \"Set-Content -Path (Join-Path $env:USERPROFILE 'Desktop\\meal_shopping_note.txt') -Value @('Dinner: tomato-and-egg stir-fry','Already have: cooking oil, salt, sugar, and other seasonings','Still need the two core fresh ingredients.')\"",
-        "shell": true
+        "files": [
+          {
+            "local_path": "assets/consumption-tomato_egg_shopping_list.xlsx",
+            "path": "C:\\Users\\Docker\\Desktop\\tomato_egg_shopping_list.xlsx"
+          }
+        ]
+      }
+    },
+    {
+      "type": "open",
+      "parameters": {
+        "path": "C:\\Users\\Docker\\Desktop\\tomato_egg_shopping_list.xlsx"
       }
     },
     {
@@ -65,36 +76,80 @@
   ],
   "related_apps": [
     "chrome",
-    "notepad"
+    "libreoffice_calc"
   ],
   "evaluator": {
-    "func": "is_page_contains_items",
-    "result": {
-      "type": "page_info",
-      "url": "http://host.docker.internal:7770/checkout/cart/",
-      "load_state": "networkidle"
-    },
-    "expected": {
-      "type": "rule",
-      "rules": {
-        "item_groups": [
-          [
-            "B07ZS7FJ9Y",
-            "B092H4XZKY",
-            "B078158XZ4"
-          ],
-          [
-            "B074H577S3",
-            "B00IV6N3YK",
-            "B00A0OJ4EY",
-            "B07SKD2MCN",
-            "B07SH9YYHB",
-            "B07SNP3S2Q",
-            "B07SG9YX4C",
-            "B010C9RH3G"
-          ]
-        ]
+    "func": [
+      "is_page_contains_items",
+      "check_text_points"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "page_info",
+        "url": "http://host.docker.internal:7770/checkout/cart/",
+        "load_state": "networkidle"
+      },
+      {
+        "type": "vm_command_line",
+        "command": "C:\\Users\\Docker\\AppData\\Local\\Programs\\Python\\Python310\\python.exe -c \"from openpyxl import load_workbook; from pathlib import Path; p=Path.home()/'Desktop'/'tomato_egg_shopping_list.xlsx'; w=load_workbook(p,data_only=True); s=w.active; print('\\n'.join(f'{s.cell(r,1).value}: {s.cell(r,4).value}' for r in range(3,s.max_row+1) if s.cell(r,1).value))\"",
+        "shell": true
       }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "item_groups": [
+            [
+              "B07ZS7FJ9Y",
+              "B092H4XZKY",
+              "B078158XZ4"
+            ],
+            [
+              "B074H577S3",
+              "B00IV6N3YK",
+              "B00A0OJ4EY",
+              "B07SKD2MCN",
+              "B07SH9YYHB",
+              "B07SNP3S2Q",
+              "B07SG9YX4C",
+              "B010C9RH3G"
+            ]
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "ignore_case": true,
+          "points": [
+            [
+              "Cooking oil: Done"
+            ],
+            [
+              "Salt and sugar: Done"
+            ],
+            [
+              "Chicken eggs: Done"
+            ],
+            [
+              "Tomatoes: Done"
+            ],
+            [
+              "Green onion: Done"
+            ]
+          ]
+        }
+      }
+    ],
+    "metric_roles": {
+      "task_outcome": [
+        0
+      ],
+      "access_requirement": [
+        1
+      ]
     }
   },
   "proxy": false,

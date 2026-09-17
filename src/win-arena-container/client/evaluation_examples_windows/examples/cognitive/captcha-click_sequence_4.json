@@ -1,13 +1,15 @@
 {
   "id": "captcha-click_sequence_4",
   "user_group": "cognitive",
-  "subgroup_ids": ["C-S2", "C-S3"],
+  "subgroup_ids": [
+    "C-S2"
+  ],
   "category": "captcha",
   "need_ids": [
-    "C2",
-    "C4"
+    "C2"
   ],
-  "difficulty": "medium",
+  "difficulty": "easy",
+  "operation_time": 21.36,
   "instruction": "Complete the click-sequence CAPTCHA open in Chrome.",
   "source": "synthetic",
   "gt_steps": [
@@ -40,6 +42,14 @@
           "https?://host\\.docker\\.internal:8765/success\\?type=click_sequence&seed=access-click-sequence-004&session=access-captcha-click-sequence"
         ]
       }
+    },
+    "metric_roles": {
+      "task_outcome": [
+        0
+      ],
+      "access_requirement": [
+        0
+      ]
     }
   },
   "proxy": false,

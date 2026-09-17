@@ -48,6 +48,12 @@ def human_agent():
     """
     parser = argparse.ArgumentParser()
     parser.add_argument('-e', '--example', type=str, help="Path to the example json file.")
+    parser.add_argument(
+        '--evaluation-wait',
+        type=float,
+        default=3.0,
+        help="Seconds to wait after human operation before starting evaluation.",
+    )
     args = parser.parse_args(sys.argv[1:])
 
     if args.example is not None and os.path.exists(args.example):
@@ -75,13 +81,15 @@ def human_agent():
     print("Human operation started. Complete the task in the Windows VM, then return here.", flush=True)
     print("Press Enter to finish human operation.", flush=True)
     input()
-    print("Time elapsed of human operation: %.2f" % (time.time() - human_start_time))
 
+    evaluation_finished = False
     while True:
-        print("Waiting for the environment to be stable...")
-        time.sleep(3)
+        time.sleep(args.evaluation_wait)
 
         result = env.evaluate()
+        if not evaluation_finished:
+            print("Time elapsed of human operation: %.2f" % (time.time() - human_start_time))
+            evaluation_finished = True
         logger.info("Result: %.2f", result)
 
         choice = input(

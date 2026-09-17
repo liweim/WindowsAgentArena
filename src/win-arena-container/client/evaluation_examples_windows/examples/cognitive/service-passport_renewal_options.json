@@ -1,24 +1,24 @@
 {
   "id": "service-passport_renewal_options",
   "user_group": "cognitive",
-  "subgroup_ids": ["C-S1", "C-S2", "C-S3"],
+  "subgroup_ids": [
+    "C-S2"
+  ],
   "category": "service",
   "need_ids": [
-    "C2",
-    "C5",
-    "C6"
+    "C2"
   ],
   "difficulty": "medium",
-  "instruction": "Create a Sticky Note containing the three passport renewal option names exactly as written on the State Department renewal page.",
+  "operation_time": 0,
+  "instruction": "Create a Sticky Note containing the two passport renewal methods named on the State Department page, exactly as written and in webpage order.",
   "source": "https://travel.state.gov/content/travel/en/passports/have-passport/renew.html",
   "gt_steps": [
     "Open the State Department passport renewal page in Google Chrome.",
-    "Locate the section that lists renewal options.",
+    "Locate the two renewal methods named on the page.",
     "Open Sticky Notes.",
     "Create a new note.",
-    "Enter exactly `Renew Online` in the note.",
-    "Add exactly `Renew by Mail` to the note.",
-    "Add exactly `Renew in Person` to the note."
+    "Enter exactly `Renew Your Passport by Mail` in the note.",
+    "Add exactly `Renew Your Passport Online` to the note."
   ],
   "config": [
     {
@@ -60,16 +60,21 @@
         "ignore_case": true,
         "points": [
           [
-            "Renew Online"
+            "Renew Your Passport by Mail"
           ],
           [
-            "Renew by Mail"
-          ],
-          [
-            "Renew in Person"
+            "Renew Your Passport Online"
           ]
         ]
       }
+    },
+    "metric_roles": {
+      "task_outcome": [
+        0
+      ],
+      "access_requirement": [
+        0
+      ]
     }
   },
   "proxy": true,

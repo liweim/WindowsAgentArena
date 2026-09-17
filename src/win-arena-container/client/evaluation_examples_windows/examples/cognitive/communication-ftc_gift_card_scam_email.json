@@ -1,29 +1,27 @@
 {
   "id": "communication-ftc_gift_card_scam_email",
   "user_group": "cognitive",
-  "subgroup_ids": ["C-S1", "C-S3"],
+  "subgroup_ids": [
+    "C-S1"
+  ],
   "category": "communication",
   "need_ids": [
-    "C1",
-    "C6",
-    "C8"
+    "C1"
   ],
-  "difficulty": "hard",
-  "instruction": "Draft a warning email in Thunderbird to `parent@example.com` with the subject `Gift card payment warning`, based on the FTC gift card scam guidance viewed in Microsoft Edge with Immersive Reader. Use the FTC's exact wording to state whether a government payment demand by gift card is legitimate, what to do with the gift card company, and where to report the scam. Save the draft without sending it.",
+  "difficulty": "medium",
+  "operation_time": 63.18,
+  "instruction": "View the FTC gift card scam guidance in Microsoft Edge with Immersive Reader and find the website the page tells consumers to use to report a gift card scam directly to the FTC. Draft an email in Thunderbird to `parent@example.com` with the subject `Report a gift card scam`. Enter only the website address in the message body, exactly as shown on the FTC page. Save the draft without sending it.",
   "source": "https://consumer.ftc.gov/articles/avoiding-and-reporting-gift-card-scams",
   "gt_steps": [
     "Open the FTC gift card scam guidance page in Microsoft Edge.",
     "Activate Immersive Reader.",
-    "Locate the guidance about government gift card payment demands.",
-    "Locate the guidance about reporting a gift card scam to the gift card company.",
-    "Locate the FTC scam reporting destination.",
+    "Locate the `What To Do If You Gave a Gift Card to a Scammer` section.",
+    "Find the website where consumers can report the scam directly to the FTC.",
     "Open Thunderbird.",
     "Start a new email draft.",
     "Set the recipient to `parent@example.com`.",
-    "Set the subject to `Gift card payment warning`.",
-    "Enter a body containing the exact phrase `No real business or government agency will ever tell you to buy a gift card to pay them`.",
-    "Add the exact phrase `report the gift card scam to the gift card company right away` to the body.",
-    "Add `ReportFraud.ftc.gov` to the body.",
+    "Set the subject to `Report a gift card scam`.",
+    "Enter `ReportFraud.ftc.gov` in the message body.",
     "Save the email as a draft."
   ],
   "config": [
@@ -89,14 +87,8 @@
         "type": "rule",
         "rules": {
           "to": "parent@example.com",
-          "subject": "Gift card payment warning",
+          "subject": "Report a gift card scam",
           "body_points": [
-            [
-              "No real business or government agency will ever tell you to buy a gift card to pay them"
-            ],
-            [
-              "report the gift card scam to the gift card company right away"
-            ],
             [
               "ReportFraud.ftc.gov"
             ]
@@ -109,7 +101,15 @@
           "reader_mode_open": true
         }
       }
-    ]
+    ],
+    "metric_roles": {
+      "task_outcome": [
+        0
+      ],
+      "access_requirement": [
+        1
+      ]
+    }
   },
   "proxy": true,
   "possibility_of_env_change": "low"

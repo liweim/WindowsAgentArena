@@ -1,6 +1,6 @@
 # Accessibility-Oriented GUI Agent Benchmark Guidelines
 
-This benchmark evaluates GUI agents on accessibility-related digital tasks. Tasks should represent realistic workflows in which accessibility needs, assistive tools, accessibility settings, or cognitive-support strategies materially affect how a user completes the goal.
+This benchmark evaluates GUI agents on accessibility-oriented digital tasks. For every released everyday task, a documented access need must materially change an observable and evaluable completion condition: required information, a user-facing representation/support artifact, or a persistent accessibility/continuation state.
 
 The benchmark supports platform-specific implementations while following shared principles for task design, annotation, and deterministic evaluation.
 
@@ -32,7 +32,7 @@ The benchmark evaluates whether a computer-use agent can solve a user's task **f
 
 Unless a task explicitly defines an interaction constraint, the agent may use its normal computer-use capabilities, including visual perception, mouse input, keyboard input, and supported structured observations. The agent is not expected to simulate a disability or reproduce a human AT interaction trajectory. Instead, it should complete the user's goal and, when required, preserve or configure the relevant accessibility state so the user can monitor the result, inspect it, continue the workflow, or take control afterward.
 
-This design creates a meaningful distinction from ordinary GUI automation in two ways. First, some tasks require an accessibility feature or support state as part of successful completion, and the evaluator verifies that state in addition to the task result. Second, tasks are grounded in access needs that differ across user groups, enabling analysis of where current agents succeed or fail for visual, hearing, motor, and cognitive accessibility scenarios.
+This design distinguishes the benchmark from ordinary GUI automation by requiring the documented access need to change what counts as successful completion. The change must be observable in the evaluator—for example, additional information that must be acquired for the user, a persistent accessible representation/support artifact, or an accessibility/continuation state that must be established or preserved. Tasks whose final evaluator is unchanged from an ordinary GUI task should be redesigned or excluded from the main benchmark.
 
 Accordingly, evaluators should score the **user-facing outcome and required accessibility state**, not whether the agent followed the same interaction strategy as the target user group. Studies that constrain an agent to keyboard-only, magnified, or screen-reader-mediated interaction answer a complementary question about AT-constrained agent behavior; this benchmark instead focuses on whether the agent can reliably complete accessibility-oriented user goals and hand control back in an appropriate state.
 
@@ -50,14 +50,13 @@ Use one of the following exact lowercase category labels:
 | `service` | Bill payment, statement inquiry, form submission, government services, and identity verification |
 | `health` | Medical appointments, health records, prescriptions, hospital information, and emergency contacts |
 | `access` | Installing, enabling, or configuring accessibility tools such as screen readers, captions, magnification, reading mode, keyboard assistance, or mouse assistance |
-| `setup` | Installing or setting up ordinary software or system components when setup itself is the primary user goal |
 | `captcha` | Focused stress-test tasks for CAPTCHA-style verification barriers |
 
 #### CAPTCHA Stress-Test Slice
 
 The `captcha` category is analyzed separately from standard daily-life workflow categories. It measures whether GUI agents can handle verification barriers that may otherwise block end-to-end assistance.
 
-Choose the category from the task's **primary user goal or workflow**, not merely from the source website, the output application, or the disability group. Use `access` when the installed or configured target is itself an accessibility tool; use `setup` for ordinary software installation or setup workflows. If changing a task's category, rename the JSON file so the lowercase category prefix changes with it, and update `id` to exactly match the new filename without `.json`.
+Choose the category from the task's **primary user goal or workflow**, not merely from the source website, the output application, or the disability group. Use `access` when the installed or configured target is itself an accessibility or access-support tool. Ordinary software installation is not a standalone workflow category and should be embedded in the task's actual primary workflow or excluded if no approved category naturally applies. If changing a task's category, rename the JSON file so the lowercase category prefix changes with it, and update `id` to exactly match the new filename without `.json`.
 
 The local Windows CAPTCHA service currently supports:
 
@@ -85,7 +84,7 @@ Each task should include:
 
 1. A realistic app, browser, media, document, or system-settings scenario.
 2. A clearly grounded accessibility need, support strategy, or disability-relevant interaction challenge mapped to the Documented User Need Taxonomy below.
-3. A concrete user goal whose completion depends on accessible information, controls, feedback, or meaningful cognitive demands such as planning, sequencing, working memory, attention, decision-making, or maintaining task context.
+3. A concrete user goal whose access need changes an observable completion condition: required information, a user-facing representation/support artifact, or a persistent accessibility/continuation state.
 4. An initial state that prepares the relevant app, page, file, media, message, or setting without completing the task.
 5. A measurable final output or system state.
 6. A deterministic evaluator that checks the result and, when applicable, the required accessibility tool or support state.
@@ -131,12 +130,11 @@ Each released task stores three accessibility annotation layers directly in JSON
 | motor | `M-S1` | Keyboard input difficulty | `M1`, `M2` |
 | motor | `M-S2` | Pointer / fine-motor control difficulty | `M4`, `M5`, `M6`, `M7` |
 | motor | `M-S3` | Involuntary input / timing difficulty | `M3`, `M7` |
-| cognitive | `C-S1` | Attention / information-processing difficulty | `C1`, `C6` |
-| cognitive | `C-S2` | Memory / time-management difficulty | `C2`, `C3`, `C7` |
-| cognitive | `C-S3` | Executive function / decision-making difficulty | `C4`, `C5`, `C8` |
-| cognitive | `C-S4` | Numerical / reconciliation difficulty | `C7` |
+| cognitive | `C-S1` | Attention / readability / simplification difficulty | `C1` |
+| cognitive | `C-S2` | Memory / persistent-information support | `C2` |
+| cognitive | `C-S3` | Time / prospective-memory support | `C3` |
 
-During benchmark curation, a task receives the union of subgroup IDs associated with its `need_ids`. Therefore a task may have multiple subgroup labels when the broad populations genuinely overlap. For example, a motor task with `need_ids: ["M7"]` maps to both `M-S2` and `M-S3`; a cognitive task with `need_ids: ["C7"]` maps to both `C-S2` and `C-S4`. Hearing currently uses a single broad subgroup (`H-S1`) because the benchmark tasks do not support a reliable Deaf-versus-hard-of-hearing split.
+During benchmark curation, a task receives the union of subgroup IDs associated with its `need_ids`. Therefore a task may have multiple subgroup labels when the broad populations genuinely overlap. For example, a motor task with `need_ids: ["M7"]` maps to both `M-S2` and `M-S3`. Cognitive tasks use a deliberately narrower three-need taxonomy aligned to attention/readability, memory externalization, and prospective-memory/time support. Hearing currently uses a single broad subgroup (`H-S1`) because the benchmark tasks do not support a reliable Deaf-versus-hard-of-hearing split.
 
 #### Visual
 
@@ -147,7 +145,7 @@ During benchmark curation, a task receives the union of subgroup IDs associated 
 | `V3` | Contrast and display-palette customization | Adjust contrast, foreground/background presentation, inversion, or display palette to improve visual readability. | WebAIM Low Vision Survey #2; W3C Visual Disabilities; Microsoft color/contrast docs |
 | `V4` | Color-vision differentiation support | Use color filters or non-color cues when color differences are difficult or impossible to distinguish. | WCAG 1.4.1 Use of Color; Microsoft color-filter docs |
 | `V5` | Access to non-text visual information | Obtain equivalent information from images, maps, charts, infographics, scans, labels, and other visual-only or poorly described content. | WebAIM Screen Reader Survey #10; WCAG 1.1.1 Non-text Content |
-| `V6` | Accessible CAPTCHA and verification | Complete verification without depending on inaccessible visual perception, including alternative modalities or delegated assistance. | WebAIM Screen Reader Survey #10; WCAG 1.1.1 Non-text Content |
+| `V6` | Accessible CAPTCHA and verification | Complete verification without depending on inaccessible visual perception, using an alternative modality or accessible verification path. | WebAIM Screen Reader Survey #10; WCAG 1.1.1 Non-text Content |
 
 #### Hearing
 
@@ -157,7 +155,7 @@ During benchmark curation, a task receives the union of subgroup IDs associated 
 | `H2` | Caption readability and language customization | Configure caption language and visual presentation so caption text is readable and appropriate for the media. | Microsoft hearing-access docs; ACMA captioning research |
 | `H3` | Visual and persistent alternatives to auditory notifications | Receive alerts visually rather than by sound alone and keep visual notifications available long enough to notice and read. | Microsoft hearing-access docs |
 | `H4` | Single-channel access to stereo audio | Combine stereo channels so information is not missed when a user hears through one channel or one headphone. | Microsoft hearing-access docs |
-| `H5` | Verification without relying on hearing | Complete verification when the challenge depends on auditory perception, using a non-auditory alternative or delegated assistance. | WCAG 1.1.1 Non-text Content |
+| `H5` | Verification without relying on hearing | Complete verification when the challenge depends on auditory perception, using a non-auditory alternative or accessible verification path. | WCAG 1.1.1 Non-text Content |
 
 #### Motor
 
@@ -166,7 +164,7 @@ During benchmark curation, a task receives the union of subgroup IDs associated 
 | `M1` | Alternative text entry without a physical keyboard | Enter text through an on-screen keyboard or other alternative input when physical keyboard use is difficult. | WebAIM Motor Disability Survey; Microsoft mobility docs |
 | `M2` | Sequential modifier-key input | Use multi-key commands one key at a time instead of holding multiple keys simultaneously. | Microsoft mobility docs / Sticky Keys |
 | `M3` | Keystroke filtering and sensitivity control | Reduce accidental repeated or brief key presses by adjusting keyboard sensitivity/filtering. | Microsoft mobility docs / Filter Keys |
-| `M4` | Alternative pointer control or delegated pointing | Use keyboard, speech/other alternative input, or delegated pointer activation when conventional mouse use is difficult. | Microsoft mobility docs; WebAIM Motor Disability Survey |
+| `M4` | Alternative pointer control | Use keyboard, speech, or other alternative pointer-control support when conventional mouse use is difficult. | Microsoft mobility docs; WebAIM Motor Disability Survey |
 | `M5` | Reduced press-hold and dragging demand | Avoid or reduce sustained press-hold-drag-release movements that require dexterity or sustained pointer control. | WCAG 2.5.7 Dragging Movements |
 | `M6` | Mouse-button and handedness customization | Configure the primary mouse button or equivalent pointer settings to match reach, strength, dexterity, or unilateral motor needs. | Microsoft mobility docs |
 | `M7` | Reduced pointer precision, repetition, and timing demand | Avoid or delegate repeated precise target acquisition, tightly timed pointer actions, or fine motor control. | WebAIM Motor Disability Survey; WCAG 2.5.7 |
@@ -176,13 +174,8 @@ During benchmark curation, a task receives the union of subgroup IDs associated 
 | ID | Documented user need | Definition | Evidence |
 | --- | --- | --- | --- |
 | `C1` | Focus, readability, and simplification | Reduce distraction, visual/cognitive clutter, or reading load so attention, language processing, and comprehension are easier to sustain. | W3C Cognitive Accessibility; COGA Support Simplification |
-| `C2` | Memory externalization and short-term retention support | Reduce reliance on working memory or short-term retention through notes, checklists, persistent cues, or delegated assistance. | COGA memory/calculation pattern |
-| `C3` | Time and prospective-memory support | Use reminders, calendars, timers, and persistent time-based cues to manage appointments, deadlines, intervals, and future actions. | COGA Provide Reminders |
-| `C4` | Planning, sequencing, task-state tracking, and completion recognition | Reduce the burden of unfamiliar or multi-step workflows, maintaining context, recovering after distraction, tracking progress, and recognizing successful completion. | COGA clear-steps/task-expectations/feedback patterns; Pew setup evidence only as supplementary age-related evidence |
-| `C5` | Decision and choice support | Help compare alternatives, apply constraints, understand consequences, and select an appropriate option. | COGA Supported Choice |
-| `C6` | Important-information extraction and prioritization | Identify and preserve the small set of important facts/actions from dense, mixed, or distracting information. | COGA Important Information; Support Simplification |
-| `C7` | Calculation, counting, copying, and cross-source reconciliation support | Reduce reliance on arithmetic/counting, copying, short-term retention, or reconciliation across sources and steps. | COGA memory/calculation pattern |
-| `C8` | Error prevention and safety-critical guidance | Make risky actions, scams, health/safety guidance, and error-prone choices easier to understand and act on correctly. | COGA error prevention; Supported Choice; Important Information |
+| `C2` | Memory externalization and persistent information support | Reduce reliance on working memory or short-term retention by creating or using notes, checklists, persistent cues, and other durable external representations. | COGA memory/calculation pattern |
+| `C3` | Time and prospective-memory support | Use reminders, calendars, timers, notification persistence, and other time-based cues to manage appointments, deadlines, intervals, and future actions. | COGA Provide Reminders |
 
 #### Evidence source registry
 
@@ -226,7 +219,7 @@ Each released task JSON carries these accessibility fields immediately before `c
 
 The mapping question for `need_ids` remains: **Which documented accessibility barrier or support need does this task instantiate for its user group?** The exact task topic does not need to appear in the evidence source. Do not force a mapping merely to pass the schema: an unresolved task should be revised or withheld from release. Naturalness and task–need fit should still be reviewed during curation, but those judgments belong in review notes/checklists rather than released task metadata.
 
-For CAPTCHA tasks, inspect the actual challenge rather than inferring the barrier from the word “CAPTCHA.” An audio-only challenge can directly instantiate `H5`; a visual CAPTCHA can instantiate `V6`; sustained press/hold or dragging can instantiate `M5`; and an otherwise ordinary pointer activation can instantiate `M4` when the relevant motor need is alternative/delegated pointing rather than fine precision.
+For CAPTCHA tasks, inspect the actual challenge rather than inferring the barrier from the word “CAPTCHA.” An audio-only challenge can directly instantiate `H5`; a visual CAPTCHA can instantiate `V6`; sustained press/hold or dragging can instantiate `M5`; and `M4` should be used only when the task establishes or preserves an alternative pointer-control support rather than merely asking the agent to perform an otherwise ordinary click.
 
 Do not use survey percentages as population prevalence unless the survey design supports that inference. In particular, WebAIM explicitly describes Screen Reader Survey #10 as uncontrolled, and its Motor Disability Survey has a small convenience sample. These sources are used here to establish the existence and character of needs, not population-level rates.
 
@@ -339,21 +332,19 @@ Find the correct value and enter it.
 
 ### Cognitive-Access Tasks
 
-Cognitive-access tasks on Windows are not limited to Microsoft Edge Immersive Reader. Immersive Reader is one useful support for reducing page clutter and strengthening focus, but tasks may instead involve reminders, notes, checklists, calendars, timers, reduced time pressure, text sizing, or structured multi-step workflows.
+Cognitive-access tasks on Windows use a deliberately narrow three-need taxonomy: `C1` focus/readability/simplification, `C2` memory externalization and persistent information support, and `C3` time/prospective-memory support. Immersive Reader is one possible C1 support, while notes/checklists, persistent references, reminders, calendars, timers, and related durable cues can instantiate C2 or C3.
 
-Appropriate scenarios include older adults with memory, attention, processing-speed, or planning difficulties; users with dyslexia or reading difficulties; users with ADHD or distractibility; and users who need help turning dense information into short actionable output.
+Appropriate scenarios are those in which the task-relevant barrier can be operationalized through C1–C3 and the resulting support is part of the graded final state. Group labels are functional benchmark slices rather than diagnoses, and age alone is never sufficient evidence for a cognitive-access mapping.
 
-Age alone is not sufficient to classify a task as cognitive. Task complexity alone is also not sufficient: an ordinary multi-step workflow should not be labeled cognitive merely because it requires planning, sequencing, working memory, attention, or decision-making. A cognitive-access task should make the agent's assistance materially reduce one of those barriers for the user—for example by externalizing memory into a reminder or checklist, simplifying dense information into an actionable form, reconciling multiple pieces of information, reducing time pressure, preserving task state, or producing a structured artifact that makes the next user action easier. Generic software installation, product lookup, shopping, or administrative data-entry tasks without such a cognitive-support outcome should be reassigned, redesigned, or removed.
+Task complexity alone is not sufficient: an ordinary multi-step workflow must not be labeled cognitive merely because it requires planning, sequencing, decision-making, arithmetic, reconciliation, or long-horizon state tracking. A cognitive-access task must instead make a C1–C3 support requirement observable in the final state—for example, a readable/simplified representation, a persistent note/checklist/reference artifact, or a reminder/calendar/timer. Generic software installation, product lookup, shopping, administrative data entry, option selection, or calculation without such a graded support outcome should be reassigned, redesigned, or removed.
 
-A cognitive task should make at least one of the following central to the scenario:
+A cognitive task must make at least one of the following graded requirements central to the scenario:
 
-- memory or maintaining task context;
-- attention or distraction management;
-- information processing or comprehension;
-- planning, sequencing, or decision-making;
-- step tracking or prospective memory;
-- recognizing successful completion;
-- simplified interaction or reduced time pressure.
+- **C1 — Focus, readability, and simplification:** a readable/simplified representation or configured readability support;
+- **C2 — Memory externalization and persistent information support:** a durable note, checklist, reference, completion cue, or other persistent artifact;
+- **C3 — Time and prospective-memory support:** a reminder, calendar event, timer, persistent notification cue, or equivalent future-action support.
+
+If removing the cognitive-support clause leaves the required final state and evaluator essentially unchanged, the task is not a released cognitive benchmark task and should be rewritten or removed.
 
 For cognitive reading and information-extraction tasks:
 

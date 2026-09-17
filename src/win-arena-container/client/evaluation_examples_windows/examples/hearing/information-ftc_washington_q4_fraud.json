@@ -9,7 +9,8 @@
     "H1"
   ],
   "difficulty": "hard",
-  "instruction": "Turn on captions in the opened YouTube video, then use the FTC Explore Data tool shown in the video to find the top fraud category in Washington state for quarter 4 of 2024. Save the answer in `answer.txt` on the Desktop.",
+  "operation_time": 0,
+  "instruction": "Turn on captions in the opened YouTube video, then use the FTC Explore Data tool shown there. In `Fraud & ID Theft by State`, select Washington, year `2024`, and quarter `4`. Save only the category ranked first by number of reports in `answer.txt` on the Desktop.",
   "source": "https://www.youtube.com/watch?v=F2wQGBjKiaM",
   "gt_steps": [
     "Turn on captions in the YouTube player.",
@@ -18,7 +19,7 @@
     "Go to State and Metro Area Maps.",
     "Open Fraud & ID Theft by State.",
     "Set the year to 2024 and Quarter to `4`.",
-    "Select Washington on the map.",
+    "Select Washington on the map and read the category ranked first by number of reports.",
     "Open Notepad.",
     "Write `Imposter Scams`.",
     "Save the file as `answer.txt` on the Desktop."
@@ -99,7 +100,15 @@
           "exclude": []
         }
       }
-    ]
+    ],
+    "metric_roles": {
+      "task_outcome": [
+        1
+      ],
+      "access_requirement": [
+        0
+      ]
+    }
   },
   "proxy": true
 }

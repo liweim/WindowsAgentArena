@@ -1,17 +1,19 @@
 {
   "id": "captcha-audio_1",
   "user_group": "cognitive",
-  "subgroup_ids": ["C-S2", "C-S4"],
+  "subgroup_ids": [
+    "C-S2"
+  ],
   "category": "captcha",
   "need_ids": [
-    "C2",
-    "C7"
+    "C2"
   ],
   "difficulty": "easy",
+  "operation_time": 20.27,
   "instruction": "Complete the audio CAPTCHA open in Chrome.",
   "source": "synthetic",
   "gt_steps": [
-    "Listen to the five-digit verification code, retain/copy it, and submit it."
+    "Listen to the verification code, enter `33572`, and submit it."
   ],
   "config": [
     {
@@ -40,6 +42,14 @@
           "https?://host\\.docker\\.internal:8765/success\\?type=audio&seed=access-audio-001&session=access-captcha-audio"
         ]
       }
+    },
+    "metric_roles": {
+      "task_outcome": [
+        0
+      ],
+      "access_requirement": [
+        0
+      ]
     }
   },
   "proxy": false,

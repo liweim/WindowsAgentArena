@@ -1,15 +1,18 @@
 {
   "id": "service-cfpb_stop_automatic_payments",
   "user_group": "cognitive",
-  "subgroup_ids": ["C-S1", "C-S3"],
+  "subgroup_ids": [
+    "C-S1",
+    "C-S2"
+  ],
   "category": "service",
   "need_ids": [
     "C1",
-    "C4",
-    "C6"
+    "C2"
   ],
   "difficulty": "medium",
-  "instruction": "Write the CFPB's steps for stopping automatic payments from a bank account in `answer.txt` on the Desktop, using the page's original wording and Immersive Reader to read the guidance.",
+  "operation_time": 0,
+  "instruction": "Create a persistent step list in `answer.txt` on the Desktop containing all four action headings under the CFPB page's `How to stop automatic debits from your account` section, in webpage order and using the original wording. Use Immersive Reader to read the guidance.",
   "source": "https://www.consumerfinance.gov/ask-cfpb/how-do-i-stop-automatic-payments-from-my-bank-account-en-2023/",
   "gt_steps": [
     "Open the CFPB page about stopping automatic payments from a bank account in Microsoft Edge.",
@@ -19,6 +22,7 @@
     "Create `answer.txt` on the Desktop.",
     "Enter `Call and write the company` in the file.",
     "Add `Call and write your bank or credit union` to the file.",
+    "Add `Your bank or credit union might use stop payment orders` to the file.",
     "Add `Monitor your accounts` to the file.",
     "Save `answer.txt`."
   ],
@@ -68,6 +72,9 @@
               "Call and write your bank or credit union"
             ],
             [
+              "Your bank or credit union might use stop payment orders"
+            ],
+            [
               "Monitor your accounts"
             ]
           ]
@@ -79,7 +86,16 @@
           "reader_mode_open": true
         }
       }
-    ]
+    ],
+    "metric_roles": {
+      "task_outcome": [
+        0
+      ],
+      "access_requirement": [
+        0,
+        1
+      ]
+    }
   },
   "proxy": true,
   "possibility_of_env_change": "low"

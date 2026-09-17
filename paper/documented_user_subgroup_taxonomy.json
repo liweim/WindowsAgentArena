@@ -1,5 +1,5 @@
 {
-  "version": "2026-09-11-v2",
+  "version": "2026-09-15-v4",
   "design": {
     "user_group": "Exactly one of visual, hearing, motor, cognitive. It is duplicated in task JSON for self-contained analysis even though the directory also encodes the group.",
     "subgroup_ids": "One or more broad, non-mutually-exclusive functional/population subgroups. These are intentionally coarse and should not be treated as diagnoses or prevalence categories. A user group may have only one broad subgroup when the benchmark tasks do not support a meaningful finer split.",
@@ -39,23 +39,18 @@
     },
     "C-S1": {
       "group": "cognitive",
-      "name": "Attention / information-processing difficulty",
-      "definition": "Tasks relevant to users who benefit from reduced distraction, simplification, prioritization, or help extracting important information."
+      "name": "Attention / readability / simplification difficulty",
+      "definition": "Tasks relevant to users who benefit from reduced distraction, reduced reading load, clearer presentation, or simplified information."
     },
     "C-S2": {
       "group": "cognitive",
-      "name": "Memory / time-management difficulty",
-      "definition": "Tasks relevant to users who benefit from external memory support, reminders, time cues, or reduced short-term retention burden."
+      "name": "Memory / persistent-information support",
+      "definition": "Tasks relevant to users who benefit from notes, checklists, durable external representations, or reduced short-term retention burden."
     },
     "C-S3": {
       "group": "cognitive",
-      "name": "Executive function / decision-making difficulty",
-      "definition": "Tasks relevant to users who benefit from planning, sequencing, task-state tracking, choice support, or error prevention."
-    },
-    "C-S4": {
-      "group": "cognitive",
-      "name": "Numerical / reconciliation difficulty",
-      "definition": "Tasks relevant to users who benefit from assistance with calculation, counting, copying, or reconciling information across sources."
+      "name": "Time / prospective-memory support",
+      "definition": "Tasks relevant to users who benefit from reminders, calendars, timers, persistent notifications, or other future-action/time cues."
     }
   },
   "need_id_to_subgroup_ids": {
@@ -123,22 +118,6 @@
       "C-S2"
     ],
     "C3": [
-      "C-S2"
-    ],
-    "C4": [
-      "C-S3"
-    ],
-    "C5": [
-      "C-S3"
-    ],
-    "C6": [
-      "C-S1"
-    ],
-    "C7": [
-      "C-S2",
-      "C-S4"
-    ],
-    "C8": [
       "C-S3"
     ]
   }

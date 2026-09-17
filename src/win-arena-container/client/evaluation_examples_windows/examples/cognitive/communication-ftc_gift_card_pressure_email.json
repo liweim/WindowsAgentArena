@@ -1,14 +1,15 @@
 {
   "id": "communication-ftc_gift_card_pressure_email",
   "user_group": "cognitive",
-  "subgroup_ids": ["C-S1", "C-S3"],
+  "subgroup_ids": [
+    "C-S1"
+  ],
   "category": "communication",
   "need_ids": [
-    "C1",
-    "C6",
-    "C8"
+    "C1"
   ],
   "difficulty": "medium",
+  "operation_time": 83.92,
   "instruction": "Draft a Thunderbird email to `relative@example.org` with subject `Gift card pressure tactics` using Microsoft Edge Immersive Reader to read the FTC guidance. Include the three scam-pressure phrases exactly as written on the page and save the draft without sending it.",
   "source": "https://consumer.ftc.gov/articles/avoiding-and-reporting-gift-card-scams",
   "gt_steps": [
@@ -19,7 +20,7 @@
     "Create a new email draft.",
     "Set the recipient to `relative@example.org`.",
     "Set the subject to `Gift card pressure tactics`.",
-    "Enter the following message body:\n`pay them right away or something terrible will happen`\n`buy cards at several stores`\n`gift card number and PIN`",
+    "Enter the following message body: Scammers will say it’s urgent\nScammers will tell you which gift card to buy (and where)\nScammers will ask you for the gift card number and PIN",
     "Save the email as a draft without sending it."
   ],
   "config": [
@@ -88,13 +89,13 @@
           "subject": "Gift card pressure tactics",
           "body_points": [
             [
-              "pay them right away or something terrible will happen"
+              "Scammers will say it’s urgent"
             ],
             [
-              "buy cards at several stores"
+              "Scammers will tell you which gift card to buy (and where)"
             ],
             [
-              "gift card number and PIN"
+              "Scammers will ask you for the gift card number and PIN"
             ]
           ]
         }
@@ -105,7 +106,15 @@
           "reader_mode_open": true
         }
       }
-    ]
+    ],
+    "metric_roles": {
+      "task_outcome": [
+        0
+      ],
+      "access_requirement": [
+        1
+      ]
+    }
   },
   "proxy": true,
   "possibility_of_env_change": "low"

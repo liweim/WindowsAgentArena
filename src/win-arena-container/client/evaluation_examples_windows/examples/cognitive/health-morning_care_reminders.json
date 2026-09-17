@@ -1,0 +1,137 @@
+{
+  "id": "health-morning_care_reminders",
+  "user_group": "cognitive",
+  "subgroup_ids": [
+    "C-S3"
+  ],
+  "category": "health",
+  "need_ids": [
+    "C3"
+  ],
+  "difficulty": "medium",
+  "operation_time": 0,
+  "instruction": "Use the morning care plan on the Desktop to set up two Thunderbird calendar reminders: a 30-minute event titled `Morning care` on September 17, 2026 at 8:30 AM with the three same-morning care actions in the description, and a 30-minute event titled `Refill eye drops` on September 18, 2026 at 9:00 AM.",
+  "source": "synthetic",
+  "gt_steps": [
+    "Read `MorningCarePlan.txt` in Notepad.",
+    "Create a Thunderbird calendar event on September 17, 2026 at 8:30 AM for 30 minutes titled `Morning care`.",
+    "Add the blood-pressure check, blue inhaler, and medication-list/clinic-bag actions to the `Morning care` event description.",
+    "Create a Thunderbird calendar event on September 18, 2026 at 9:00 AM for 30 minutes titled `Refill eye drops`."
+  ],
+  "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/health-morning_care_reminders.txt",
+            "path": "C:\\Users\\Docker\\Desktop\\MorningCarePlan.txt"
+          }
+        ]
+      }
+    },
+    {
+      "type": "download",
+      "parameters": {
+        "files": [
+          {
+            "url": "https://huggingface.co/datasets/xlangai/ubuntu_osworld_file_cache/resolve/main/thunderbird/dd84e895-72fd-4023-a336-97689ded257c/thunderbird-profile.tar.gz",
+            "path": "C:\\Users\\Docker\\Downloads\\thunderbird-profile.tar.gz"
+          }
+        ]
+      }
+    },
+    {
+      "type": "prepare_thunderbird_profile",
+      "parameters": {}
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "notepad.exe",
+          "C:\\Users\\Docker\\Desktop\\MorningCarePlan.txt"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "thunderbird.exe",
+          "-profile",
+          "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release"
+        ]
+      }
+    }
+  ],
+  "related_apps": [
+    "notepad",
+    "thunderbird"
+  ],
+  "evaluator": {
+    "func": [
+      "check_thunderbird_calendar_event",
+      "check_thunderbird_calendar_event"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "thunderbird_calendar_events",
+        "profile_path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release"
+      },
+      {
+        "type": "thunderbird_calendar_events",
+        "profile_path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release"
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "date": "2026-09-17",
+          "hour": 8,
+          "minute": 30,
+          "duration_minutes": 30,
+          "title": "Morning care",
+          "body_points": [
+            [
+              "blood pressure"
+            ],
+            [
+              "blue inhaler"
+            ],
+            [
+              "medication list"
+            ],
+            [
+              "clinic bag"
+            ]
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "date": "2026-09-18",
+          "hour": 9,
+          "minute": 0,
+          "duration_minutes": 30,
+          "title": "Refill eye drops"
+        }
+      }
+    ],
+    "metric_roles": {
+      "task_outcome": [
+        0,
+        1
+      ],
+      "access_requirement": [
+        0,
+        1
+      ]
+    }
+  },
+  "proxy": false,
+  "possibility_of_env_change": "low"
+}

@@ -6,21 +6,21 @@
 
 ### 0.1 一句话主线
 
-现有 computer-use agents（CUAs）主要在“通用用户目标 + 标准 GUI + 通用完成条件”下被评测，但真实用户具有不同的 accessibility needs。一个 agent 即使能完成 underlying GUI goal，也不意味着它能可靠处理由 access need 带来的信息获取、交互代理、输出表示、accessibility configuration 和 continuation requirements。本文构建一个可执行、可重置、端到端、确定性评测的 accessibility-oriented computer-use benchmark，系统评测代表性 CUAs，分析不同 user groups、modalities、workflow types 和 accessibility requirements 下的系统性 failure，并基于这些 failure patterns 设计改进方法，同时在已有通用 computer-use benchmark 上验证泛化性。
+现有 computer-use agents（CUAs）主要在“通用用户目标 + 标准 GUI + 通用完成条件”下被评测，但真实用户具有不同的 accessibility needs。一个 agent 即使能完成 underlying GUI goal，也不意味着它能可靠处理由 access need 带来的额外信息获取、用户可访问表示/支持 artifact、accessibility configuration 和 continuation requirements。本文构建一个可执行、可重置、端到端、确定性评测的 accessibility-oriented computer-use benchmark，系统评测代表性 CUAs，分析不同 user groups、modalities、workflow types 和 accessibility requirements 下的系统性 failure，并基于这些 failure patterns 设计改进方法，同时在已有通用 computer-use benchmark 上验证泛化性。
 
 ### 0.2 最重要的概念边界
 
-本文**不要求 agent 模拟残障用户的操作轨迹，也不要求 agent 自己依赖 assistive technology (AT)**。Agent 可以使用其正常的视觉、鼠标、键盘或 structured observation 能力。我们评估的是：给定一个具有 documented access need 的用户目标，agent 是否能完成任务，并满足该 access need 对最终结果或用户环境提出的额外要求。
+本文**不要求 agent 模拟残障用户的操作轨迹，也不把“必须依赖 assistive technology (AT)”作为统一的评测条件**。Agent 可以使用其正常的视觉、鼠标、键盘、structured observation，也可以在有帮助时使用 screen reader、Immersive Reader、caption、magnification 等 AT/accessibility features；某些任务本身也可能明确要求配置或使用这些功能。我们评估的是：给定一个具有 documented access need 的用户目标，agent 是否能完成任务，并满足该 access need 对最终结果或用户环境提出的要求，而不是强制一种 agent-side interaction strategy。
 
 建议全文使用下面的核心定义：
 
-> **An accessibility-oriented computer-use task asks an agent to complete an everyday digital goal on behalf of a user with a documented access need, where that need materially changes what information must be acquired, what interaction burden is delegated, what user-facing output must be produced, or what accessibility/continuation state must be preserved.**
+> **An accessibility-oriented computer-use task asks an agent to complete an everyday digital goal on behalf of a user with a documented access need, where that need materially changes an observable and evaluable completion condition: the information that must be acquired for the user, the user-facing representation or support artifact that must be produced, or the accessibility/continuation state that must be established or preserved.**
 
 因此：
 
 > **Accessibility relevance ≠ agent-side AT usage.**
 
-AT 是 access need 的一种 manifestation，不是 benchmark 的定义标准。
+AT 是 access need 的一种 manifestation，不是 benchmark 的定义标准；**agent-side AT use is allowed but not universally required**。
 
 ### 0.3 Accessibility-oriented 与 ordinary GUI task 的本质区别
 
@@ -36,12 +36,13 @@ S_{ordinary}=\text{underlying goal completed}
 S_{access}=\text{underlying goal completed}\land\text{access-need-specific requirement satisfied}
 \]
 
-一个 task 的 accessibility relevance 至少来自以下四类机制之一：
+一个 task 的 accessibility relevance 来自以下三类可观察机制之一：
 
-1. **Information access**：access need 改变 agent 必须替用户获取的信息路径，例如 visual-only information、speech/audio information、dense information extraction。
-2. **Delegated interaction burden**：agent 代理 documented perceptual、motor、memory、planning、sequencing、decision 或 completion-recognition burden。
-3. **Accessible user-facing output**：access need 改变最终 artifact/representation，例如 transcript、plain-language summary、persistent note、checklist、reminder、structured transfer instruction。
-4. **Persistent accessibility / continuation state**：agent 需要配置或保留用户可能依赖的 accessibility setting 或 user-facing state，使用户保有后续 inspect、understand、continue 或 take over 的能力。
+1. **Information access**：access need 改变 agent 必须替用户获取的信息，例如 visual-only information、speech/audio information，或需要转为可访问表示的内容。
+2. **Accessible representation / support artifact**：access need 改变最终 user-facing artifact，例如 transcript、plain-language summary、persistent note、checklist、reminder 或 structured reference。
+3. **Persistent accessibility / continuation state**：agent 需要配置或保留用户可能依赖的 accessibility setting 或 persistent user-facing state，使用户保有后续 inspect、understand、continue 或 take over 的能力。
+
+Delegated motor/cognitive burden 可以解释用户为什么希望使用 agent，但**仅有 delegation motivation 不足以使任务进入 AccessCUA Core**；released Core task 必须存在上述至少一种进入 evaluator 的 observable requirement shift。
 
 注意：一个 task 可以同时属于多类。
 
@@ -59,15 +60,15 @@ Benchmark 不需要知道用户之后是否真的继续操作。它评估的是�
 
 推荐 reviewer-facing 表述：
 
-> We distinguish **agent-side tool use** from **user-side accessibility state**. An agent may use its preferred interaction mechanisms while configuring or preserving captions, magnification, keyboard assistance, or other accessibility features for the user. We do not assume that the user necessarily continues the interaction after every task; rather, we evaluate whether the agent preserves the **option for accessible continuation**.
+> We distinguish **agent-side tool use** from **user-side accessibility requirements**. An agent may freely use its normal interaction mechanisms or assistive/accessibility technologies when useful; the benchmark does not impose a universal requirement that the agent emulate a disabled user's interaction trajectory. When a task explicitly requests captions, magnification, Immersive Reader, keyboard assistance, or another accessibility state, that requested condition can itself be part of task success. We do not assume that the user necessarily continues the interaction after every task; rather, we evaluate whether the requested accessible state/output is satisfied and, where relevant, preserved for continuation.
 
 ### 0.5 Task validity counterfactual：防止“普通任务 + 随机 accessibility toggle”
 
 构建和 human validation 时加入一个核心检查：
 
-> **If the accessibility-specific requirement were removed, would the task definition, required information/output, delegated burden, or success condition remain essentially unchanged?**
+> **If the accessibility-specific requirement were removed, would the required information, user-facing output/artifact, persistent state, or evaluator remain essentially unchanged?**
 
-- 如果 access need 改变了 information、burden、output 或 continuation state，task 有明确 accessibility construct。
+- 如果 access need 改变了 information、output/artifact 或 persistent accessibility/continuation state，并且这种变化进入 evaluator，task 有明确 accessibility construct。
 - 如果唯一差异只是任意附加一个与用户需求无关、也无 continuation value 的 accessibility toggle，则 task relevance 很弱，应重写或移除。
 
 不要使用“agent 是否真的用上该 AT”作为 task validity 判据；这是错误维度。
@@ -76,7 +77,7 @@ Benchmark 不需要知道用户之后是否真的继续操作。它评估的是�
 
 **RQ1.** Current CUAs 能否可靠完成 accessibility-oriented user goals？整体 success 如何，不同 visual / hearing / motor / cognitive slices 是否存在显著差异？
 
-**RQ2.** Accessibility-oriented requirements 相比 ordinary GUI completion 带来什么额外困难？重点分析 information access、delegated burden、accessible output、persistent accessibility/continuation state；如果资源允许，构造 small matched subset 控制 underlying goal。
+**RQ2.** 对 `TaskOutcome` 与 `AccessRequirement` 为 distinct conditions 的任务，agent 在完成 nominal GUI/life goal 后有多大比例仍遗漏 access-specific requirement？这种 requirement gap 在 information access、accessible representation/support artifact、persistent accessibility/continuation state 中如何变化？Coincident-component tasks 仍报告三个指标，但不进入 gap。
 
 **RQ3.** 不同 user groups / documented needs 是否暴露不同 failure signatures？
 
@@ -110,7 +111,7 @@ Introduction 建议 5 段，围绕“为什么现有 benchmark 没回答这个�
 
 - hearing：从视频中的 spoken content 获得信息，并提供 non-auditory representation；必要时保持 Live Caption 等 state；
 - motor：agent 代理高精度 pointer、dragging、repetitive input 或配置 keyboard assistance；
-- cognitive：把 dense/multi-step information 转为 persistent note/reminder/checklist，或代理 sequencing、task-state tracking、completion recognition burden。
+- cognitive：把 dense/multi-step information 转为 readable/persistent note、checklist、reminder、calendar cue 或其他可观察 support state。
 
 引出：
 
@@ -122,7 +123,7 @@ Introduction 建议 5 段，围绕“为什么现有 benchmark 没回答这个�
 
 这一段建议 Introduction 就明确，否则 reviewer 容易误解整个 benchmark。
 
-> Our goal is not to force an agent to interact as a disabled user would. Accessibility features may be part of the user-facing environment or success condition, but the agent may use its own visual, pointer, keyboard, or structured observations. We evaluate whether the user’s documented access requirement is satisfied, not whether the agent itself relies on assistive technology.
+> Our goal is not to force an agent to interact as a disabled user would, nor to require assistive-technology use as a universal agent-side constraint. The agent may use visual, pointer, keyboard, structured observations, or assistive/accessibility technologies when useful. Accessibility features may also be explicitly requested by the task and therefore become part of the graded user-facing state. We evaluate whether the documented access requirement is satisfied, not whether the agent follows one prescribed interaction strategy.
 
 接着引入 **accessible continuation state**：如果用户要求或依赖某个 accessibility configuration，agent 完成 underlying task 后不应破坏它；benchmark 只要求保留用户继续操作的 option，不假设用户一定马上接管。
 
@@ -174,7 +175,7 @@ Introduction 建议 5 段，围绕“为什么现有 benchmark 没回答这个�
 定位重点不是“我们多了 accessibility tasks”，而是 **benchmark construct 不同**：
 
 - user access need 显式进入 task specification；
-- accessibility relevance 可以来自 information、delegation、output 或 persistent state；
+- accessibility relevance 由可观察的 information、user-facing artifact/output 或 persistent state requirement 定义；delegation 只能作为使用动机，不能单独构成 Core；
 - success 不仅是 underlying state change；
 - analysis 关注 heterogeneous user needs 与 failure signatures。
 
@@ -192,7 +193,7 @@ A11y-CUA 更关注：
 
 本文更关注：
 
-> 给定具有 documented access need 的 everyday digital goal，agent 能否完成 underlying task，并满足由该 access need 带来的 information、delegation、output 或 continuation-state requirement？
+> 给定具有 documented access need 的 everyday digital goal，agent 能否完成 underlying task，并满足由该 access need 带来的 information、user-facing artifact/output 或 continuation-state requirement？
 
 建议对比：
 
@@ -207,7 +208,19 @@ A11y-CUA 更关注：
 
 不要写“A11y-CUA 不是 benchmark”；更准确地说，它支持 benchmark-style evaluation，但 artifact 和 research question 与本文不同。
 
-本文可以借鉴其：matched/controlled comparison、trajectory analysis、accessibility state 关注，但不复制“agent 必须用 AT”的设定。
+本文可以借鉴其：matched/controlled comparison、trajectory analysis、accessibility state 关注，但不把“agent 必须使用某种 AT trajectory”设为统一约束。
+
+### Are We There Yet? (Kodandaram et al., 2026)
+
+该工作研究 **blind screen-reader users 在真实 desktop workflows 中使用 CUA** 的实际体验：三周 diary study、8 位 blind users、1,258 条 commands、12 个 desktop applications，并对多种模型做 replay evaluation。其 trace analysis 报告 grounding、planning、constraint-tracking 和 termination failures，同时访谈揭示 automation 之外的用户需求。
+
+与本文的关系应写成 **complementary rather than competing**：
+
+- *Are We There Yet?* 提供 naturalistic blind-user commands、screen-reader-accessible interaction 与 lived-experience evidence；
+- AccessCUA 提供跨 visual / hearing / motor / cognitive documented needs 的 **reproducible executable benchmark**，并把 nominal completion 与 access-specific requirement 变成可分解、可机器评估的 end-state metrics；
+- 因而本文不把 constraint-tracking / termination failure 本身作为首次发现的 novelty，而强调 **cross-need quantification、requirement-shift construct、TaskOutcome–AccessRequirement decomposition、matched controls 与 deterministic evaluation**。
+
+这篇工作也可以在 Discussion/Limitations 中作为 target-user ecological evidence 的重要互补来源，但不能替代本文自己对 task construct 的 validation。
 
 ## 2.3 User assistance / intent-aware systems
 
@@ -237,18 +250,17 @@ GUIDE 类工作更关注从 user demonstration/interaction 推断 intent、state
 
 推荐正文直接给出：
 
-> An accessibility-oriented task is an everyday computer-use task for which a documented access need materially changes at least one of: (i) information that must be acquired, (ii) interaction burden delegated to the agent, (iii) user-facing representation/output, or (iv) accessibility/continuation state that must be preserved.
+> An accessibility-oriented task is an everyday computer-use task for which a documented access need materially changes at least one observable completion condition: (i) information that must be acquired for the user, (ii) user-facing representation or support artifact that must be produced, or (iii) accessibility/continuation state that must be established or preserved. Delegation may motivate assistance, but delegation alone is not a sufficient Core construct.
 
 这一定义比“task for disabled users”或“task requiring assistive technology”都更可辩护。
 
-### Four accessibility-relevance mechanisms
+### Three accessibility-relevance mechanisms
 
 | Mechanism | What changes relative to ordinary GUI completion? | Typical examples |
 | --- | --- | --- |
-| Information access | agent must obtain information unavailable/unreliable through the user's constrained modality | speech→text, visual-only content, key facts from dense content |
-| Delegated burden | agent substitutes for a documented interaction/cognitive burden | fine pointer control, dragging, multi-stage sequencing, completion verification |
-| Accessible output | final representation must reduce an access barrier | transcript, plain-language note, checklist, reminder, persistent transfer instructions |
-| Accessibility / continuation state | final system state must preserve a requested access condition | captions, magnification, keyboard assistance, readable settings |
+| Information access | required information changes because of an access need | speech→text, visual-only content converted to an equivalent representation |
+| Accessible representation / support artifact | final user-facing representation must reduce an access barrier or externalize information | transcript, plain-language note, checklist, reminder, persistent reference |
+| Accessibility / continuation state | final system/user state must preserve a requested access condition | captions, magnification, keyboard assistance, readable settings |
 
 这些机制是 task-level construct；`user_group` 只是 aggregate slice。
 
@@ -256,7 +268,7 @@ GUIDE 类工作更关注从 user demonstration/interaction 推断 intent、state
 
 必须明确：
 
-> The benchmark does not evaluate whether agents themselves use assistive technologies. Accessibility settings are properties of the user-facing environment and may be success conditions even when the agent never consumes them during execution.
+> The benchmark does not score agents according to whether they use assistive technologies as an execution strategy. Agents are free to use AT/accessibility features when helpful. Separately, an accessibility feature may be an explicit task requirement or a graded user-facing environment state; in that case its requested state is evaluated regardless of which interaction strategy the agent used to reach it.
 
 因此，“Sticky Keys 开启后 agent 没有用 Sticky Keys”不是 construct flaw。真正需要审查的是：Sticky Keys 是否与 task 声明的 documented keyboard-access need 有合理关系，以及最终保持该 state 是否支持用户的 continuation option。
 
@@ -303,10 +315,9 @@ GUIDE 类工作更关注从 user demonstration/interaction 推断 intent、state
 | motor | `M-S1` | Keyboard input difficulty | `M1`, `M2` |
 | motor | `M-S2` | Pointer / fine-motor control difficulty | `M4`, `M5`, `M6`, `M7` |
 | motor | `M-S3` | Involuntary input / timing difficulty | `M3`, `M7` |
-| cognitive | `C-S1` | Attention / information-processing difficulty | `C1`, `C6` |
-| cognitive | `C-S2` | Memory / time-management difficulty | `C2`, `C3`, `C7` |
-| cognitive | `C-S3` | Executive function / decision-making difficulty | `C4`, `C5`, `C8` |
-| cognitive | `C-S4` | Numerical / reconciliation difficulty | `C7` |
+| cognitive | `C-S1` | Attention / readability / simplification difficulty | `C1` |
+| cognitive | `C-S2` | Memory / persistent-information support | `C2` |
+| cognitive | `C-S3` | Time / prospective-memory support | `C3` |
 
 `subgroup_ids` 允许 multi-label，因此 subgroup counts 不要求相加等于 benchmark 总数。
 
@@ -321,7 +332,7 @@ GUIDE 类工作更关注从 user demonstration/interaction 推断 intent、state
 | `V3` | Contrast and display-palette customization | 高对比度、前景/背景、反色或显示配色。 | WebAIM Low Vision Survey #2; W3C; Microsoft |
 | `V4` | Color-vision differentiation support | color filters 或 non-color cues。 | WCAG 1.4.1; Microsoft color-filter docs |
 | `V5` | Access to non-text visual information | 图片、地图、图表、扫描件、visual-only content 的等价信息。 | WebAIM; WCAG 1.1.1 |
-| `V6` | Accessible CAPTCHA and verification | 视觉 verification 的替代 modality 或 delegated assistance。 | WebAIM; WCAG 1.1.1 |
+| `V6` | Accessible CAPTCHA and verification | 视觉 verification 的 non-visual / alternative verification path 或等价信息支持。 | WebAIM; WCAG 1.1.1 |
 
 #### Hearing
 
@@ -331,7 +342,7 @@ GUIDE 类工作更关注从 user demonstration/interaction 推断 intent、state
 | `H2` | Caption readability and language customization | caption language/visual presentation 调整。 | Microsoft; ACMA |
 | `H3` | Visual and persistent alternatives to auditory notifications | visual notification + 足够 persistence。 | Microsoft |
 | `H4` | Single-channel access to stereo audio | stereo → mono，避免遗漏单侧声道。 | Microsoft |
-| `H5` | Verification without relying on hearing | non-auditory verification 或 delegated assistance。 | WCAG 1.1.1 |
+| `H5` | Verification without relying on hearing | non-auditory verification path 或等价视觉/文本支持。 | WCAG 1.1.1 |
 
 #### Motor
 
@@ -340,7 +351,7 @@ GUIDE 类工作更关注从 user demonstration/interaction 推断 intent、state
 | `M1` | Alternative text entry without a physical keyboard | on-screen keyboard 或 alternative input。 | WebAIM Motor Survey; Microsoft |
 | `M2` | Sequential modifier-key input | Sticky Keys 等将 simultaneous shortcut 改成 sequential input。 | Microsoft |
 | `M3` | Keystroke filtering and sensitivity control | Filter Keys 等过滤重复/短促按键。 | Microsoft |
-| `M4` | Alternative pointer control or delegated pointing | keyboard/speech/alternative input 或 agent 代理 pointer activation。 | Microsoft; WebAIM |
+| `M4` | Alternative pointer control / reduced precise pointing demand | keyboard/speech/alternative input，或通过 accessibility configuration 降低精确 pointer activation demand。 | Microsoft; WebAIM |
 | `M5` | Reduced press-hold and dragging demand | 减少持续按住、拖动、精确释放。 | WCAG 2.5.7 |
 | `M6` | Mouse-button and handedness customization | primary mouse button 等 pointer setting。 | Microsoft |
 | `M7` | Reduced pointer precision, repetition, and timing demand | 减少反复精确 target acquisition、timing、fine-motor operation。 | WebAIM; WCAG 2.5.7 |
@@ -349,23 +360,21 @@ GUIDE 类工作更关注从 user demonstration/interaction 推断 intent、state
 
 | ID | Documented user need | Operational definition | Primary evidence |
 | --- | --- | --- | --- |
-| `C1` | Focus, readability, and simplification | 降低 distraction、clutter、reading load。 | W3C Cognitive Accessibility; COGA |
-| `C2` | Memory externalization and short-term retention support | notes/checklists/persistent cues/delegation。 | COGA |
-| `C3` | Time and prospective-memory support | reminders/calendar/timer/persistent time cues。 | COGA |
-| `C4` | Planning, sequencing, task-state tracking, and completion recognition | 降低 unfamiliar multi-step workflow、progress tracking、completion burden。 | COGA; Pew supplementary |
-| `C5` | Decision and choice support | alternatives/constraints/consequences 的比较与选择。 | COGA |
-| `C6` | Important-information extraction and prioritization | dense/mixed information 中提取少量关键事实/actions。 | COGA |
-| `C7` | Calculation, counting, copying, and cross-source reconciliation support | 减少 arithmetic/counting/copying/短期保持/跨 source reconciliation。 | COGA |
-| `C8` | Error prevention and safety-critical guidance | 高风险选择、scam、health/safety guidance 的正确理解与执行。 | COGA |
+| `C1` | Focus, readability, and simplification | 降低 distraction、clutter、reading load，并通过可读/简化表示支持持续注意与理解。 | W3C Cognitive Accessibility; COGA |
+| `C2` | Memory externalization and persistent information support | 通过 notes/checklists/persistent cues 等 durable representation 降低 working-memory / short-term retention burden。 | COGA |
+| `C3` | Time and prospective-memory support | reminders/calendar/timer/notification persistence 等 future-action / time cues。 | COGA |
 
 ### Cognitive slice 的边界
 
-不要把“任何多步骤任务”自动称为 cognitive-access task。本文允许两类：
+为降低与 generic long-horizon / planning / decision difficulty 的 construct overlap，Cognitive Core 只保留三类具有可观察 support requirement 的 need：`C1` readability/simplification、`C2` persistent memory externalization、`C3` prospective-memory/time support。
 
-1. **Support-output tasks**：通过 reminder/checklist/calendar/plain-language note 等降低 memory、attention、processing、planning burden；
-2. **Delegated-burden tasks**：流程本身自然实例化 documented cognitive burden，如 sequencing、working-memory tracking、option/permission judgment、state interpretation、recovery、completion recognition。
+1. **Core**：success condition 中必须出现可观察的 readable/simplified representation、persistent note/checklist/artifact、calendar/reminder/timer，或 requested cognitive-support configuration。
+2. **No delegation tier**：若 reminder/list 只是输入辅助，而最终 evaluator 与普通 GUI task 完全相同，则任务必须重写，使 persistent support requirement 进入 evaluator；若无法自然重写则移除，而不是保留为 Delegation。
+3. **Stress test**：CAPTCHA 等 burden probes 单独报告，不用于证明 accessibility-specific requirement shift。
 
-Software installation 可以属于 `C4`，但理由必须是具体 cognitive demands，而不是“older adults”或“步骤多”。
+纯 software installation、generic option selection、multi-constraint shopping、arithmetic/counting/reconciliation 不再仅凭“需要 planning/decision/calculation”进入 Cognitive Core。
+
+当前 cognitive release 为 **45 个 Core + 5 个 CAPTCHA stress-test**。45 个 Core workflow 分布为：`access=5, communication=5, consumption=6, health=6, information=6, management=6, mobility=5, service=6`；八个正式 everyday workflow categories 均保持在 5–6 个任务之间。
 
 ## 3.3 Workflow taxonomy and ICF grounding
 
@@ -383,10 +392,9 @@ Software installation 可以属于 `C4`，但理由必须是具体 cognitive dem
 | `service` | administrative and public/private services | payments, statements, forms, government services, identity verification |
 | `health` | health-related digital workflows | appointments, records, prescriptions, hospital information, emergency contacts |
 | `access` | configuring accessibility support itself | captions, screen readers, magnification, reading mode, keyboard/pointer assistance |
-| `setup` | ordinary software/system setup | installation or configuration where setup itself is the user goal |
 | `captcha` | verification-barrier stress test | audio/text/image/pointer/puzzle CAPTCHA-like challenges |
 
-其中 `captcha` 建议在结果中作为 **stress-test slice** 单独分析，而不是与 everyday-life categories 直接混合解释；`access` 和 `setup` 要区分“accessibility support 本身是目标”与“普通软件配置本身是目标”。
+其中 `captcha` 建议在结果中作为 **stress-test slice** 单独分析，而不是与 everyday-life categories 直接混合解释；`access` 仅用于 accessibility/access-support configuration 本身是主要目标的任务。普通软件安装不单设 workflow category。
 
 Task categories 可写成 **informed by WHO ICF Activities and Participation**，不要写“采用/复刻 ICF taxonomy”。ICF Activities and Participation 覆盖：
 
@@ -423,7 +431,7 @@ WHODAS 2.0 可作为补充 framing，但不要让 taxonomy 显得依赖过多 st
 构建阶段每个 task 至少回答：
 
 - documented access need 是什么？
-- 该 need 在任务中具体改变了 information / delegated burden / output / continuation state 中哪一项？
+- 该 need 在任务中具体改变了 information / user-facing artifact / persistent state 中哪一项？
 - 如果移除 accessibility-specific requirement，task construct 是否实质变化？
 - 用户提出该要求是否自然，而不是 benchmark-engineered constraint？
 - 如果有 AT setting，该 setting 是 user-facing requirement 还是仅为了增加 evaluator 条件？
@@ -432,12 +440,12 @@ WHODAS 2.0 可作为补充 framing，但不要让 taxonomy 显得依赖过多 st
 
 ### 当前 curation 原则
 
-- `access-docker_install` / `access-spotify_install`：若保留 cognitive，依据 `C4` 的 unfamiliar setup / sequencing / completion-recognition burden，不把年龄本身当 disability evidence；
-- cognitive CAPTCHA：只保留能自然实例化 retention、sequencing、focus/counting burden 的 challenge；
-- consumption：generic exact lookup 改成 persistent reminder / natural preference constraints；
-- information：长讨论→plain-language takeaway，Wikipedia→persistent reference artifact；
-- cognitive × mobility：保留 workflow coverage，但 construct 是复杂 route/station info 的 simplification / step sequencing，而不是把 physical mobility access 当 cognitive need；
-- visual/motor CAPTCHA：依据 verification delegation 或 pointer burden，而不是按 challenge 表面形式判断 group。
+- Cognitive Core 只使用 `C1`–`C3`；`C4`–`C8` 不再作为 cognitive need IDs。
+- consumption 中原先“使用 reminder 然后完成普通 cart state”的任务已重写：最终 evaluator 同时检查 cart outcome 与 persistent completion/decision cue，因此不再存在 Delegation tier。
+- information / service / health 中优先保留 plain-language representation、persistent reference/checklist/note、reminder/calendar 等可观察 support output。
+- cognitive CAPTCHA 只作为 stress-test slice；纯 arithmetic CAPTCHA 不作为 cognitive construct，原 math slots 已替换为 C2 persistent information/management support workflows。
+- cognitive × mobility 只有在最终生成 persistent route/time plan 时进入 Core，不把 route planning 本身等同 cognitive-access construct。
+- visual/motor CAPTCHA：依据 non-visual verification requirement 或 pointer burden，而不是按 challenge 表面形式判断 group。
 
 ## 3.5 Execution environment and multimodal task realization
 
@@ -569,21 +577,36 @@ OpenCaptchaWorld-derived tasks 使用复制到本地的 image assets 和 ground-
 
 ### Outcome decomposition
 
-建议将每个 task 的 evaluator 显式区分：
+每个主 benchmark task 在**同一次 run / final state** 上报告三个分数：
 
-- `TaskOutcome`：underlying life/GUI goal 是否完成；
-- `AccessRequirement`：task 明确要求的 access-need-specific information/output/state 是否满足；
-- `FullSuccess = TaskOutcome ∧ AccessRequirement`。
+- `TaskOutcome`（\(T_t\)）：underlying life/GUI goal 是否完成；
+- `AccessRequirement`（\(A_t\)）：task 明确要求的 access-need-specific information / representation / support artifact / accessibility state 是否满足；
+- `FullSuccess`（\(F_t\)）：传统 task success rate；对 binary evaluator，\(F_t=T_t\land A_t\)。
 
-并定义：
+这里不要求 `TaskOutcome` 与 `AccessRequirement` 必须是两个不同的 observable condition。存在两类合法 task：
+
+1. **Distinct-component tasks**：nominal outcome 与 access-specific requirement 是不同的 graded conditions。例如 email draft + calendar reminder、cart state + persistent completion cue。
+2. **Coincident-component tasks**：满足 access requirement 本身就是 nominal goal，例如启用 requested readability setting、创建 reminder、生成 persistent support artifact；此时 `TaskOutcome` 与 `AccessRequirement` 可以引用同一个 primitive evaluator。
+
+实现上，每个 task 的 primitive evaluators 只运行一次，再通过 task-level metric-role mapping 分别聚合出 `TaskOutcome` 与 `AccessRequirement`；`FullSuccess` 保持原 WAA task evaluator 的传统 aggregate score，以兼容现有 success-rate reporting。
+
+**Accessibility Requirement Gap 只在预先标注为 distinct-component 的非-CAPTCHA tasks 上计算**。令 \(D\) 表示该 task subset：
 
 \[
-\text{AccessibilityRequirementGap}=P(TaskOutcome)-P(FullSuccess)
+\text{AccessibilityRequirementGap}_D
+= P(T=1\mid D)-P(F=1\mid D)
+= P(T=1,A=0\mid D).
 \]
 
-这个指标比单纯 `HandoffGap` 更一般，因为不是所有 task 的 additional requirement 都是 handoff state。
+同时报告：
 
-对具有 continuation-state requirement 的 subset，可额外报告 `ContinuationStateSuccess`。
+\[
+\text{ConditionalRequirementSatisfaction}_D=P(A=1\mid T=1,D).
+\]
+
+不能按某次运行中观察到的 `T != A` 来选择样本；`distinct` / `coincident` 是 **task construct 的静态属性**。Coincident tasks 仍进入 overall `TaskOutcome`、`AccessRequirement` 和 `FullSuccess`，但不进入 gap 分析，因为它们的 gap 按定义为 0。
+
+CAPTCHA 作为独立 stress-test slice 报告 challenge success，不进入 requirement-gap 分析。对具有 continuation-state requirement 的 subset，可额外报告 `ContinuationStateSuccess`。
 
 ## 3.8 Construct validity: human / expert review
 
@@ -642,13 +665,16 @@ OpenCaptchaWorld-derived tasks 使用复制到本地的 image assets 和 ground-
 
 ## 4.2 Main metrics
 
-主指标：`FullSuccess` / task success rate。
+主指标：`FullSuccess` / traditional task success rate（所有主 benchmark tasks）。
 
-辅助诊断：
+同一次 run 同时报告：
 
 - `TaskOutcome`；
 - `AccessRequirementSuccess`；
-- `AccessibilityRequirementGap`；
+- `FullSuccess`；
+- `AccessibilityRequirementGap`：**仅 distinct-component、non-CAPTCHA subset**；
+- `ConditionalRequirementSatisfaction = P(AccessRequirement=1 | TaskOutcome=1)`：同样仅 distinct-component、non-CAPTCHA subset；
+- distinct/coincident task counts，避免 overall gap 被 coincident tasks 的结构性 0 gap 稀释；
 - partial fact/state score；
 - steps/actions；
 - completion time；
@@ -668,7 +694,7 @@ OpenCaptchaWorld-derived tasks 使用复制到本地的 image assets 和 ground-
 
 - documented need / broad subgroup；
 - modality；
-- four accessibility-relevance mechanisms；
+- three accessibility-relevance mechanisms；
 - accessibility/continuation setting required vs not required；
 - single-app vs cross-app；
 - workflow category；
@@ -725,7 +751,7 @@ OpenCaptchaWorld-derived tasks 使用复制到本地的 image assets 和 ground-
 重点不是“哪个 failure 最多”，而是：
 
 - 哪些 failure 在 visual/hearing/motor/cognitive 中集中？
-- 哪些 failure 与 information/delegation/output/continuation mechanism 相关？
+- 哪些 failure 与 information / accessible-artifact / continuation-state mechanism 相关？
 - 哪些 agent family 更容易发生哪些 failure？
 - accessibility requirement failure 是否常发生在 underlying `TaskOutcome` 已成功之后？
 - structured observation / persistent planning / verification 是否与更低的特定 failure rate 相关？
@@ -818,7 +844,7 @@ OpenCaptchaWorld-derived tasks 使用复制到本地的 image assets 和 ground-
 
 强调很多 underlying goals 与 general users 相同是设计优点，不是缺陷：benchmark 要测的是 everyday assistance，而不是 disability-exclusive activities。
 
-真正区别来自 information pathway、delegated burden、output representation、continuation state。
+真正区别来自 required information、user-facing representation/support artifact 和 persistent accessibility/continuation state。
 
 ## 8.3 Accessible continuation without predicting future user behavior
 
@@ -847,7 +873,7 @@ visual/hearing/motor/cognitive 是 operational functional slices；真实用户�
 7. **Synthetic/self-hosted tasks**：为确定性可能牺牲部分开放世界 realism。
 8. **Evaluator coverage**：deterministic evaluation 仍可能遗漏未建模但合理的 success variants；用 validity study 降低风险。
 9. **Cognitive construct sensitivity**：尤其避免将年龄、普通 long-horizon difficulty 或“步骤多”直接等同 cognitive disability。
-10. **No claim of replacing user autonomy**：benchmark 测 delegated assistance capability，不意味着 agent 应默认替用户做决定；高风险任务需用户 control/confirmation。
+10. **No claim of replacing user autonomy**：benchmark 测 accessibility-oriented computer assistance capability，不意味着 agent 应默认替用户做决定；高风险任务需用户 control/confirmation。
 
 ---
 
@@ -958,7 +984,7 @@ Docker image rebuild、Windows VM storage recreation、persistent VM changes、W
 | Accessibility-oriented construct is not ordinary GUI difficulty relabeled | task mechanisms + matched/near-matched subset + task-factor analysis |
 | Tasks have real accessibility relevance | documented need mapping + counterfactual relevance check + human/expert validation |
 | AT usage is not the benchmark definition | task definition + agent-side/user-side separation + results by mechanism |
-| Persistent accessibility state is a real additional success condition | TaskOutcome vs FullSuccess / continuation-state subset |
+| Access-specific requirements can fail after nominal completion | distinct-task TaskOutcome vs AccessRequirement vs FullSuccess + continuation-state subset |
 | Evaluator is valid | evaluator validity study |
 | Proposed method addresses observed mechanisms | targeted gains + failure reduction + ablation |
 | Method is not evaluator-specific overfit | cross-benchmark results |
@@ -970,7 +996,7 @@ Docker image rebuild、Windows VM storage recreation、persistent VM changes、W
 
 ### C1. “Why should the agent use assistive technology?”
 
-它不需要。Benchmark 分离 agent-side interaction strategy 与 user-side accessibility requirement。AT/settings 可以是最终 user-facing environment state，而不是 agent observation/action method。
+Benchmark **不强制** agent 使用 AT，也不禁止。Agent 可以使用常规视觉/鼠标/键盘/structured observation，也可以在有帮助时使用 screen reader、Immersive Reader、caption 等 accessibility tools。关键判据是 task 的 documented access requirement 是否满足；若 task 明确要求配置/使用某个 accessibility feature，则该 feature 的结果状态可以进入 evaluator。
 
 ### C2. “The agent never used Sticky Keys after enabling it. Isn’t that artificial?”
 
@@ -978,7 +1004,7 @@ Docker image rebuild、Windows VM storage recreation、persistent VM changes、W
 
 ### C3. “Aren’t these just normal tasks with disability labels?”
 
-Underlying goals 故意是普通生活目标。Accessibility-oriented 的差异在于 documented need materially changes information、delegated burden、output 或 continuation state。用 task-level need mapping、counterfactual relevance check、human validation 和 matched subset 支撑。
+Underlying goals 故意是普通生活目标。Accessibility-oriented 的差异在于 documented need materially changes required information、user-facing output/artifact 或 persistent accessibility/continuation state，并且该变化进入 evaluator。用 task-level need mapping、counterfactual relevance check、human validation 和 matched subset 支撑。
 
 ### C4. “How is this different from A11y-CUA?”
 
@@ -986,7 +1012,7 @@ A11y-CUA 主要研究 accessibility-conditioned interaction behavior/trajectory�
 
 ### C5. “Are cognitive tasks just long-horizon tasks?”
 
-不是。只有能映射到 C1–C8 documented needs 且具体 operationalize simplification、memory externalization、prospective memory、sequencing/state tracking、decision support、information extraction、reconciliation 或 error prevention 的任务保留。
+不是。Cognitive Core 只保留 C1–C3：readability/simplification、persistent memory externalization、prospective-memory/time support，并要求这些 support 进入可观察 success condition。Generic planning、decision、multi-step difficulty、calculation/reconciliation 不再单独构成 cognitive Core need。
 
 ### C6. “Are four disability groups reductive?”
 
@@ -1000,7 +1026,11 @@ A11y-CUA 主要研究 accessibility-conditioned interaction behavior/trajectory�
 
 structured state + atomic fact-based deterministic scoring + evaluator validity study。
 
-### C9. “Method overfits your benchmark?”
+### C9. “Can TaskOutcome and AccessRequirement be the same?”
+
+可以。若 requested accessibility/support condition 本身就是 nominal task goal（例如 enable a readability setting、create a reminder、produce a persistent support artifact），二者按 construct 合法地 coincide。它们仍分别汇报，但不进入 `AccessibilityRequirementGap`；gap 只对预先定义的 distinct-component tasks 计算。
+
+### C10. “Method overfits your benchmark?”
 
 failure-specific ablation + external benchmark transfer；不只报 own-benchmark SOTA。
 
@@ -1010,7 +1040,7 @@ failure-specific ablation + external benchmark transfer；不只报 own-benchmar
 
 推荐画成：
 
-**Documented access needs (4 functional groups)** → **everyday workflows / modalities** → **four accessibility-relevance mechanisms** → **agent** → **TaskOutcome + AccessRequirement / continuation state** → **deterministic evaluator**。
+**Documented access needs (4 functional groups)** → **everyday workflows / modalities** → **three observable accessibility-relevance mechanisms** → **agent** → **TaskOutcome + AccessRequirement / continuation state** → **deterministic evaluator**。
 
 这比旧版“four user groups → agent → handoff state”更能回答“和普通 task 有什么区别”。
 
@@ -1026,15 +1056,15 @@ user group / subgroup / need / category / modality / mechanism / apps / continua
 
 ### Table 3 — Baseline main results
 
-Overall + visual/hearing/motor/cognitive + TaskOutcome/FullSuccess。
+Overall + visual/hearing/motor/cognitive，主列至少包括 `TaskOutcome`、`AccessRequirement`、`FullSuccess`；其中 `FullSuccess` 是传统 success rate。
 
 ### Figure 2 — Accessibility Requirement Gap
 
-展示 `TaskOutcome` vs `FullSuccess`，最好按 group 或 mechanism 分解。
+只在 **distinct-component non-CAPTCHA subset** 上展示 `TaskOutcome`、`AccessRequirement` 与 `FullSuccess`，并按 group / mechanism 分解；coincident tasks 单独报告数量与 overall success，不进入 gap。
 
 ### Figure 3 — Mechanism/task-factor performance
 
-information / delegation / output / continuation；modalities；cross-app 等。
+information access / accessible artifact / continuation state；modalities；cross-app 等。
 
 ### Figure 4 — Failure taxonomy
 
@@ -1054,7 +1084,7 @@ Overall + hard slices + mechanism slices。
 
 ## F. Abstract template（实验后填数字）
 
-> Computer-use agents are increasingly capable of completing everyday digital tasks, yet existing evaluations largely assume general user goals and standard completion conditions. We introduce [BENCHMARK], an executable benchmark for evaluating whether agents can complete everyday computer-use tasks on behalf of users with diverse accessibility needs. Rather than requiring agents to emulate assistive-technology interaction, our tasks are grounded in documented access needs that materially affect required information, delegated interaction burden, user-facing output, or persistent accessibility and continuation states. [BENCHMARK] contains [N] tasks spanning visual, hearing, motor, and cognitive functional scenarios, multiple life-workflow categories and modalities, and uses task-specific deterministic evaluators with structured state checking and atomic fact-based natural-language scoring. Evaluating [K] representative agents reveals [MAIN FINDING], including substantial variation across [GROUPS/MECHANISMS] and a gap between nominal task completion and full accessibility-oriented success. Based on these failures, we introduce [METHOD], which [MECHANISM] and improves [RESULT] while [preserving/improving] performance on [EXTERNAL BENCHMARK]. Our results show that strong general computer-use performance does not guarantee reliable assistance under heterogeneous accessibility requirements.
+> Computer-use agents are increasingly capable of completing everyday digital tasks, yet existing evaluations largely assume general user goals and standard completion conditions. We introduce [BENCHMARK], an executable benchmark for evaluating whether agents can complete everyday computer-use tasks on behalf of users with diverse accessibility needs. Rather than imposing assistive-technology use as a universal agent-side constraint, while still allowing agents to use AT when helpful, our tasks are grounded in documented access needs that materially change observable completion conditions: required information, user-facing representations/support artifacts, or persistent accessibility and continuation states. [BENCHMARK] contains [N] tasks spanning visual, hearing, motor, and cognitive functional scenarios, multiple life-workflow categories and modalities, and uses task-specific deterministic evaluators with structured state checking and atomic fact-based natural-language scoring. Evaluating [K] representative agents reveals [MAIN FINDING], including substantial variation across [GROUPS/MECHANISMS] and a gap between nominal task completion and full accessibility-oriented success. Based on these failures, we introduce [METHOD], which [MECHANISM] and improves [RESULT] while [preserving/improving] performance on [EXTERNAL BENCHMARK]. Our results show that strong general computer-use performance does not guarantee reliable assistance under heterogeneous accessibility requirements.
 
 ## G. Title candidates
 
@@ -1068,7 +1098,7 @@ Overall + hard slices + mechanism slices。
 ## H. 六句话 paper story
 
 1. **现有 CUA benchmark 主要评测通用用户目标，而 documented accessibility needs 会改变任务的 usable completion requirements。**
-2. **本文不要求 agent 模仿残障用户或依赖 AT；accessibility relevance 来自 information access、delegated burden、accessible output 或 persistent accessibility/continuation state。**
+2. **本文不要求 agent 模仿残障用户，也不把 AT 使用设为统一强制约束；agent 可以在有帮助时使用 AT。Core task 必须让 documented access need 改变可观察、可评估的信息、user-facing artifact 或 persistent accessibility/continuation state；delegation motivation 本身不足以进入 Core。**
 3. **我们构建一个覆盖 visual/hearing/motor/cognitive functional slices、ICF-informed everyday workflows 和 multimodal information 的 executable benchmark，并用 deterministic end-state evaluator 评分。**
 4. **代表性 CUAs 的评测显示：nominal GUI task completion 不等价于 full accessibility-oriented success，而且不同 needs 暴露不同 failure signatures。**
 5. **这些 failure 直接指导新的 agent method，而不是只产生一个排行榜。**

@@ -9,11 +9,12 @@
     "H1"
   ],
   "difficulty": "medium",
-  "instruction": "Turn on captions in the opened YouTube video, identify the hand-washing steps mentioned there, then record them in a Sticky Note.",
+  "operation_time": 0,
+  "instruction": "Turn on captions in the opened YouTube video and record the physical hand-washing sequence from wetting the hands through drying them in a Sticky Note. Include each hand area the video specifically says to wash.",
   "source": "https://www.youtube.com/watch?v=UitUdTjhZz8",
   "gt_steps": [
     "Turn on captions in the YouTube player.",
-    "Play the video and use the YouTube captions to identify the hand-washing steps.",
+    "Play the video and use the YouTube captions to identify the physical sequence from wetting through drying, including the specifically named hand areas.",
     "Switch to Sticky Notes.",
     "Write the phrases in a sticky note: `warm water`, `soap`, `front and back`, `between your fingers`, `rinse and dry`."
   ],
@@ -134,7 +135,15 @@
           "expected": "true"
         }
       }
-    ]
+    ],
+    "metric_roles": {
+      "task_outcome": [
+        0
+      ],
+      "access_requirement": [
+        1
+      ]
+    }
   },
   "proxy": true
 }

@@ -1,13 +1,17 @@
 {
   "id": "information-running_hydration_note",
   "user_group": "cognitive",
-  "subgroup_ids": ["C-S1", "C-S2"],
+  "subgroup_ids": [
+    "C-S1",
+    "C-S2"
+  ],
   "category": "information",
   "need_ids": [
     "C1",
     "C2"
   ],
   "difficulty": "medium",
+  "operation_time": 0,
   "instruction": "Copy the article's short-distance water-intake advice exactly into Sticky Notes, using Immersive Reader to read the article.",
   "source": "https://www.self.com/gallery/best-hydration-packs",
   "gt_steps": [
@@ -80,7 +84,16 @@
           "reader_mode_open": true
         }
       }
-    ]
+    ],
+    "metric_roles": {
+      "task_outcome": [
+        0
+      ],
+      "access_requirement": [
+        0,
+        1
+      ]
+    }
   },
   "proxy": true,
   "possibility_of_env_change": "medium"

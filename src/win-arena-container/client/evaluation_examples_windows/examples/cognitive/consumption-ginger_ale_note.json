@@ -1,28 +1,39 @@
 {
   "id": "consumption-ginger_ale_note",
   "user_group": "cognitive",
-  "subgroup_ids": ["C-S1", "C-S2", "C-S3"],
+  "subgroup_ids": [
+    "C-S2"
+  ],
   "category": "consumption",
   "need_ids": [
-    "C2",
-    "C5",
-    "C6"
+    "C2"
   ],
   "difficulty": "medium",
-  "instruction": "Use the drink-preference note on the Desktop and the customer reviews on the already-open Q Mixers Premium Ginger Ale page to decide whether it is a good fit. If it fits all the preferences, add it to the cart.",
-  "source": "http://host.docker.internal:7770/q-mixers-premium-ginger-ale-real-ingredients-less-sweet-6-7-fl-oz-24-bottles.html",
+  "operation_time": 52.26,
+  "instruction": "Complete the ginger-ale item in `ginger_ale_shopping_list.xlsx` on the Desktop using the listed preferences and customer reviews. When finished, check it off by changing its `Status` from `Pending` to `Done`, then save the spreadsheet.",
+  "source": "synthetic",
   "gt_steps": [
-    "Open `drink_preferences.txt` and read the three preferences.",
-    "Review the customer-review text on the already-open Q Mixers Premium Ginger Ale page.",
-    "Determine that the reviews support all three preferences.",
-    "Add Q Mixers Premium Ginger Ale to the shopping cart."
+    "Open `ginger_ale_shopping_list.xlsx` and find the pending ginger ale item and its preferences.",
+    "Use the product details and customer reviews to identify `Q Mixers Premium Ginger Ale: Real Ingredients & Less Sweet, 6.7 Fl Oz (24 Bottles)` (SKU `B071KC37VD`) as the standard answer; confirm that it is less sweet, has a noticeable ginger flavor, and is enjoyable on its own.",
+    "Add that exact ginger ale to the shopping cart.",
+    "Return to the spreadsheet, change the Ginger ale row status from `Pending` to `Done`, and save the file."
   ],
   "config": [
     {
-      "type": "execute",
+      "type": "upload_file",
       "parameters": {
-        "command": "powershell -NoProfile -Command \"Set-Content -Path (Join-Path $env:USERPROFILE 'Desktop\\drink_preferences.txt') -Value @('Ginger ale preferences:','- less sweet / not overly sweet','- noticeable ginger flavor','- enjoyable on its own, not only as a mixer')\"",
-        "shell": true
+        "files": [
+          {
+            "local_path": "assets/consumption-ginger_ale_shopping_list.xlsx",
+            "path": "C:\\Users\\Docker\\Desktop\\ginger_ale_shopping_list.xlsx"
+          }
+        ]
+      }
+    },
+    {
+      "type": "open",
+      "parameters": {
+        "path": "C:\\Users\\Docker\\Desktop\\ginger_ale_shopping_list.xlsx"
       }
     },
     {
@@ -30,34 +41,73 @@
       "parameters": {}
     },
     {
-      "type": "launch",
+      "type": "chrome_open_tabs",
       "parameters": {
-        "command": [
-          "cmd",
-          "/c",
-          "start chrome http://host.docker.internal:7770/q-mixers-premium-ginger-ale-real-ingredients-less-sweet-6-7-fl-oz-24-bottles.html"
+        "urls_to_open": [
+          "http://host.docker.internal:7770"
         ]
       }
     }
   ],
   "related_apps": [
     "chrome",
-    "notepad"
+    "libreoffice_calc"
   ],
   "evaluator": {
-    "func": "is_page_contains_items",
-    "result": {
-      "type": "page_info",
-      "url": "http://host.docker.internal:7770/checkout/cart/",
-      "load_state": "networkidle"
-    },
-    "expected": {
-      "type": "rule",
-      "rules": {
-        "items": [
-          "B071KC37VD"
-        ]
+    "func": [
+      "is_page_contains_items",
+      "check_text_points"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "page_info",
+        "url": "http://host.docker.internal:7770/checkout/cart/",
+        "load_state": "networkidle"
+      },
+      {
+        "type": "vm_command_line",
+        "command": "C:\\Users\\Docker\\AppData\\Local\\Programs\\Python\\Python310\\python.exe -c \"from openpyxl import load_workbook; from pathlib import Path; p=Path.home()/'Desktop'/'ginger_ale_shopping_list.xlsx'; w=load_workbook(p,data_only=True); s=w.active; print('\\n'.join(f'{s.cell(r,1).value}: {s.cell(r,4).value}' for r in range(3,s.max_row+1) if s.cell(r,1).value))\"",
+        "shell": true
       }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "items": [
+            "B071KC37VD"
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "ignore_case": true,
+          "points": [
+            [
+              "Oat milk: Done"
+            ],
+            [
+              "Ginger ale: Done"
+            ],
+            [
+              "Paper towels: Done"
+            ],
+            [
+              "Sparkling water: Pending"
+            ]
+          ]
+        }
+      }
+    ],
+    "metric_roles": {
+      "task_outcome": [
+        0
+      ],
+      "access_requirement": [
+        1
+      ]
     }
   },
   "proxy": false,

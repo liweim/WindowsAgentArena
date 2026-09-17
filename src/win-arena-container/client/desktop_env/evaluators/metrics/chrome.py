@@ -11,6 +11,7 @@ from bs4 import BeautifulSoup, Tag
 import json
 
 from desktop_env.evaluators.metrics.utils import are_lists_equal, compare_urls
+from desktop_env.evaluators.metrics.general import normalize_text
 
 logger = logging.getLogger("desktopenv.metrics.chrome")
 
@@ -184,7 +185,7 @@ def compare_pdfs(pdf1_path: Union[str, List[str]], pdf2_path: Union[str, List[st
         try:
             text1 = extract_text_from_pdf(path1)
             text2 = extract_text_from_pdf(path2)
-            score += fuzz.ratio(text1, text2) / 100
+            score += fuzz.ratio(normalize_text(text1), normalize_text(text2)) / 100
         except Exception as e:
             logger.info(f"[ERROR]: unexpected error occurred when comparing PDF files: {e}")
     return score / len(pdf2_path)
@@ -323,10 +324,12 @@ def compare_htmls(html_path1: str, html_path2: str) -> float:
 
     def compare_elements(elem1, elem2):
         if not (isinstance(elem1, Tag) and isinstance(elem2, Tag)):
+            if isinstance(elem1, str) and isinstance(elem2, str):
+                return normalize_text(elem1, ignore_case=False) == normalize_text(elem2, ignore_case=False)
             return elem1 == elem2
         if elem1.name != elem2.name:
             return False
-        if elem1.text.strip() != elem2.text.strip():
+        if normalize_text(elem1.text, ignore_case=False) != normalize_text(elem2.text, ignore_case=False):
             return False
         if elem1.attrs != elem2.attrs:
             return False
@@ -650,20 +653,36 @@ def _shopping_cart_options_match(rule, cart_item_ids):
 
 
 def check_chrome_weather_bookmark(env, config):
+    response = env.controller.execute_python_command(r"""
+import glob
+import json
+import os
 
-    bookmark_paths = [
-        r"C:\Users\Docker\AppData\Local\Google\Chrome\User Data\Default\Bookmarks",
-        r"C:\Users\Docker\AppData\Local\Google\Chrome\User Data\Profile 1\Bookmarks"
-    ]
+roots = glob.glob(os.path.join(
+    os.environ.get("LOCALAPPDATA", ""), "Google", "Chrome*", "User Data"
+))
+roots.extend([
+    r"C:\Temp\winarena-chrome-user-data",
+    r"C:\Temp\winarena-chrome-debug",
+])
+paths = []
+for root in dict.fromkeys(roots):
+    paths.extend(glob.glob(os.path.join(root, "*", "Bookmarks")))
+paths = [path for path in paths if os.path.isfile(path)]
+paths.sort(key=os.path.getmtime, reverse=True)
+print(json.dumps(paths))
+""")
+    try:
+        bookmark_paths = json.loads(response["output"].strip())
+    except (KeyError, TypeError, json.JSONDecodeError):
+        bookmark_paths = []
 
     for path in bookmark_paths:
-
-        if not os.path.exists(path):
-            continue
-
         try:
-            with open(path, "r", encoding="utf-8") as f:
-                bookmarks = json.load(f)
+            content = env.controller.get_file(path)
+            if isinstance(content, bytes):
+                content = content.decode("utf-8")
+            bookmarks = json.loads(content)
 
             stack = [bookmarks]
 

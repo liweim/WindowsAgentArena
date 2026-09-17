@@ -9,12 +9,13 @@
     "H1"
   ],
   "difficulty": "easy",
+  "operation_time": 0,
   "instruction": "Turn on captions in the opened YouTube video, then watch it and open the complaint website it mentions in Chrome.",
   "source": "https://www.youtube.com/watch?v=3LvMO5UMCl8",
   "gt_steps": [
     "Turn on captions in the YouTube player.",
     "Play the video and use the YouTube captions to identify where victims should go to file a complaint online.",
-    "Open https://reportfraud.ftc.gov in Chrome."
+    "Open the address stated in the captions, `https://ftc.gov/complaint`, in Chrome and allow it to redirect to the current FTC reporting site."
   ],
   "config": [
     {
@@ -84,7 +85,15 @@
           "url": "https://reportfraud.ftc.gov"
         }
       }
-    ]
+    ],
+    "metric_roles": {
+      "task_outcome": [
+        1
+      ],
+      "access_requirement": [
+        0
+      ]
+    }
   },
   "proxy": true
 }

@@ -1,23 +1,44 @@
 {
   "id": "consumption-kids_sunscreen_reviews",
   "user_group": "cognitive",
-  "subgroup_ids": ["C-S1", "C-S3"],
+  "subgroup_ids": [
+    "C-S2"
+  ],
   "category": "consumption",
   "need_ids": [
-    "C5",
-    "C6"
+    "C2"
   ],
-  "difficulty": "hard",
-  "instruction": "Find a kids sunscreen that is SPF 50, mineral, sold as a foam twin pack, and whose customer reviews support that it does not sting and does not feel sticky. Add the matching product to the cart.",
-  "source": "http://host.docker.internal:7770",
+  "difficulty": "medium",
+  "operation_time": 67.33,
+  "instruction": "Complete the kids-sunscreen item in `family_trip_shopping.txt` on the Desktop using the listed requirements and customer reviews. When finished, check it off by changing `[ ]` to `[x]` on that item, then save the list.",
+  "source": "synthetic",
   "gt_steps": [
-    "Open the self-hosted shopping website and search for kids sunscreen.",
-    "Use product details to narrow to SPF 50 mineral foam twin packs.",
-    "Check customer reviews for non-stinging and non-sticky feedback.",
-    "Identify the Banana Boat Kids Vanishing Color mineral sunscreen foam twin pack as the matching product.",
-    "Add the matching product to the shopping cart."
+    "Open `family_trip_shopping.txt` and read the unchecked kids sunscreen item and its requirements.",
+    "Identify `Banana Boat Kids Vanishing Color Sunscreen` as the standard answer: select `Mineral Foam` for `Pattern Name` and `SPF 50 - Twin Pack` for `Style`; confirm that customer reviews describe it as non-stinging and non-sticky.",
+    "Add that exact product and option combination to the shopping cart.",
+    "Return to the list, change the kids sunscreen item from `[ ]` to `[x]`, and save it."
   ],
   "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/consumption-kids_sunscreen_shopping_list.txt",
+            "path": "C:\\Users\\Docker\\Desktop\\family_trip_shopping.txt"
+          }
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "notepad.exe",
+          "C:\\Users\\Docker\\Desktop\\family_trip_shopping.txt"
+        ]
+      }
+    },
     {
       "type": "launch",
       "parameters": {
@@ -58,22 +79,69 @@
     }
   ],
   "related_apps": [
-    "chrome"
+    "chrome",
+    "notepad"
   ],
   "evaluator": {
-    "func": "is_page_contains_items",
-    "result": {
-      "type": "page_info",
-      "url": "http://host.docker.internal:7770/checkout/cart/",
-      "load_state": "networkidle"
-    },
-    "expected": {
-      "type": "rule",
-      "rules": {
-        "items": [
-          "B08Q3S3SNF"
-        ]
+    "func": [
+      "is_page_contains_items",
+      "check_text_points"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "page_info",
+        "url": "http://host.docker.internal:7770/checkout/cart/",
+        "load_state": "networkidle"
+      },
+      {
+        "type": "desktop_file_text",
+        "filename": "family_trip_shopping.txt"
       }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "items": [
+            "B08Q3S3SNF"
+          ],
+          "options": {
+            "B08Q3S3SNF": {
+              "Pattern Name": "Mineral Foam",
+              "Style": "SPF 50 - Twin Pack"
+            }
+          }
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "ignore_case": true,
+          "points": [
+            [
+              "[x] Kids sunscreen - SPF 50 mineral formula; foam rather than lotion or spray; enough for both kids in one purchase; reviews should mention that it does not sting or feel sticky"
+            ],
+            [
+              "[x] Insect repellent - family-size pump spray, fragrance-free"
+            ],
+            [
+              "[x] Travel-size hand sanitizer - unscented, 2 fl oz bottle"
+            ],
+            [
+              "[ ] Bottled water - 24-pack of 16.9 fl oz bottles"
+            ]
+          ]
+        }
+      }
+    ],
+    "metric_roles": {
+      "task_outcome": [
+        0
+      ],
+      "access_requirement": [
+        1
+      ]
     }
   },
   "proxy": false,

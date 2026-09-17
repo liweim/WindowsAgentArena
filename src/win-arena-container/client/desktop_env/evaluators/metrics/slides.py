@@ -6,6 +6,8 @@ from math import sqrt
 from pptx import Presentation
 from pptx.util import Inches
 
+from .general import normalize_text
+
 logger = logging.getLogger("desktopenv.metric.slides")
 
 
@@ -183,13 +185,13 @@ def compare_pptx_files(file1_path, file2_path, **options):
             else:
                 return None
 
-        if get_slide_notes(slide1).strip() != get_slide_notes(slide2).strip() and examine_note:
+        if normalize_text(get_slide_notes(slide1), ignore_case=False) != normalize_text(get_slide_notes(slide2), ignore_case=False) and examine_note:
             return 0
         # check if the shapes are the same
         for shape1, shape2 in zip(slide1.shapes, slide2.shapes):
             if examine_title_bottom_position:
-                if hasattr(shape1, "text") and hasattr(shape2, "text") and shape1.text == shape2.text:
-                    if shape1.text == "Product Comparison" and (shape1.top <= shape2.top or shape1.top < 3600000):
+                if hasattr(shape1, "text") and hasattr(shape2, "text") and normalize_text(shape1.text, ignore_case=False) == normalize_text(shape2.text, ignore_case=False):
+                    if normalize_text(shape1.text, ignore_case=False) == normalize_text("Product Comparison", ignore_case=False) and (shape1.top <= shape2.top or shape1.top < 3600000):
                         return 0
                 elif shape1.left != shape2.left or shape1.top != shape2.top or shape1.width != shape2.width or shape1.height != shape2.height:
                     return 0
@@ -216,7 +218,7 @@ def compare_pptx_files(file1_path, file2_path, **options):
             if examine_shape_for_shift_size:
                 if shape1.left != shape2.left or shape1.top != shape2.top or shape1.width != shape2.width or shape1.height != shape2.height:
                     if not (hasattr(shape1, "text") and hasattr(shape2,
-                                                                "text") and shape1.text == shape2.text and shape1.text == "Elaborate on what you want to discuss."):
+                                                                "text") and normalize_text(shape1.text, ignore_case=False) == normalize_text(shape2.text, ignore_case=False) and normalize_text(shape1.text, ignore_case=False) == normalize_text("Elaborate on what you want to discuss.", ignore_case=False)):
                         return 0
 
             if (
@@ -239,7 +241,7 @@ def compare_pptx_files(file1_path, file2_path, **options):
                     return 0
 
             if hasattr(shape1, "text") and hasattr(shape2, "text"):
-                if shape1.text.strip() != shape2.text.strip() and examine_text:
+                if normalize_text(shape1.text, ignore_case=False) != normalize_text(shape2.text, ignore_case=False) and examine_text:
                     return 0
 
                     # check if the paragraphs are the same
@@ -248,7 +250,7 @@ def compare_pptx_files(file1_path, file2_path, **options):
                         return 0
 
                     # check if the runs are the same
-                    if para1.text != para2.text and examine_text:
+                    if normalize_text(para1.text, ignore_case=False) != normalize_text(para2.text, ignore_case=False) and examine_text:
                         return 0
 
                     if para1.level != para2.level and examine_indent:

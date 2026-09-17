@@ -1,17 +1,19 @@
 {
   "id": "access-edge_immersive_reader_setup",
   "user_group": "cognitive",
-  "subgroup_ids": ["C-S1"],
+  "subgroup_ids": [
+    "C-S1"
+  ],
   "category": "access",
   "need_ids": [
     "C1"
   ],
   "difficulty": "medium",
+  "operation_time": 32.27,
   "instruction": "Set up the Guardian entertainment guide in Microsoft Edge for reading in Immersive Reader with one-line focus turned on.",
   "source": "https://www.theguardian.com/culture/2026/jun/27/entertainment-guide-week-ahead-supergirl-silo-jackass-life-larry-pursuit-unhappiness",
   "gt_steps": [
-    "Open the `More actions (...)` menu in Microsoft Edge.",
-    "Activate `Immersive Reader`.",
+    "Click F9 to activate `Immersive Reader`.",
     "Open `Reading preferences`.",
     "Turn on `Line focus`.",
     "Select the one-line focus option."
@@ -44,6 +46,14 @@
         "one_line_focus_visible": true,
         "one_line_focus_selected": true
       }
+    },
+    "metric_roles": {
+      "task_outcome": [
+        0
+      ],
+      "access_requirement": [
+        0
+      ]
     }
   },
   "proxy": true,

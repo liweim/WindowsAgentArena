@@ -10,6 +10,7 @@
     "H1"
   ],
   "difficulty": "easy",
+  "operation_time": 0,
   "instruction": "Turn on Windows Live captions.",
   "source": "synthetic",
   "gt_steps": [
@@ -39,6 +40,14 @@
           "windows_live_caption_enabled"
         ]
       }
+    },
+    "metric_roles": {
+      "task_outcome": [
+        0
+      ],
+      "access_requirement": [
+        0
+      ]
     }
   },
   "proxy": false

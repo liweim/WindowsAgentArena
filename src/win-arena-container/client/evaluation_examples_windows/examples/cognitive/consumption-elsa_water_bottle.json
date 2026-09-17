@@ -1,27 +1,41 @@
 {
   "id": "consumption-elsa_water_bottle",
   "user_group": "cognitive",
-  "subgroup_ids": ["C-S1", "C-S2"],
+  "subgroup_ids": [
+    "C-S2"
+  ],
   "category": "consumption",
   "need_ids": [
-    "C2",
-    "C6"
+    "C2"
   ],
   "difficulty": "easy",
-  "instruction": "Use the shopping reminder on the Desktop to add the matching water bottle to the cart.",
-  "source": "http://host.docker.internal:7770",
+  "operation_time": 44.12,
+  "instruction": "Complete Elsa's water-bottle item in `school_shopping_list.txt` on the Desktop. When finished, check it off by changing `[ ]` to `[x]` on that item, then save the list.",
+  "source": "synthetic",
   "gt_steps": [
-    "Open `water_bottle_reminder.txt` on the Desktop and identify the requested product details.",
-    "Open the self-hosted shopping website.",
-    "Find `Disney Frozen 2 Elsa 24 oz. Tritan Water Bottle`.",
-    "Add the matching product to the shopping cart."
+    "Open `school_shopping_list.txt` and find Elsa's unchecked water-bottle item and its listed requirements.",
+    "Identify `Disney Frozen 2 Elsa 24 oz. Tritan Water Bottle` (SKU `B09LMSGJW6`) as the standard answer and add that exact product to the shopping cart.",
+    "Return to the list, change Elsa's water-bottle item from `[ ]` to `[x]`, and save it."
   ],
   "config": [
     {
-      "type": "execute",
+      "type": "upload_file",
       "parameters": {
-        "command": "powershell -NoProfile -Command \"Set-Content -Path (Join-Path $env:USERPROFILE 'Desktop\\water_bottle_reminder.txt') -Value @('School bottle reminder:','- Disney Frozen 2','- Elsa','- 24 oz','- Tritan')\"",
-        "shell": true
+        "files": [
+          {
+            "local_path": "assets/consumption-elsa_water_bottle_shopping_list.txt",
+            "path": "C:\\Users\\Docker\\Desktop\\school_shopping_list.txt"
+          }
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "notepad.exe",
+          "C:\\Users\\Docker\\Desktop\\school_shopping_list.txt"
+        ]
       }
     },
     {
@@ -68,19 +82,59 @@
     "notepad"
   ],
   "evaluator": {
-    "func": "is_page_contains_items",
-    "result": {
-      "type": "page_info",
-      "url": "http://host.docker.internal:7770/checkout/cart/",
-      "load_state": "networkidle"
-    },
-    "expected": {
-      "type": "rule",
-      "rules": {
-        "items": [
-          "B09LMSGJW6"
-        ]
+    "func": [
+      "is_page_contains_items",
+      "check_text_points"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "page_info",
+        "url": "http://host.docker.internal:7770/checkout/cart/",
+        "load_state": "networkidle"
+      },
+      {
+        "type": "desktop_file_text",
+        "filename": "school_shopping_list.txt"
       }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "items": [
+            "B09LMSGJW6"
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "ignore_case": true,
+          "points": [
+            [
+              "[x] Water bottle for Elsa - Frozen 2 design featuring Elsa; 24 oz; durable Tritan; leak-resistant lid"
+            ],
+            [
+              "[x] Pencil case - navy blue, two zip compartments, washable fabric"
+            ],
+            [
+              "[x] Lunch box - insulated with an easy-clean lining; fits in a standard school backpack"
+            ],
+            [
+              "[ ] Replacement name labels - waterproof, dishwasher-safe, 40-count pack"
+            ]
+          ]
+        }
+      }
+    ],
+    "metric_roles": {
+      "task_outcome": [
+        0
+      ],
+      "access_requirement": [
+        1
+      ]
     }
   },
   "proxy": false,
