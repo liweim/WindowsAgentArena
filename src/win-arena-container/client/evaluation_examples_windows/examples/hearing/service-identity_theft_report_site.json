@@ -9,6 +9,7 @@
     "H1"
   ],
   "difficulty": "easy",
+  "operation_time": 0,
   "instruction": "Turn on captions in the opened YouTube video, then open the website the video says to use for reporting identity theft in Chrome.",
   "source": "https://www.youtube.com/watch?v=0GGDKL7TVPo",
   "gt_steps": [
@@ -84,7 +85,15 @@
           "url": "https://www.identitytheft.gov/"
         }
       }
-    ]
+    ],
+    "metric_roles": {
+      "task_outcome": [
+        1
+      ],
+      "access_requirement": [
+        0
+      ]
+    }
   },
   "proxy": true
 }

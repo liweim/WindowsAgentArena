@@ -1,19 +1,21 @@
 {
   "id": "access-chrome_font_size_large",
   "user_group": "cognitive",
-  "subgroup_ids": ["C-S1"],
+  "subgroup_ids": [
+    "C-S1"
+  ],
   "category": "access",
   "need_ids": [
     "C1"
   ],
   "difficulty": "easy",
+  "operation_time": 29.16,
   "instruction": "Set Chrome's default font size to Large.",
   "source": "synthetic",
   "gt_steps": [
     "Open Google Chrome.",
     "Open Chrome Settings.",
     "Open `Appearance`.",
-    "Open `Customize fonts`.",
     "Set `Font size` to `Large`."
   ],
   "config": [
@@ -78,6 +80,14 @@
         "min": 18,
         "max": 24
       }
+    },
+    "metric_roles": {
+      "task_outcome": [
+        0
+      ],
+      "access_requirement": [
+        0
+      ]
     }
   },
   "proxy": false,

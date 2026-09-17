@@ -1,24 +1,27 @@
 {
   "id": "service-ftc_spam_text_actions",
   "user_group": "cognitive",
-  "subgroup_ids": ["C-S1", "C-S3"],
+  "subgroup_ids": [
+    "C-S1",
+    "C-S2"
+  ],
   "category": "service",
   "need_ids": [
     "C1",
-    "C6",
-    "C8"
+    "C2"
   ],
   "difficulty": "medium",
-  "instruction": "Create a Sticky Note containing the two relevant action headings from the FTC scam guidance exactly as written, using Immersive Reader to read the page.",
+  "operation_time": 0,
+  "instruction": "Create a Sticky Note containing the page's two section headings about taking action on and reporting spam text messages, exactly as written and in webpage order. Use Immersive Reader to read the page.",
   "source": "https://consumer.ftc.gov/articles/how-recognize-and-report-spam-text-messages",
   "gt_steps": [
     "Open the FTC spam text message guidance page in Microsoft Edge.",
     "Activate Immersive Reader.",
-    "Locate the section about what to do with spam text messages.",
+    "Locate the two section headings about taking action on and reporting spam text messages.",
     "Open Sticky Notes.",
     "Create a new note.",
-    "Enter exactly `Don't respond to unwanted texts` in the note.",
-    "Add exactly `Report unwanted texts` to the note."
+    "Enter exactly `What To Do About Spam Text Messages` in the note.",
+    "Add exactly `How To Report Spam Text Messages` to the note."
   ],
   "config": [
     {
@@ -71,10 +74,10 @@
           "ignore_case": true,
           "points": [
             [
-              "Don't respond to unwanted texts"
+              "What To Do About Spam Text Messages"
             ],
             [
-              "Report unwanted texts"
+              "How To Report Spam Text Messages"
             ]
           ]
         }
@@ -85,7 +88,16 @@
           "reader_mode_open": true
         }
       }
-    ]
+    ],
+    "metric_roles": {
+      "task_outcome": [
+        0
+      ],
+      "access_requirement": [
+        0,
+        1
+      ]
+    }
   },
   "proxy": true,
   "possibility_of_env_change": "medium"

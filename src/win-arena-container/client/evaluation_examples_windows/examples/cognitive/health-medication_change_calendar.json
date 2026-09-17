@@ -1,13 +1,15 @@
 {
   "id": "health-medication_change_calendar",
   "user_group": "cognitive",
-  "subgroup_ids": ["C-S2", "C-S4"],
+  "subgroup_ids": [
+    "C-S3"
+  ],
   "category": "health",
   "need_ids": [
-    "C3",
-    "C7"
+    "C3"
   ],
   "difficulty": "medium",
+  "operation_time": 0,
   "instruction": "Use the medication plan on the Desktop to find the first medication change that occurs after the 4:00 PM follow-up appointment on September 25, 2026. Create a 30-minute Thunderbird Calendar event titled `New dose start` at that change time and include the new-dose instruction and the old-dose action in the event description.",
   "source": "synthetic",
   "gt_steps": [
@@ -93,6 +95,14 @@
           ]
         ]
       }
+    },
+    "metric_roles": {
+      "task_outcome": [
+        0
+      ],
+      "access_requirement": [
+        0
+      ]
     }
   },
   "proxy": true,

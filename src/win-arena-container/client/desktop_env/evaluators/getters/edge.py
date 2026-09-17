@@ -381,7 +381,7 @@ def get_cookie_data_from_edge(env, config: Dict[str, str]):
     else:
         if os_type == 'Windows':
             chrome_cookie_file_path = env.controller.execute_python_command(
-                "import os; print(os.path.join(os.getenv('LOCALAPPDATA'), 'Google/Chrome/User Data/Default/Network/Cookies'))"
+                "import os; print(os.path.join(os.getenv('LOCALAPPDATA'), 'Microsoft/Edge/User Data/Default/Network/Cookies'))"
             )['output'].strip()
         elif os_type == 'Darwin':
             chrome_cookie_file_path = env.controller.execute_python_command(

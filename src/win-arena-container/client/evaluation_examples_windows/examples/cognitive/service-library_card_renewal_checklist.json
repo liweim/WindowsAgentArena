@@ -1,14 +1,15 @@
 {
   "id": "service-library_card_renewal_checklist",
   "user_group": "cognitive",
-  "subgroup_ids": ["C-S1", "C-S2", "C-S3"],
+  "subgroup_ids": [
+    "C-S2"
+  ],
   "category": "service",
   "need_ids": [
-    "C2",
-    "C4",
-    "C6"
+    "C2"
   ],
   "difficulty": "medium",
+  "operation_time": 0,
   "instruction": "Use the library service page on the Desktop to create a Sticky Note for an adult renewing an existing library card in person. Include the two required documents, the renewal desk closing time, and the renewal desk code; ignore replacement-card and youth-card instructions.",
   "source": "synthetic",
   "gt_steps": [
@@ -105,6 +106,14 @@
           ]
         ]
       }
+    },
+    "metric_roles": {
+      "task_outcome": [
+        0
+      ],
+      "access_requirement": [
+        0
+      ]
     }
   },
   "proxy": false,

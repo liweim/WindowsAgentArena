@@ -19,6 +19,7 @@ logger = logging.getLogger("desktopenv.env")
 
 Metric = Callable[[Any, Any], float]
 Getter = Callable[[gym.Env, Dict[str, Any]], Any]
+EVALUATION_SETTLE_SECONDS = 3
 
 def _execute_command(command: List[str]) -> None:
     def _is_contained_in(a, b):
@@ -210,6 +211,7 @@ class DesktopEnv(gym.Env):
         # if func is a str list, then result, expected (if exists), options (if exists) should also be lists of the same length
         # even if one of the metrics does not need expected or options field, it should be included in the list with None
         self.evaluator = task_config["evaluator"]
+        self.last_evaluation = None
         self.metric: Metric = [getattr(metrics, func) for func in self.evaluator["func"]] \
             if isinstance(self.evaluator["func"], list) \
             else getattr(metrics, self.evaluator["func"])
@@ -338,78 +340,112 @@ class DesktopEnv(gym.Env):
     def _filter_windows_postconfig(self, postconfig: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         return list(postconfig or [])
 
-    def evaluate(self):
-        """
-        Evaluate whether the task is successfully completed.
-        """
+    @staticmethod
+    def _aggregate_metric_values(values, conjunction):
+        """Aggregate primitive evaluator values using the task conjunction semantics."""
+        if not values:
+            return 0.0
+        numeric = [float(value) for value in values]
+        if conjunction == "or":
+            return 1.0 if any(value == 1.0 for value in numeric) else max(numeric)
+        return 0.0 if any(value == 0.0 for value in numeric) else sum(numeric) / len(numeric)
 
+    def _set_evaluation_breakdown(self, primitive_values, success_rate):
+        """Store TaskOutcome and AccessRequirement for the current task."""
+        roles = self.evaluator.get("metric_roles") or {}
+        task_indices = roles.get("task_outcome")
+        access_indices = roles.get("access_requirement")
+
+        if task_indices is None or access_indices is None:
+            task_outcome = float(success_rate)
+            access_requirement = float(success_rate)
+            relation = "coincident"
+        else:
+            task_indices = [int(index) for index in task_indices]
+            access_indices = [int(index) for index in access_indices]
+            task_values = [primitive_values[index] for index in task_indices]
+            access_values = [primitive_values[index] for index in access_indices]
+            task_outcome = self._aggregate_metric_values(task_values, self.metric_conj)
+            access_requirement = self._aggregate_metric_values(access_values, self.metric_conj)
+            relation = "coincident" if task_indices == access_indices else "distinct"
+
+        self.last_evaluation = {
+            "task_outcome": float(task_outcome),
+            "access_requirement": float(access_requirement),
+            "success_rate": float(success_rate),
+            "requirement_relation": relation,
+        }
+
+    def evaluate(self):
+        """Evaluate task success and retain accessibility component scores."""
+
+        logger.info(
+            "Waiting %s seconds for application state to settle before evaluation",
+            EVALUATION_SETTLE_SECONDS,
+        )
+        time.sleep(EVALUATION_SETTLE_SECONDS)
         self.setup_controller.setup(self._filter_windows_postconfig(self.evaluator.get("postconfig", [])))
 
-        # logger.info(f"ACTION HISTORY: {self.action_history}")
-
         if self.evaluator['func'] == "infeasible":
-            if len(self.action_history) > 0 and self.action_history[-1] == "FAIL":
-                # logger.info("Infeasible task and last agent action = FAIL")
-                return 1
-            else:
-                # logger.info("Infeasible task but last agent action != FAIL")
-                return 0
-        else:
-            if len(self.action_history) > 0 and self.action_history[-1] == "FAIL":
-                # logger.info("Feasible task but last agent = FAIL")
-                return 0
+            success_rate = 1.0 if len(self.action_history) > 0 and self.action_history[-1] == "FAIL" else 0.0
+            self._set_evaluation_breakdown([success_rate], success_rate)
+            return success_rate
 
-        if type(self.metric) == list:
-            results = []
-            for idx, metric in enumerate(self.metric):
+        if len(self.action_history) > 0 and self.action_history[-1] == "FAIL":
+            primitive_values = [0.0] * len(self.metric) if isinstance(self.metric, list) else [0.0]
+            self._set_evaluation_breakdown(primitive_values, 0.0)
+            return 0.0
+
+        if isinstance(self.metric, list):
+            primitive_values = []
+            for idx, metric_fn in enumerate(self.metric):
                 try:
                     config = self.evaluator["result"][idx]
                     result_state = self.result_getter[idx](self, config)
+                    expected = self.evaluator["expected"][idx]
+                    expected_state = self.expected_getter[idx](self, expected) if expected else None
+                    value = metric_fn(
+                        result_state, expected_state, **self.metric_options[idx]
+                    ) if expected_state is not None else metric_fn(
+                        result_state, **self.metric_options[idx]
+                    )
+                    value = float(value) if isinstance(value, (float, int, bool)) else 0.0
                 except FileNotFoundError:
-                    logger.error("File not found!")
-                    if self.metric_conj == 'and':
-                        return 0
+                    logger.error("File not found while evaluating metric %s", idx)
+                    value = 0.0
+                except Exception as exc:
+                    logger.error("Error while evaluating metric %s: %s", idx, exc)
+                    value = 0.0
+                primitive_values.append(value)
 
-                expected = self.evaluator["expected"][idx]
-                expected_state = self.expected_getter[idx](self, expected) if expected else None
+            success_rate = self._aggregate_metric_values(primitive_values, self.metric_conj)
+            self._set_evaluation_breakdown(primitive_values, success_rate)
+            return success_rate
 
-                metric: int = metric(result_state, expected_state,
-                                     **self.metric_options[idx]) if expected_state is not None \
-                    else metric(result_state, **self.metric_options[idx])
+        try:
+            result_state = self.result_getter(self, self.evaluator["result"])
+        except FileNotFoundError:
+            logger.error("File not found!")
+            self._set_evaluation_breakdown([0.0], 0.0)
+            return 0.0
+        except Exception as exc:
+            logger.error("An unexpected error occurred: %s", exc)
+            self._set_evaluation_breakdown([0.0], 0.0)
+            return 0.0
 
-                if self.metric_conj == 'and' and float(metric) == 0.0:
-                    return 0
-                elif self.metric_conj == 'or' and float(metric) == 1.0:
-                    return 1
-                else:
-                    results.append(metric)
-            return sum(results) / len(results) if self.metric_conj == 'and' else max(results)
-        else:
-            try:
-                result_state = self.result_getter(self, self.evaluator["result"])
-            except FileNotFoundError:
-                logger.error("File not found!")
-                return 0
-            except Exception as e:
-                logger.error(f"An unexpected error occurred: {e}")
-                return 0
-            expected_state = self.expected_getter(self, self.evaluator["expected"]) if "expected" in self.evaluator \
-                else None
- 
-            # logger.info(f"RESULT STATE: {result_state}")
-            # logger.info(f"EXPECTED STATE: {expected_state}")
+        expected_state = self.expected_getter(self, self.evaluator["expected"]) if "expected" in self.evaluator else None
+        value = self.metric(
+            result_state, expected_state, **self.metric_options
+        ) if expected_state is not None else self.metric(
+            result_state, **self.metric_options
+        )
 
-            metric: float = self.metric(result_state, expected_state,
-                                        **self.metric_options) if expected_state is not None \
-                else self.metric(result_state, **self.metric_options)
-            
-        if isinstance(metric, (float, int, bool)):
-            return metric
-        else:
+        if not isinstance(value, (float, int, bool)):
             logger.error("Task metric value produced is neither numeric nor boolean: returning 0 instead")
-            return 0            
-
-        return metric
+            value = 0.0
+        success_rate = float(value)
+        self._set_evaluation_breakdown([success_rate], success_rate)
+        return success_rate
 
     def render(self, mode='rgb_array'):
         if mode == 'rgb_array':

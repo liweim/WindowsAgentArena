@@ -1,26 +1,29 @@
 {
   "id": "information-passport_renewal_checklist",
   "user_group": "cognitive",
-  "subgroup_ids": ["C-S1", "C-S2", "C-S3"],
+  "subgroup_ids": [
+    "C-S1",
+    "C-S2"
+  ],
   "category": "information",
   "need_ids": [
     "C1",
-    "C2",
-    "C4"
+    "C2"
   ],
   "difficulty": "medium",
-  "instruction": "Create Sticky Notes listing the online passport renewal eligibility requirements using the article's wording rather than paraphrasing, and use Immersive Reader to read the eligibility rules.",
+  "operation_time": 0,
+  "instruction": "Create a Sticky Note listing the four online passport renewal eligibility conditions highlighted in the AP News article, using the article's wording rather than paraphrasing. Use Immersive Reader to read the eligibility rules.",
   "source": "https://apnews.com/article/70fbd31bdc1a519701c83a177ed3ef95",
   "gt_steps": [
     "Open the AP News passport renewal article in Microsoft Edge.",
     "Activate Immersive Reader.",
-    "Locate the online passport renewal eligibility requirements.",
+    "Locate the four online passport renewal eligibility conditions highlighted in the article.",
     "Open Sticky Notes.",
     "Create a new note.",
-    "Enter `You're 25 or older` in the note.",
-    "Add `passport issued between 2009 and 2015` to the note.",
-    "Add `You aren't changing any personal information` to the note.",
-    "Add `won't travel overseas for at least eight weeks` to the note."
+    "Enter `You’re 25 or older.` in the note.",
+    "Add `You’re renewing a passport issued between 2009 and 2015.` to the note.",
+    "Add `You aren’t changing any personal information.` to the note.",
+    "Add `You won’t travel overseas for at least eight weeks after you apply.` to the note."
   ],
   "config": [
     {
@@ -73,16 +76,16 @@
           "ignore_case": true,
           "points": [
             [
-              "You're 25 or older"
+              "You’re 25 or older."
             ],
             [
-              "passport issued between 2009 and 2015"
+              "You’re renewing a passport issued between 2009 and 2015."
             ],
             [
-              "You aren't changing any personal information"
+              "You aren’t changing any personal information."
             ],
             [
-              "won't travel overseas for at least eight weeks"
+              "You won’t travel overseas for at least eight weeks after you apply."
             ]
           ]
         }
@@ -93,7 +96,16 @@
           "reader_mode_open": true
         }
       }
-    ]
+    ],
+    "metric_roles": {
+      "task_outcome": [
+        0
+      ],
+      "access_requirement": [
+        0,
+        1
+      ]
+    }
   },
   "proxy": true,
   "possibility_of_env_change": "low"

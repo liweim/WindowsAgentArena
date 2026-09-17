@@ -1,15 +1,17 @@
 {
   "id": "information-wikipedia_accessibility_definition",
   "user_group": "cognitive",
-  "subgroup_ids": ["C-S1", "C-S2"],
+  "subgroup_ids": [
+    "C-S2"
+  ],
   "category": "information",
   "need_ids": [
-    "C2",
-    "C6"
+    "C2"
   ],
   "difficulty": "medium",
+  "operation_time": 0,
   "instruction": "Build the reference note in the open document: find the sentence in the local Wikipedia `Accessibility` article that defines accessibility as a design concept, replace `[add definition here]` with that sentence only, and save the completed document as `answer.docx` on the Desktop.",
-  "source": "http://host.docker.internal:8888/wikipedia_en_all_maxi_2022-05/A/Accessibility",
+  "source": "synthetic",
   "gt_steps": [
     "Open the local Kiwix Wikipedia site in Google Chrome.",
     "Search for the `Accessibility` article.",
@@ -99,6 +101,14 @@
       "type": "vm_file",
       "path": "C:\\Users\\Docker\\AppData\\Local\\Temp\\accessibility_definition_paper_gold.docx",
       "dest": "information-wikipedia_accessibility_definition_gold.docx"
+    },
+    "metric_roles": {
+      "task_outcome": [
+        0
+      ],
+      "access_requirement": [
+        0
+      ]
     }
   },
   "proxy": false,

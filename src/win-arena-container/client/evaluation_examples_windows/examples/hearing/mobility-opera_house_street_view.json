@@ -9,6 +9,7 @@
     "H1"
   ],
   "difficulty": "easy",
+  "operation_time": 0,
   "instruction": "Turn on captions in the opened YouTube video, identify the scenic place shown there, then open Street View for it in Google Maps.",
   "source": "https://www.youtube.com/watch?v=KAYLcWhyWj4",
   "gt_steps": [
@@ -88,7 +89,15 @@
           "expected": "true"
         }
       }
-    ]
+    ],
+    "metric_roles": {
+      "task_outcome": [
+        1
+      ],
+      "access_requirement": [
+        0
+      ]
+    }
   },
   "proxy": true
 }

@@ -9,6 +9,7 @@
     "H1"
   ],
   "difficulty": "medium",
+  "operation_time": 0,
   "instruction": "Use Chrome Live Caption to identify the exact item in the audio shopping reminder, then find it on the shopping website and add it to the cart.",
   "source": "synthetic",
   "transcript": "Nina, I found the missing charger, but the Dyson Corrale is still rolling around loose in my suitcase. Could you order a travel case for it from the shopping site? It is the black multifunction box that fits the straightener, the cord, and the heat mat. Please add that one to the cart before I forget again.",
@@ -102,7 +103,15 @@
           "expected": "true"
         }
       }
-    ]
+    ],
+    "metric_roles": {
+      "task_outcome": [
+        0
+      ],
+      "access_requirement": [
+        1
+      ]
+    }
   },
   "proxy": false,
   "possibility_of_env_change": "low"

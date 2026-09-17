@@ -1,14 +1,17 @@
 {
   "id": "mobility-harvard_mather_evening_plan",
   "user_group": "cognitive",
-  "subgroup_ids": ["C-S2", "C-S3"],
+  "subgroup_ids": [
+    "C-S2",
+    "C-S3"
+  ],
   "category": "mobility",
   "need_ids": [
     "C2",
-    "C3",
-    "C4"
+    "C3"
   ],
   "difficulty": "medium",
+  "operation_time": 0,
   "instruction": "Use the Harvard Shuttle printable schedule open in Microsoft Edge. On a weekday evening, you are at Mather House at 9:15 pm and want the first shuttle to Lamont Library. Create a Sticky Note with four ordered checkpoints: the Mather House departure time, the Quad time, the Law School time, and the Lamont Library arrival time.",
   "source": "https://prod-transportation.drupalsites.harvard.edu/sites/g/files/omnuum12016/files/2025-08/All%20Shuttle%20Routes.pdf",
   "gt_steps": [
@@ -106,6 +109,14 @@
           }
         ]
       }
+    },
+    "metric_roles": {
+      "task_outcome": [
+        0
+      ],
+      "access_requirement": [
+        0
+      ]
     }
   },
   "proxy": false,

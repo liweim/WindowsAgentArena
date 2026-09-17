@@ -2,12 +2,15 @@
   "id": "access-windows_notification_duration",
   "manually_evaluated": false,
   "user_group": "cognitive",
-  "subgroup_ids": ["C-S2"],
+  "subgroup_ids": [
+    "C-S3"
+  ],
   "category": "access",
   "need_ids": [
     "C3"
   ],
   "difficulty": "easy",
+  "operation_time": 57.06,
   "instruction": "Set Windows notifications to stay on screen for 5 minutes.",
   "source": "synthetic",
   "gt_steps": [
@@ -30,6 +33,14 @@
       "rules": {
         "expected": "5 minutes"
       }
+    },
+    "metric_roles": {
+      "task_outcome": [
+        0
+      ],
+      "access_requirement": [
+        0
+      ]
     }
   },
   "proxy": false,

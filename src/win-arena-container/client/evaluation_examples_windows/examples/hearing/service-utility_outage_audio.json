@@ -9,6 +9,7 @@
     "H1"
   ],
   "difficulty": "medium",
+  "operation_time": 0,
   "instruction": "Use Chrome Live Caption to read the utility outage recording on the Desktop. Save the outage area, restoration estimate, support phone number, and incident code to `answer.txt`, one item per line.",
   "source": "synthetic",
   "transcript": "Utility service notice. The outage affects the North Harbour zone. Estimated restoration is 6:45 PM. For accessibility support call 555-017-3088. Incident code UT-641.",
@@ -126,7 +127,15 @@
           "expected": "true"
         }
       }
-    ]
+    ],
+    "metric_roles": {
+      "task_outcome": [
+        0
+      ],
+      "access_requirement": [
+        1
+      ]
+    }
   },
   "proxy": false,
   "possibility_of_env_change": "low"

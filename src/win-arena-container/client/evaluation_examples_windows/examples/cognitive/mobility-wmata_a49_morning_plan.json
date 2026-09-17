@@ -1,14 +1,17 @@
 {
   "id": "mobility-wmata_a49_morning_plan",
   "user_group": "cognitive",
-  "subgroup_ids": ["C-S2", "C-S3"],
+  "subgroup_ids": [
+    "C-S2",
+    "C-S3"
+  ],
   "category": "mobility",
   "need_ids": [
     "C2",
-    "C3",
-    "C4"
+    "C3"
   ],
   "difficulty": "medium",
+  "operation_time": 0,
   "instruction": "Use the WMATA A49 weekday timetable open in Microsoft Edge. You are at Glen Carlyn Dr + Vista Dr at 7:05 am and need the first eastbound bus toward Metro Center. Create `answer.txt` on the Desktop with four lines: the departure time from Glen Carlyn Dr + Vista Dr, the time at Columbia Pike + George Mason Dr, the time at 18 St + C St NW, and the arrival time at Metro Center.",
   "source": "https://www.wmata.com/content/dam/wmata-com/Timetables/A49_timetable.pdf",
   "gt_steps": [
@@ -114,6 +117,14 @@
           }
         ]
       }
+    },
+    "metric_roles": {
+      "task_outcome": [
+        0
+      ],
+      "access_requirement": [
+        0
+      ]
     }
   },
   "proxy": false,

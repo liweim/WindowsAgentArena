@@ -22,8 +22,6 @@
 
   * `access`
 
-  * `setup`
-
   * `captcha`
 
 * Determine the category based on the task's **primary user goal or workflow**, rather than categorizing it solely by the source website, output application, or disability group.
@@ -116,7 +114,28 @@ Use a consistent style with **concise, direct imperative phrasing**.
 
 * For tasks that themselves require restructuring, do not normalize the old `gt_steps` yet. Rewrite them together once the new task definition is finalized.
 
-### 6. Evaluator
+### 6. Accessibility Construct Check
+
+For every released non-CAPTCHA task, verify that the documented access need changes an **observable and evaluable** completion condition. The change must be reflected in at least one of:
+
+* required information that must be acquired for the user;
+* a user-facing representation or persistent support artifact;
+* an accessibility / continuation state that must be established or preserved.
+
+For cognitive tasks specifically:
+
+* only `C1`, `C2`, and `C3` are valid cognitive `need_ids`;
+* generic planning, decision-making, arithmetic, reconciliation, or long-horizon difficulty is not sufficient by itself;
+* if removing the cognitive-support clause leaves the final evaluator essentially unchanged, rewrite or remove the task.
+
+Checklist:
+
+* [ ] The access-specific requirement is explicit in the instruction or task specification.
+* [ ] The evaluator checks that requirement.
+* [ ] Removing the access-specific requirement would materially change the required final state or evaluator.
+* [ ] The task is not relying only on a disability label or an unchanged ordinary GUI goal.
+
+### 7. Evaluator
 
 * The evaluator must cover all explicitly required and verifiable final success conditions in the instruction.
 
@@ -129,6 +148,92 @@ Use a consistent style with **concise, direct imperative phrasing**.
 * When multiple independent success conditions must all be satisfied, use the appropriate conjunction.
 
 * The evaluator should not check only a small subset of the required fields in a way that allows obviously incomplete results to pass.
+
+### 8. Source-Derived Answer Uniqueness
+
+Apply this check to every task that requires the Agent to obtain information from a webpage, local web application, online or local PDF, video captions, live captions, audio recording, interactive data tool, timetable, map, forum, product page, or CMS.
+
+#### Review the complete source
+
+* Read or inspect the complete relevant source, not only search-result snippets, the current `gt_steps`, or the evaluator's expected answer.
+
+* Identify every passage, list item, heading, data value, route, product, or interpretation that could reasonably satisfy the instruction.
+
+* Treat redirects, changed headings, revised web content, updated datasets, and stale URLs as source-drift risks. Confirm that the current source still contains the expected answer.
+
+* For videos and audio, inspect the full transcript or captions where possible. Do not assume that the evaluator's existing answer includes every recommendation mentioned in the recording.
+
+#### Ask a natural, high-level question
+
+* The requested information must be naturally connected to the task's user goal and output artifact. For example, a doctor-appointment calendar description should contain a useful appointment-preparation note, not an unrelated reading-comprehension answer.
+
+* Phrase the request as a realistic user need. Do not make the task unique through mechanical document coordinates such as `copy the sentence immediately after ...`, line numbers, paragraph numbers, or arbitrary word positions unless the actual user workflow genuinely depends on them.
+
+* Keep the question high-level enough to require understanding the source, while still defining the answer boundary precisely.
+
+* Do not reveal the answer in the instruction merely to force uniqueness.
+
+#### Require one objectively determinable answer
+
+* The instruction must make the expected answer, answer set, route, product, or data state objectively determinable from the source.
+
+* Use natural semantic constraints when needed, such as:
+
+  * a named section or subject;
+
+  * a clearly identified numbered or bulleted list;
+
+  * an explicit number of requested items;
+
+  * a date, year, quarter, geography, direction, time, or starting point;
+
+  * a ranking measure such as `ranked first by number of reports`;
+
+  * a named field, table, record, product option, or data view;
+
+  * a bounded response format such as `yes` or `no` when the source supports a binary conclusion.
+
+* Avoid vague requests such as `summarize the advice`, `write the main takeaway`, `list the relevant items`, `find the website`, `identify the top category`, or `include the main steps` unless the instruction also defines what counts as relevant, top, main, or complete.
+
+* A request for `all` items is acceptable only when the source contains a clearly bounded set and the evaluator checks the entire set. If the source contains more qualifying items than the evaluator expects, either narrow the question naturally or update the evaluator to cover all of them.
+
+* For schedules and maps, confirm that the travel day, direction, departure condition, interchange rule, and requested checkpoints select exactly one route or timetable row.
+
+* For interactive or changing data, specify every filter needed to reproduce one displayed result, including the dataset or view, year, quarter or date range, geography, category, and ranking metric. Determine whether a fixed expected value can remain valid if the source is updated.
+
+#### Exact wording and evaluator alignment
+
+* If the instruction says `exact wording`, `exactly as written`, or `using the source's wording`, the expected value must preserve the complete required source text, including meaningful qualifiers, punctuation, apostrophes, and dashes.
+
+* Do not claim to require exact wording while the evaluator checks only a keyword or shortened fragment.
+
+* Conversely, do not require a free-form summary when the evaluator accepts only one predetermined phrase. Either ask for the exact source phrase or make the evaluator genuinely semantic.
+
+* The instruction, current source, `gt_steps`, and evaluator must describe the same answer scope. Update all four together when the question changes.
+
+* If a source states an old URL that redirects to a current destination, distinguish between the address the Agent must extract and the final URL the browser evaluator observes.
+
+#### Final uniqueness audit
+
+For each source-derived task, verify:
+
+* [ ] A reasonable reader cannot produce two materially different answers that both satisfy the instruction.
+
+* [ ] The answer is useful and relevant to the requested email, calendar event, note, document, route, purchase, or service workflow.
+
+* [ ] The question is natural and high-level, rather than a mechanical text-location puzzle.
+
+* [ ] The source currently supports the expected answer.
+
+* [ ] Any list boundary, filter state, ranking rule, route condition, or response format is explicit.
+
+* [ ] `gt_steps` use the answer only inside executable actions and do not add standalone answer-key reasoning.
+
+* [ ] The evaluator accepts the complete required answer and rejects materially incomplete or out-of-scope alternatives.
+
+* [ ] After editing, all JSON files parse successfully and `git diff --check` passes.
+
+In the final review report, list the exact task IDs that were modified because of this uniqueness check.
 
 ## Recommended Execution Order for the Next Round
 
@@ -144,8 +249,10 @@ Use a consistent style with **concise, direct imperative phrasing**.
 
 6. For tasks that are neither CAPTCHA tasks nor pending restructuring, check that every `gt_steps` item is an executable action and that any canonical answer appears only as the value used by that action, never as a standalone answer-key or reasoning step.
 
-7. Check evaluator consistency with the instruction.
+7. For every source-derived task, perform the complete-source and answer-uniqueness audit in Section 8.
 
-8. Re-parse all JSON files and check for duplicate ids and case-only duplicate filenames.
+8. Check evaluator consistency with the instruction and the current source.
 
-9. The final ZIP must **contain only the files actually modified in the current round**. Do not accumulate and repackage changes that were already delivered in previous rounds. Include `DELETED_FILES.txt` only when files were deleted or renamed in the current round.
+9. Re-parse all JSON files and check for duplicate ids and case-only duplicate filenames.
+
+10. The final ZIP must **contain only the files actually modified in the current round**. Do not accumulate and repackage changes that were already delivered in previous rounds. Include `DELETED_FILES.txt` only when files were deleted or renamed in the current round.

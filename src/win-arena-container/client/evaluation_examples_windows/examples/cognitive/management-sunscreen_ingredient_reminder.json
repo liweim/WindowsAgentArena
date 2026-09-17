@@ -1,14 +1,17 @@
 {
   "id": "management-sunscreen_ingredient_reminder",
   "user_group": "cognitive",
-  "subgroup_ids": ["C-S1", "C-S2", "C-S4"],
+  "subgroup_ids": [
+    "C-S1",
+    "C-S3"
+  ],
   "category": "management",
   "need_ids": [
     "C1",
-    "C3",
-    "C7"
+    "C3"
   ],
   "difficulty": "medium",
+  "operation_time": 0,
   "instruction": "Determine the first date a child born on January 15, 2026 is old enough to use the newly approved sunscreen ingredient, using Immersive Reader to read the article's age guidance. Create an all-day Thunderbird Calendar event titled `Sunscreen ingredient reminder` for that date.",
   "source": "https://apnews.com/article/9b9c7e04b418b3c9c1fbaa7ddabade25",
   "gt_steps": [
@@ -103,7 +106,16 @@
           "reader_mode_open": true
         }
       }
-    ]
+    ],
+    "metric_roles": {
+      "task_outcome": [
+        0
+      ],
+      "access_requirement": [
+        0,
+        1
+      ]
+    }
   },
   "proxy": true,
   "possibility_of_env_change": "low"

@@ -10,6 +10,7 @@
     "H2"
   ],
   "difficulty": "easy",
+  "operation_time": 0,
   "instruction": "Set the caption style in Windows to Large text.",
   "source": "synthetic",
   "gt_steps": [
@@ -31,6 +32,14 @@
       "rules": {
         "expected": "Large text"
       }
+    },
+    "metric_roles": {
+      "task_outcome": [
+        0
+      ],
+      "access_requirement": [
+        0
+      ]
     }
   },
   "proxy": false

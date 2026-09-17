@@ -9,7 +9,8 @@
     "H1"
   ],
   "difficulty": "easy",
-  "instruction": "Turn on captions in the opened YouTube video, determine whether ibuprofen and acetaminophen can be taken together, then save the answer in `answer.txt` on the Desktop.",
+  "operation_time": 0,
+  "instruction": "Turn on captions in the opened YouTube video and determine whether it says ibuprofen and acetaminophen can be taken together. Save only `yes` or `no` in `answer.txt` on the Desktop.",
   "source": "https://www.youtube.com/watch?v=2324zMLFYC8",
   "gt_steps": [
     "Turn on captions in the YouTube player.",
@@ -85,17 +86,21 @@
         "rules": {
           "ignore_case": true,
           "points": [
-            [
-              "yes",
-              "can be taken together",
-              "may be taken together",
-              "okay to take together",
-              "safe to take together"
-            ]
+          [
+            "yes"
+          ]
           ]
         }
       }
-    ]
+    ],
+    "metric_roles": {
+      "task_outcome": [
+        1
+      ],
+      "access_requirement": [
+        0
+      ]
+    }
   },
   "proxy": true
 }

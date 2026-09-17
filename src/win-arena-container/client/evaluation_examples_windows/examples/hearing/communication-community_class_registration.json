@@ -10,6 +10,7 @@
     "H1"
   ],
   "difficulty": "medium",
+  "operation_time": 0,
   "instruction": "Use Chrome Live Caption to identify the free class, its start date, and the required registration card in the community-center audio, then compose a new Thunderbird email to register@communitycenter.org with subject `Free Workshop Registration` and include those three details in the body. Do not send it.",
   "source": "synthetic",
   "transcript": "Hey neighbors! Exciting news from the center. Registration opens next Monday for our summer workshops. We have baking, oil painting, and our super popular Beginner Pottery Class. Great news: the Pottery class is completely free this month! It officially starts on July 6th. Due to high demand, spots are limited. To register, please email us and make sure to bring your Local Library Card on the first day to verify your residency. See you there!",
@@ -142,7 +143,15 @@
           "expected": "true"
         }
       }
-    ]
+    ],
+    "metric_roles": {
+      "task_outcome": [
+        0
+      ],
+      "access_requirement": [
+        1
+      ]
+    }
   },
   "proxy": true,
   "possibility_of_env_change": "low"

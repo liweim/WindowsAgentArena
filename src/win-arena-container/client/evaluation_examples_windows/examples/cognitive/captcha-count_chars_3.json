@@ -1,13 +1,15 @@
 {
   "id": "captcha-count_chars_3",
   "user_group": "cognitive",
-  "subgroup_ids": ["C-S1", "C-S2", "C-S4"],
+  "subgroup_ids": [
+    "C-S1"
+  ],
   "category": "captcha",
   "need_ids": [
-    "C1",
-    "C7"
+    "C1"
   ],
-  "difficulty": "medium",
+  "difficulty": "easy",
+  "operation_time": 20.70,
   "instruction": "Complete the character-count CAPTCHA open in Chrome.",
   "source": "synthetic",
   "gt_steps": [
@@ -40,6 +42,14 @@
           "https?://host\\.docker\\.internal:8765/success\\?type=count_chars&seed=access-count-chars-003&session=access-captcha-count-chars"
         ]
       }
+    },
+    "metric_roles": {
+      "task_outcome": [
+        0
+      ],
+      "access_requirement": [
+        0
+      ]
     }
   },
   "proxy": false,

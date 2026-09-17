@@ -5,6 +5,8 @@ import sys
 import re
 from typing import Dict
 
+from .general import normalize_text
+
 
 def check_json_keybindings(actual: str, expected: str, **options) -> float:
     """
@@ -87,17 +89,9 @@ def compare_text_file(actual: str, expected: str, **options) -> float:
     with open(expected) as f2:
         expected_text = f2.read()
 
-    ignore_blanks = options.get('ignore_blanks', False)
-    if ignore_blanks:
-        actual_text = re.sub(r'[\t\n]', ' ', actual_text).strip()
-        actual_text = re.sub(r'\s+', ' ', actual_text)
-        expected_text = re.sub(r'[\t\n]', ' ', expected_text).strip()
-        expected_text = re.sub(r'\s+', ' ', expected_text)
-
     ignore_case = options.get('ignore_case', False)
-    if ignore_case:
-        actual_text = actual_text.lower()
-        expected_text = expected_text.lower()
+    actual_text = normalize_text(actual_text, ignore_case=ignore_case)
+    expected_text = normalize_text(expected_text, ignore_case=ignore_case)
 
     if actual_text == expected_text:
         return 1.0
@@ -185,7 +179,7 @@ def compare_answer(actual: str, rules: Dict, **options) -> float:
     if not actual:
         return 0.
 
-    if actual == rules['expected']:
+    if normalize_text(actual, ignore_case=False) == normalize_text(rules['expected'], ignore_case=False):
         return 1.0
 
     # TODO: can use text embedding to get non-zero return

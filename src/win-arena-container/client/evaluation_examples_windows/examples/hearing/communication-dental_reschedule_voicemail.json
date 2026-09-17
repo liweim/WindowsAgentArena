@@ -9,6 +9,7 @@
     "H1"
   ],
   "difficulty": "medium",
+  "operation_time": 0,
   "instruction": "Use Chrome Live Caption to read the dental voicemail on the Desktop. Choose the earlier of the two offered appointments and draft a Thunderbird email to `appointments@example.com` with subject `Dental reschedule`, including the chosen date, time, and confirmation code. Do not send it.",
   "source": "synthetic",
   "transcript": "Hi Jamie. This is Lakeside Dental. Your Tuesday appointment needs to move. We can offer Thursday, September 17th at 2:20 PM, or Friday, September 18th at 9:40 AM. Reply by email to appointments@example.com. Include confirmation code LD731.",
@@ -152,7 +153,15 @@
           "expected": "true"
         }
       }
-    ]
+    ],
+    "metric_roles": {
+      "task_outcome": [
+        0
+      ],
+      "access_requirement": [
+        1
+      ]
+    }
   },
   "proxy": true,
   "possibility_of_env_change": "low"

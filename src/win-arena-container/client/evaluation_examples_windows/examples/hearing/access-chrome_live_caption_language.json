@@ -10,6 +10,7 @@
     "H2"
   ],
   "difficulty": "easy",
+  "operation_time": 0,
   "instruction": "Enable Live Caption in Chrome and add Spanish as a supported caption language.",
   "source": "synthetic",
   "gt_steps": [
@@ -70,7 +71,17 @@
           "expected": "es"
         }
       }
-    ]
+    ],
+    "metric_roles": {
+      "task_outcome": [
+        0,
+        1
+      ],
+      "access_requirement": [
+        0,
+        1
+      ]
+    }
   },
   "proxy": false
 }

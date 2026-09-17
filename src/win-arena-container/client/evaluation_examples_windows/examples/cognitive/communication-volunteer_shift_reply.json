@@ -1,14 +1,16 @@
 {
   "id": "communication-volunteer_shift_reply",
   "user_group": "cognitive",
-  "subgroup_ids": ["C-S3"],
+  "subgroup_ids": [
+    "C-S3"
+  ],
   "category": "communication",
   "need_ids": [
-    "C4",
-    "C5"
+    "C3"
   ],
   "difficulty": "hard",
-  "instruction": "Use the availability note and volunteer shift options on the Desktop to choose the compatible shift. Draft a Thunderbird email to `volunteer@example.org` with subject `Volunteer shift confirmation` and include the chosen day, date, start time, and end time. Do not send it.",
+  "operation_time": 213.32,
+  "instruction": "Use the availability note and volunteer shift options on the Desktop to choose the compatible shift. Draft a Thunderbird email to `volunteer@example.org` with subject `Volunteer shift confirmation` and include the chosen day, date, start time, and end time. Do not send it. Also add the chosen shift to the Thunderbird calendar as a persistent reminder titled `Volunteer shift` using the selected start and end time.",
   "source": "synthetic",
   "gt_steps": [
     "Open `VolunteerAvailability.txt` on the Desktop.",
@@ -17,7 +19,8 @@
     "Set To to `volunteer@example.org`.",
     "Set Subject to `Volunteer shift confirmation`.",
     "Enter `I confirm the volunteer shift for Thursday, 17 September 2026, from 11:15 AM to 12:45 PM.` in the message body.",
-    "Save the message as a draft. Do not send it."
+    "Save the message as a draft. Do not send it.",
+    "Create a Thunderbird calendar event on 17 September 2026 from 11:15 AM to 12:45 PM titled `Volunteer shift`."
   ],
   "config": [
     {
@@ -75,36 +78,66 @@
     "thunderbird"
   ],
   "evaluator": {
-    "func": "check_thunderbird_email_composition",
-    "result": {
-      "type": "vm_file",
-      "path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release\\Mail\\Local Folders\\Drafts",
-      "dest": "thunderbird-drafts.mbox"
-    },
-    "expected": {
-      "type": "rule",
-      "rules": {
-        "to": "volunteer@example.org",
-        "subject": "Volunteer shift confirmation",
-        "body_points": [
-          [
-            "Thursday"
-          ],
-          [
-            "17 September 2026",
-            "September 17, 2026",
-            "Sep 17, 2026"
-          ],
-          [
-            "11:15 AM",
-            "11:15"
-          ],
-          [
-            "12:45 PM",
-            "12:45"
-          ]
-        ]
+    "func": [
+      "check_thunderbird_email_composition",
+      "check_thunderbird_calendar_event"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "vm_file",
+        "path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release\\Mail\\Local Folders\\Drafts",
+        "dest": "thunderbird-drafts.mbox"
+      },
+      {
+        "type": "thunderbird_calendar_events",
+        "profile_path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release"
       }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "to": "volunteer@example.org",
+          "subject": "Volunteer shift confirmation",
+          "body_points": [
+            [
+              "Thursday"
+            ],
+            [
+              "17 September 2026",
+              "September 17, 2026",
+              "Sep 17, 2026"
+            ],
+            [
+              "11:15 AM",
+              "11:15"
+            ],
+            [
+              "12:45 PM",
+              "12:45"
+            ]
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "date": "2026-09-17",
+          "hour": 11,
+          "minute": 15,
+          "duration_minutes": 90,
+          "title": "Volunteer shift"
+        }
+      }
+    ],
+    "metric_roles": {
+      "task_outcome": [
+        0
+      ],
+      "access_requirement": [
+        1
+      ]
     }
   },
   "proxy": true,

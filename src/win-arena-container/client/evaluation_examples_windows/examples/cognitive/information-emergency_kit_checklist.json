@@ -1,13 +1,17 @@
 {
   "id": "information-emergency_kit_checklist",
   "user_group": "cognitive",
-  "subgroup_ids": ["C-S1", "C-S2"],
+  "subgroup_ids": [
+    "C-S1",
+    "C-S2"
+  ],
   "category": "information",
   "need_ids": [
     "C1",
     "C2"
   ],
   "difficulty": "medium",
+  "operation_time": 0,
   "instruction": "Create a Sticky Note containing the first three basic emergency supplies exactly as listed on the ready.gov page, using Immersive Reader to read the page.",
   "source": "https://www.ready.gov/kit",
   "gt_steps": [
@@ -16,8 +20,8 @@
     "Locate the `Basic Disaster Supplies Kit` list.",
     "Open Sticky Notes.",
     "Create a new note.",
-    "Enter `Water` in the note.",
-    "Add `Food` to the note.",
+    "Enter `Water (one gallon per person per day for several days, for drinking and sanitation)` in the note.",
+    "Add `Food (at least a several-day supply of non-perishable food)` to the note.",
     "Add `Battery-powered or hand crank radio and a NOAA Weather Radio with tone alert` to the note."
   ],
   "config": [
@@ -71,10 +75,10 @@
           "ignore_case": true,
           "points": [
             [
-              "Water"
+              "Water (one gallon per person per day for several days, for drinking and sanitation)"
             ],
             [
-              "Food"
+              "Food (at least a several-day supply of non-perishable food)"
             ],
             [
               "Battery-powered or hand crank radio and a NOAA Weather Radio with tone alert"
@@ -88,7 +92,16 @@
           "reader_mode_open": true
         }
       }
-    ]
+    ],
+    "metric_roles": {
+      "task_outcome": [
+        0
+      ],
+      "access_requirement": [
+        0,
+        1
+      ]
+    }
   },
   "proxy": true,
   "possibility_of_env_change": "medium"

@@ -1,5 +1,5 @@
 {
-  "version": "2026-09-11-v2",
+  "version": "2026-09-15-v4",
   "sources": {
     "webaim_sr10": {
       "title": "WebAIM Screen Reader User Survey #10 Results",
@@ -72,34 +72,6 @@
     "coga_reminders": {
       "title": "W3C COGA: Provide Reminders",
       "url": "https://www.w3.org/WAI/WCAG2/supplemental/patterns/o7p07-reminders/"
-    },
-    "coga_steps": {
-      "title": "W3C COGA: Make Each Step Clear / Use Clear Step-by-step Instructions",
-      "url": "https://www.w3.org/WAI/WCAG2/supplemental/patterns/o1p04-clear-steps/"
-    },
-    "coga_task_expectations": {
-      "title": "W3C COGA: Provide Information So a User Can Complete and Prepare for a Task",
-      "url": "https://www.w3.org/WAI/WCAG2/supplemental/patterns/o5p04-task-expectations/"
-    },
-    "coga_choice": {
-      "title": "W3C COGA: Clearly State Results and Disadvantages of Choices",
-      "url": "https://www.w3.org/WAI/WCAG2/supplemental/patterns/o7p03-supported-choice/"
-    },
-    "coga_important": {
-      "title": "W3C COGA: Make Important Tasks and Information Easy to Find",
-      "url": "https://www.w3.org/WAI/WCAG2/supplemental/patterns/o2p01-site-important/"
-    },
-    "coga_feedback": {
-      "title": "W3C COGA: Provide Feedback",
-      "url": "https://www.w3.org/WAI/WCAG2/supplemental/patterns/o4p10-status-feedback/"
-    },
-    "coga_errors": {
-      "title": "W3C COGA: Design Forms to Prevent Mistakes",
-      "url": "https://www.w3.org/WAI/WCAG2/supplemental/patterns/o4p04-supportive-forms/"
-    },
-    "pew_setup": {
-      "title": "Pew Research Center: Navigating technological challenges",
-      "url": "https://www.pewresearch.org/internet/2021/09/01/navigating-technological-challenges/"
     }
   },
   "taxonomy": {
@@ -152,7 +124,7 @@
     "V6": {
       "group": "visual",
       "name": "Accessible CAPTCHA and verification",
-      "definition": "Complete verification without depending on inaccessible visual perception, including use of alternative modalities or delegated assistance.",
+      "definition": "Complete verification without depending on inaccessible visual perception, using an alternative modality or accessible verification path.",
       "sources": [
         "webaim_sr10",
         "w3c_nontext"
@@ -196,7 +168,7 @@
     "H5": {
       "group": "hearing",
       "name": "Verification without relying on hearing",
-      "definition": "Complete CAPTCHA or verification when the presented challenge depends on auditory perception, using a non-auditory alternative or delegated assistance.",
+      "definition": "Complete CAPTCHA or verification when the presented challenge depends on auditory perception, using a non-auditory alternative or accessible verification path.",
       "sources": [
         "w3c_nontext"
       ]
@@ -228,7 +200,7 @@
     },
     "M4": {
       "group": "motor",
-      "name": "Alternative pointer control or delegated pointing",
+      "name": "Alternative pointer control",
       "definition": "Use keyboard, speech/other alternative input, or delegated pointer activation when conventional mouse use is difficult.",
       "sources": [
         "ms_mobility",
@@ -271,8 +243,8 @@
     },
     "C2": {
       "group": "cognitive",
-      "name": "Memory externalization and short-term retention support",
-      "definition": "Reduce reliance on working memory or short-term retention by using notes, checklists, persistent cues, or delegated assistance.",
+      "name": "Memory externalization and persistent information support",
+      "definition": "Reduce reliance on working memory or short-term retention by creating or using notes, checklists, persistent cues, and other durable external representations.",
       "sources": [
         "coga_memory_calc"
       ]
@@ -280,55 +252,9 @@
     "C3": {
       "group": "cognitive",
       "name": "Time and prospective-memory support",
-      "definition": "Use reminders, calendars, timers, and persistent time-based cues to manage appointments, deadlines, intervals, and future actions.",
+      "definition": "Use reminders, calendars, timers, notification persistence, and other time-based cues to manage appointments, deadlines, intervals, and future actions.",
       "sources": [
         "coga_reminders"
-      ]
-    },
-    "C4": {
-      "group": "cognitive",
-      "name": "Planning, sequencing, task-state tracking, and completion recognition",
-      "definition": "Reduce the burden of unfamiliar or multi-step workflows, maintaining context, tracking progress, recovering after distraction, and recognizing successful completion.",
-      "sources": [
-        "coga_steps",
-        "coga_task_expectations",
-        "coga_feedback",
-        "pew_setup"
-      ]
-    },
-    "C5": {
-      "group": "cognitive",
-      "name": "Decision and choice support",
-      "definition": "Help compare alternatives, apply constraints, understand consequences, and select an appropriate option.",
-      "sources": [
-        "coga_choice"
-      ]
-    },
-    "C6": {
-      "group": "cognitive",
-      "name": "Important-information extraction and prioritization",
-      "definition": "Identify and preserve the small set of important facts or actions from dense, mixed, or distracting information.",
-      "sources": [
-        "coga_important",
-        "coga_simplify"
-      ]
-    },
-    "C7": {
-      "group": "cognitive",
-      "name": "Calculation, counting, copying, and cross-source reconciliation support",
-      "definition": "Reduce reliance on arithmetic/counting, copying, short-term retention, or reconciling information across sources and steps.",
-      "sources": [
-        "coga_memory_calc"
-      ]
-    },
-    "C8": {
-      "group": "cognitive",
-      "name": "Error prevention and safety-critical guidance",
-      "definition": "Make risky actions, scams, health/safety guidance, and error-prone choices easier to understand and act on correctly.",
-      "sources": [
-        "coga_errors",
-        "coga_choice",
-        "coga_important"
       ]
     }
   }

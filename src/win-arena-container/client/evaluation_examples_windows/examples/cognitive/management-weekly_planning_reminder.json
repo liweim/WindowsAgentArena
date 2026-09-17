@@ -1,0 +1,89 @@
+{
+  "id": "management-weekly_planning_reminder",
+  "user_group": "cognitive",
+  "subgroup_ids": [
+    "C-S3"
+  ],
+  "category": "management",
+  "need_ids": [
+    "C3"
+  ],
+  "difficulty": "easy",
+  "operation_time": 0,
+  "instruction": "Create a recurring Thunderbird Calendar event titled `Weekly planning review` starting Monday, September 21, 2026 at 8:00 AM for 30 minutes and repeating weekly. Put `Review calendar`, `Review reminders`, and `Check email` in the event description.",
+  "source": "synthetic",
+  "gt_steps": [
+    "Create a Thunderbird calendar event on September 21, 2026 at 8:00 AM for 30 minutes titled `Weekly planning review`.",
+    "Add `Review calendar`, `Review reminders`, and `Check email` to the event description.",
+    "Set the event to repeat weekly and save it."
+  ],
+  "config": [
+    {
+      "type": "download",
+      "parameters": {
+        "files": [
+          {
+            "url": "https://huggingface.co/datasets/xlangai/ubuntu_osworld_file_cache/resolve/main/thunderbird/dd84e895-72fd-4023-a336-97689ded257c/thunderbird-profile.tar.gz",
+            "path": "C:\\Users\\Docker\\Downloads\\thunderbird-profile.tar.gz"
+          }
+        ]
+      }
+    },
+    {
+      "type": "prepare_thunderbird_profile",
+      "parameters": {}
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "thunderbird.exe",
+          "-profile",
+          "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release"
+        ]
+      }
+    }
+  ],
+  "related_apps": [
+    "thunderbird"
+  ],
+  "evaluator": {
+    "func": "check_thunderbird_calendar_event",
+    "result": {
+      "type": "thunderbird_calendar_events",
+      "profile_path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release"
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "date": "2026-09-21",
+        "hour": 8,
+        "minute": 0,
+        "duration_minutes": 30,
+        "title": "Weekly planning review",
+        "body_points": [
+          [
+            "Review calendar"
+          ],
+          [
+            "Review reminders"
+          ],
+          [
+            "Check email"
+          ]
+        ],
+        "recurrence": "WEEKLY"
+      }
+    },
+    "metric_roles": {
+      "task_outcome": [
+        0
+      ],
+      "access_requirement": [
+        0
+      ]
+    }
+  },
+  "proxy": false,
+  "possibility_of_env_change": "low"
+}

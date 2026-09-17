@@ -1,19 +1,21 @@
 {
   "id": "access-chrome_immersive_reader_extension",
   "user_group": "cognitive",
-  "subgroup_ids": ["C-S1"],
+  "subgroup_ids": [
+    "C-S1"
+  ],
   "category": "access",
   "need_ids": [
     "C1"
   ],
   "difficulty": "medium",
+  "operation_time": 46.73,
   "instruction": "Install the Immersive Reader extension in Chrome.",
   "source": "https://chromewebstore.google.com/detail/immersive-reader/cccnhdbjafjobcppogeaaabofifbpdho",
   "gt_steps": [
     "Open Google Chrome.",
-    "Open the Chrome Web Store listing `Immersive Reader` with extension ID `cccnhdbjafjobcppogeaaabofifbpdho`.",
-    "Select `Add to Chrome`.",
-    "Confirm the extension installation."
+    "Open the Chrome Web Store listing `Immersive Reader`.",
+    "Select `Add to Chrome`."
   ],
   "config": [
     {
@@ -48,7 +50,7 @@
     "func": "check_text_points",
     "result": {
       "type": "vm_command_line",
-      "command": "powershell -NoProfile -Command \"$id='cccnhdbjafjobcppogeaaabofifbpdho'; $root=Join-Path $env:LOCALAPPDATA 'Google\\Chrome\\User Data'; $found=Get-ChildItem $root -Directory -ErrorAction SilentlyContinue | ForEach-Object { Join-Path $_.FullName ('Extensions\\' + $id) } | Where-Object { Test-Path $_ } | Select-Object -First 1; if ($found) { Write-Output 'IMMERSIVE_READER_EXTENSION_FOUND'; exit 0 }; Write-Output 'IMMERSIVE_READER_EXTENSION_NOT_FOUND'; exit 1\"",
+      "command": "powershell -NoProfile -Command \"$knownId='cccnhdbjafjobcppogeaaabofifbpdho'; $googleRoot=Join-Path $env:LOCALAPPDATA 'Google'; $found=$false; Get-ChildItem $googleRoot -Directory -Filter 'Chrome*' -ErrorAction SilentlyContinue | ForEach-Object { $userData=Join-Path $_.FullName 'User Data'; Get-ChildItem $userData -Directory -ErrorAction SilentlyContinue | ForEach-Object { $extensions=Join-Path $_.FullName 'Extensions'; Get-ChildItem $extensions -Directory -ErrorAction SilentlyContinue } } | ForEach-Object { $extension=$_; if ($extension.Name -eq $knownId) { $found=$true }; Get-ChildItem $extension.FullName -Filter manifest.json -Recurse -File -ErrorAction SilentlyContinue | ForEach-Object { try { $manifest=Get-Content $_.FullName -Raw | ConvertFrom-Json; $manifestDir=$_.DirectoryName; $names=@($manifest.name,$manifest.short_name) | Where-Object { $_ }; foreach ($name in $names) { if ($name -match '(?i)immersive[ _-]*reader') { $found=$true }; if ($name -match '^__MSG_(.+)__$') { $key=$Matches[1]; Get-ChildItem (Join-Path $manifestDir '_locales') -Filter messages.json -Recurse -File -ErrorAction SilentlyContinue | ForEach-Object { try { $messages=Get-Content $_.FullName -Raw | ConvertFrom-Json; $entry=$messages.PSObject.Properties[$key]; if ($entry -and $entry.Value.message -match '(?i)immersive[ _-]*reader') { $found=$true } } catch {} } } } } catch {} } }; if ($found) { Write-Output 'IMMERSIVE_READER_EXTENSION_FOUND'; exit 0 }; Write-Output 'IMMERSIVE_READER_EXTENSION_NOT_FOUND'; exit 1\"",
       "shell": true
     },
     "expected": {
@@ -61,6 +63,14 @@
           ]
         ]
       }
+    },
+    "metric_roles": {
+      "task_outcome": [
+        0
+      ],
+      "access_requirement": [
+        0
+      ]
     }
   },
   "proxy": true,

@@ -11,6 +11,7 @@
     "H3"
   ],
   "difficulty": "easy",
+  "operation_time": 0,
   "instruction": "Enable Mono audio and set visual audio alerts to Flash the entire screen in Windows.",
   "source": "synthetic",
   "gt_steps": [
@@ -50,7 +51,17 @@
       {
         "type": "visual_audio_alerts"
       }
-    ]
+    ],
+    "metric_roles": {
+      "task_outcome": [
+        0,
+        1
+      ],
+      "access_requirement": [
+        0,
+        1
+      ]
+    }
   },
   "proxy": false
 }

@@ -1,27 +1,39 @@
 {
   "id": "consumption-lowest_price_white_mouse",
   "user_group": "cognitive",
-  "subgroup_ids": ["C-S2", "C-S3"],
+  "subgroup_ids": [
+    "C-S2"
+  ],
   "category": "consumption",
   "need_ids": [
-    "C2",
-    "C5"
+    "C2"
   ],
   "difficulty": "medium",
-  "instruction": "Use the mouse shopping reminder on the Desktop to choose the matching product and add it to the cart.",
-  "source": "http://host.docker.internal:7770",
+  "operation_time": 63.52,
+  "instruction": "Complete the mouse item in `white_mouse_shopping_list.xlsx` on the Desktop following the listed requirements. When finished, check it off by changing its `Status` from `Pending` to `Done`, then save the spreadsheet.",
+  "source": "synthetic",
   "gt_steps": [
-    "Open `mouse_shopping_reminder.txt` and read the requirements.",
-    "Search the shopping site for wireless mouse products.",
-    "Compare standalone white options and choose the lowest-priced match.",
-    "Select the White option and add the matching mouse to the cart."
+    "Open `white_mouse_shopping_list.xlsx` and read the pending Mouse row.",
+    "Compare the matching standalone wireless mice and identify `Wireless Mouse, 3 Adjustable DPI Innovative Stylish Portable Gaming Mouse, Suitable for Notebook, PC, Computer Office Home Work` (SKU `B09443ZWQD`) as the lowest-priced standard answer.",
+    "Select `White` for the `Color` option and add that exact mouse to the shopping cart.",
+    "Return to the spreadsheet, change the Mouse row status from `Pending` to `Done`, and save the file."
   ],
   "config": [
     {
-      "type": "execute",
+      "type": "upload_file",
       "parameters": {
-        "command": "powershell -NoProfile -Command \"Set-Content -Path (Join-Path $env:USERPROFILE 'Desktop\\mouse_shopping_reminder.txt') -Value @('Mouse requirements:','- wireless','- white','- standalone mouse, not a bundle','- choose the lowest-priced match')\"",
-        "shell": true
+        "files": [
+          {
+            "local_path": "assets/consumption-white_mouse_shopping_list.xlsx",
+            "path": "C:\\Users\\Docker\\Desktop\\white_mouse_shopping_list.xlsx"
+          }
+        ]
+      }
+    },
+    {
+      "type": "open",
+      "parameters": {
+        "path": "C:\\Users\\Docker\\Desktop\\white_mouse_shopping_list.xlsx"
       }
     },
     {
@@ -65,27 +77,68 @@
   ],
   "related_apps": [
     "chrome",
-    "notepad"
+    "libreoffice_calc"
   ],
   "evaluator": {
-    "func": "is_page_contains_items",
-    "result": {
-      "type": "page_info",
-      "url": "http://host.docker.internal:7770/checkout/cart/",
-      "load_state": "networkidle"
-    },
-    "expected": {
-      "type": "rule",
-      "rules": {
-        "items": [
-          "B09443ZWQD"
-        ],
-        "options": {
-          "B09443ZWQD": {
-            "Color": "White"
+    "func": [
+      "is_page_contains_items",
+      "check_text_points"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "page_info",
+        "url": "http://host.docker.internal:7770/checkout/cart/",
+        "load_state": "networkidle"
+      },
+      {
+        "type": "vm_command_line",
+        "command": "C:\\Users\\Docker\\AppData\\Local\\Programs\\Python\\Python310\\python.exe -c \"from openpyxl import load_workbook; from pathlib import Path; p=Path.home()/'Desktop'/'white_mouse_shopping_list.xlsx'; w=load_workbook(p,data_only=True); s=w.active; print('\\n'.join(f'{s.cell(r,1).value}: {s.cell(r,4).value}' for r in range(3,s.max_row+1) if s.cell(r,1).value))\"",
+        "shell": true
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "items": [
+            "B09443ZWQD"
+          ],
+          "options": {
+            "B09443ZWQD": {
+              "Color": "White"
+            }
           }
         }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "ignore_case": true,
+          "points": [
+            [
+              "Keyboard: Done"
+            ],
+            [
+              "Mouse: Done"
+            ],
+            [
+              "USB hub: Pending"
+            ],
+            [
+              "Monitor arm: Done"
+            ]
+          ]
+        }
       }
+    ],
+    "metric_roles": {
+      "task_outcome": [
+        0
+      ],
+      "access_requirement": [
+        1
+      ]
     }
   },
   "proxy": false,
