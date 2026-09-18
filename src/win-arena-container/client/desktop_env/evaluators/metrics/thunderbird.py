@@ -534,6 +534,17 @@ def _calendar_event_recurrence_matches(event: Dict[str, Any], expected: str) -> 
     records = [event]
     records.extend(item for item in event.get("related", []) if isinstance(item, dict))
     for record in records:
+        # Current Thunderbird stores recurrence rules in cal_recurrence's
+        # generic ``icalString`` column (for example,
+        # ``RRULE:FREQ=WEEKLY``), so inspect the complete record text rather
+        # than relying exclusively on recurrence-related column names.
+        record_text = "\n".join(
+            str(value) for value in record.values() if isinstance(value, str)
+        ).upper()
+        for frequency in re.findall(r"(?:^|[\r\n])RRULE:[^\r\n]*\bFREQ=([^;\r\n]+)", record_text):
+            if frequency.strip() == expected_norm:
+                return True
+
         for key, value in record.items():
             key_norm = str(key).lower()
             if not any(token in key_norm for token in ("recur", "rrule", "repeat")):

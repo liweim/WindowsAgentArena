@@ -9,7 +9,7 @@
     "C3"
   ],
   "difficulty": "easy",
-  "operation_time": 0,
+  "operation_time": 41.31,
   "instruction": "Read the waiting interval between the eye drops from the caregiver note on the Desktop, start a timer for that amount of time on vclock.com, and leave it running where it can be seen.",
   "source": "synthetic",
   "gt_steps": [

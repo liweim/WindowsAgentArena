@@ -11,7 +11,7 @@
     "C3"
   ],
   "difficulty": "medium",
-  "operation_time": 0,
+  "operation_time": 71.90,
   "instruction": "Create a 30-minute Thunderbird Calendar reminder on October 2, 2026 at 9:00 AM titled `Review automatic payments`. Use Microsoft Edge Immersive Reader to read the CFPB guidance and include all four action headings under `How to stop automatic debits from your account` in the event description, in webpage order.",
   "source": "https://www.consumerfinance.gov/ask-cfpb/how-do-i-stop-automatic-payments-from-my-bank-account-en-2023/",
   "gt_steps": [

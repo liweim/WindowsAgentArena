@@ -9,15 +9,15 @@
     "C2"
   ],
   "difficulty": "medium",
-  "operation_time": 0,
-  "instruction": "Use the payment activity on the Desktop to bring the persistent bill tracker up to date. Update the one bill that is still marked `Unpaid` in the tracker but has a `Completed` payment in the activity list. Record its payment date, leave the other bill rows unchanged, and save the spreadsheet as `answer.ods` on the Desktop.",
+  "operation_time": 53.58,
+  "instruction": "Use the payment activity on the Desktop to bring the persistent bill tracker `Bills.ods` up to date. Update the one bill that is still marked `Unpaid` in the tracker but has a `Completed` payment in the activity list. Record its payment date, leave the other bill rows unchanged, and save the spreadsheet.",
   "source": "synthetic",
   "gt_steps": [
     "Switch to the open `WaterPayment.txt` Notepad window.",
     "Switch to the open `Bills.ods` spreadsheet in LibreOffice Calc.",
     "Set the Water row Status cell to `Paid`.",
     "Set the Water row Payment Date cell to `20/10/2026`.",
-    "Save the spreadsheet as `answer.ods` on the Desktop."
+    "Save `Bills.ods`."
   ],
   "config": [
     {
@@ -62,8 +62,8 @@
     "func": "check_ods_cell_values",
     "result": {
       "type": "vm_file",
-      "path": "C:\\Users\\Docker\\Desktop\\answer.ods",
-      "dest": "answer.ods"
+      "path": "C:\\Users\\Docker\\Desktop\\Bills.ods",
+      "dest": "Bills.ods"
     },
     "expected": {
       "type": "rule",

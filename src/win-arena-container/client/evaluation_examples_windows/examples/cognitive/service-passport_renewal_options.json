@@ -17,8 +17,7 @@
     "Locate the two renewal methods named on the page.",
     "Open Sticky Notes.",
     "Create a new note.",
-    "Enter exactly `Renew Your Passport by Mail` in the note.",
-    "Add exactly `Renew Your Passport Online` to the note."
+    "Enter exactly `Renew Your Passport by Mail\nRenew Your Passport Online` in the note, one item per line."
   ],
   "config": [
     {

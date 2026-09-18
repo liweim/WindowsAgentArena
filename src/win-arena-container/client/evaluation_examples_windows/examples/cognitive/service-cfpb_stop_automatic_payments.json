@@ -20,10 +20,7 @@
     "Locate the section about stopping automatic debits.",
     "Open Notepad.",
     "Create `answer.txt` on the Desktop.",
-    "Enter `Call and write the company` in the file.",
-    "Add `Call and write your bank or credit union` to the file.",
-    "Add `Your bank or credit union might use stop payment orders` to the file.",
-    "Add `Monitor your accounts` to the file.",
+    "Enter `Call and write the company\nCall and write your bank or credit union\nYour bank or credit union might use stop payment orders\nMonitor your accounts` in the file, one item per line.",
     "Save `answer.txt`."
   ],
   "config": [

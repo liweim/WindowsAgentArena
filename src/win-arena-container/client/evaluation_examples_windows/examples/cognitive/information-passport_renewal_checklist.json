@@ -11,7 +11,7 @@
     "C2"
   ],
   "difficulty": "medium",
-  "operation_time": 0,
+  "operation_time": 84.35,
   "instruction": "Create a Sticky Note listing the four online passport renewal eligibility conditions highlighted in the AP News article, using the article's wording rather than paraphrasing. Use Immersive Reader to read the eligibility rules.",
   "source": "https://apnews.com/article/70fbd31bdc1a519701c83a177ed3ef95",
   "gt_steps": [
@@ -20,10 +20,7 @@
     "Locate the four online passport renewal eligibility conditions highlighted in the article.",
     "Open Sticky Notes.",
     "Create a new note.",
-    "Enter `You’re 25 or older.` in the note.",
-    "Add `You’re renewing a passport issued between 2009 and 2015.` to the note.",
-    "Add `You aren’t changing any personal information.` to the note.",
-    "Add `You won’t travel overseas for at least eight weeks after you apply.` to the note."
+    "Enter `You’re 25 or older.\nYou’re renewing a passport issued between 2009 and 2015.\nYou aren’t changing any personal information.\nYou won’t travel overseas for at least eight weeks after you apply.` in the note, one item per line."
   ],
   "config": [
     {

@@ -11,16 +11,16 @@
     "C2"
   ],
   "difficulty": "medium",
-  "operation_time": 0,
-  "instruction": "Create a Sticky Note containing all three distance-based water-intake recommendations from the SELF article, using Microsoft Edge Immersive Reader to read the article. Keep one recommendation per line.",
+  "operation_time": 76.39,
+  "instruction": "Create a Sticky Note containing the SELF article's hydration-system recommendations for road or trail running, hiking or walking, and official races, using Microsoft Edge Immersive Reader to read the article. Use the article's exact wording without paraphrasing, and keep one recommendation per line in webpage order.",
   "source": "https://www.self.com/gallery/best-hydration-packs",
   "gt_steps": [
     "Switch to the SELF hydration article in Microsoft Edge.",
     "With the article active in Microsoft Edge, press `F9` to enter Immersive Reader.",
-    "Scroll to `Gear and Water Capacity`.",
+    "Read the `Type of Activity` section.",
     "Switch to Sticky Notes.",
     "Create a new note.",
-    "Enter the following text in the note, one recommendation per line:\n`Short distance (2 to 5 miles): 12 to 20 ounces via a handheld or belt`\n`Medium distance (5 to 10 miles): 20 to 50 ounces (0.5 to 1.5 liters) via a small pack or vest for medium-length runs, hot weather, or adventures with a dog`\n`Long distances (10+ miles): 50 to 100 ounces (1.5 to 3 liters) via a larger vest or day pack for longer runs in hot weather, or if there isn't water restock available`",
+    "Enter the following article text in the note, one recommendation per line:\n`For anything like road and trail running, you’ll want a system that keeps your water and gear close to your body to cut down on bouncing. In that case, most runners opt for vests and belts.`\n`If you’re hiking or walking, a daypack or waist pack should do just fine.`\n`For official races, always research what kind of hydration systems are allowed first. If you plan on running with a permitted hydration pack, she recommends training with it prior to race day so you can get comfortable with how it feels beforehand.`",
     "Keep the completed note saved in Sticky Notes."
   ],
   "config": [
@@ -73,62 +73,15 @@
         "rules": {
           "ignore_case": true,
           "points": [
-            {
-              "all_of": [
-                [
-                  "2 to 5 miles",
-                  "2-5 miles"
-                ],
-                [
-                  "12 to 20 ounces",
-                  "12-20 ounces"
-                ],
-                [
-                  "handheld",
-                  "belt"
-                ]
-              ]
-            },
-            {
-              "all_of": [
-                [
-                  "5 to 10 miles",
-                  "5-10 miles"
-                ],
-                [
-                  "20 to 50 ounces",
-                  "20-50 ounces",
-                  "0.5 to 1.5 liters"
-                ],
-                [
-                  "small pack",
-                  "vest"
-                ]
-              ]
-            },
-            {
-              "all_of": [
-                [
-                  "10+ miles",
-                  "10 plus miles",
-                  "over 10 miles"
-                ],
-                [
-                  "50 to 100 ounces",
-                  "50-100 ounces",
-                  "1.5 to 3 liters"
-                ],
-                [
-                  "larger vest",
-                  "day pack"
-                ],
-                [
-                  "hot weather",
-                  "water restock",
-                  "water refill"
-                ]
-              ]
-            }
+            [
+              "For anything like road and trail running, you’ll want a system that keeps your water and gear close to your body to cut down on bouncing. In that case, most runners opt for vests and belts."
+            ],
+            [
+              "If you’re hiking or walking, a daypack or waist pack should do just fine."
+            ],
+            [
+              "For official races, always research what kind of hydration systems are allowed first. If you plan on running with a permitted hydration pack, she recommends training with it prior to race day so you can get comfortable with how it feels beforehand."
+            ]
           ],
           "ordered": true,
           "line_based": true

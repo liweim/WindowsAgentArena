@@ -9,13 +9,13 @@
     "C3"
   ],
   "difficulty": "medium",
-  "operation_time": 0,
+  "operation_time": 95.90,
   "instruction": "Use the morning care plan on the Desktop to set up two Thunderbird calendar reminders: a 30-minute event titled `Morning care` on September 17, 2026 at 8:30 AM with the three same-morning care actions in the description, and a 30-minute event titled `Refill eye drops` on September 18, 2026 at 9:00 AM.",
   "source": "synthetic",
   "gt_steps": [
     "Read `MorningCarePlan.txt` in Notepad.",
     "Create a Thunderbird calendar event on September 17, 2026 at 8:30 AM for 30 minutes titled `Morning care`.",
-    "Add the blood-pressure check, blue inhaler, and medication-list/clinic-bag actions to the `Morning care` event description.",
+    "Add the `Before 9:00 AM, check the blood pressure and write the reading in the paper log. After breakfast, take the blue inhaler. Before leaving for the clinic, put the current medication list in the clinic bag.` to the `Morning care` event description.",
     "Create a Thunderbird calendar event on September 18, 2026 at 9:00 AM for 30 minutes titled `Refill eye drops`."
   ],
   "config": [

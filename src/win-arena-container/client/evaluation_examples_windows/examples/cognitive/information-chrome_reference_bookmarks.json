@@ -9,13 +9,12 @@
     "C2"
   ],
   "difficulty": "easy",
-  "operation_time": 0,
+  "operation_time": 21.25,
   "instruction": "Save the two already-open local Wikipedia reference pages `Accessibility` and `Computer accessibility` as persistent bookmarks on the Chrome bookmark bar so they can be reopened without having to remember or search for them again.",
-  "source": "synthetic/local Wikipedia mirror",
+  "source": "synthetic",
   "gt_steps": [
-    "In Chrome, save the already-open local Wikipedia `Accessibility` page as a bookmark on the bookmark bar.",
-    "Save the already-open local Wikipedia `Computer accessibility` page as a bookmark on the bookmark bar.",
-    "Leave both bookmarks saved on the bookmark bar."
+    "On the already-open `Accessibility` page in Chrome, open the bookmark dialog, explicitly select `Bookmarks bar` as the destination folder, and save the bookmark.",
+    "Switch to the already-open `Computer accessibility` page, open the bookmark dialog, explicitly select `Bookmarks bar` as the destination folder, and save the bookmark."
   ],
   "config": [
     {

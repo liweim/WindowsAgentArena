@@ -11,13 +11,13 @@
     "C3"
   ],
   "difficulty": "medium",
-  "operation_time": 0,
+  "operation_time": 47.52,
   "instruction": "Use the Harvard Shuttle printable schedule open in Microsoft Edge. On a weekday evening, you are at Mather House at 9:15 pm and want the first shuttle to Lamont Library. Create a Sticky Note with four ordered checkpoints: the Mather House departure time, the Quad time, the Law School time, and the Lamont Library arrival time.",
   "source": "https://prod-transportation.drupalsites.harvard.edu/sites/g/files/omnuum12016/files/2025-08/All%20Shuttle%20Routes.pdf",
   "gt_steps": [
     "Find the evening Mather–Crimson–Overnight timetable in the Harvard Shuttle PDF.",
     "Find the first Mather House departure after 9:15 pm: 9:20 pm.",
-    "Follow the same row to the Quad at 9:40 pm, the Law School at 9:45 pm, and Lamont Library at 9:53 pm.",
+    "Use `Mather House: 9:20 pm\nQuad: 9:40 pm\nLaw School: 9:45 pm\nLamont Library: 9:53 pm` as the standard answer.",
     "Create a Sticky Note containing the four checkpoints in order."
   ],
   "config": [
@@ -36,8 +36,9 @@
       "type": "launch",
       "parameters": {
         "command": [
-          "msedge",
-          "file:///C:/Users/Docker/Desktop/Harvard_Shuttle_Routes.pdf"
+          "cmd",
+          "/c",
+          "start msedge file:///C:/Users/Docker/Desktop/Harvard_Shuttle_Routes.pdf"
         ]
       }
     }
