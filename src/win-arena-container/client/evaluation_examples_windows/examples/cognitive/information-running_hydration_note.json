@@ -11,16 +11,16 @@
     "C2"
   ],
   "difficulty": "medium",
-  "operation_time": 0,
-  "instruction": "Copy the article's short-distance water-intake advice exactly into Sticky Notes, using Immersive Reader to read the article.",
+  "operation_time": 72.81,
+  "instruction": "Copy the article's road and trail running hydration-system advice exactly into Sticky Notes, using Immersive Reader to read the article.",
   "source": "https://www.self.com/gallery/best-hydration-packs",
   "gt_steps": [
     "Open the SELF hydration article in Microsoft Edge.",
     "Activate Immersive Reader.",
-    "Locate the short-distance outdoor running water-intake guidance.",
+    "Locate the road and trail running hydration-system guidance in the `Type of Activity` section.",
     "Open Sticky Notes.",
     "Create a new note.",
-    "Enter exactly `Short distance (2 to 5 miles): 12 to 20 ounces via a handheld or belt.` in the note."
+    "Enter exactly `For anything like road and trail running, you’ll want a system that keeps your water and gear close to your body to cut down on bouncing. In that case, most runners opt for vests and belts.` in the note."
   ],
   "config": [
     {
@@ -73,7 +73,7 @@
           "ignore_case": true,
           "points": [
             [
-              "Short distance (2 to 5 miles): 12 to 20 ounces via a handheld or belt"
+              "For anything like road and trail running, you’ll want a system that keeps your water and gear close to your body to cut down on bouncing. In that case, most runners opt for vests and belts."
             ]
           ]
         }

@@ -9,14 +9,12 @@
     "C1"
   ],
   "difficulty": "medium",
-  "operation_time": 0,
-  "instruction": "The forum discussion is long. Find the thread about how food manufacturers know the calories in each package. Based on the discussion's main answer, do manufacturers know the exact value or estimate it? Write only `exact` or `estimate` in `answer.txt` on the Desktop.",
+  "operation_time": 96.22,
+  "instruction": "Find the thread about how food manufacturers know the calories in each package. Based on the discussion's main answer, do manufacturers know the exact value or estimate it? Write only `exact` or `estimate` in `answer.txt` on the Desktop.",
   "source": "synthetic",
   "gt_steps": [
-    "Open the local Explain Like I'm Five forum and find the calorie-package discussion.",
-    "Read enough of the discussion to determine whether manufacturers know the exact value or estimate it.",
-    "Write `estimate` in the file.",
-    "Save it as `answer.txt` on the Desktop."
+    "Search for `calorie package` and open the first result",
+    "Write `estimate` in the `answer.txt` on the Desktop."
   ],
   "config": [
     {

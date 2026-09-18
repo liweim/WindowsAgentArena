@@ -9,7 +9,7 @@
     "C3"
   ],
   "difficulty": "medium",
-  "operation_time": 0,
+  "operation_time": 54.16,
   "instruction": "Create an all-day Thunderbird Calendar reminder titled `Refill medication` for the refill deadline in the pharmacy message on the Desktop.",
   "source": "synthetic",
   "gt_steps": [

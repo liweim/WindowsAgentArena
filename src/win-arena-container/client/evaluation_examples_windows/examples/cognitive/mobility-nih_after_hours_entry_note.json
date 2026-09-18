@@ -18,7 +18,7 @@
     "Find the Patient Entry section of the NIH Clinical Center Patient Handbook.",
     "Note that the regular West Drive-Main Patient/Family Entrance is open daily from 6 am to 10 pm.",
     "Because the arrival is at 10:30 pm, identify the after-hours vehicle entrance as the Commercial Vehicle Inspection Facility (CVIF).",
-    "Record its hours as 10 pm to 6 am and its location on Rockville Pike (Route 355) between North Drive and Wilson Drive.",
+    "Use `Vehicle entrance: Commercial Vehicle Inspection Facility (CVIF)\nHours: 10 pm to 6 am\nLocation: Rockville Pike (Route 355) between North Drive and Wilson Drive` as the standard answer.",
     "Create a Sticky Note with the entrance, hours, and location."
   ],
   "config": [
@@ -37,8 +37,9 @@
       "type": "launch",
       "parameters": {
         "command": [
-          "msedge",
-          "file:///C:/Users/Docker/Desktop/NIH_Patient_Handbook.pdf"
+          "cmd",
+          "/c",
+          "start msedge file:///C:/Users/Docker/Desktop/NIH_Patient_Handbook.pdf"
         ]
       }
     }

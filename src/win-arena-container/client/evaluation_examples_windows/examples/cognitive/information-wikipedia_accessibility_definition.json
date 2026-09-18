@@ -9,8 +9,8 @@
     "C2"
   ],
   "difficulty": "medium",
-  "operation_time": 0,
-  "instruction": "Build the reference note in the open document: find the sentence in the local Wikipedia `Accessibility` article that defines accessibility as a design concept, replace `[add definition here]` with that sentence only, and save the completed document as `answer.docx` on the Desktop.",
+  "operation_time": 40.71,
+  "instruction": "Build the reference note in the open `accessibility_definition_paper.docx` document: find the sentence in the local Wikipedia `Accessibility` article that defines accessibility as a design concept, replace `[add definition here]` with that sentence only, and save the document.",
   "source": "synthetic",
   "gt_steps": [
     "Open the local Kiwix Wikipedia site in Google Chrome.",
@@ -19,7 +19,7 @@
     "Use `accessibility is the design of products, devices, services, vehicles, or environments so as to be usable by people with disabilities` as the standard answer.",
     "Switch to the open `accessibility_definition_paper.docx` document in LibreOffice Writer.",
     "Replace `[add definition here]` with the standard answer only.",
-    "Save the completed document as `answer.docx` on the Desktop."
+    "Save `accessibility_definition_paper.docx`."
   ],
   "config": [
     {
@@ -94,8 +94,8 @@
     "func": "compare_docx_files",
     "result": {
       "type": "vm_file",
-      "path": "C:\\Users\\Docker\\Desktop\\answer.docx",
-      "dest": "answer.docx"
+      "path": "C:\\Users\\Docker\\Desktop\\accessibility_definition_paper.docx",
+      "dest": "accessibility_definition_paper.docx"
     },
     "expected": {
       "type": "vm_file",

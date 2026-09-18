@@ -15,7 +15,7 @@
   "gt_steps": [
     "Open Sticky Notes.",
     "Create a new note.",
-    "Enter the following text:\n`Start line: Frankston Line\nInterchange: Caulfield\nOnward line: Pakenham Line\nDestination: Pakenham`",
+    "Use `Start line: Frankston Line\nInterchange: Caulfield\nOnward line: Pakenham Line\nDestination: Pakenham` as the standard answer.",
     "Keep the completed note saved in Sticky Notes."
   ],
   "config": [
@@ -34,8 +34,9 @@
       "type": "launch",
       "parameters": {
         "command": [
-          "msedge",
-          "file:///C:/Users/Docker/Desktop/VictorianTrainNetworkMap.pdf"
+          "cmd",
+          "/c",
+          "start msedge file:///C:/Users/Docker/Desktop/VictorianTrainNetworkMap.pdf"
         ]
       }
     }

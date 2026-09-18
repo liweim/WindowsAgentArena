@@ -11,13 +11,12 @@
     "C3"
   ],
   "difficulty": "medium",
-  "operation_time": 0,
+  "operation_time": 100.19,
   "instruction": "Use the Babson–Olin–Wellesley shuttle schedule open in Microsoft Edge. On a weekday, you are at Olin College East Hall at 8:45 am and want the first shuttle that will take you to Wellesley College Campus Center. Create `answer.txt` on the Desktop with four lines: the Olin departure time, the time at Babson College Hollister Parking Lot, the time at Founders Parking Lot Gates, and the arrival time at Wellesley College Campus Center.",
   "source": "https://www.babson.edu/media/babson/assets/isss/AY-2025-2026-BOW-Shuttle-Schedule.pdf",
   "gt_steps": [
     "Read the weekday Babson–Olin–Wellesley shuttle timetable.",
-    "Find the first Olin College East Hall departure after 8:45 am: 8:52 am.",
-    "Follow the same timetable row to Babson College Hollister Parking Lot at 8:55 am, Founders Parking Lot Gates at 9:05 am, and Wellesley College Campus Center at 9:07 am.",
+    "Use `Olin College East Hall: 8:52 am\nBabson College Hollister Parking Lot: 8:55 am\nFounders Parking Lot Gates: 9:05 am\nWellesley College Campus Center: 9:07 am` as the standard answer.",
     "Open Notepad and enter the four requested items, one per line.",
     "Save the file as `answer.txt` on the Desktop."
   ],
@@ -37,8 +36,9 @@
       "type": "launch",
       "parameters": {
         "command": [
-          "msedge",
-          "file:///C:/Users/Docker/Desktop/Babson_BOW_Shuttle_Schedule.pdf"
+          "cmd",
+          "/c",
+          "start msedge file:///C:/Users/Docker/Desktop/Babson_BOW_Shuttle_Schedule.pdf"
         ]
       }
     }

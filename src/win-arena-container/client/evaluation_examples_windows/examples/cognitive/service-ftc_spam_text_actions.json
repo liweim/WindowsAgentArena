@@ -20,8 +20,7 @@
     "Locate the two section headings about taking action on and reporting spam text messages.",
     "Open Sticky Notes.",
     "Create a new note.",
-    "Enter exactly `What To Do About Spam Text Messages` in the note.",
-    "Add exactly `How To Report Spam Text Messages` to the note."
+    "Enter exactly `What To Do About Spam Text Messages\nHow To Report Spam Text Messages` in the note, one item per line."
   ],
   "config": [
     {
