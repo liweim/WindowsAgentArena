@@ -1,0 +1,122 @@
+{
+  "id": "service-cms_update_voyage_stock",
+  "user_group": "cognitive",
+  "subgroup_ids": [
+    "C-S2"
+  ],
+  "category": "service",
+  "need_ids": [
+    "C2"
+  ],
+  "difficulty": "hard",
+  "operation_time": 87.44,
+  "instruction": "Update the stock quantity of `Voyage Yoga Bag` (SKU `24-WB01`) to `80` in the CMS, and keep a completed change record in Sticky Notes that includes the product, SKU, and quantity change. Use username `admin` and password `admin1234`.",
+  "source": "synthetic",
+  "gt_steps": [
+    "Sign in to the CMS admin site.",
+    "Find `Voyage Yoga Bag` with SKU `24-WB01` in the product catalog.",
+    "Change its quantity from `100` to `80` and save the product.",
+    "Create a Sticky Note containing `Product: Voyage Yoga Bag\nSKU: 24-WB01\nQuantity: 100 -> 80`, one field per line and in that order."
+  ],
+  "config": [
+    {
+      "type": "magento_set_product_stock",
+      "parameters": {
+        "sku": "24-WB01",
+        "qty": 100,
+        "is_in_stock": true
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "cmd",
+          "/c",
+          "start chrome http://host.docker.internal:7780/admin"
+        ]
+      }
+    },
+    {
+      "type": "execute",
+      "parameters": {
+        "command": [
+          "powershell",
+          "-NoProfile",
+          "-ExecutionPolicy",
+          "Bypass",
+          "-Command",
+          "Start-Process 'shell:AppsFolder\\Microsoft.MicrosoftStickyNotes_8wekyb3d8bbwe!App'"
+        ]
+      }
+    }
+  ],
+  "related_apps": [
+    "chrome",
+    "sticky_notes"
+  ],
+  "evaluator": {
+    "func": [
+      "exact_match",
+      "check_text_points"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "magento_product_match",
+        "sku": "24-WB01",
+        "qty": 80,
+        "is_in_stock": true
+      },
+      {
+        "type": "sticky_notes_content"
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "expected": "1"
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "ignore_case": true,
+          "ordered": false,
+          "line_based": false,
+          "points": [
+            [
+              "Voyage Yoga Bag"
+            ],
+            [
+              "24-WB01"
+            ],
+            [
+              {
+                "all_of": [
+                  [
+                    "100"
+                  ],
+                  [
+                    "80"
+                  ]
+                ]
+              }
+            ]
+          ]
+        }
+      }
+    ],
+    "metric_roles": {
+      "task_outcome": [
+        0
+      ],
+      "access_requirement": [
+        1
+      ]
+    }
+  },
+  "proxy": false,
+  "possibility_of_env_change": "low"
+}

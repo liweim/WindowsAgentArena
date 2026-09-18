@@ -1,0 +1,89 @@
+{
+  "id": "service-cms_simplify_service_hours",
+  "user_group": "cognitive",
+  "subgroup_ids": [
+    "C-S1"
+  ],
+  "category": "service",
+  "need_ids": [
+    "C1"
+  ],
+  "difficulty": "medium",
+  "operation_time": 144.39,
+  "instruction": "The CMS page with URL key `service-hours-draft` is difficult to scan. Simplify it without changing its meaning: set the title and content heading to `Service Hours`, replace the body with three short lines in this order—`Monday-Friday: 9 AM-5 PM`, `Saturday: 10 AM-2 PM`, `Sunday: Closed`—enable the page, and save it. Use username `admin` and password `admin1234`.",
+  "source": "synthetic",
+  "gt_steps": [
+    "Sign in to the CMS admin site.",
+    "Open Content > Pages and find `service-hours-draft`.",
+    "Set the page title to `Service Hours`.",
+    "Set the content heading to `Service Hours`.",
+    "Replace the existing body with `Monday-Friday: 9 AM-5 PM\nSaturday: 10 AM-2 PM\nSunday: Closed`, one item per line and in that order.",
+    "Set the page to enabled.",
+    "Save the page."
+  ],
+  "config": [
+    {
+      "type": "magento_seed_cms_page",
+      "parameters": {
+        "page": {
+          "identifier": "service-hours-draft",
+          "title": "Service availability information",
+          "page_layout": "1column",
+          "content_heading": "Service availability information",
+          "content": "Our representatives generally answer enquiries during ordinary weekday business hours, with a shorter service period available on Saturdays; the desk does not operate on Sundays.",
+          "active": false
+        }
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "cmd",
+          "/c",
+          "start chrome http://host.docker.internal:7780/admin"
+        ]
+      }
+    }
+  ],
+  "related_apps": [
+    "chrome"
+  ],
+  "evaluator": {
+    "func": "exact_match",
+    "result": {
+      "type": "magento_cms_page_match",
+      "identifier": "service-hours-draft",
+      "exists": true,
+      "fields": {
+        "title": "Service Hours",
+        "content_heading": "Service Hours",
+        "active": true
+      },
+      "content_contains_in_order": [
+        "Monday-Friday: 9 AM-5 PM",
+        "Saturday: 10 AM-2 PM",
+        "Sunday: Closed"
+      ],
+      "content_excludes": [
+        "Our representatives generally"
+      ]
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "expected": "1"
+      }
+    },
+    "metric_roles": {
+      "task_outcome": [
+        0
+      ],
+      "access_requirement": [
+        0
+      ]
+    }
+  },
+  "proxy": false,
+  "possibility_of_env_change": "low"
+}

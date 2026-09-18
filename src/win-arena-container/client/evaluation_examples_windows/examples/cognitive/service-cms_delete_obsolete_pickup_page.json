@@ -1,0 +1,122 @@
+{
+  "id": "service-cms_delete_obsolete_pickup_page",
+  "user_group": "cognitive",
+  "subgroup_ids": [
+    "C-S2"
+  ],
+  "category": "service",
+  "need_ids": [
+    "C2"
+  ],
+  "difficulty": "hard",
+  "operation_time": 84.81,
+  "instruction": "In the CMS Pages list, use the keyword `Pickup` to find the obsolete pickup page. Before deleting it, create a durable Sticky Note record containing the page title, URL key, previous pickup desk, and previous pickup code, one field per line with labels `Deleted page`, `URL key`, `Previous desk`, and `Previous code`. Obtain every value from the CMS, then delete the page. Use username `admin` and password `admin1234`.",
+  "source": "synthetic",
+  "gt_steps": [
+    "Sign in to the CMS admin site.",
+    "Open Content > Pages and search for the keyword `Pickup`.",
+    "Open the matching obsolete page titled `Old Pickup Instructions`.",
+    "Read the URL key `old-pickup-instructions` from the page settings and read `North Desk` and `NP-41` from the page content.",
+    "Create a Sticky Note containing `Deleted page: Old Pickup Instructions\nURL key: old-pickup-instructions\nPrevious desk: North Desk\nPrevious code: NP-41`, one field per line and in that order.",
+    "Delete the obsolete page and confirm the deletion."
+  ],
+  "config": [
+    {
+      "type": "magento_seed_cms_page",
+      "parameters": {
+        "page": {
+          "identifier": "old-pickup-instructions",
+          "title": "Old Pickup Instructions",
+          "page_layout": "1column",
+          "content_heading": "Old Pickup Instructions",
+          "content": "Collect documents from North Desk. Use code NP-41.",
+          "active": true
+        }
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "cmd",
+          "/c",
+          "start chrome http://host.docker.internal:7780/admin"
+        ]
+      }
+    },
+    {
+      "type": "execute",
+      "parameters": {
+        "command": [
+          "powershell",
+          "-NoProfile",
+          "-ExecutionPolicy",
+          "Bypass",
+          "-Command",
+          "Start-Process 'shell:AppsFolder\\Microsoft.MicrosoftStickyNotes_8wekyb3d8bbwe!App'"
+        ]
+      }
+    }
+  ],
+  "related_apps": [
+    "chrome",
+    "sticky_notes"
+  ],
+  "evaluator": {
+    "func": [
+      "exact_match",
+      "check_text_points"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "magento_cms_page_match",
+        "identifier": "old-pickup-instructions",
+        "exists": false
+      },
+      {
+        "type": "sticky_notes_content"
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "expected": "1"
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "ignore_case": true,
+          "ordered": true,
+          "line_based": true,
+          "points": [
+            [
+              "Deleted page: Old Pickup Instructions"
+            ],
+            [
+              "URL key: old-pickup-instructions"
+            ],
+            [
+              "Previous desk: North Desk"
+            ],
+            [
+              "Previous code: NP-41"
+            ]
+          ]
+        }
+      }
+    ],
+    "metric_roles": {
+      "task_outcome": [
+        0
+      ],
+      "access_requirement": [
+        1
+      ]
+    }
+  },
+  "proxy": false,
+  "possibility_of_env_change": "low"
+}

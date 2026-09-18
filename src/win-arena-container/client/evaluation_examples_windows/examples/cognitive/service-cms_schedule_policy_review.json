@@ -1,0 +1,99 @@
+{
+  "id": "service-cms_schedule_policy_review",
+  "user_group": "cognitive",
+  "subgroup_ids": [
+    "C-S3"
+  ],
+  "category": "service",
+  "need_ids": [
+    "C3"
+  ],
+  "difficulty": "hard",
+  "operation_time": 0,
+  "instruction": "Find the existing Privacy Policy in the CMS and schedule its compliance review in Thunderbird Calendar for September 22, 2026 at 9:00 AM for 30 minutes. Include the page's URL key in the event description and set a reminder for 15 minutes beforehand. Use username `admin` and password `admin1234`.",
+  "source": "synthetic",
+  "gt_steps": [
+    "Sign in to the CMS admin site.",
+    "Open Content > Pages and use the keyword `Privacy Policy` to filter the existing Pages table.",
+    "Open the existing page titled `Privacy Policy`.",
+    "Read its URL key `privacy-policy-cookie-restriction-mode` from the CMS page settings.",
+    "Open Thunderbird Calendar.",
+    "Create an event titled `Review CMS privacy policy` on September 22, 2026 at 9:00 AM with a duration of 30 minutes.",
+    "Enter `URL key: privacy-policy-cookie-restriction-mode` in the event description.",
+    "Set a reminder for 15 minutes before the event and save it."
+  ],
+  "config": [
+    {
+      "type": "download",
+      "parameters": {
+        "files": [
+          {
+            "url": "https://huggingface.co/datasets/xlangai/ubuntu_osworld_file_cache/resolve/main/thunderbird/dd84e895-72fd-4023-a336-97689ded257c/thunderbird-profile.tar.gz",
+            "path": "C:\\Users\\Docker\\Downloads\\thunderbird-profile.tar.gz"
+          }
+        ]
+      }
+    },
+    {
+      "type": "prepare_thunderbird_profile",
+      "parameters": {}
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "cmd",
+          "/c",
+          "start chrome http://host.docker.internal:7780/admin"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "thunderbird.exe",
+          "-profile",
+          "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release"
+        ]
+      }
+    }
+  ],
+  "related_apps": [
+    "chrome",
+    "thunderbird"
+  ],
+  "evaluator": {
+    "func": "check_thunderbird_calendar_event",
+    "result": {
+      "type": "thunderbird_calendar_events",
+      "profile_path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release"
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "date": "2026-09-22",
+        "hour": 9,
+        "minute": 0,
+        "duration_minutes": 30,
+        "title": "Review CMS privacy policy",
+        "body_points": [
+          [
+            "URL key: privacy-policy-cookie-restriction-mode"
+          ]
+        ],
+        "reminder_minutes_before": 15
+      }
+    },
+    "metric_roles": {
+      "task_outcome": [
+        0
+      ],
+      "access_requirement": [
+        0
+      ]
+    }
+  },
+  "proxy": false,
+  "possibility_of_env_change": "low"
+}

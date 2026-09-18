@@ -1,0 +1,94 @@
+{
+  "id": "service-cms_import_service_product",
+  "user_group": "cognitive",
+  "subgroup_ids": [
+    "C-S2"
+  ],
+  "category": "service",
+  "need_ids": [
+    "C2"
+  ],
+  "difficulty": "hard",
+  "operation_time": 159.40,
+  "instruction": "Use `ServiceProductImport.csv` on the Desktop as the approved, persistent import manifest. In the CMS, use the native product import workflow with import behavior `Add/Update` to check and import the table. Use username `admin` and password `admin1234`.",
+  "source": "synthetic",
+  "gt_steps": [
+    "Review `ServiceProductImport.csv` in LibreOffice Calc.",
+    "Sign in to the CMS admin site.",
+    "Open System > Data Transfer > Import.",
+    "Set Entity Type to `Products`.",
+    "Set Import Behavior to `Add/Update`.",
+    "Select `ServiceProductImport.csv` from the Desktop as the file to import.",
+    "Run Check Data and resolve no fields manually.",
+    "Run Import after the file passes validation.",
+    "Verify that product SKU `SERVICE-SETUP-30` was created with name `30-Minute In-Store Setup Assistance`, type `virtual`, price `25.00`, and quantity `50`."
+  ],
+  "config": [
+    {
+      "type": "magento_delete_product",
+      "parameters": {
+        "sku": "SERVICE-SETUP-30"
+      }
+    },
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/service-cms_import_service_product.csv",
+            "path": "C:\\Users\\Docker\\Desktop\\ServiceProductImport.csv"
+          }
+        ]
+      }
+    },
+    {
+      "type": "open",
+      "parameters": {
+        "path": "C:\\Users\\Docker\\Desktop\\ServiceProductImport.csv"
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "cmd",
+          "/c",
+          "start chrome http://host.docker.internal:7780/admin"
+        ]
+      }
+    }
+  ],
+  "related_apps": [
+    "chrome",
+    "libreoffice_calc"
+  ],
+  "evaluator": {
+    "func": "exact_match",
+    "result": {
+      "type": "magento_product_match",
+      "sku": "SERVICE-SETUP-30",
+      "name": "30-Minute In-Store Setup Assistance",
+      "type_id": "virtual",
+      "price": 25.0,
+      "qty": 50.0,
+      "is_in_stock": true,
+      "status": 1
+    },
+    "expected": {
+      "type": "rule",
+      "rules": {
+        "expected": "1"
+      }
+    },
+    "metric_roles": {
+      "task_outcome": [
+        0
+      ],
+      "access_requirement": [
+        0
+      ]
+    }
+  },
+  "proxy": false,
+  "possibility_of_env_change": "low"
+}
