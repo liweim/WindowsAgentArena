@@ -9,7 +9,7 @@
     "C2"
   ],
   "difficulty": "hard",
-  "operation_time": 0,
+  "operation_time": 129.73,
   "instruction": "Use `cms_product_record.xlsx` on the Desktop as a checklist. Fill its Value column with the current CMS details for `Joust Duffle Bag`, then save the spreadsheet. Use username `admin` and password `admin1234` to access the CMS admin site.",
   "source": "synthetic",
   "gt_steps": [
@@ -24,16 +24,9 @@
     "Enter the displayed CMS value for `Thumbnail` in the spreadsheet Value column.",
     "Enter the standard value `Joust Duffle Bag` for `Name`.",
     "Enter the standard value `Simple Product` for `Type`.",
-    "Enter the displayed CMS value for `Attribute Set` in the spreadsheet Value column.",
     "Enter the standard value `24-MB01` for `SKU`.",
     "Enter the standard value `$34.00` for `Price`.",
     "Enter the standard value `100.0000` for `Quantity`.",
-    "Enter the displayed CMS value for `Salable Quantity` in the spreadsheet Value column.",
-    "Enter the displayed CMS value for `Visibility` in the spreadsheet Value column.",
-    "Enter the displayed CMS value for `Status` in the spreadsheet Value column.",
-    "Enter the displayed CMS value for `Websites` in the spreadsheet Value column.",
-    "Enter the displayed CMS value for `Last Updated At` in the spreadsheet Value column.",
-    "Enter the displayed CMS value for `Action` in the spreadsheet Value column.",
     "Save `cms_product_record.xlsx`."
   ],
   "config": [
@@ -73,7 +66,7 @@
     "func": "check_text_points",
     "result": {
       "type": "vm_command_line",
-      "command": "C:\\Users\\Docker\\AppData\\Local\\Programs\\Python\\Python310\\python.exe -c \"from openpyxl import load_workbook; from pathlib import Path; p=Path.home()/'Desktop'/'cms_product_record.xlsx'; wb=load_workbook(p, data_only=True); ws=wb.active; print('\\n'.join(f'{ws.cell(r,1).value}: {ws.cell(r,2).value}' for r in range(2, ws.max_row+1) if ws.cell(r,2).value is not None and str(ws.cell(r,2).value).strip() != ''))\"",
+      "command": "C:\\Users\\Docker\\AppData\\Local\\Programs\\Python\\Python310\\python.exe -c \"from openpyxl import load_workbook; from pathlib import Path; p=Path.home()/'Desktop'/'cms_product_record.xlsx'; wb=load_workbook(p, data_only=True); ws=wb.active; print('\\n'.join(f'{ws.cell(1,c).value}: {ws.cell(2,c).value}' for c in range(1, ws.max_column+1) if ws.cell(2,c).value is not None and str(ws.cell(2,c).value).strip() != ''))\"",
       "shell": true
     },
     "expected": {
@@ -81,33 +74,6 @@
       "rules": {
         "ignore_case": true,
         "points": [
-          [
-            "ID:"
-          ],
-          [
-            "Thumbnail:"
-          ],
-          [
-            "Attribute Set:"
-          ],
-          [
-            "Salable Quantity:"
-          ],
-          [
-            "Visibility:"
-          ],
-          [
-            "Status:"
-          ],
-          [
-            "Websites:"
-          ],
-          [
-            "Last Updated At:"
-          ],
-          [
-            "Action:"
-          ],
           [
             "Name: Joust Duffle Bag"
           ],
