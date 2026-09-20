@@ -9,11 +9,11 @@
     "H1"
   ],
   "difficulty": "medium",
-  "operation_time": 0,
-  "instruction": "Turn on captions in the opened YouTube video, identify the area demonstrated there, then search for that area on the Census data website.",
-  "source": "https://www.youtube.com/watch?v=6eqpPRLndPk",
+  "operation_time": 348.35,
+  "instruction": "Use Chrome Live Caption on the opened video, identify the area demonstrated there, then search for that area on the Census data website.",
+  "source": "https://www.census.gov/data/academy/data-gems/2026/visualize-data.html",
   "gt_steps": [
-    "Turn on captions in the YouTube player.",
+    "Turn on Chrome Live Caption.",
     "Play the video and use the YouTube captions to identify the demonstrated area: `Maricopa County, Arizona`.",
     "Open https://data.census.gov/.",
     "Click the website search box.",
@@ -45,7 +45,7 @@
     {
       "type": "chrome_prepare_youtube_for_live_caption",
       "parameters": {
-        "url": "https://www.youtube.com/watch?v=6eqpPRLndPk",
+        "url": "https://www.census.gov/data/academy/data-gems/2026/visualize-data.html",
         "wait_seconds": 1
       }
     },
@@ -67,8 +67,7 @@
     "conj": "and",
     "result": [
       {
-        "type": "youtube_captions_enabled",
-        "url": "https://www.youtube.com/watch?v=6eqpPRLndPk"
+        "type": "live_caption_enabled"
       },
       {
         "type": "active_tab_contains_text",

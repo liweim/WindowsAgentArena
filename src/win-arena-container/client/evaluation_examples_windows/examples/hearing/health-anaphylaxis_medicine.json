@@ -9,12 +9,12 @@
     "H1"
   ],
   "difficulty": "medium",
-  "operation_time": 0,
-  "instruction": "Turn on captions in the opened YouTube video, identify the medicine needed for anaphylaxis, then save the answer in `answer.txt` on the Desktop.",
-  "source": "https://youtu.be/1YrKVobZnNg",
+  "operation_time": 43.36,
+  "instruction": "Use Chrome Live Caption to identify the medicine needed for anaphylaxis in the opened video, then save the answer in `answer.txt` on the Desktop.",
+  "source": "https://medlineplus.gov/medlineplus-videos/histamine-the-stuff-allergies-are-made-of",
   "gt_steps": [
-    "Turn on captions in the YouTube player.",
-    "Play the video and use the YouTube captions to identify the medicine needed for anaphylaxis.",
+    "Turn on Chrome Live Caption.",
+    "Play the video and use Live Caption to identify the medicine needed for anaphylaxis.",
     "Open Notepad.",
     "Write `epinephrine`.",
     "Save the file as `answer.txt` on the Desktop."
@@ -26,7 +26,8 @@
         "command": [
           "google-chrome",
           "--remote-debugging-port=1337",
-          "--force-renderer-accessibility"
+          "--force-renderer-accessibility",
+          "https://medlineplus.gov/medlineplus-videos/histamine-the-stuff-allergies-are-made-of"
         ]
       }
     },
@@ -41,9 +42,9 @@
       }
     },
     {
-      "type": "chrome_prepare_youtube_for_live_caption",
+      "type": "chrome_pause_video",
       "parameters": {
-        "url": "https://youtu.be/1YrKVobZnNg",
+        "url": "https://medlineplus.gov/medlineplus-videos/histamine-the-stuff-allergies-are-made-of",
         "wait_seconds": 1
       }
     },
@@ -66,8 +67,7 @@
     "conj": "and",
     "result": [
       {
-        "type": "youtube_captions_enabled",
-        "url": "https://youtu.be/1YrKVobZnNg"
+        "type": "live_caption_enabled"
       },
       {
         "type": "desktop_file_text",

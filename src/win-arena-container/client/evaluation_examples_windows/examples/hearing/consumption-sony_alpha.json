@@ -9,7 +9,7 @@
     "H1"
   ],
   "difficulty": "medium",
-  "operation_time": 0,
+  "operation_time": 49.36,
   "instruction": "Use Chrome Live Caption to identify the exact item in the audio shopping reminder, then find it on the shopping website and add it to the cart.",
   "source": "synthetic",
   "transcript": "Avery, the gallery asked for higher resolution photos of the ceramics collection, so I am finally upgrading the camera kit. Please order the Sony Alpha a7R IV from the shopping site. I need the bundle with the 24-70 GM lens, not the body-only listing.",
@@ -23,12 +23,16 @@
   ],
   "config": [
     {
+      "type": "reset_shopping_cart",
+      "parameters": {}
+    },
+    {
       "type": "upload_file",
       "parameters": {
         "files": [
           {
             "local_path": "assets/consumption-sony_alpha.mp3",
-            "path": "C:\\Users\\Docker\\Desktop\\Consumption-sony_alpha.mp3"
+            "path": "C:\\Users\\Docker\\Desktop\\ShoppingReminder.mp3"
           }
         ]
       }
@@ -63,7 +67,7 @@
       "type": "chrome_open_tabs",
       "parameters": {
         "urls_to_open": [
-          "file:///C:/Users/Docker/Desktop/Consumption-sony_alpha.mp3",
+          "file:///C:/Users/Docker/Desktop/ShoppingReminder.mp3",
           "http://host.docker.internal:7770"
         ]
       }

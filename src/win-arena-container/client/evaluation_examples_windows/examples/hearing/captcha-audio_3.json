@@ -1,5 +1,5 @@
 {
-  "id": "captcha-audio_2",
+  "id": "captcha-audio_3",
   "user_group": "hearing",
   "subgroup_ids": [
     "H-S1"
@@ -9,7 +9,7 @@
     "H5"
   ],
   "difficulty": "easy",
-  "operation_time": 21.47,
+  "operation_time": 21.81,
   "instruction": "Complete the audio CAPTCHA verification in Microsoft Edge.",
   "source": "synthetic",
   "gt_steps": [
@@ -22,7 +22,7 @@
         "command": [
           "cmd",
           "/c",
-          "start msedge http://host.docker.internal:8765/captcha?type=audio^&seed=access-audio-002^&session=access-captcha-audio"
+          "start msedge http://host.docker.internal:8765/captcha?type=audio^&seed=access-audio-003^&session=access-captcha-audio"
         ]
       }
     }
@@ -39,7 +39,7 @@
       "type": "rule",
       "rules": {
         "expected": [
-          "https?://host\\.docker\\.internal:8765/success\\?type=audio&seed=access-audio-002&session=access-captcha-audio"
+          "https?://host\\.docker\\.internal:8765/success\\?type=audio&seed=access-audio-003&session=access-captcha-audio"
         ]
       }
     },

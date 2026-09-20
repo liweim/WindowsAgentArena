@@ -10,8 +10,8 @@
     "H2"
   ],
   "difficulty": "easy",
-  "operation_time": 0,
-  "instruction": "Set the caption style in Windows to Large text.",
+  "operation_time": 30.48,
+  "instruction": "Set the live caption style in Windows to Large text.",
   "source": "synthetic",
   "gt_steps": [
     "Open Windows Settings.",

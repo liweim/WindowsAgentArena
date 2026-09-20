@@ -9,12 +9,12 @@
     "H1"
   ],
   "difficulty": "medium",
-  "operation_time": 0,
-  "instruction": "Turn on Windows Live captions and use them to read the service appointment recording on the Desktop. Create a 45-minute Thunderbird Calendar event titled `Home support assessment` at the stated date and time.",
+  "operation_time": 74.06,
+  "instruction": "Use Chrome Live Caption to read the service appointment recording on the Desktop. Create a 45-minute Thunderbird Calendar event titled `Home support assessment` at the stated date and time.",
   "source": "synthetic",
   "transcript": "Your home support assessment is booked for Tuesday, September 29, 2026 at 1:15 PM. Allow forty-five minutes for the appointment. The appointment title is Home support assessment.",
   "gt_steps": [
-    "Turn on Windows Live captions.",
+    "Turn on Chrome Live Caption.",
     "Play `ServiceAppointmentAudio.mp3` in Chrome with Windows Live captions running.",
     "Switch to Thunderbird Calendar.",
     "Create an event on `29 September 2026` at `1:15 PM`.",
@@ -108,19 +108,13 @@
   ],
   "evaluator": {
     "func": [
-      "check_include_exclude",
+      "exact_match",
       "check_thunderbird_calendar_event"
     ],
     "conj": "and",
     "result": [
       {
-        "type": "vm_command_line",
-        "command": [
-          "powershell",
-          "-NoProfile",
-          "-Command",
-          "$found = Get-Process | Where-Object { $_.ProcessName -match 'LiveCaptions|LiveCaption' -or $_.MainWindowTitle -match 'Live captions|Live Caption' }; if ($found) { 'WINDOWS_LIVE_CAPTIONS_RUNNING' } else { 'WINDOWS_LIVE_CAPTIONS_NOT_RUNNING' }"
-        ]
+        "type": "live_caption_enabled"
       },
       {
         "type": "thunderbird_calendar_events",

@@ -10,7 +10,7 @@
     "H1"
   ],
   "difficulty": "easy",
-  "operation_time": 0,
+  "operation_time": 50.49,
   "instruction": "Turn on Windows Live captions.",
   "source": "synthetic",
   "gt_steps": [

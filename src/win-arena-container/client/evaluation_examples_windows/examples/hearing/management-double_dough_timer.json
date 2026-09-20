@@ -9,11 +9,11 @@
     "H1"
   ],
   "difficulty": "medium",
-  "operation_time": 0,
-  "instruction": "Turn on captions in the opened YouTube video, determine about how long the pita dough should take to double in size, then use https://vclock.com to create a timer for that duration. Leave the timer visible in the browser.",
-  "source": "https://www.youtube.com/watch?v=NPiA69p4gqE",
+  "operation_time": 414.85,
+  "instruction": "Use Chrome Live Caption on the opened video, determine about how long the pita dough should take to double in size, then use https://vclock.com to create a timer for that duration. Leave the timer visible in the browser.",
+  "source": "https://foodwishes.blogspot.com/2013/04/pita-bread-whats-in-your-pocket.html",
   "gt_steps": [
-    "Turn on captions in the YouTube player.",
+    "Turn on Chrome Live Caption.",
     "Watch the YouTube video and use the YouTube captions to determine that the pita dough should take 2h to double in size.",
     "Open https://vclock.com in the browser.",
     "Click the Timer page.",
@@ -44,7 +44,7 @@
     {
       "type": "chrome_prepare_youtube_for_live_caption",
       "parameters": {
-        "url": "https://www.youtube.com/watch?v=NPiA69p4gqE",
+        "url": "https://foodwishes.blogspot.com/2013/04/pita-bread-whats-in-your-pocket.html",
         "wait_seconds": 1
       }
     },
@@ -69,8 +69,7 @@
         "type": "active_tab_info_simple"
       },
       {
-        "type": "youtube_captions_enabled",
-        "url": "https://www.youtube.com/watch?v=NPiA69p4gqE"
+        "type": "live_caption_enabled"
       }
     ],
     "expected": [

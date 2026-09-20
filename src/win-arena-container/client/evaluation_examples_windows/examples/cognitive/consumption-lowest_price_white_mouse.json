@@ -10,10 +10,10 @@
   ],
   "difficulty": "medium",
   "operation_time": 63.52,
-  "instruction": "Complete the mouse item in `white_mouse_shopping_list.xlsx` on the Desktop following the listed requirements. When finished, check it off by changing its `Status` from `Pending` to `Done`, then save the spreadsheet.",
+  "instruction": "Complete the mouse item in `computer_accessories.xlsx` on the Desktop following the listed requirements. When finished, check it off by changing its `Status` from `Pending` to `Done`, then save the spreadsheet.",
   "source": "synthetic",
   "gt_steps": [
-    "Open `white_mouse_shopping_list.xlsx` and read the pending Mouse row.",
+    "Open `computer_accessories.xlsx` and read the pending Mouse row.",
     "Compare the matching standalone wireless mice and identify `Wireless Mouse, 3 Adjustable DPI Innovative Stylish Portable Gaming Mouse, Suitable for Notebook, PC, Computer Office Home Work` (SKU `B09443ZWQD`) as the lowest-priced standard answer.",
     "Select `White` for the `Color` option and add that exact mouse to the shopping cart.",
     "Return to the spreadsheet, change the Mouse row status from `Pending` to `Done`, and save the file."
@@ -25,7 +25,7 @@
         "files": [
           {
             "local_path": "assets/consumption-white_mouse_shopping_list.xlsx",
-            "path": "C:\\Users\\Docker\\Desktop\\white_mouse_shopping_list.xlsx"
+            "path": "C:\\Users\\Docker\\Desktop\\computer_accessories.xlsx"
           }
         ]
       }
@@ -33,7 +33,7 @@
     {
       "type": "open",
       "parameters": {
-        "path": "C:\\Users\\Docker\\Desktop\\white_mouse_shopping_list.xlsx"
+        "path": "C:\\Users\\Docker\\Desktop\\computer_accessories.xlsx"
       }
     },
     {
@@ -93,7 +93,7 @@
       },
       {
         "type": "vm_command_line",
-        "command": "C:\\Users\\Docker\\AppData\\Local\\Programs\\Python\\Python310\\python.exe -c \"from openpyxl import load_workbook; from pathlib import Path; p=Path.home()/'Desktop'/'white_mouse_shopping_list.xlsx'; w=load_workbook(p,data_only=True); s=w.active; print('\\n'.join(f'{s.cell(r,1).value}: {s.cell(r,4).value}' for r in range(3,s.max_row+1) if s.cell(r,1).value))\"",
+        "command": "C:\\Users\\Docker\\AppData\\Local\\Programs\\Python\\Python310\\python.exe -c \"from openpyxl import load_workbook; from pathlib import Path; p=Path.home()/'Desktop'/'computer_accessories.xlsx'; w=load_workbook(p,data_only=True); s=w.active; print('\\n'.join(f'{s.cell(r,1).value}: {s.cell(r,4).value}' for r in range(3,s.max_row+1) if s.cell(r,1).value))\"",
         "shell": true
       }
     ],

@@ -23,12 +23,16 @@
   ],
   "config": [
     {
+      "type": "reset_shopping_cart",
+      "parameters": {}
+    },
+    {
       "type": "upload_file",
       "parameters": {
         "files": [
           {
             "local_path": "assets/consumption-dyson_travel_case.mp3",
-            "path": "C:\\Users\\Docker\\Desktop\\Consumption-dyson_travel_case.mp3"
+            "path": "C:\\Users\\Docker\\Desktop\\ShoppingReminder.mp3"
           }
         ]
       }
@@ -63,7 +67,7 @@
       "type": "chrome_open_tabs",
       "parameters": {
         "urls_to_open": [
-          "file:///C:/Users/Docker/Desktop/Consumption-dyson_travel_case.mp3",
+          "file:///C:/Users/Docker/Desktop/ShoppingReminder.mp3",
           "http://host.docker.internal:7770"
         ]
       }

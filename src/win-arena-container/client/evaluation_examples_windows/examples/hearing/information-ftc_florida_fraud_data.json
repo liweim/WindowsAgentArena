@@ -9,12 +9,12 @@
     "H1"
   ],
   "difficulty": "medium",
-  "operation_time": 0,
-  "instruction": "Turn on captions in the opened YouTube video, then use the tool shown in the video to view Florida's fraud and identity theft combined state data.",
-  "source": "https://www.youtube.com/watch?v=F2wQGBjKiaM",
+  "operation_time": 122.56,
+  "instruction": "Use Chrome Live Caption on the opened video to identify the FTC Explore Data address, then view Florida's combined fraud and identity theft state data.",
+  "source": "https://www.ftc.gov/media/video-0194-explore-data-ftc",
   "gt_steps": [
-    "Turn on captions in the YouTube player.",
-    "Play the video and use the YouTube captions to identify the FTC Explore Data address.",
+    "Turn on Chrome Live Caption.",
+    "Play the video and use Live Caption to identify the FTC Explore Data address.",
     "Open https://ftc.gov/exploredata.",
     "Go to State and Metro Area Maps.",
     "Open Fraud & ID Theft by State.",
@@ -22,6 +22,17 @@
     "Stay on the Florida state data page or data panel."
   ],
   "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/information-ftc_2024_fraud_reports.mp4",
+            "path": "C:\\Users\\Docker\\Desktop\\FTCExploreData.mp4"
+          }
+        ]
+      }
+    },
     {
       "type": "launch",
       "parameters": {
@@ -43,9 +54,23 @@
       }
     },
     {
-      "type": "chrome_prepare_youtube_for_live_caption",
+      "type": "sleep",
       "parameters": {
-        "url": "https://www.youtube.com/watch?v=F2wQGBjKiaM",
+        "seconds": 1
+      }
+    },
+    {
+      "type": "chrome_open_tabs",
+      "parameters": {
+        "urls_to_open": [
+          "file:///C:/Users/Docker/Desktop/FTCExploreData.mp4"
+        ]
+      }
+    },
+    {
+      "type": "chrome_pause_video",
+      "parameters": {
+        "url": "file:///C:/Users/Docker/Desktop/FTCExploreData.mp4",
         "wait_seconds": 1
       }
     },
@@ -67,8 +92,7 @@
     "conj": "and",
     "result": [
       {
-        "type": "youtube_captions_enabled",
-        "url": "https://www.youtube.com/watch?v=F2wQGBjKiaM"
+        "type": "live_caption_enabled"
       },
       {
         "type": "active_tab_contains_text",

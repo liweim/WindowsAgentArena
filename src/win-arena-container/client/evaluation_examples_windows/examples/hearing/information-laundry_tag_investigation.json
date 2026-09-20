@@ -10,7 +10,7 @@
     "H1"
   ],
   "difficulty": "medium",
-  "operation_time": 0,
+  "operation_time": 51.33,
   "instruction": "Use Chrome Live Caption to identify the three forbidden washing and drying actions in the coat-care audio, then record them in a Sticky Note.",
   "source": "synthetic",
   "transcript": "Thank you for purchasing our premium merino wool blend coat. To keep its shape and avoid shrinking, please follow these strict care instructions. First, you must never put it in the washing machine—it's strictly dry clean or gentle hand wash only. Second, do not use standard bleach or harsh detergents, as they destroy the natural fibers. And finally, when drying, never hang it vertically while wet; always lay it flat on a towel in the shade. Hope this helps you enjoy your garment for years to much come!",
@@ -21,7 +21,7 @@
     "Switch to Sticky Notes.",
     "Close the sign-in prompt if it appears.",
     "Create a sticky note.",
-    "Write the three forbidden care actions in the sticky note: `Never put it in the washing machine`, `Do not use standard bleach`, `Never hang it vertically`."
+    "Write the three forbidden care actions in the sticky note: `Never put it in the washing machine\nDo not use standard bleach\nNever hang it vertically`."
   ],
   "config": [
     {

@@ -10,7 +10,7 @@
     "H3"
   ],
   "difficulty": "easy",
-  "operation_time": 0,
+  "operation_time": 38.23,
   "instruction": "Set Windows to flash the active window during audio notifications.",
   "source": "synthetic",
   "gt_steps": [
