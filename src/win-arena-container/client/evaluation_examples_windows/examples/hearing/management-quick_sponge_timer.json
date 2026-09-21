@@ -10,17 +10,27 @@
   ],
   "difficulty": "medium",
   "operation_time": 430.31,
-  "instruction": "Use Chrome Live Caption on the opened video, determine how long the quick sponge should sit before checking whether the yeast is active, then use https://vclock.com to create a timer for that duration. Leave the timer visible in the browser.",
-  "source": "https://foodwishes.blogspot.com/2013/04/pita-bread-whats-in-your-pocket.html",
+  "instruction": "Use Chrome Live Caption on the opened cooking video to determine how long the quick sponge should sit before checking whether the yeast is active, then use https://vclock.com to create a timer for that duration. Leave the timer visible in the browser.",
+  "source": "synthetic",
   "gt_steps": [
     "Turn on Chrome Live Caption.",
-    "Watch the YouTube video and use the YouTube captions to determine that the quick sponge should sit for 15 minutes before checking whether the yeast is active.",
-    "Open https://vclock.com in the browser.",
-    "Click the Timer page.",
-    "Create and start a 15 minute timer.",
+    "Play the local cooking video and identify the source phrase `fifteen minutes` before checking whether the yeast is active.",
+    "Open `https://vclock.com` in the browser.",
+    "Create and start a 15-minute timer.",
     "Leave the timer visible in the browser."
   ],
   "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/management-quick_sponge_timer.mp4",
+            "path": "C:\\Users\\Docker\\Desktop\\QuickSpongeTimer.mp4"
+          }
+        ]
+      }
+    },
     {
       "type": "launch",
       "parameters": {
@@ -42,10 +52,17 @@
       }
     },
     {
-      "type": "chrome_prepare_youtube_for_live_caption",
+      "type": "sleep",
       "parameters": {
-        "url": "https://foodwishes.blogspot.com/2013/04/pita-bread-whats-in-your-pocket.html",
-        "wait_seconds": 1
+        "seconds": 1
+      }
+    },
+    {
+      "type": "chrome_open_tabs",
+      "parameters": {
+        "urls_to_open": [
+          "file:///C:/Users/Docker/Desktop/QuickSpongeTimer.mp4"
+        ]
       }
     },
     {
@@ -97,5 +114,6 @@
       ]
     }
   },
-  "proxy": true
+  "proxy": true,
+  "transcript": "Pita dough timing note. Let the quick sponge sit for fifteen minutes before checking whether the yeast is active. Then continue with the dough."
 }

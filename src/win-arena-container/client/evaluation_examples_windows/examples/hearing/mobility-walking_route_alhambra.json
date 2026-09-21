@@ -9,19 +9,27 @@
     "H1"
   ],
   "difficulty": "medium",
-  "operation_time": 97.40,
-  "instruction": "Turn on captions in the opened video, identify the destination, then show a walking route in Google Maps from Granada Train Station to that destination.",
-  "source": "https://www.ricksteves.com/watch-read-listen/video/alhambra",
+  "operation_time": 97.4,
+  "instruction": "Use Chrome Live Caption on the opened Granada travel video to identify the destination from the spoken historical and landmark clues, then show a walking route in Google Maps from Granada Train Station to that destination.",
+  "source": "synthetic",
   "gt_steps": [
     "Turn on Chrome Live Caption.",
-    "Watch the video and identify `Alhambra Palace` from the captions.",
-    "Open Google Maps.",
-    "Search for `Alhambra Palace`.",
-    "Click Directions.",
-    "Set the start location to `Granada Train Station`.",
-    "Keep walking mode selected."
+    "Play the local Granada travel video and use the clues `hilltop Nasrid palace complex`, `Court of the Lions`, and `Generalife gardens` to identify the Alhambra.",
+    "Open Google Maps and get directions to `Alhambra` from `Granada Train Station`.",
+    "Select walking mode and leave the walking route visible."
   ],
   "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/mobility-walking_route_alhambra.mp4",
+            "path": "C:\\Users\\Docker\\Desktop\\GranadaTravelClue.mp4"
+          }
+        ]
+      }
+    },
     {
       "type": "launch",
       "parameters": {
@@ -43,10 +51,17 @@
       }
     },
     {
-      "type": "chrome_prepare_youtube_for_live_caption",
+      "type": "sleep",
       "parameters": {
-        "url": "https://www.ricksteves.com/watch-read-listen/video/alhambra",
-        "wait_seconds": 1
+        "seconds": 1
+      }
+    },
+    {
+      "type": "chrome_open_tabs",
+      "parameters": {
+        "urls_to_open": [
+          "file:///C:/Users/Docker/Desktop/GranadaTravelClue.mp4"
+        ]
       }
     },
     {
@@ -108,5 +123,6 @@
       ]
     }
   },
-  "proxy": true
+  "proxy": true,
+  "transcript": "Granada walking clue. Your destination is the hilltop Nasrid palace complex above Granada, famous for the Court of the Lions and the Generalife gardens. Start from Granada Train Station and walk to that destination."
 }

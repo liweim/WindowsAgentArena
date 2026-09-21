@@ -1,0 +1,141 @@
+{
+  "id": "service-ssa_replacement_card_start",
+  "user_group": "hearing",
+  "subgroup_ids": [
+    "H-S1"
+  ],
+  "category": "service",
+  "need_ids": [
+    "H1"
+  ],
+  "difficulty": "hard",
+  "operation_time": 72.33,
+  "instruction": "Use Chrome Live Caption to read the Social Security request on the Desktop. Navigate the official SSA website to the service that fits the recorded situation, save its normal mailing window in `answer.txt` on the Desktop, and leave that service page open.",
+  "source": "https://www.ssa.gov/number-card/replace-card",
+  "transcript": "I lost my Social Security card. I know my Social Security number, but my employer needs a physical replacement. There is no name change. My onboarding is in twelve business days. Start the fastest official replacement path and note the normal mailing window so I can judge whether it fits.",
+  "gt_steps": [
+    "Turn on Chrome Live Caption.",
+    "Play the Social Security request in Chrome.",
+    "Navigate on SSA.gov to the `https://www.ssa.gov/number-card/replace-card`.",
+    "Open Notepad and enter `5 to 10 business days` in `answer.txt`.",
+    "Save `answer.txt` on the Desktop.",
+    "Leave the replacement-card service page open."
+  ],
+  "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/service-ssa_replacement_card_start.mp3",
+            "path": "C:\\Users\\Docker\\Desktop\\SSAReplacementRequest.mp3"
+          }
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port=1337",
+          "--force-renderer-accessibility"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    },
+    {
+      "type": "sleep",
+      "parameters": {
+        "seconds": 1
+      }
+    },
+    {
+      "type": "chrome_open_tabs",
+      "parameters": {
+        "urls_to_open": [
+          "file:///C:/Users/Docker/Desktop/SSAReplacementRequest.mp3",
+          "https://www.ssa.gov/"
+        ]
+      }
+    }
+  ],
+  "related_apps": [
+    "chrome",
+    "notepad"
+  ],
+  "evaluator": {
+    "func": [
+      "is_expected_url_pattern_match",
+      "check_text_points",
+      "exact_match"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "active_tab_info_simple"
+      },
+      {
+        "type": "desktop_file_text",
+        "filename": "answer.txt"
+      },
+      {
+        "type": "live_caption_enabled"
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "expected": [
+            "https?://(www\\.)?ssa\\.gov/number-card/replace-card/?(?:[?#].*)?$"
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "ignore_case": true,
+          "points": [
+            [
+              "5 to 10 business days",
+              "5-10 business days",
+              "five to ten business days",
+              "five-to-ten business days",
+              "between 5 and 10 business days",
+              "between five and ten business days",
+              "within 5 to 10 business days",
+              "within five to ten business days"
+            ]
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "expected": "true"
+        }
+      }
+    ],
+    "metric_roles": {
+      "task_outcome": [
+        0,
+        1
+      ],
+      "access_requirement": [
+        2
+      ]
+    }
+  },
+  "proxy": true,
+  "possibility_of_env_change": "medium"
+}

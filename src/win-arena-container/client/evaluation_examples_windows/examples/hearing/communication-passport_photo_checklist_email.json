@@ -1,0 +1,234 @@
+{
+  "id": "communication-passport_photo_checklist_email",
+  "user_group": "hearing",
+  "subgroup_ids": [
+    "H-S1"
+  ],
+  "category": "communication",
+  "need_ids": [
+    "H1"
+  ],
+  "difficulty": "medium",
+  "operation_time": 64.88,
+  "instruction": "My sister Maya is preparing for her passport appointment. Use Chrome Live Caption to read the passport-photo reminder on the Desktop, then draft a Thunderbird email to Maya at `maya.chen@example.com` with subject `Passport photo checklist` containing every photo requirement from the recording so she can check her photo before the appointment. Do not send it.",
+  "source": "https://travel.state.gov/content/travel/en/passports/how-apply/photos.html",
+  "transcript": "Passport photo checklist. Submit one color photo taken within the last six months. Face the camera directly without tilting your head. Take off your eyeglasses for the photo. Use a plain white or off-white background without shadows, texture, or lines. Do not change the photo using computer software, phone apps, filters, or artificial intelligence.",
+  "gt_steps": [
+    "Turn on Chrome Live Caption.",
+    "Play the passport-photo reminder and identify every requirement using the source wording.",
+    "In Thunderbird, compose a new email to Maya at `maya.chen@example.com`.",
+    "Set the subject to `Passport photo checklist`.",
+    "Include all requirements from the recording in the body: `one color photo\ntaken within the last six months\nFace the camera directly without tilting your head\nTake off your eyeglasses\nplain white or off-white background without shadows, texture, or lines`, and `Do not change the photo using computer software, phone apps, filters, or artificial intelligence`.",
+    "Save the message as a draft. Do not send it."
+  ],
+  "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/communication-passport_photo_checklist_email.mp3",
+            "path": "C:\\Users\\Docker\\Desktop\\PassportPhotoChecklist.mp3"
+          }
+        ]
+      }
+    },
+    {
+      "type": "download",
+      "parameters": {
+        "files": [
+          {
+            "url": "https://huggingface.co/datasets/xlangai/ubuntu_osworld_file_cache/resolve/main/thunderbird/dd84e895-72fd-4023-a336-97689ded257c/thunderbird-profile.tar.gz",
+            "path": "C:\\Users\\Docker\\Downloads\\thunderbird-profile.tar.gz"
+          }
+        ]
+      }
+    },
+    {
+      "type": "prepare_thunderbird_profile",
+      "parameters": {}
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port=1337",
+          "--force-renderer-accessibility"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "thunderbird.exe",
+          "-profile",
+          "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release"
+        ]
+      }
+    },
+    {
+      "type": "sleep",
+      "parameters": {
+        "seconds": 2
+      }
+    },
+    {
+      "type": "chrome_open_tabs",
+      "parameters": {
+        "urls_to_open": [
+          "file:///C:/Users/Docker/Desktop/PassportPhotoChecklist.mp3"
+        ]
+      }
+    },
+    {
+      "type": "activate_window",
+      "parameters": {
+        "window_name": "Google Chrome"
+      }
+    }
+  ],
+  "related_apps": [
+    "chrome",
+    "thunderbird"
+  ],
+  "evaluator": {
+    "func": [
+      "check_thunderbird_email_composition",
+      "exact_match"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "vm_file",
+        "path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release\\Mail\\Local Folders\\Drafts",
+        "dest": "thunderbird-drafts.mbox"
+      },
+      {
+        "type": "live_caption_enabled"
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "to": "maya.chen@example.com",
+          "subject": "Passport photo checklist",
+          "body_points": [
+            [
+              "one color photo",
+              "one colour photo",
+              "a color photo",
+              "a colour photo",
+              "color photograph",
+              "colour photograph"
+            ],
+            [
+              "taken within the last six months",
+              "taken within the last 6 months",
+              "taken in the last six months",
+              "taken in the last 6 months",
+              "no more than six months old",
+              "no more than 6 months old"
+            ],
+            [
+              "face the camera directly",
+              "directly face the camera",
+              "face directly toward the camera",
+              "look directly at the camera"
+            ],
+            [
+              "without tilting your head",
+              "do not tilt your head",
+              "don't tilt your head",
+              "head not tilted",
+              "keep your head straight"
+            ],
+            [
+              "take off your eyeglasses",
+              "remove your eyeglasses",
+              "take off your glasses",
+              "remove your glasses",
+              "no eyeglasses",
+              "no glasses"
+            ],
+            [
+              "plain white or off-white background",
+              "plain white or off white background",
+              "white or off-white background",
+              "white or off white background",
+              "plain white background",
+              "plain off-white background"
+            ],
+            [
+              "without shadows, texture, or lines",
+              "without shadows, textures, or lines",
+              {
+                "all_of": [
+                  [
+                    "without shadows",
+                    "no shadows",
+                    "shadow-free background",
+                    "background free of shadows"
+                  ],
+                  [
+                    "without texture",
+                    "without textures",
+                    "no texture",
+                    "no textures",
+                    "texture-free background",
+                    "background free of texture",
+                    "background free of textures"
+                  ],
+                  [
+                    "without lines",
+                    "no lines",
+                    "line-free background",
+                    "background free of lines"
+                  ]
+                ]
+              }
+            ],
+            [
+              "do not change the photo using computer software, phone apps, filters, or artificial intelligence",
+              "don't change the photo using computer software, phone apps, filters, or artificial intelligence",
+              "do not digitally alter the photo",
+              "don't digitally alter the photo",
+              "do not edit the photo",
+              "don't edit the photo",
+              "keep the photo unedited",
+              "use the original unedited photo"
+            ]
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "expected": "true"
+        }
+      }
+    ],
+    "metric_roles": {
+      "task_outcome": [
+        0
+      ],
+      "access_requirement": [
+        1
+      ]
+    }
+  },
+  "proxy": true,
+  "possibility_of_env_change": "low"
+}

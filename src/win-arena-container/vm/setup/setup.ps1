@@ -180,34 +180,48 @@ $chromeToolDetails = Get-ToolDetails -toolsList $toolsList -toolName $chromeTool
 $chromeExePath = "C:\Program Files\Google\Chrome\Application\chrome.exe"
 $chromeAlias = $chromeToolDetails.alias
 
-# Install a fixed Chrome for Testing build. The upstream `latest` bootstrapper
-# made both Chrome UI and CDP behavior depend on the date of image creation.
-$expectedChromeVersion = $chromeToolDetails.version
+# Live Caption depends on SODA components that Chrome for Testing does not
+# reliably download. Install the official machine-wide Enterprise MSI instead.
+$isOfficialChromeInstalled = $false
 if (Test-Path $chromeExePath) {
-    $installedChromeVersion = (Get-Item $chromeExePath).VersionInfo.ProductVersion
-    if (-not $installedChromeVersion.StartsWith($expectedChromeVersion)) {
-        throw "Chrome $installedChromeVersion is installed; expected $expectedChromeVersion. Rebuild from a clean golden disk."
+    $installedChromeInfo = (Get-Item $chromeExePath).VersionInfo
+    $isOfficialChromeInstalled = $installedChromeInfo.ProductName -eq "Google Chrome"
+    if ($isOfficialChromeInstalled) {
+        Write-Host "Google Chrome $($installedChromeInfo.ProductVersion) is already installed."
+    } else {
+        Write-Host "$($installedChromeInfo.ProductName) $($installedChromeInfo.ProductVersion) is installed; replacing it with official Google Chrome."
     }
-    Write-Host "Google Chrome $installedChromeVersion is already installed."
-} else {
-    $chromeInstallerFilePath = "$env:TEMP\chrome-for-testing.zip"
-    $chromeExtractPath = "$env:TEMP\chrome-for-testing"
+}
+
+if (-not $isOfficialChromeInstalled) {
+    $chromeInstallerFilePath = "$env:TEMP\googlechromestandaloneenterprise64.msi"
     $downloadResult = Invoke-DownloadFileFromAvailableMirrors -mirrorUrls $chromeToolDetails.mirrors -outfile $chromeInstallerFilePath
     if (-not $downloadResult) {
-        throw "Failed to download Google Chrome $expectedChromeVersion."
-    } else {
-        Remove-Item -Path $chromeExtractPath -Recurse -Force -ErrorAction SilentlyContinue
-        7z x -y "-o$chromeExtractPath" $chromeInstallerFilePath | Out-Null
-        $chromeInstallPath = Split-Path $chromeExePath -Parent
-        New-Item -ItemType Directory -Path $chromeInstallPath -Force | Out-Null
-        Copy-Item -Path "$chromeExtractPath\chrome-win64\*" -Destination $chromeInstallPath -Recurse -Force
-        Remove-Item -Path $chromeInstallerFilePath -Force
-        Remove-Item -Path $chromeExtractPath -Recurse -Force
+        throw "Failed to download the Google Chrome Enterprise MSI."
     }
+
+    $chromeInstallerSignature = Get-AuthenticodeSignature -FilePath $chromeInstallerFilePath
+    if ($chromeInstallerSignature.Status -ne "Valid" -or
+        $chromeInstallerSignature.SignerCertificate.Subject -notmatch "(^|, )O=Google LLC(,|$)") {
+        throw "The Google Chrome Enterprise MSI does not have a valid Google LLC signature."
+    }
+
+    $chromeInstallProcess = Start-Process -FilePath "msiexec.exe" `
+        -ArgumentList "/i `"$chromeInstallerFilePath`" /qn /norestart" `
+        -Wait -NoNewWindow -PassThru
+    if ($chromeInstallProcess.ExitCode -ne 0) {
+        throw "Google Chrome installation failed with MSI exit code $($chromeInstallProcess.ExitCode)."
+    }
+    Remove-Item -Path $chromeInstallerFilePath -Force
 }
 if (-not (Test-Path $chromeExePath)) {
     throw "Chrome installation did not create $chromeExePath"
 }
+$installedChromeInfo = (Get-Item $chromeExePath).VersionInfo
+if ($installedChromeInfo.ProductName -ne "Google Chrome") {
+    throw "Expected official Google Chrome, but installed product is '$($installedChromeInfo.ProductName)'."
+}
+Write-Host "Google Chrome $($installedChromeInfo.ProductVersion) is ready."
 
 $setAliasExpression = "Set-Alias -Name $chromeAlias -Value `"$chromeExePath`""
 Add-Content -Path $PROFILE -Value $setAliasExpression

@@ -15,11 +15,11 @@
   "transcript": "Council service update. Your parking permit documents are ready for pickup at the Civic Service Centre, counter 4. Collection hours are 9:00 AM to 4:30 PM. Bring photo ID. Reference number PS-482.",
   "gt_steps": [
     "Turn on Chrome Live Caption.",
-    "Play `CouncilPickupAudio.mp3` in Chrome with Windows Live captions running.",
+    "Play `CouncilPickupAudio.mp3` in Chrome with Chrome Live Caption enabled.",
     "Open Notepad.",
     "Enter `Civic Service Centre, counter 4\\n9:00 AM-4:30 PM\\nPhoto ID\\nPS-482`, one item per line.",
     "Save the file as `answer.txt` on the Desktop.",
-    "Leave Windows Live captions running."
+    "Leave Chrome Live Caption enabled."
   ],
   "config": [
     {
@@ -98,12 +98,7 @@
       {
         "type": "rule",
         "rules": {
-          "include": [
-            "WINDOWS_LIVE_CAPTIONS_RUNNING"
-          ],
-          "exclude": [
-            "WINDOWS_LIVE_CAPTIONS_NOT_RUNNING"
-          ]
+          "expected": "true"
         }
       },
       {

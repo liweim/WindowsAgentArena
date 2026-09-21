@@ -1,0 +1,136 @@
+{
+  "id": "information-noaa_pillow_lava",
+  "user_group": "hearing",
+  "subgroup_ids": [
+    "H-S1"
+  ],
+  "category": "information",
+  "need_ids": [
+    "H1"
+  ],
+  "difficulty": "medium",
+  "operation_time": 56.39,
+  "instruction": "Use Chrome Live Caption on the opened NOAA video to identify where the pillow lavas were imaged and the age estimate given for the lava flows. Save those two facts in `answer.txt` on the Desktop.",
+  "source": "https://oceanexplorer.noaa.gov/multimedia/video-shorts-ex1702-pillowlava/",
+  "gt_steps": [
+    "Turn on Chrome Live Caption.",
+    "Play the NOAA Pillow Lava video.",
+    "Open Notepad.",
+    "Enter `Vailulu'u Seamount\nlikely less than five years old` in `answer.txt`.",
+    "Save `answer.txt` on the Desktop."
+  ],
+  "config": [
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port=1337",
+          "--force-renderer-accessibility"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    },
+    {
+      "type": "sleep",
+      "parameters": {
+        "seconds": 1
+      }
+    },
+    {
+      "type": "chrome_open_tabs",
+      "parameters": {
+        "urls_to_open": [
+          "https://oceanexplorer.noaa.gov/wp-content/uploads/2021/04/ex1702-pillowlava.mp4"
+        ]
+      }
+    },
+    {
+      "type": "chrome_pause_video",
+      "parameters": {
+        "url": "https://oceanexplorer.noaa.gov/wp-content/uploads/2021/04/ex1702-pillowlava.mp4",
+        "wait_seconds": 1
+      }
+    },
+    {
+      "type": "activate_window",
+      "parameters": {
+        "window_name": "Google Chrome"
+      }
+    }
+  ],
+  "related_apps": [
+    "chrome",
+    "notepad"
+  ],
+  "evaluator": {
+    "func": [
+      "check_text_points",
+      "exact_match"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "desktop_file_text",
+        "filename": "answer.txt"
+      },
+      {
+        "type": "live_caption_enabled"
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "ignore_case": true,
+          "points": [
+            [
+              "Vailulu'u Seamount",
+              "Vailulu’u Seamount",
+              "Vailuluu Seamount"
+            ],
+            [
+              "likely less than five years old",
+              "likely less than 5 years old",
+              "less than five years old",
+              "less than 5 years old",
+              "likely under five years old",
+              "likely under 5 years old",
+              "under five years old",
+              "under 5 years old",
+              "probably less than five years old",
+              "probably less than 5 years old",
+              "probably under five years old",
+              "probably under 5 years old"
+            ]
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "expected": "true"
+        }
+      }
+    ],
+    "metric_roles": {
+      "task_outcome": [
+        0
+      ],
+      "access_requirement": [
+        1
+      ]
+    }
+  },
+  "proxy": true,
+  "possibility_of_env_change": "medium"
+}

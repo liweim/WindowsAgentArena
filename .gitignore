@@ -3,6 +3,7 @@
 tmp
 *.bak
 results
+paper/plot
 
 # a few testing images
 *.proposed_region_screenbert_test.png

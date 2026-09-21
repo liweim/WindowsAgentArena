@@ -1,0 +1,137 @@
+{
+  "id": "consumption-colgate_slimsoft_six_pack",
+  "user_group": "hearing",
+  "subgroup_ids": [
+    "H-S1"
+  ],
+  "category": "consumption",
+  "need_ids": [
+    "H1"
+  ],
+  "difficulty": "medium",
+  "operation_time": 38.10,
+  "instruction": "Use Chrome Live Caption to identify the exact toothbrush and quantity in the opened shopping reminder, then add that item to the shopping cart and leave the cart page open.",
+  "source": "https://www.colgate.com/en-sg/products/toothbrush/colgate-slimsoft-charcoal",
+  "transcript": "Shopping reminder. I compared the six-count toothbrush options. Skip the Oral-B Complete Deep Clean pack. Buy the Colgate Slimsoft Floss-Tip Charcoal Toothbrush, Pack of 6. Add exactly one pack to the cart.",
+  "gt_steps": [
+    "Turn on Chrome Live Caption.",
+    "Play the shopping reminder in Chrome.",
+    "Switch to the shopping website.",
+    "Add exactly one `Colgate Slimsoft Floss-Tip Charcoal Toothbrush (Pack of 6)` to the cart.",
+    "Open the shopping cart and leave it visible."
+  ],
+  "config": [
+    {
+      "type": "reset_shopping_cart",
+      "parameters": {}
+    },
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/consumption-colgate_slimsoft_six_pack.mp3",
+            "path": "C:\\Users\\Docker\\Desktop\\ColgateShoppingReminder.mp3"
+          }
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port=1337",
+          "--force-renderer-accessibility"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    },
+    {
+      "type": "sleep",
+      "parameters": {
+        "seconds": 1
+      }
+    },
+    {
+      "type": "chrome_open_tabs",
+      "parameters": {
+        "urls_to_open": [
+          "file:///C:/Users/Docker/Desktop/ColgateShoppingReminder.mp3",
+          "http://host.docker.internal:7770"
+        ]
+      }
+    }
+  ],
+  "related_apps": [
+    "chrome"
+  ],
+  "evaluator": {
+    "func": [
+      "is_page_contains_items",
+      "is_expected_active_tab",
+      "exact_match"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "page_info",
+        "url": "http://host.docker.internal:7770/checkout/cart/",
+        "load_state": "networkidle"
+      },
+      {
+        "type": "active_tab_info",
+        "goto_prefix": "http://"
+      },
+      {
+        "type": "live_caption_enabled"
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "items": [
+            {
+              "name": "Colgate Slimsoft Floss-Tip Charcoal Toothbrush (Pack of 6)",
+              "quantity": 1
+            }
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "type": "url",
+          "url": "http://host.docker.internal:7770/checkout/cart/"
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "expected": "true"
+        }
+      }
+    ],
+    "metric_roles": {
+      "task_outcome": [
+        0,
+        1
+      ],
+      "access_requirement": [
+        2
+      ]
+    }
+  },
+  "proxy": false,
+  "possibility_of_env_change": "low"
+}

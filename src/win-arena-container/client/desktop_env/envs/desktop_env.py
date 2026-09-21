@@ -263,11 +263,6 @@ class DesktopEnv(gym.Env):
         if self.remote_vm:
             # TODO: Implement this
             # self.controller.revert_to_snapshot(self.snapshot_name)
-            logger.warning(
-                "Not implemented! Reverting to snapshot is not supported for remote VMs! "
-                "Full task isolation requires the host launcher's --isolate-tasks true. "
-                "This reset only closes applications and cleans task files."
-            )
             self.setup_controller._close_all_setup()
 
         time.sleep(5)

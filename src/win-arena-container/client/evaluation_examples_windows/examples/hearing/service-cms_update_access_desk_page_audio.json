@@ -1,0 +1,146 @@
+{
+  "id": "service-cms_update_access_desk_page_audio",
+  "user_group": "hearing",
+  "subgroup_ids": [
+    "H-S1"
+  ],
+  "category": "service",
+  "need_ids": [
+    "H1"
+  ],
+  "difficulty": "hard",
+  "operation_time": 157.76,
+  "instruction": "Use Chrome Live Caption to read the website service recording on the Desktop, then apply every requested change to the specified CMS page. Keep Chrome Live Caption enabled. Use username `admin` and password `admin1234`.",
+  "source": "synthetic",
+  "transcript": "Website service update. The page titled Customer Support Schedule Draft needs to be published as Access Desk Hours. The desk is open Monday through Friday from 8 AM to 6 PM, Saturday from 9 AM to 1 PM, and is closed Sunday.",
+  "gt_steps": [
+    "Turn on Chrome Live Caption.",
+    "Play `CMSAccessDeskUpdate.mp3` in Chrome with Live Caption enabled.",
+    "Sign in to the CMS admin site with username `admin` and password `admin1234`.",
+    "Open Content > Pages and search for the page titled `Customer Support Schedule Draft`.",
+    "Open the page and verify that its URL key is `customer-support-schedule-draft`.",
+    "Set the page title to `Access Desk Hours`.",
+    "Set the content heading to `Access Desk Hours`.",
+    "Replace the body with `Monday-Friday: 8 AM-6 PM\nSaturday: 9 AM-1 PM\nSunday: Closed`, one item per line and in that order.",
+    "Enable the page and save it.",
+    "Leave Chrome Live Caption enabled."
+  ],
+  "config": [
+    {
+      "type": "magento_seed_cms_page",
+      "parameters": {
+        "page": {
+          "identifier": "customer-support-schedule-draft",
+          "title": "Customer Support Schedule Draft",
+          "page_layout": "1column",
+          "content_heading": "Customer Support Schedule Draft",
+          "content": "The access desk generally operates on weekdays and for reduced hours on Saturday. Confirm the current schedule before publishing.",
+          "active": false
+        }
+      }
+    },
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/service-cms_update_access_desk_page_audio.mp3",
+            "path": "C:\\Users\\Docker\\Desktop\\CMSAccessDeskUpdate.mp3"
+          }
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port=1337",
+          "--force-renderer-accessibility"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    },
+    {
+      "type": "sleep",
+      "parameters": {
+        "seconds": 1
+      }
+    },
+    {
+      "type": "chrome_open_tabs",
+      "parameters": {
+        "urls_to_open": [
+          "file:///C:/Users/Docker/Desktop/CMSAccessDeskUpdate.mp3",
+          "http://host.docker.internal:7780/admin"
+        ]
+      }
+    }
+  ],
+  "related_apps": [
+    "chrome"
+  ],
+  "evaluator": {
+    "func": [
+      "exact_match",
+      "exact_match"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "magento_cms_page_match",
+        "identifier": "customer-support-schedule-draft",
+        "exists": true,
+        "fields": {
+          "title": "Access Desk Hours",
+          "content_heading": "Access Desk Hours",
+          "active": true
+        },
+        "content_contains_in_order": [
+          "Monday-Friday: 8 AM-6 PM",
+          "Saturday: 9 AM-1 PM",
+          "Sunday: Closed"
+        ],
+        "content_excludes": [
+          "generally operates on weekdays"
+        ]
+      },
+      {
+        "type": "live_caption_enabled"
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "expected": "1"
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "expected": "true"
+        }
+      }
+    ],
+    "metric_roles": {
+      "task_outcome": [
+        0
+      ],
+      "access_requirement": [
+        1
+      ]
+    }
+  },
+  "proxy": false,
+  "possibility_of_env_change": "low"
+}

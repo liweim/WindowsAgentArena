@@ -1,0 +1,127 @@
+{
+  "id": "service-cms_update_voyage_stock_audio",
+  "user_group": "hearing",
+  "subgroup_ids": [
+    "H-S1"
+  ],
+  "category": "service",
+  "need_ids": [
+    "H1"
+  ],
+  "difficulty": "hard",
+  "operation_time": 0,
+  "instruction": "Use Chrome Live Caption to read the inventory service recording on the Desktop, then make the requested stock change in the CMS. Keep Chrome Live Caption enabled. Use username `admin` and password `admin1234`.",
+  "source": "synthetic",
+  "transcript": "Hi, this is Maya from the inventory desk with a quick update from this morning's stock count. We finished checking the bags after receiving put away the latest delivery. The signed count sheet is on Jordan's desk, and I'll be in the weekly warehouse meeting for most of the afternoon if anyone needs me. For the Voyage Yoga Bag, SKU 24-WB01, the available quantity is sixty-five units. The item is ready for sale and isn't under a quality hold, so please update the CMS quantity and keep it listed as in stock. Thanks.",
+  "gt_steps": [
+    "Turn on Chrome Live Caption.",
+    "Play `CMSStockUpdate.mp3` in Chrome with Live Caption enabled.",
+    "Sign in to the CMS admin site with username `admin` and password `admin1234`.",
+    "Open the product catalog and find `Voyage Yoga Bag` with SKU `24-WB01`.",
+    "Open the product and change its stock quantity from `100` to `65`.",
+    "Keep the product in stock and save the product.",
+    "Leave Chrome Live Caption enabled."
+  ],
+  "config": [
+    {
+      "type": "magento_set_product_stock",
+      "parameters": {
+        "sku": "24-WB01",
+        "qty": 100,
+        "is_in_stock": true
+      }
+    },
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "assets/service-cms_update_voyage_stock_audio.mp3",
+            "path": "C:\\Users\\Docker\\Desktop\\CMSStockUpdate.mp3"
+          }
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port=1337",
+          "--force-renderer-accessibility"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    },
+    {
+      "type": "sleep",
+      "parameters": {
+        "seconds": 1
+      }
+    },
+    {
+      "type": "chrome_open_tabs",
+      "parameters": {
+        "urls_to_open": [
+          "file:///C:/Users/Docker/Desktop/CMSStockUpdate.mp3",
+          "http://host.docker.internal:7780/admin"
+        ]
+      }
+    }
+  ],
+  "related_apps": [
+    "chrome"
+  ],
+  "evaluator": {
+    "func": [
+      "exact_match",
+      "exact_match"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "magento_product_match",
+        "sku": "24-WB01",
+        "name": "Voyage Yoga Bag",
+        "qty": 65,
+        "is_in_stock": true
+      },
+      {
+        "type": "live_caption_enabled"
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "expected": "1"
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "expected": "true"
+        }
+      }
+    ],
+    "metric_roles": {
+      "task_outcome": [
+        0
+      ],
+      "access_requirement": [
+        1
+      ]
+    }
+  },
+  "proxy": false,
+  "possibility_of_env_change": "low"
+}

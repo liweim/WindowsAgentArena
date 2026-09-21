@@ -1,36 +1,25 @@
 {
-  "id": "information-maricopa_census_search",
+  "id": "mobility-zion_large_group_route",
   "user_group": "hearing",
   "subgroup_ids": [
     "H-S1"
   ],
-  "category": "information",
+  "category": "mobility",
   "need_ids": [
     "H1"
   ],
   "difficulty": "medium",
-  "operation_time": 348.35,
-  "instruction": "Use Chrome Live Caption on the opened Census demonstration video, identify the area named there, then search for that area on the Census data website and leave the matching results visible.",
-  "source": "synthetic",
+  "operation_time": 143.28,
+  "instruction": "Use Chrome Live Caption on the opened Zion National Park video. My group has 14 people. Determine which Kolob Canyons trail the video permits for a group that size, then show a driving route in Google Maps from Kolob Canyons Visitor Center to that trail.",
+  "source": "https://www.nps.gov/media/video/view.htm?id=28FF549B-155D-451F-670824562C7B1CE7",
   "gt_steps": [
     "Turn on Chrome Live Caption.",
-    "Play the local Census demonstration video and identify the exact source phrase `Maricopa County, Arizona`.",
-    "Open `https://data.census.gov/`.",
-    "Search for `Maricopa County, Arizona`.",
-    "Leave the matching Census results visible."
+    "Play the NPS video.",
+    "Open Google Maps.",
+    "Get driving directions from `Kolob Canyons Visitor Center` to `Timber Creek Overlook Trail`.",
+    "Leave the driving route visible."
   ],
   "config": [
-    {
-      "type": "upload_file",
-      "parameters": {
-        "files": [
-          {
-            "local_path": "assets/information-maricopa_census_search.mp4",
-            "path": "C:\\Users\\Docker\\Desktop\\CensusAreaDemo.mp4"
-          }
-        ]
-      }
-    },
     {
       "type": "launch",
       "parameters": {
@@ -61,8 +50,15 @@
       "type": "chrome_open_tabs",
       "parameters": {
         "urls_to_open": [
-          "file:///C:/Users/Docker/Desktop/CensusAreaDemo.mp4"
+          "https://www.nps.gov/media/video/embed.htm?id=28FF549B-155D-451F-670824562C7B1CE7"
         ]
+      }
+    },
+    {
+      "type": "chrome_pause_video",
+      "parameters": {
+        "url": "https://www.nps.gov/media/video/embed.htm?id=28FF549B-155D-451F-670824562C7B1CE7",
+        "wait_seconds": 1
       }
     },
     {
@@ -86,9 +82,18 @@
         "type": "live_caption_enabled"
       },
       {
-        "type": "active_tab_contains_text",
-        "url_contains": "data.census.gov",
-        "expected_text": "Maricopa County, Arizona"
+        "type": "google_maps_state",
+        "mode": "directions_driving",
+        "required_text": [
+          [
+            "Timber Creek Overlook Trail",
+            "Timber Creek Overlook"
+          ],
+          [
+            "Kolob Canyons Visitor Center",
+            "Kolob Canyon Visitor Center"
+          ]
+        ]
       }
     ],
     "expected": [
@@ -115,5 +120,5 @@
     }
   },
   "proxy": true,
-  "transcript": "Census data demonstration. For this example, search for Maricopa County, Arizona. Keep the county and state together in the search field."
+  "possibility_of_env_change": "medium"
 }

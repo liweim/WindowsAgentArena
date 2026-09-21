@@ -55,7 +55,7 @@ from .fileexplorer import (
     get_is_file_saved_desktop,
     get_desktop_file_text
 )
-from .general import get_vm_command_line, get_vm_terminal_output, get_vm_command_error, get_sticky_notes_content
+from .general import get_vm_command_line, get_vm_terminal_output, get_vm_command_error, get_sticky_notes_content, get_mysql_query, get_magento_product_match, get_magento_cms_page_match
 from .gimp import get_gimp_config_file
 from .impress import get_audio_in_slide, get_background_image_in_slide
 from .info import get_vm_screen_size, get_vm_window_size, get_vm_wallpaper, get_list_directory

@@ -359,20 +359,51 @@ Avoid broad prompts such as "summarize what to do" unless the evaluator defines 
 
 ### Hearing-Access Tasks
 
+### Media source and asset policy
+
+- Prefer playing hearing-task media directly from an authoritative official website when the page already provides the required video or audio. Do not copy or repackage that media into `hearing/assets/` merely to avoid its underlying hosting provider.
+- Direct navigation to the YouTube website should be avoided. A YouTube-hosted video is acceptable when it is embedded in, or explicitly provided by, an authoritative official website and the task starts from that official website.
+- Add a local asset only when it is genuinely needed for a controlled task-specific recording (for example, a voicemail, reminder, user-specific request, or other information that is not already available in suitable form on the target website), or when redistribution rights explicitly permit it and there is a concrete reliability reason.
+- Do not download and redistribute third-party or YouTube-hosted videos as benchmark assets merely for convenience.
+
 For tasks that use captions or live captions to extract spoken content:
 
-1. Prefer ordinary online video pages rather than short-form pages such as YouTube Shorts.
-2. Keep videos short enough for practical evaluation, preferably no longer than 3 minutes.
-3. Use media that has captions or produces reliable live captions.
-4. Avoid pages where the full transcript is already visible before playback.
-5. Require the relevant caption tool when using that tool is part of the task, such as Chrome Live Caption, Windows Live Captions, or Android Live Caption.
-6. Make expected answers extractable from captions alone unless visual inference is explicitly part of the task.
-7. Prefer concrete nouns, noun phrases, short action phrases, or the shortest complete continuous phrase that appears in the captions.
-8. Keep expected answers stable and unambiguous.
+1. **Avoid direct YouTube navigation.** Do not use `youtube.com`, `youtu.be`, or a YouTube watch page as the task's starting URL. Prefer an authoritative official website or the content owner's own website. A YouTube-hosted video is acceptable when an authoritative official/content-owner page embeds it or explicitly links to that official video and the task is grounded in that page. Prefer keeping playback on the official page when an embed is available. Do not download and redistribute a YouTube-hosted video as a benchmark asset unless redistribution rights are explicitly available; official provenance does not by itself grant redistribution rights.
+2. If a YouTube-specific preparation helper is needed for a video embedded on an official/content-owner page, its configured URL must be the official/content-owner page URL, not a direct YouTube URL.
+3. Keep videos short enough for practical evaluation, preferably no longer than 3 minutes.
+4. Use media that has captions or produces reliable live captions.
+5. Avoid pages where the full transcript or the task's decisive answer is already visible before playback. The spoken information should remain necessary to complete the hearing task.
+6. Require the relevant caption tool when using that tool is part of the task, such as Chrome Live Caption, Windows Live Captions, or Android Live Caption.
+7. When the instruction requires **Chrome Live Caption**, keep the entire task definition aligned: the instruction must name Chrome Live Caption, `gt_steps` must tell the user to enable/use Chrome Live Caption (not Windows Live Captions or a site's own subtitles), and the evaluator must check the Chrome caption state with `result.type = "live_caption_enabled"` and the corresponding expected state `{"expected": "true"}`. Do not mix Chrome Live Caption instructions with Windows Live Caption evaluator rules.
+8. Make expected answers extractable from captions alone unless visual inference is explicitly part of the task.
+9. Prefer concrete nouns, noun phrases, short action phrases, or the shortest complete continuous phrase that appears in the captions.
+10. Keep expected answers stable and unambiguous.
 
 Fixed AI text-to-speech audio may be used instead of online video when it improves determinism. For example, an `.mp3` generated from a fixed ElevenLabs script can reduce live-caption recognition variance. Save the script with the task materials and treat it as the source of truth. The task should still require the intended caption feature, and expected answers should be exact continuous phrases from the fixed script.
 
-#### Caption Phrase Evaluation
+#### Canonical Transcript Answers and Semantic Variants
+
+For hearing tasks whose answer is derived from spoken media, the **canonical/standard answer must preserve the source wording exactly**. The source of truth is the official transcript/captions when available, or the fixed script stored with a generated audio asset.
+
+1. Store the gold/canonical answer using the exact original wording from the source. Do not paraphrase, simplify, normalize, or replace the canonical answer with a synonym.
+2. When the answer is a phrase, prefer a stable complete continuous phrase from the transcript or fixed audio script.
+3. `gt_steps`, reference answers, and other task-authoring fields that expose the textual gold answer should use the same original wording.
+4. The evaluator should keep that original wording as the first/canonical accepted form **and also accept semantically equivalent variants** when they do not change the required meaning. Appropriate variants include harmless synonym substitutions, minor word-order or function-word differences, capitalization and punctuation differences, hyphenation variants, and equivalent number formatting.
+5. Semantic tolerance must not relax critical facts. Named entities, locations, dates, times, quantities, URLs, product identity, route endpoints, required settings, and required actions must remain correct. Missing or changed required facts must not receive full credit.
+6. Do not replace the gold answer itself with a paraphrase merely because the evaluator accepts that paraphrase. The distinction is deliberate: **gold answer = source-faithful wording; evaluator = source-faithful wording plus meaning-preserving variants**.
+
+Example: if the transcript says `Get medical care immediately`, the canonical answer must remain exactly `Get medical care immediately`. The evaluator may additionally accept meaning-preserving forms such as `seek immediate medical care` or `get medical attention immediately`, but should reject an answer that weakens the urgency or omits the required action.
+
+### Task Instruction Voice and Minimal Editing
+
+Task `instruction` text is written as the user's command to the agent. Preserve the original instruction wording and perspective whenever the task semantics do not require a change.
+
+- Prefer direct imperative wording such as `Use ...`, `Open ...`, `Draft ...`, or first-person context such as `I want ...`, `My group ...`, and `My sister ...` when personal context is necessary.
+- Do not rewrite an existing first-person or imperative instruction into second-person narration such as `You want ...`, `You are ...`, or `Your ...` merely for stylistic consistency.
+- When updating an existing task, make the smallest instruction change needed for the new task semantics, recipient, source, or evaluator. Do not otherwise rewrite unaffected wording.
+- Second-person wording that is part of a source transcript, quoted content, webpage title, or canonical answer must remain unchanged when required for source fidelity.
+
+### Caption Phrase Evaluation
 
 For caption-extraction tasks whose answers are stored in a spreadsheet, use phrase-containment coverage unless a stronger task-specific evaluator is available:
 
@@ -382,7 +413,7 @@ For caption-extraction tasks whose answers are stored in a spreadsheet, use phra
 4. For each expected answer, check whether any actual answer contains the complete normalized expected phrase.
 5. Compute coverage as `matched_expected_count / expected_count`.
 
-Expected answers should be complete continuous caption phrases. Avoid broad single-word answers, overlapping expected answers, paraphrases, synonyms, or visually inferred answers unless the task explicitly requires them.
+The canonical expected answers should be complete continuous caption phrases copied from the source wording. Avoid broad single-word answers, overlapping canonical answers, or visually inferred answers unless the task explicitly requires them. Do not put a paraphrase or synonym in place of the canonical transcript phrase; instead, encode meaning-preserving paraphrases and synonyms as evaluator alternatives when natural-language variation is acceptable.
 
 ### Construction Workflow
 
@@ -460,7 +491,23 @@ information-read_video_caption.json
 management-onscreen_keyboard_reminder.json
 ```
 
-### Evaluator Rules
+#
+
+### Instruction Voice and Perspective
+
+Task `instruction` text is written from the **user's point of view as a command/request to the agent**. Describe the user's goal in first person (`I`, `me`, `my`) or use a direct imperative such as `Please ...` / `Use ...`. Do not narrate the user in second person with wording such as `You want ...`, `your appointment`, or `left you a voicemail`.
+
+Examples:
+
+- Preferred: `I want to register for the workshop described in the audio. Use Chrome Live Caption to identify ...`
+- Preferred: `The clinic left me a voicemail. Use Chrome Live Caption to ...`
+- Avoid: `You want to register for the workshop ...`
+- Avoid: `The clinic left you a voicemail ...`
+
+The perspective must stay consistent throughout the instruction. References to people related to the user should likewise use the user's perspective, for example `my sister`, `my employer`, and `my group`.
+
+
+## Evaluator Rules
 
 Prefer deterministic state checks over subjective grading. The evaluator should judge whether the agent achieved the task goal, not whether it reproduced one arbitrary surface form of a correct answer.
 
@@ -487,7 +534,7 @@ The evaluator should cover every requirement that is necessary for task success.
 Use the following priorities when designing or reviewing an evaluator:
 
 1. **Make the task answer unique at the semantic level.** A task should have one well-defined target state or set of facts. If the source permits multiple equally valid recommendations, rankings, interpretations, or summaries, add a deterministic selection criterion, pin the source state, or rewrite the task.
-2. **Accept semantically equivalent natural-language answers.** Do not reject a correct answer because of capitalization, harmless whitespace, hyphenation, equivalent numeric formatting, or an accepted synonym.
+2. **Accept semantically equivalent natural-language answers without changing the canonical source answer.** For source-grounded hearing tasks, keep the exact transcript/script wording as the canonical expected answer, then encode accepted synonyms, harmless rephrasings, capitalization/whitespace/hyphenation differences, and equivalent numeric formatting in evaluator logic.
 3. **Require all essential facts.** Semantic tolerance must not make the evaluator permissive enough to accept an incomplete answer. Split an answer into atomic facts and require every fact that is necessary for correctness.
 4. **Evaluate state structurally whenever possible.** Check recipients as addresses, calendar titles as titles, dates as dates, URLs as URLs, quantities as numbers, and application settings as settings rather than searching for those values anywhere in a large text dump.
 5. **Use exact matching only when exact representation is part of the task.** Examples include text explicitly requested `exactly as shown`, a fixed template, a canonical filename, a specific URL, a required subject/title, or another field whose literal value is itself graded.
@@ -572,6 +619,17 @@ or when the output follows a fixed canonical template. It is usually inappropria
 
 Before using `exact_match`, ask: **Would a human consider a differently formatted but semantically identical answer wrong under the instruction?** If not, use semantic points or a structured evaluator instead.
 
+#### Email Communication Scenario Rules
+
+For every hearing task that composes, replies to, forwards, or saves an email draft, the recipient must be meaningful in the scenario rather than an unexplained benchmark placeholder. The `instruction` must explain **who the recipient is and why the user is communicating with them**.
+
+- A recipient may be a specific person with a clear relationship to the user (for example, a sister, partner, friend, colleague, or travel companion), or a role/address that naturally belongs to the scenario (for example, a clinic scheduling desk, community-center registration desk, employer reimbursement team, or an address explicitly supplied by the source recording).
+- Do not introduce new unexplained generic recipients such as `test@example.com` or `user@example.com` merely to populate Thunderbird fields. A syntactically valid address is not sufficient by itself; its person/role must make sense for the requested communication.
+- State the relationship or organizational role in `instruction`, not only in `gt_steps`. The task should read as a real communication goal.
+- **Legacy-source exception:** if an existing fixed audio/video source explicitly speaks a placeholder-looking address such as `appointments@example.com` or `pharmacy@example.com`, keep that source transcript, media asset, recipient, `gt_steps`, and evaluator address unchanged. Explain the recipient's scenario role in `instruction`; do not regenerate or rewrite the legacy audio solely to make the address look more realistic.
+- For newly constructed tasks, if the spoken source itself gives a destination address, keep the source transcript, instruction, `gt_steps`, and evaluator recipient consistent.
+- The evaluator must structurally check the same recipient address required by the instruction, along with the specified subject/body requirements.
+
 #### Structured Artifact Rules
 
 For email, calendar, file, and similar artifact tasks, evaluate each field according to its semantics rather than searching the entire serialized artifact.
@@ -615,7 +673,7 @@ Every evaluator should therefore be tested with at least:
 
 Expected outputs should be short, stable, and unambiguous. Avoid tasks that depend on current news, changing rankings, personalized recommendations, volatile page layouts, or subjective review interpretation unless the source is pinned, cached, self-hosted, or the instruction defines a deterministic selection rule.
 
-If multiple natural-language realizations are valid, encode those alternatives in the evaluator rather than forcing the task author to invent one canonical sentence. Determinism should come from the required facts and final state, not from arbitrary wording.
+If multiple natural-language realizations are valid, encode those alternatives in the evaluator rather than requiring one surface form at evaluation time. For source-grounded hearing tasks, however, the task author must still retain the exact source transcript/script wording as the canonical gold answer; accepted paraphrases belong only in evaluator alternatives. Determinism should come from the required facts and final state, not from arbitrary wording.
 
 ## 4. Windows Apps and Deterministic Services
 
@@ -740,6 +798,16 @@ Use deterministic challenge URLs generated by `src/win-arena-container/client/ca
 These examples illustrate task-construction patterns only. Benchmark positioning, comparisons with prior work, research questions, experimental plans, and paper-level claims are maintained separately in `paper_structure.md`.
 
 ## 6. Environment Maintenance
+
+### Apply an Incremental Repository Update
+
+When an update archive contains paths relative to the `WindowsAgentArena/` repository root, apply it from the repository's parent directory with:
+
+```bash
+unzip -o WindowsAgentArena-update.zip -d WindowsAgentArena
+```
+
+The `-o` flag overwrites existing files in place. Update archives should contain only the files that are new or intentionally replaced, with their paths laid out relative to the repository root.
 
 ### Rebuild the WinArena Image
 

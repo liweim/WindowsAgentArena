@@ -23,10 +23,9 @@
     },
     "Google Chrome": {
         "mirrors": [
-            "https://storage.googleapis.com/chrome-for-testing-public/131.0.6778.85/win64/chrome-win64.zip"
+            "https://dl.google.com/dl/chrome/install/googlechromestandaloneenterprise64.msi"
         ],
-        "version": "131.0.6778.85",
-        "packageType": "zip",
+        "packageType": "msi",
         "alias": "google-chrome"
     },
     "LibreOffice": {

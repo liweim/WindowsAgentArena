@@ -122,6 +122,161 @@ class SetupController:
         except subprocess.CalledProcessError as e:
             logger.error("Failed to reset shopping cart database: %s", e.stderr or e.stdout)
             raise
+
+    def _mysql_execute_setup(
+            self,
+            sql: str,
+            host: str = "host.docker.internal",
+            port: int = 13306,
+            database: str = "magentodb",
+            user: str = "magentouser",
+            password: str = "MyPassword",
+    ):
+        """Execute trusted task-fixture SQL against the local Magento database."""
+        if not sql or not sql.strip():
+            raise ValueError("mysql_execute requires a non-empty SQL statement")
+        command = [
+            "mysql", "--skip-ssl", "-h", host, "-P", str(port),
+            "-u", user, f"-p{password}", database, "-e", sql,
+        ]
+        try:
+            subprocess.run(command, check=True, capture_output=True, text=True)
+        except FileNotFoundError:
+            logger.error("mysql client is not installed in the WinArena container.")
+            raise
+        except subprocess.CalledProcessError as e:
+            logger.error("Failed to prepare Magento database fixture: %s", e.stderr or e.stdout)
+            raise
+
+    def _magento_delete_product_setup(
+            self,
+            sku: str,
+            base_url: str = "http://host.docker.internal:7780",
+            username: str = "admin",
+            password: str = "admin1234",
+    ):
+        """Delete a task-owned Magento product through the admin REST API."""
+        token_response = requests.post(
+            f"{base_url}/rest/V1/integration/admin/token",
+            json={"username": username, "password": password},
+            timeout=HTTP_REQUEST_TIMEOUT,
+        )
+        token_response.raise_for_status()
+        token = token_response.json()
+        response = requests.delete(
+            f"{base_url}/rest/V1/products/{requests.utils.quote(sku, safe='')}",
+            headers={"Authorization": f"Bearer {token}"},
+            timeout=HTTP_REQUEST_TIMEOUT,
+        )
+        if response.status_code not in (200, 404):
+            response.raise_for_status()
+
+    def _magento_seed_cms_page_setup(
+            self,
+            page: Dict[str, Any],
+            base_url: str = "http://host.docker.internal:7780",
+            username: str = "admin",
+            password: str = "admin1234",
+    ):
+        """Replace a task-owned CMS page through the Magento admin REST API."""
+        token_response = requests.post(
+            f"{base_url}/rest/V1/integration/admin/token",
+            json={"username": username, "password": password},
+            timeout=HTTP_REQUEST_TIMEOUT,
+        )
+        token_response.raise_for_status()
+        headers = {"Authorization": f"Bearer {token_response.json()}"}
+        search_response = requests.get(
+            f"{base_url}/rest/V1/cmsPage/search",
+            headers=headers,
+            params={
+                "searchCriteria[filter_groups][0][filters][0][field]": "identifier",
+                "searchCriteria[filter_groups][0][filters][0][value]": page["identifier"],
+                "searchCriteria[filter_groups][0][filters][0][condition_type]": "eq",
+            },
+            timeout=HTTP_REQUEST_TIMEOUT,
+        )
+        search_response.raise_for_status()
+        for existing in search_response.json().get("items", []):
+            delete_response = requests.delete(
+                f"{base_url}/rest/V1/cmsPage/{existing['id']}",
+                headers=headers,
+                timeout=HTTP_REQUEST_TIMEOUT,
+            )
+            delete_response.raise_for_status()
+        create_response = requests.post(
+            f"{base_url}/rest/V1/cmsPage",
+            headers={**headers, "Content-Type": "application/json"},
+            json={"page": page},
+            timeout=HTTP_REQUEST_TIMEOUT,
+        )
+        create_response.raise_for_status()
+
+    def _magento_delete_cms_page_setup(
+            self,
+            identifier: str,
+            base_url: str = "http://host.docker.internal:7780",
+            username: str = "admin",
+            password: str = "admin1234",
+    ):
+        """Delete all CMS pages with a task-owned identifier through REST."""
+        token_response = requests.post(
+            f"{base_url}/rest/V1/integration/admin/token",
+            json={"username": username, "password": password},
+            timeout=HTTP_REQUEST_TIMEOUT,
+        )
+        token_response.raise_for_status()
+        headers = {"Authorization": f"Bearer {token_response.json()}"}
+        response = requests.get(
+            f"{base_url}/rest/V1/cmsPage/search",
+            headers=headers,
+            params={
+                "searchCriteria[filter_groups][0][filters][0][field]": "identifier",
+                "searchCriteria[filter_groups][0][filters][0][value]": identifier,
+                "searchCriteria[filter_groups][0][filters][0][condition_type]": "eq",
+            },
+            timeout=HTTP_REQUEST_TIMEOUT,
+        )
+        response.raise_for_status()
+        for page in response.json().get("items", []):
+            delete_response = requests.delete(
+                f"{base_url}/rest/V1/cmsPage/{page['id']}",
+                headers=headers,
+                timeout=HTTP_REQUEST_TIMEOUT,
+            )
+            delete_response.raise_for_status()
+
+    def _magento_set_product_stock_setup(
+            self,
+            sku: str,
+            qty: float,
+            is_in_stock: bool = True,
+            base_url: str = "http://host.docker.internal:7780",
+            username: str = "admin",
+            password: str = "admin1234",
+    ):
+        """Set stock for an existing Magento product through REST."""
+        token_response = requests.post(
+            f"{base_url}/rest/V1/integration/admin/token",
+            json={"username": username, "password": password},
+            timeout=HTTP_REQUEST_TIMEOUT,
+        )
+        token_response.raise_for_status()
+        headers = {"Authorization": f"Bearer {token_response.json()}"}
+        product_response = requests.get(
+            f"{base_url}/rest/V1/products/{requests.utils.quote(sku, safe='')}",
+            headers=headers,
+            timeout=HTTP_REQUEST_TIMEOUT,
+        )
+        product_response.raise_for_status()
+        item_id = product_response.json()["extension_attributes"]["stock_item"]["item_id"]
+        update_response = requests.put(
+            f"{base_url}/rest/V1/products/{requests.utils.quote(sku, safe='')}/stockItems/{item_id}",
+            headers={**headers, "Content-Type": "application/json"},
+            json={"stockItem": {"qty": qty, "is_in_stock": is_in_stock}},
+            timeout=HTTP_REQUEST_TIMEOUT,
+        )
+        update_response.raise_for_status()
     
     def _set_default_browser_setup(self, browser: str):
         # Comment: this function doesn't work. It does set the registry key correctly, but looks like there's some security mechanism that prevents the key by itself from setting the default browser

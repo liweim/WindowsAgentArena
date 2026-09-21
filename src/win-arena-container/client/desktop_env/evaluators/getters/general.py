@@ -2,8 +2,113 @@ import logging
 from typing import Dict
 import requests
 import os
+import subprocess
 
 logger = logging.getLogger("desktopenv.getters.general")
+
+
+def get_magento_product_match(env, config):
+    """Return `1` when a Magento admin product matches all requested fields."""
+    base_url = config.get("base_url", "http://host.docker.internal:7780")
+    try:
+        token_response = requests.post(
+            f"{base_url}/rest/V1/integration/admin/token",
+            json={
+                "username": config.get("username", "admin"),
+                "password": config.get("password", "admin1234"),
+            },
+            timeout=20,
+        )
+        token_response.raise_for_status()
+        token = token_response.json()
+        product_response = requests.get(
+            f"{base_url}/rest/V1/products/{requests.utils.quote(config['sku'], safe='')}",
+            headers={"Authorization": f"Bearer {token}"},
+            timeout=20,
+        )
+        if product_response.status_code == 404:
+            return "0"
+        product_response.raise_for_status()
+        product = product_response.json()
+        stock = product.get("extension_attributes", {}).get("stock_item", {})
+        checks = [
+            product.get("sku") == config["sku"],
+            product.get("name") == config.get("name", product.get("name")),
+            product.get("type_id") == config.get("type_id", product.get("type_id")),
+            int(product.get("status", 0)) == int(config.get("status", product.get("status", 0))),
+            abs(float(product.get("price", 0)) - float(config.get("price", product.get("price", 0)))) < 1e-6,
+            abs(float(stock.get("qty", 0)) - float(config.get("qty", stock.get("qty", 0)))) < 1e-6,
+            bool(stock.get("is_in_stock")) == bool(config.get("is_in_stock", stock.get("is_in_stock"))),
+        ]
+        return "1" if all(checks) else "0"
+    except (requests.RequestException, TypeError, ValueError, KeyError) as e:
+        logger.error("Failed to validate Magento product through REST: %s", e)
+        return "0"
+
+
+def get_magento_cms_page_match(env, config):
+    """Return `1` when CMS page existence and optional fields match the rule."""
+    base_url = config.get("base_url", "http://host.docker.internal:7780")
+    try:
+        token_response = requests.post(
+            f"{base_url}/rest/V1/integration/admin/token",
+            json={
+                "username": config.get("username", "admin"),
+                "password": config.get("password", "admin1234"),
+            },
+            timeout=20,
+        )
+        token_response.raise_for_status()
+        response = requests.get(
+            f"{base_url}/rest/V1/cmsPage/search",
+            headers={"Authorization": f"Bearer {token_response.json()}"},
+            params={
+                "searchCriteria[filter_groups][0][filters][0][field]": "identifier",
+                "searchCriteria[filter_groups][0][filters][0][value]": config["identifier"],
+                "searchCriteria[filter_groups][0][filters][0][condition_type]": "eq",
+            },
+            timeout=20,
+        )
+        response.raise_for_status()
+        items = response.json().get("items", [])
+        expected_exists = config.get("exists", True)
+        if not expected_exists:
+            return "1" if not items else "0"
+        for page in items:
+            content = str(page.get("content", ""))
+            ordered = config.get("content_contains_in_order", [])
+            positions = [content.find(value) for value in ordered]
+            ordered_match = all(position >= 0 for position in positions) and positions == sorted(positions)
+            excludes_match = all(value not in content for value in config.get("content_excludes", []))
+            if (all(page.get(field) == value for field, value in config.get("fields", {}).items())
+                    and ordered_match and excludes_match):
+                return "1"
+        return "0"
+    except (requests.RequestException, TypeError, ValueError, KeyError) as e:
+        logger.error("Failed to validate Magento CMS page through REST: %s", e)
+        return "0"
+
+
+def get_mysql_query(env, config: Dict[str, str]):
+    """Run a read-only query against the local Magento database for evaluation."""
+    sql = config["sql"].strip()
+    if not sql.lower().startswith(("select ", "show ", "describe ", "with ")):
+        raise ValueError("mysql_query only accepts read-only SQL")
+    command = [
+        "mysql", "--skip-ssl",
+        "-h", config.get("host", "host.docker.internal"),
+        "-P", str(config.get("port", 13306)),
+        "-u", config.get("user", "magentouser"),
+        f"-p{config.get('password', 'MyPassword')}",
+        config.get("database", "magentodb"),
+        "-N", "-B", "-e", sql,
+    ]
+    try:
+        result = subprocess.run(command, check=True, capture_output=True, text=True)
+        return result.stdout.strip()
+    except (FileNotFoundError, subprocess.CalledProcessError) as e:
+        logger.error("Failed to query Magento database: %s", e)
+        return None
 
 
 def get_vm_command_line(env, config: Dict[str, str]):

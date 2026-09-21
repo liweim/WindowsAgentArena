@@ -16,8 +16,8 @@ nohup setsid env \
     --connect false \
     --start-client true \
     --agent tars \
-    --model qwen3.5-9b \
-    --global-planner-model qwen3.5-9b \
+    --model qwen3.8-27b \
+    --global-planner-model qwen3.8-27b \
     --visual-grounder-model gta1-7b \
     --max-steps 100 \
     --som-origin oss \
@@ -29,10 +29,9 @@ nohup setsid env \
     --container-name a11yarena-tars \
     --browser-port 18118 \
     --rdp-port 13397 \
-    --result-dir /locallstc/projects/WindowsAgentArena/results/tars_qwen3.5-9b \
-    --json-name evaluation_examples_windows/test_one.json \
+    --result-dir /locallstc/projects/WindowsAgentArena/results/tars_qwen3.8-27b \
+    --json-name evaluation_examples_windows/debug.json \
     --remove-container true \
-    --rerun-fail \
     "$@" >"$LOG_FILE" 2>&1 < /dev/null &
 
 runner_pid=$!

@@ -2,8 +2,9 @@
 
 set -e
 
-cd "$(dirname "$0")"
-LOG_FILE="$(pwd)/../nohup_locallstc.out"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR"
+LOG_FILE="$(dirname "$SCRIPT_DIR")/nohup_locallstc.out"
 
 method="${1:-locallstc}"
 if [ "$#" -gt 0 ]; then
@@ -21,10 +22,10 @@ nohup setsid env \
     --connect false \
     --start-client true \
     --agent "$method" \
-    --model qwen3.5-9b \
-    --global_planner_model qwen3.5-9b \
+    --model qwen3.8-27b \
+    --global_planner_model qwen3.8-27b \
     --visual_grounder_model gta1-7b \
-    --state_manager_model qwen3.5-9b \
+    --state_manager_model qwen3.8-27b \
     --max_steps 100 \
     --som-origin oss \
     --a11y-backend uia \
@@ -35,10 +36,9 @@ nohup setsid env \
     --container-name a11yarena-locallstc \
     --browser-port 18113 \
     --rdp-port 13392 \
-    --result-dir /locallstc/projects/WindowsAgentArena/results/locallstc_qwen3.5-9b \
-    --json-name evaluation_examples_windows/test_small.json \
+    --result-dir /locallstc/projects/WindowsAgentArena/results/locallstc_qwen3.8-27b \
+    --json-name evaluation_examples_windows/debug.json \
     --remove-container true \
-    # --rerun_fail \
     "$@" >"$LOG_FILE" 2>&1 < /dev/null &
 
 runner_pid=$!

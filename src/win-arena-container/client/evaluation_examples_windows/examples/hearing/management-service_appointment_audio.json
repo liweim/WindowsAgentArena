@@ -15,13 +15,13 @@
   "transcript": "Your home support assessment is booked for Tuesday, September 29, 2026 at 1:15 PM. Allow forty-five minutes for the appointment. The appointment title is Home support assessment.",
   "gt_steps": [
     "Turn on Chrome Live Caption.",
-    "Play `ServiceAppointmentAudio.mp3` in Chrome with Windows Live captions running.",
+    "Play `ServiceAppointmentAudio.mp3` in Chrome with Chrome Live Caption enabled.",
     "Switch to Thunderbird Calendar.",
     "Create an event on `29 September 2026` at `1:15 PM`.",
     "Set the duration to `45 minutes`.",
     "Set the title to `Home support assessment`.",
     "Save the calendar event.",
-    "Leave Windows Live captions running."
+    "Leave Chrome Live Caption enabled."
   ],
   "config": [
     {
@@ -125,12 +125,7 @@
       {
         "type": "rule",
         "rules": {
-          "include": [
-            "WINDOWS_LIVE_CAPTIONS_RUNNING"
-          ],
-          "exclude": [
-            "WINDOWS_LIVE_CAPTIONS_NOT_RUNNING"
-          ]
+          "expected": "true"
         }
       },
       {

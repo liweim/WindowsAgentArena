@@ -1174,4 +1174,5 @@ def save_detail_results():
 
 
 if __name__ == "__main__":
-    summary('/home/weimingli/projects/WindowsAgentArena/results/locallstc_qwen3.5-9b', '/home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client/evaluation_examples_windows/test_small.json')
+    summary('/home/weimingli/projects/WindowsAgentArena/results/locallstc_qwen3.8-27b', '/home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client/evaluation_examples_windows/debug.json')
+    summary('/home/weimingli/projects/WindowsAgentArena/results/tars_qwen3.8-27b', '/home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client/evaluation_examples_windows/debug.json')

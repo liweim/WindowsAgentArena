@@ -1,0 +1,153 @@
+{
+  "id": "health-long_covid_care_note",
+  "user_group": "hearing",
+  "subgroup_ids": [
+    "H-S1"
+  ],
+  "category": "health",
+  "need_ids": [
+    "H1"
+  ],
+  "difficulty": "medium",
+  "operation_time": 68.36,
+  "instruction": "Use Chrome Live Caption on the opened CDC video and create a Sticky Note containing the three consequences or care needs named in its opening description of Long COVID.",
+  "source": "https://www.cdc.gov/long-covid/resources/video-navigating-long-covid.html",
+  "gt_steps": [
+    "Turn on Chrome Live Caption.",
+    "Play the CDC Long COVID video.",
+    "Create a Sticky Note containing the source phrases `chronic conditions\nrequire comprehensive care\ncan sometimes cause disability`."
+  ],
+  "config": [
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port=1337",
+          "--force-renderer-accessibility"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    },
+    {
+      "type": "sleep",
+      "parameters": {
+        "seconds": 1
+      }
+    },
+    {
+      "type": "chrome_open_tabs",
+      "parameters": {
+        "urls_to_open": [
+          "https://www.cdc.gov/wcms/video/low-res/vaccines/2026/10291029longCovid-noMask-1080.mp4"
+        ]
+      }
+    },
+    {
+      "type": "chrome_pause_video",
+      "parameters": {
+        "url": "https://www.cdc.gov/wcms/video/low-res/vaccines/2026/10291029longCovid-noMask-1080.mp4",
+        "wait_seconds": 1
+      }
+    },
+    {
+      "type": "execute",
+      "parameters": {
+        "command": [
+          "powershell",
+          "-NoProfile",
+          "-ExecutionPolicy",
+          "Bypass",
+          "-Command",
+          "Start-Process 'shell:AppsFolder\\Microsoft.MicrosoftStickyNotes_8wekyb3d8bbwe!App'"
+        ]
+      }
+    },
+    {
+      "type": "activate_window",
+      "parameters": {
+        "window_name": "Google Chrome"
+      }
+    }
+  ],
+  "related_apps": [
+    "chrome",
+    "sticky_notes"
+  ],
+  "evaluator": {
+    "func": [
+      "check_text_points",
+      "exact_match"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "sticky_notes_content"
+      },
+      {
+        "type": "live_caption_enabled"
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "ignore_case": true,
+          "points": [
+            [
+              "chronic conditions",
+              "chronic condition",
+              "chronic health conditions",
+              "long-term conditions",
+              "long term conditions",
+              "long-term health conditions",
+              "long term health conditions"
+            ],
+            [
+              "require comprehensive care",
+              "requires comprehensive care",
+              "need comprehensive care",
+              "needs comprehensive care",
+              "comprehensive care is required",
+              "comprehensive care"
+            ],
+            [
+              "can sometimes cause disability",
+              "may cause disability",
+              "can cause disability",
+              "could cause disability",
+              "sometimes causes disability",
+              "cause disability",
+              "disability"
+            ]
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "expected": "true"
+        }
+      }
+    ],
+    "metric_roles": {
+      "task_outcome": [
+        0
+      ],
+      "access_requirement": [
+        1
+      ]
+    }
+  },
+  "proxy": true,
+  "possibility_of_env_change": "medium"
+}

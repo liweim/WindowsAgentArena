@@ -169,8 +169,90 @@ def check_text_points(result: str, rules: Dict[str, Any]) -> float:
     ordered = rules.get("ordered", False)
     line_based = rules.get("line_based", False)
 
+    month_numbers = {
+        "jan": 1, "january": 1, "feb": 2, "february": 2,
+        "mar": 3, "march": 3, "apr": 4, "april": 4,
+        "may": 5, "jun": 6, "june": 6, "jul": 7, "july": 7,
+        "aug": 8, "august": 8, "sep": 9, "sept": 9, "september": 9,
+        "oct": 10, "october": 10, "nov": 11, "november": 11,
+        "dec": 12, "december": 12,
+    }
+    month_pattern = "|".join(sorted(month_numbers, key=len, reverse=True))
+
+    def canonicalize_dates(text: str) -> str:
+        """Replace common absolute-date spellings with one semantic token."""
+        def named_date(first, second, year, original):
+            if first.casefold() in month_numbers:
+                month, day = month_numbers[first.casefold()], int(second)
+            else:
+                day, month = int(first), month_numbers[second.casefold()]
+            try:
+                if year is None:
+                    # Yearless dates are useful for facts such as "July 6th".
+                    datetime.date(2000, month, day)  # validate month/day
+                    return f"--{month:02d}-{day:02d}"
+                return datetime.date(int(year), month, day).isoformat()
+            except ValueError:
+                return original
+
+        named = re.compile(
+            rf"\b(?:(?P<first>{month_pattern})\.?\s+(?P<second>\d{{1,2}})(?:st|nd|rd|th)?"
+            rf"|(?P<first_day>\d{{1,2}})(?:st|nd|rd|th)?\s+(?P<second_month>{month_pattern})\.?)"
+            rf"(?:,?\s+(?P<year>\d{{4}}))?\b",
+            re.IGNORECASE,
+        )
+
+        def normalize_named(match):
+            if match.group("first") is not None:
+                return named_date(
+                    match.group("first"), match.group("second"),
+                    match.group("year"), match.group(0),
+                )
+            return named_date(
+                match.group("first_day"), match.group("second_month"),
+                match.group("year"), match.group(0),
+            )
+
+        text = named.sub(normalize_named, text)
+
+        # ISO dates are already canonical. Ambiguous numeric dates carry both
+        # possible month/day interpretations, allowing a named standard answer
+        # to match either locale's numeric rendering.
+        numeric = re.compile(r"\b(?P<a>\d{1,2})[/-](?P<b>\d{1,2})[/-](?P<year>\d{2}|\d{4})\b")
+        def normalize_numeric(match):
+            a, b, year = int(match.group("a")), int(match.group("b")), int(match.group("year"))
+            if year < 100:
+                year += 2000
+            if a > 12 >= b:
+                candidates = [(year, b, a)]
+            elif b > 12 >= a:
+                candidates = [(year, a, b)]
+            else:
+                candidates = [(year, a, b), (year, b, a)]
+            dates = []
+            for candidate in candidates:
+                try:
+                    value = datetime.date(*candidate).isoformat()
+                except ValueError:
+                    continue
+                if value not in dates:
+                    dates.append(value)
+            if not dates:
+                return match.group(0)
+            return " ".join(dates)
+        return numeric.sub(normalize_numeric, text)
+
+    def normalize_point_text(value: Any) -> str:
+        text = normalize_text(value, ignore_case=ignore_case)
+        # A full stop ending a sentence is presentation punctuation, not part
+        # of the preceding fact. Remove it before applying numeric boundaries
+        # so, for example, the point ``4826`` matches ``4826.`` while decimal
+        # points such as ``4.10`` remain intact.
+        text = re.sub(r"\.(?=\s|$)", "", text)
+        return canonicalize_dates(text)
+
     def literal_span(actual: str, variant: Any):
-        needle = normalize_text(variant, ignore_case=ignore_case)
+        needle = normalize_point_text(variant)
         if not needle:
             return None
         if re.fullmatch(r"[+-]?(?:\d+(?:\.\d+)?|\.\d+)", needle):
@@ -236,9 +318,9 @@ def check_text_points(result: str, rules: Dict[str, Any]) -> float:
 
     if line_based:
         lines = [
-            normalize_text(line, ignore_case=ignore_case)
+            normalize_point_text(line)
             for line in str(result).splitlines()
-            if normalize_text(line, ignore_case=ignore_case)
+            if normalize_point_text(line)
         ]
         matched = 0
         next_line = 0
@@ -259,7 +341,7 @@ def check_text_points(result: str, rules: Dict[str, Any]) -> float:
                     next_line = found + 1
         return matched / len(points)
 
-    actual = normalize_text(result, ignore_case=ignore_case)
+    actual = normalize_point_text(result)
     matched = 0
     previous_end = 0
     for point in points:

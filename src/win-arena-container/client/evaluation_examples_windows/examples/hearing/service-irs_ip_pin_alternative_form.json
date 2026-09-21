@@ -1,23 +1,25 @@
 {
-  "id": "management-double_dough_timer",
+  "id": "service-irs_ip_pin_alternative_form",
   "user_group": "hearing",
   "subgroup_ids": [
     "H-S1"
   ],
-  "category": "management",
+  "category": "service",
   "need_ids": [
     "H1"
   ],
-  "difficulty": "medium",
-  "operation_time": 414.85,
-  "instruction": "Use Chrome Live Caption on the opened cooking video to determine about how long the pita dough should take to double in size, then use https://vclock.com to create a timer for that duration. Leave the timer visible in the browser.",
-  "source": "synthetic",
+  "difficulty": "hard",
+  "operation_time": 81.49,
+  "instruction": "Use Chrome Live Caption on the customer's voicemail, then use the official IRS website to find the alternative IP PIN application option that fits the customer's situation. Leave the official application form open and keep Chrome Live Caption enabled.",
+  "source": "https://www.irs.gov/identity-theft-fraud-scams/get-an-identity-protection-pin",
+  "transcript": "Hi, I'm calling because I couldn't get through the IRS online identity check. My adjusted gross income on my last return was 72400 dollars, and I file as an individual. I still need another way to apply for an Identity Protection PIN.",
   "gt_steps": [
     "Turn on Chrome Live Caption.",
-    "Play the local cooking video and identify the source phrase `about two hours` for the dough to double in size.",
-    "Open `https://vclock.com` in the browser.",
-    "Create and start a 2-hour timer.",
-    "Leave the timer visible in the browser."
+    "Play the customer's voicemail.",
+    "Open the official IRS Identity Protection PIN page.",
+    "Open `https://irs.gov/pub/irs-pdf/f15227.pdf`.",
+    "Leave Form 15227 open.",
+    "Leave Chrome Live Caption enabled."
   ],
   "config": [
     {
@@ -25,8 +27,8 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/management-double_dough_timer.mp4",
-            "path": "C:\\Users\\Docker\\Desktop\\PitaDoughDoubleTimer.mp4"
+            "local_path": "assets/service-irs_ip_pin_alternative_form.mp3",
+            "path": "C:\\Users\\Docker\\Desktop\\IRSIPPINRequest.mp3"
           }
         ]
       }
@@ -61,14 +63,9 @@
       "type": "chrome_open_tabs",
       "parameters": {
         "urls_to_open": [
-          "file:///C:/Users/Docker/Desktop/PitaDoughDoubleTimer.mp4"
+          "file:///C:/Users/Docker/Desktop/IRSIPPINRequest.mp3",
+          "https://www.irs.gov/identity-theft-fraud-scams/get-an-identity-protection-pin"
         ]
-      }
-    },
-    {
-      "type": "activate_window",
-      "parameters": {
-        "window_name": "Google Chrome"
       }
     }
   ],
@@ -94,7 +91,7 @@
         "type": "rule",
         "rules": {
           "expected": [
-            "https?://(www\\.)?vclock\\.com/timer/#countdown=02:00:00(&|$)"
+            "https?://(www\\.)?irs\\.gov/pub/irs-pdf/f15227\\.pdf.*"
           ]
         }
       },
@@ -115,5 +112,5 @@
     }
   },
   "proxy": true,
-  "transcript": "Pita dough timing note. After the dough is mixed and covered, leave it in a warm place until it doubles in size. That should take about two hours."
+  "possibility_of_env_change": "medium"
 }

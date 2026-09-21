@@ -1,23 +1,24 @@
 {
-  "id": "information-maricopa_census_search",
+  "id": "management-dryer_cycle_timer",
   "user_group": "hearing",
   "subgroup_ids": [
     "H-S1"
   ],
-  "category": "information",
+  "category": "management",
   "need_ids": [
     "H1"
   ],
   "difficulty": "medium",
-  "operation_time": 348.35,
-  "instruction": "Use Chrome Live Caption on the opened Census demonstration video, identify the area named there, then search for that area on the Census data website and leave the matching results visible.",
+  "operation_time": 34.77,
+  "instruction": "Use Chrome Live Caption to read the opened laundry update, then create and start a vclock.com timer for the dryer time remaining in the recording. Leave the timer visible.",
   "source": "synthetic",
+  "transcript": "Laundry update. The dryer display shows thirty-seven minutes remaining on the current load. Ignore the fifty-minute manual setting in the paper guide; that is not the time remaining. Start a timer for the remaining time so the load is not left sitting in the dryer.",
   "gt_steps": [
     "Turn on Chrome Live Caption.",
-    "Play the local Census demonstration video and identify the exact source phrase `Maricopa County, Arizona`.",
-    "Open `https://data.census.gov/`.",
-    "Search for `Maricopa County, Arizona`.",
-    "Leave the matching Census results visible."
+    "Play the laundry update in Chrome.",
+    "Open vclock.com and go to Timer.",
+    "Create and start a 37-minute timer.",
+    "Leave the running timer visible."
   ],
   "config": [
     {
@@ -25,8 +26,8 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/information-maricopa_census_search.mp4",
-            "path": "C:\\Users\\Docker\\Desktop\\CensusAreaDemo.mp4"
+            "local_path": "assets/management-dryer_cycle_timer.mp3",
+            "path": "C:\\Users\\Docker\\Desktop\\DryerCycleUpdate.mp3"
           }
         ]
       }
@@ -61,7 +62,7 @@
       "type": "chrome_open_tabs",
       "parameters": {
         "urls_to_open": [
-          "file:///C:/Users/Docker/Desktop/CensusAreaDemo.mp4"
+          "file:///C:/Users/Docker/Desktop/DryerCycleUpdate.mp3"
         ]
       }
     },
@@ -77,25 +78,25 @@
   ],
   "evaluator": {
     "func": [
-      "exact_match",
+      "is_expected_url_pattern_match",
       "exact_match"
     ],
     "conj": "and",
     "result": [
       {
-        "type": "live_caption_enabled"
+        "type": "active_tab_info_simple"
       },
       {
-        "type": "active_tab_contains_text",
-        "url_contains": "data.census.gov",
-        "expected_text": "Maricopa County, Arizona"
+        "type": "live_caption_enabled"
       }
     ],
     "expected": [
       {
         "type": "rule",
         "rules": {
-          "expected": "true"
+          "expected": [
+            "https?://(www\\.)?vclock\\.com/timer/#countdown=00:37:00(&|$)"
+          ]
         }
       },
       {
@@ -107,13 +108,13 @@
     ],
     "metric_roles": {
       "task_outcome": [
-        1
+        0
       ],
       "access_requirement": [
-        0
+        1
       ]
     }
   },
   "proxy": true,
-  "transcript": "Census data demonstration. For this example, search for Maricopa County, Arizona. Keep the county and state together in the search field."
+  "possibility_of_env_change": "low"
 }

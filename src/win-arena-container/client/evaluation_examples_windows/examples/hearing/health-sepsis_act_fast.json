@@ -1,0 +1,137 @@
+{
+  "id": "health-sepsis_act_fast",
+  "user_group": "hearing",
+  "subgroup_ids": [
+    "H-S1"
+  ],
+  "category": "health",
+  "need_ids": [
+    "H1"
+  ],
+  "difficulty": "medium",
+  "operation_time": 32.70,
+  "instruction": "Use Chrome Live Caption on the opened CDC video. Save the phrase the narrator uses for what infections can lead to, followed by the three actions the narrator says can help get ahead of sepsis, in `answer.txt` on the Desktop.",
+  "source": "https://www.cdc.gov/sepsis/communication-resources/domino-effect.html",
+  "gt_steps": [
+    "Turn on Chrome Live Caption.",
+    "On the opened CDC `Sepsis: The Domino Effect` page, play the short English video.",
+    "Use Chrome Live Caption to identify the original phrases `a deadly chain reaction called sepsis\nknow the risks\nspot the symptoms`, and `act fast`.",
+    "Open Notepad.",
+    "Enter `a deadly chain reaction called sepsis\nknow the risks\nspot the symptoms\nact fast` in `answer.txt`.",
+    "Save `answer.txt` on the Desktop.",
+    "Leave Chrome Live Caption enabled."
+  ],
+  "config": [
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "google-chrome",
+          "--remote-debugging-port=1337",
+          "--force-renderer-accessibility"
+        ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    },
+    {
+      "type": "sleep",
+      "parameters": {
+        "seconds": 1
+      }
+    },
+    {
+      "type": "chrome_open_tabs",
+      "parameters": {
+        "urls_to_open": [
+          "https://www.cdc.gov/sepsis/communication-resources/domino-effect.html"
+        ]
+      }
+    },
+    {
+      "type": "activate_window",
+      "parameters": {
+        "window_name": "Google Chrome"
+      }
+    }
+  ],
+  "related_apps": [
+    "chrome",
+    "notepad"
+  ],
+  "evaluator": {
+    "func": [
+      "check_text_points",
+      "exact_match"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "desktop_file_text",
+        "filename": "answer.txt"
+      },
+      {
+        "type": "live_caption_enabled"
+      }
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "ignore_case": true,
+          "points": [
+            [
+              "a deadly chain reaction called sepsis",
+              "deadly chain reaction called sepsis",
+              "a deadly chain reaction known as sepsis",
+              "a deadly chain reaction named sepsis",
+              "a deadly chain reaction: sepsis"
+            ],
+            [
+              "know the risks",
+              "know the risk",
+              "understand the risks",
+              "be aware of the risks"
+            ],
+            [
+              "spot the symptoms",
+              "recognize the symptoms",
+              "identify the symptoms",
+              "notice the symptoms"
+            ],
+            [
+              "act fast",
+              "act quickly",
+              "take action quickly",
+              "respond quickly"
+            ]
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "expected": "true"
+        }
+      }
+    ],
+    "metric_roles": {
+      "task_outcome": [
+        0
+      ],
+      "access_requirement": [
+        1
+      ]
+    }
+  },
+  "proxy": true,
+  "possibility_of_env_change": "medium"
+}
