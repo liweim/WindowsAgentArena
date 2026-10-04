@@ -29,6 +29,7 @@
     }
   ],
   "related_apps": [
+    "settings",
     "chrome"
   ],
   "evaluator": {

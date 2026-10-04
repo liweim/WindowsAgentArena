@@ -1046,9 +1046,20 @@ failure-specific ablation + external benchmark transfer；不只报 own-benchmar
 
 ### Table 1 — Prior benchmark comparison
 
-列：executable environment、end-to-end tasks、deterministic evaluator、multimodal input、documented access-need grounding、multiple functional groups、accessible output/state evaluation、human trajectory dataset。
+| Category | Benchmark | Scale | Real OS / Interactive Env. | Text Input | Video Input | Audio Input | Accessibility-Oriented | Daily-Life Tasks | Multi-Scenario | End-to-End GUI Execution |
+| --- | --- | ---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| Web GUI Agents | WebArena | 812 tasks | ◐ | ✓ | ✗ | ✗ | ✗ | ◐ | ✓ | ✓ |
+| Web GUI Agents | VisualWebArena | 910 tasks | ◐ | ✓ | ✗ | ✗ | ✗ | ◐ | ✓ | ✓ |
+| OS / Mobile Computer Use | OSWorld | 369 tasks | ✓ | ✓ | ✗ | ✗ | ✗ | ◐ | ✓ | ✓ |
+| OS / Mobile Computer Use | AndroidWorld | 116 task types | ✓ | ✓ | ✗ | ✗ | ✗ | ✓ | ✓ | ✓ |
+| Multimodal / Video-Aware GUI Agents | VideoWebArena | 2,021 tasks | ◐ | ✓ | ✓ | ◐ | ✗ | ◐ | ✓ | ✓ |
+| Multimodal / Video-Aware GUI Agents | VideoGUI | 86 tasks / 463 subtasks | ◐ | ✓ | ✓ | ✗ | ✗ | ✗ | ✓ | ◐ |
+| Multimodal / Video-Aware GUI Agents | OmniGUI | 709 episodes / 2,579 steps | ✓ | ✓ | ✓ | ✓ | ✗ | ◐ | ✓ | ◐ |
+| Accessibility / User Assistance | A11y-CUA | 60 tasks | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ◐ | ✗ |
+| Accessibility / User Assistance | GUIDE | 67.5h videos / 120 users | ◐ | ✓ | ✓ | ✓ | ✗ | ✗ | ✓ | ✗ |
+| **Ours** | **Ours** | **200 tasks** | **✓** | **✓** | **✓** | **✓** | **✓** | **✓** | **✓, 8 scenarios** | **✓** |
 
-不要做成所有列本文都是 ✓ 的 marketing table。
+符号：✓ = supported；✗ = not supported；◐ = partially supported or limited setting。
 
 ### Table 2 — Benchmark statistics
 

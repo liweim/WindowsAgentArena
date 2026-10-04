@@ -31,6 +31,7 @@
     }
   ],
   "related_apps": [
+    "settings",
     "msedge"
   ],
   "evaluator": {

@@ -489,65 +489,114 @@ def get_extensions_installed_from_shop(env, config: Dict[str, str]):
 # The following ones require Playwright to be installed on the target machine, and the chrome needs to be pre-config on
 # port info to allow remote debugging, see README.md for details
 
-def get_page_info(env, config: Dict[str, str]):
-    """ Get information from a website. 
-    Args:
-        env (Any): The environment object.
-        config (Dict[Any, Any]): The configuration dictionary.
-            - url (str): The URL of the website to visit
-            - load_state (str): The playwright load state to wait for. Can be 'load' or 'domcontentloaded'
-    """
+# def get_page_info(env, config: Dict[str, str]):
+#     """ Get information from a website. 
+#     Args:
+#         env (Any): The environment object.
+#         config (Dict[Any, Any]): The configuration dictionary.
+#             - url (str): The URL of the website to visit
+#             - load_state (str): The playwright load state to wait for. Can be 'load' or 'domcontentloaded'
+#     """
     
+#     host = env.vm_ip
+#     port = 9222  # fixme: this port is hard-coded, need to be changed from config file
+#     url = config["url"]
+#     load_state = config.get('load_state', 'load')
+
+#     remote_debugging_url = f"http://{host}:{port}"
+#     with sync_playwright() as p:
+#         # connect to remote Chrome instance
+#         try:
+#             browser = p.chromium.connect_over_cdp(remote_debugging_url)
+#         except Exception as e:
+#             # If the connection fails, start a new browser instance
+#             platform.machine()
+#             if "arm" in platform.machine():
+#                 # start a new browser instance if the connection fails
+#                 payload = json.dumps({"command": [
+#                     "chromium",
+#                     "--remote-debugging-port=1337"
+#                 ], "shell": False})
+#             else:
+#                 payload = json.dumps({"command": [
+#                     "google-chrome",
+#                     "--remote-debugging-port=1337"
+#                 ], "shell": False})
+
+#             headers = {"Content-Type": "application/json"}
+#             requests.post("http://" + host + ":5000/setup" + "/launch", headers=headers, data=payload)
+#             time.sleep(5)
+#             browser = p.chromium.connect_over_cdp(remote_debugging_url)
+
+#         page = browser.contexts[0].new_page()
+#         page.goto(url)
+
+#         try:
+#             # Wait for the page to finish loading, this prevents the "execution context was destroyed" issue
+#             page.wait_for_load_state(load_state)  # Wait for the 'load' event to complete
+#             title = page.title()
+#             url = page.url
+#             page_info = {'title': title, 'url': url, 'content': page.content()}
+#             print("page_info: ", page_info)
+#         except TimeoutError:
+#             # If page loading times out, catch the exception and store the current information in the list
+#             page_info = {'title': 'Load timeout', 'url': page.url, 'content': page.content()}
+#         except Exception as e:
+#             # Catch other potential exceptions that might occur while reading the page title
+#             print(f'Error: {e}')
+#             page_info = {'title': 'Error encountered', 'url': page.url, 'content': page.content()}   
+
+#         browser.close()
+#         return page_info
+
+def get_page_info(env, config: Dict[str, str]):
     host = env.vm_ip
-    port = 9222  # fixme: this port is hard-coded, need to be changed from config file
-    url = config["url"]
-    load_state = config.get('load_state', 'load')
+    port = 9222
+    expected_url = config["url"]
+    load_state = config.get("load_state", "load")
 
     remote_debugging_url = f"http://{host}:{port}"
+
     with sync_playwright() as p:
-        # connect to remote Chrome instance
-        try:
-            browser = p.chromium.connect_over_cdp(remote_debugging_url)
-        except Exception as e:
-            # If the connection fails, start a new browser instance
-            platform.machine()
-            if "arm" in platform.machine():
-                # start a new browser instance if the connection fails
-                payload = json.dumps({"command": [
-                    "chromium",
-                    "--remote-debugging-port=1337"
-                ], "shell": False})
-            else:
-                payload = json.dumps({"command": [
-                    "google-chrome",
-                    "--remote-debugging-port=1337"
-                ], "shell": False})
+        browser = p.chromium.connect_over_cdp(remote_debugging_url)
 
-            headers = {"Content-Type": "application/json"}
-            requests.post("http://" + host + ":5000/setup" + "/launch", headers=headers, data=payload)
-            time.sleep(5)
-            browser = p.chromium.connect_over_cdp(remote_debugging_url)
+        context = browser.contexts[0]
 
-        page = browser.contexts[0].new_page()
-        page.goto(url)
+        # Find the existing page instead of creating a new one
+        page = None
+
+        for existing_page in context.pages:
+            if existing_page.url.startswith(expected_url):
+                page = existing_page
+                break
+
+        if page is None:
+            print(f"No existing page found for {expected_url}")
+            return {
+                "title": "",
+                "url": "",
+                "content": ""
+            }
 
         try:
-            # Wait for the page to finish loading, this prevents the "execution context was destroyed" issue
-            page.wait_for_load_state(load_state)  # Wait for the 'load' event to complete
-            title = page.title()
-            url = page.url
-            page_info = {'title': title, 'url': url, 'content': page.content()}
-        except TimeoutError:
-            # If page loading times out, catch the exception and store the current information in the list
-            page_info = {'title': 'Load timeout', 'url': page.url, 'content': page.content()}
+            page.wait_for_load_state(load_state)
+
+            page_info = {
+                "title": page.title(),
+                "url": page.url,
+                "content": page.content()
+            }
+
+            print("page_info:", page_info)
+            return page_info
+
         except Exception as e:
-            # Catch other potential exceptions that might occur while reading the page title
-            print(f'Error: {e}')
-            page_info = {'title': 'Error encountered', 'url': page.url, 'content': page.content()}   
-
-        browser.close()
-        return page_info
-
+            print(f"Error getting page info: {e}")
+            return {
+                "title": "",
+                "url": page.url,
+                "content": page.content()
+            }
 
 def get_open_tabs_info(env, config: Dict[str, str]):
     host = env.vm_ip
@@ -1924,10 +1973,33 @@ def get_chrome_page_zoom_from_preferences(env, config):
         logger.error("Failed to read Chrome page zoom: %s", e)
         return ""
 
-def get_coupon_code_value(env, config, page):
-    selector = config.get("selector", "#coupon_code")
+def get_coupon_code_value(env, config):
+    host = env.vm_ip
+    port = 9222
 
-    try:
-        return page.locator(selector).input_value().strip()
-    except Exception:
-        return ""
+    selector = config["selector"]
+
+    remote_debugging_url = f"http://{host}:{port}"
+
+    with sync_playwright() as p:
+        try:
+            browser = p.chromium.connect_over_cdp(remote_debugging_url)
+            context = browser.contexts[0]
+
+            cart_page = None
+
+            for page in context.pages:
+                if page.url.startswith(
+                    "http://host.docker.internal:7770/checkout/cart/"
+                ):
+                    cart_page = page
+                    break
+
+            if cart_page is None:
+                return ""
+
+            return cart_page.locator(selector).input_value().strip()
+
+        except Exception as e:
+            print(f"Error getting coupon code: {e}")
+            return ""

@@ -284,7 +284,7 @@ def plot_distributions(
         + annotate(
             "text",
             x=-3.8,
-            y=1.72,
+            y=1.38,
             label="Tasks by user group",
             size=24,
             fontweight="bold",
@@ -302,8 +302,8 @@ def plot_distributions(
         + annotate(
             "text",
             x=4.35,
-            y=1.72,
-            label="Tasks by related app",
+            y=1.38,
+            label="Tasks by apps",
             size=24,
             fontweight="bold",
             family="Arial",

@@ -593,7 +593,6 @@ FIX_RESPONSE_PROMPT = """Repair the planner response below and preserve the inte
 Repair rules:
 - Focus on fixing the concrete parse/schema/tool-syntax error shown above.
 - If the error points to a specific line, column, or token, fix that exact location.
-- Return exactly one final JSON object matching the response format below.
 - Action content must be a bare string, not an object.
 - A GUI action must be a valid Python `pyautogui` code string.
 - An API action must be exactly one Python call expression such as `GoogleDriveTools.upload_file(...)`.
@@ -712,7 +711,6 @@ Instructions:
 - **IMPORTANT**: Preserve coordinates in click actions (e.g., "click(500,300)") so the summary records the exact prior interactions
 - Identify repeated no-progress behavior, task-relevant progress, or stalled execution.
 - Provide actionable suggestions for the next step if there are issues
-- If `bash_execution` or api already verified the requested file/data state, do not suggest GUI Save, reopen, reload, or refresh just to sync a stale window; suggest termination or another text-level verification instead.
 
 Return a concise summary string in this format:
 Steps X~Y: [ordered list of what was done, keeping coordinates]. Suggestion: [actionable advice, or 'Continue' if progressing well]
