@@ -18,7 +18,7 @@ nohup setsid env \
     --agent tars \
     --model qwen3.8-27b \
     --global-planner-model qwen3.8-27b \
-    --visual-grounder-model gta1-7b \
+    --visual-grounder-model qwen3.8-27b \
     --max-steps 100 \
     --som-origin oss \
     --a11y-backend uia \
@@ -30,8 +30,9 @@ nohup setsid env \
     --browser-port 18118 \
     --rdp-port 13397 \
     --result-dir /locallstc/projects/WindowsAgentArena/results/tars_qwen3.8-27b \
-    --json-name evaluation_examples_windows/debug.json \
+    --json-name evaluation_examples_windows/test_one.json \
     --remove-container true \
+    --rerun \
     "$@" >"$LOG_FILE" 2>&1 < /dev/null &
 
 runner_pid=$!

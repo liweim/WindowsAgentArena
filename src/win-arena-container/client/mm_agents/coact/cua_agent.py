@@ -291,7 +291,53 @@ def run_cua(
                     })
                     break
 
-                py_cmd, step_reasoning = client.parse_cua_response(raw_response, messages, screen_width, screen_height)
+                try:
+                    py_cmd, step_reasoning = client.parse_cua_response(
+                        raw_response, messages, screen_width, screen_height
+                    )
+                except (ValueError, NotImplementedError) as parse_error:
+                    logger.warning(
+                        "Local CUA response was not parseable; asking the model to "
+                        "retry once. Error: %s. Response: %.500s",
+                        parse_error,
+                        raw_response,
+                    )
+                    retry_before = llm.get_usage()
+                    messages.extend([
+                        {"role": "assistant", "content": raw_response},
+                        {
+                            "role": "user",
+                            "content": [
+                                {
+                                    "type": "input_text",
+                                    "text": (
+                                        "Your previous response could not be executed. "
+                                        "Return exactly one Python code block containing "
+                                        "one PyAutoGUI action. Express every mouse coordinate "
+                                        "in the 0-to-1000 normalized screenshot coordinate "
+                                        "space; do not use pixel coordinates. "
+                                        "or return exactly TERMINATE or IDK: <reason>. "
+                                        "Do not return prose or a UI action schema."
+                                    ),
+                                }
+                            ],
+                        },
+                    ])
+                    raw_response = llm(messages, max_retries=3) or ""
+                    retry_after = llm.get_usage()
+                    retry_cost, retry_input, retry_output, retry_images = _usage_delta(
+                        retry_before, retry_after
+                    )
+                    step_cost += retry_cost
+                    step_input_tokens += retry_input
+                    step_output_tokens += retry_output
+                    step_image_count += retry_images
+                    total_input_tokens += retry_input
+                    total_output_tokens += retry_output
+                    total_image_count += retry_images
+                    py_cmd, step_reasoning = client.parse_cua_response(
+                        raw_response, messages, screen_width, screen_height
+                    )
                 reasoning = step_reasoning or raw_response
                 lower_raw = raw_response.lower()
                 action_repr = _extract_action_block(raw_response) or py_cmd
@@ -359,6 +405,7 @@ def run_cua(
                     break
 
                 try:
+                    logger.info("Executing GUI command (step %s): %s", step_no, py_cmd)
                     next_obs, *_ = env.step(py_cmd, sleep_after_execution)
                     obs = next_obs["screenshot"]
                     with open(os.path.join(save_path, f"step_{step_no}.png"), "wb") as f:
@@ -499,6 +546,8 @@ def run_cua(
                     obs, *_ = env.step(py_cmd, sleep_after_execution)
 
                     screenshot_b64 = base64.b64encode(obs["screenshot"]).decode("utf-8")
+                    with Image.open(io.BytesIO(obs["screenshot"])) as current_screenshot:
+                        screen_width, screen_height = current_screenshot.size
                     with open(os.path.join(save_path, f"step_{step_no}.png"), "wb") as f:
                         f.write(obs["screenshot"])
                     history_inputs += [{

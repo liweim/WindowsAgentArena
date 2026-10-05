@@ -111,9 +111,7 @@
     "conj": "and",
     "result": [
       {
-        "type": "vm_file",
-        "path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release\\Mail\\Local Folders\\Drafts",
-        "dest": "thunderbird-drafts.mbox"
+        "type": "thunderbird_drafts"
       },
       {
         "type": "live_caption_enabled"

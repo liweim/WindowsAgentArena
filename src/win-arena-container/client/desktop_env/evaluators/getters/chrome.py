@@ -1328,6 +1328,36 @@ def get_live_caption_enabled(env, config: Dict[str, str]):
     return "false"
 
 
+def get_browser_video_captions_enabled(env, config: Dict[str, str]):
+    """Accept Chrome Live Caption or captions enabled in a YouTube player."""
+    if get_live_caption_enabled(env, config) == "true":
+        return "true"
+
+    remote_debugging_url = f"http://{env.vm_ip}:9222"
+    script = """() => {
+        const button = document.querySelector('.ytp-subtitles-button');
+        if (!button) return false;
+        const title = (button.getAttribute('title') || '').toLowerCase();
+        return button.getAttribute('aria-pressed') === 'true'
+            || button.classList.contains('ytp-button-active')
+            || title.includes('turn off');
+    }"""
+    with sync_playwright() as p:
+        try:
+            browser = p.chromium.connect_over_cdp(remote_debugging_url)
+            for context in browser.contexts:
+                for page in context.pages:
+                    for frame in page.frames:
+                        try:
+                            if frame.evaluate(script):
+                                return "true"
+                        except Exception:
+                            continue
+        except Exception as e:
+            logger.error("Failed to check browser video captions: %s", e)
+    return "false"
+
+
 def get_live_caption_languages(env, config: Dict[str, str]):
     os_type = env.vm_platform
     if os_type == 'Windows':

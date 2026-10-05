@@ -1,10 +1,8 @@
-import requests
 import os
 import time
 import threading
 from functools import wraps
 from PIL import Image, ImageDraw
-import json
 import base64
 import io
 from dataclasses import dataclass
@@ -16,7 +14,8 @@ import math
 import re
 import ast
 from io import BytesIO
-from mm_agents.utils import smart_resize
+from mm_agents.utils import smart_resize, postprocess_action
+from typing import Callable
 
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", None)
 # LOCAL_API_URL = "http://129.94.173.199:30001/v1"
@@ -118,6 +117,182 @@ MODEL_CONFIGS = {
     "gemma-4-31b": ModelConfig("LocalLLM", 0, 0),
 }
 
+DIRECT_COORDINATE_GROUNDING_PROMPT = """# Direct Screenshot Coordinate Grounding
+For every visible mouse target, use the attached current screenshot to emit normalized coordinates directly in the `pyautogui` action.
+
+- Every x and y coordinate in the new actions you generate must use the model's 0-to-1000 normalized coordinate space, independent of screenshot resolution. Origin `(0, 0)` is top-left and bottom-right is `(1000, 1000)`.
+- Use the center of the visible target, not a bounding-box corner.
+- Never emit coordinate placeholders such as `X_COORD`, `Y_COORD`, `START_X_COORD`, or `END_X_COORD`.
+- For `click`, `doubleClick`, `rightClick`, and `moveTo`, always include `(x, y)`.
+- For a drag, include both `pyautogui.moveTo(start_x, start_y)` and `pyautogui.dragTo(end_x, end_y, duration=...)`.
+- For a region-specific scroll, include `pyautogui.moveTo(x, y)` immediately before `pyautogui.scroll(...)`.
+- Do not describe a target in place of coordinates.
+"""
+
+
+def normalize_model_name(model_name: str) -> str:
+    return str(model_name or "").strip().lower()
+
+
+def uses_direct_coordinate_grounding(planner_model: str, grounder_model: str) -> bool:
+    """Return whether one deployed model should plan and ground in one call."""
+    planner = normalize_model_name(planner_model)
+    grounder = normalize_model_name(grounder_model)
+    return bool(planner) and planner == grounder
+
+
+@dataclass(frozen=True)
+class PreparedDirectAction:
+    """The two representations of one direct-coordinate planner action."""
+
+    history_action: str
+    executed_action: str
+
+
+class DirectCoordinateActionAdapter:
+    """Validate, postprocess and map normalized planner actions to pixels.
+
+    `history_action` retains normalized coordinates but includes all non-coordinate
+    execution postprocessing. `executed_action` contains the corresponding native
+    screenshot pixels. This prevents both pixel-coordinate history pollution and
+    misleading history such as recording scroll(-10) when scroll(-5) ran.
+    """
+
+    COORDINATE_METHODS = {
+        "click",
+        "doubleClick",
+        "rightClick",
+        "moveTo",
+        "dragTo",
+        "long_press",
+    }
+    PLACEHOLDERS = {
+        "X_COORD",
+        "Y_COORD",
+        "START_X_COORD",
+        "START_Y_COORD",
+        "END_X_COORD",
+        "END_Y_COORD",
+    }
+
+    def __init__(self, action_postprocessor: Callable[[str], str] = postprocess_action):
+        self.action_postprocessor = action_postprocessor
+
+    @staticmethod
+    def normalize_code(code: str) -> str:
+        if not isinstance(code, str) or not code.strip():
+            return code
+        return re.sub(r"(?<=\(|,)\s*([xy])\s*=\s*", "", code)
+
+    @staticmethod
+    def _parse(code: str) -> ast.Module:
+        try:
+            return ast.parse(code)
+        except SyntaxError as exc:
+            raise ValueError(f"Failed to parse direct-coordinate action: {exc}") from exc
+
+    @staticmethod
+    def _pyautogui_method(call: ast.Call) -> str:
+        if (
+            isinstance(call.func, ast.Attribute)
+            and isinstance(call.func.value, ast.Name)
+            and call.func.value.id == "pyautogui"
+        ):
+            return call.func.attr
+        return ""
+
+    @staticmethod
+    def _numeric_value(node: ast.AST):
+        try:
+            value = ast.literal_eval(node)
+        except (ValueError, TypeError, SyntaxError):
+            return None
+        if isinstance(value, bool) or not isinstance(value, (int, float)):
+            return None
+        return value
+
+    @classmethod
+    def _point_nodes(cls, call: ast.Call):
+        keyword_nodes = {kw.arg: kw.value for kw in call.keywords if kw.arg}
+        if "x" in keyword_nodes or "y" in keyword_nodes:
+            if "x" not in keyword_nodes or "y" not in keyword_nodes:
+                return None
+            return keyword_nodes["x"], keyword_nodes["y"]
+        if len(call.args) >= 2:
+            return call.args[0], call.args[1]
+        return None
+
+    def has_valid_coordinates(self, code: str) -> bool:
+        if any(token in str(code or "") for token in self.PLACEHOLDERS):
+            return False
+        try:
+            tree = self._parse(self.normalize_code(code))
+        except ValueError:
+            return False
+
+        saw_drag = False
+        saw_move = False
+        for node in ast.walk(tree):
+            if not isinstance(node, ast.Call):
+                continue
+            method = self._pyautogui_method(node)
+            if method not in self.COORDINATE_METHODS:
+                continue
+            saw_drag = saw_drag or method == "dragTo"
+            saw_move = saw_move or method == "moveTo"
+            point_nodes = self._point_nodes(node)
+            if point_nodes is None:
+                return False
+            x = self._numeric_value(point_nodes[0])
+            y = self._numeric_value(point_nodes[1])
+            if x is None or y is None or not 0 <= x <= 1000 or not 0 <= y <= 1000:
+                return False
+        return not saw_drag or saw_move
+
+    @staticmethod
+    def _pixel_coordinate(value: float, size: int) -> int:
+        return min(max(0, size - 1), round(float(value) * size / 1000))
+
+    def map_to_pixels(self, code: str, screen_width: int, screen_height: int) -> str:
+        tree = self._parse(self.normalize_code(code))
+        for node in ast.walk(tree):
+            if not isinstance(node, ast.Call):
+                continue
+            if self._pyautogui_method(node) not in self.COORDINATE_METHODS:
+                continue
+            point_nodes = self._point_nodes(node)
+            if point_nodes is None:
+                continue
+            normalized_x = self._numeric_value(point_nodes[0])
+            normalized_y = self._numeric_value(point_nodes[1])
+            if normalized_x is None or normalized_y is None:
+                continue
+            pixel_x = ast.Constant(self._pixel_coordinate(normalized_x, screen_width))
+            pixel_y = ast.Constant(self._pixel_coordinate(normalized_y, screen_height))
+            keyword_nodes = {kw.arg: kw for kw in node.keywords if kw.arg}
+            if "x" in keyword_nodes and "y" in keyword_nodes:
+                keyword_nodes["x"].value = pixel_x
+                keyword_nodes["y"].value = pixel_y
+            else:
+                node.args[0] = pixel_x
+                node.args[1] = pixel_y
+        ast.fix_missing_locations(tree)
+        return ast.unparse(tree).strip()
+
+    def prepare(self, code: str, screen_width: int, screen_height: int) -> PreparedDirectAction:
+        normalized_code = self.normalize_code(code)
+        history_action = self.action_postprocessor(normalized_code)
+        if not self.has_valid_coordinates(history_action):
+            raise ValueError(
+                "Direct-coordinate planner returned missing, placeholder, or "
+                "out-of-range 0..1000 coordinates; no visual-grounder fallback is configured."
+            )
+        executed_action = self.map_to_pixels(history_action, screen_width, screen_height)
+        executed_action = self.action_postprocessor(executed_action)
+        return PreparedDirectAction(
+            history_action=history_action,
+            executed_action=executed_action,
+        )
 
 def resize_image(img, max_size=1024):
     """Resize image to meet API constraints"""
@@ -922,8 +1097,17 @@ class LocalLLM(BaseLLMClient):
                             {"type": "input_image", "image_url": encode_image(image)}
                         ],
                     }
-                ]
+            ]
             return messages
+        elif self.model_type in {"qwen", "gemma"}:
+            instruction = (
+                instruction
+                + "\n\n[Computer-use response format]\n"
+                + f"The screenshot is {screen_width}x{screen_height} pixels. Return exactly one Python code block with the next executable PyAutoGUI action. Ground the target from this current screenshot. For every mouse position, output coordinates in a 0-to-1000 normalized coordinate space, where (0,0) is the screenshot top-left and (1000,1000) is the bottom-right; the runtime converts them to pixels. Never output screenshot pixel coordinates and never copy coordinate estimates from the task description. Keep the action to one step. Allowed examples: pyautogui.click(x, y), pyautogui.hotkey('ctrl', 'l'), pyautogui.write('text'), pyautogui.press('enter'). For scrolling inside a menu, panel, or dialog, first position the pointer inside it with normalized coordinates in the same code block, for example pyautogui.moveTo(850, 500); pyautogui.scroll(-3). Use pyautogui.scroll(-3) alone only for full-page scrolling. Do not include imports, shell commands, or other code. If the task is complete, return TERMINATE; if you cannot proceed, return IDK with a brief reason."
+            )
+            return super()._build_cua_messages(
+                instruction, image, screen_width, screen_height
+            )
         else:
             return super()._build_cua_messages(instruction, image, screen_width, screen_height)
 
@@ -950,6 +1134,21 @@ class LocalLLM(BaseLLMClient):
             return self._parse_uitars_response(raw_response, messages, screen_width, screen_height)
         elif self.model_type == "gta1":
             return self._parse_gta1_response(raw_response, messages)
+        elif self.model_type in {"qwen", "gemma"}:
+            simple_action = self._extract_simple_action(raw_response)
+            if simple_action:
+                return simple_action, raw_response
+
+            py_cmd = self._extract_pyautogui_code(raw_response)
+            if py_cmd:
+                prepared = DirectCoordinateActionAdapter().prepare(
+                    py_cmd, screen_width, screen_height
+                )
+                return prepared.executed_action, raw_response
+
+            raise ValueError(
+                f"Could not extract a PyAutoGUI action from {self.model_type} response"
+            )
         else:
             raise NotImplementedError(f"CUA parsing for model type {self.model_type} not implemented")
 
@@ -1760,6 +1959,65 @@ class AbstractLLM:
     def reset_stats(self):
         """Reset usage statistics"""
         self.client.reset_stats()
+
+
+class SingleCallGroundingAdapter:
+    """Make an isolated image-grounding request through an existing model client."""
+
+    def __init__(self, llm: AbstractLLM):
+        self.llm = llm
+
+    def __call__(self, instruction: str, image: Image.Image, system_prompt: str = "") -> str:
+        messages = []
+        if system_prompt:
+            messages.append({
+                "role": "system",
+                "content": [{"type": "input_text", "text": system_prompt}],
+            })
+        messages.append({
+            "role": "user",
+            "content": [
+                {"type": "input_text", "text": instruction},
+                {"type": "input_image", "image_url": encode_image(image)},
+            ],
+        })
+        trace_callback = getattr(self.llm.client, "cua_trace_callback", None)
+        if trace_callback:
+            trace_callback(
+                "visual_grounder_request",
+                {"messages": messages, "image_size": list(image.size)},
+            )
+        try:
+            response = self.llm(messages, max_retries=3) or ""
+        except Exception as exc:
+            if trace_callback:
+                trace_callback("visual_grounder_error", {"error": repr(exc)})
+            raise
+        if trace_callback:
+            trace_callback("visual_grounder_response", {"raw_response": response})
+        return response
+
+    def ground_point(self, target: str, image: Image.Image) -> Tuple[int, int]:
+        """Locate a described target in a separate image call and return pixels."""
+        width, height = image.size
+        prompt = (
+            "Locate the center of this visible GUI target in the attached screenshot: "
+            f"{target!r}. The image is {width} pixels wide and {height} pixels high. "
+            "Return exactly one coordinate pair in image pixels as (x,y), with the "
+            "origin at the top-left. Do not include explanation or code."
+        )
+        response = self(
+            prompt,
+            image,
+            system_prompt=(
+                "You are a visual GUI grounding model. Identify the described target "
+                "in the screenshot and return its center point as (x,y) pixel coordinates."
+            ),
+        )
+        match = re.search(r"\((-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\)", response)
+        if not match:
+            raise ValueError(f"Grounding model did not return an (x,y) pair: {response!r}")
+        return round(float(match.group(1))), round(float(match.group(2)))
 
 
 def calculate_image_tokens():

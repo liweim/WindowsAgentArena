@@ -244,6 +244,11 @@ def check_text_points(result: str, rules: Dict[str, Any]) -> float:
 
     def normalize_point_text(value: Any) -> str:
         text = normalize_text(value, ignore_case=ignore_case)
+        # Treat common punctuated and unpunctuated meridiem spellings as the
+        # same presentation.  Accessibility-oriented tasks frequently copy
+        # source wording such as "10 p.m." while their reference answer uses
+        # "10 pm"; the punctuation does not change the time.
+        text = re.sub(r"\b([ap])\s*\.\s*m\s*\.?\b", r"\1m", text)
         # A full stop ending a sentence is presentation punctuation, not part
         # of the preceding fact. Remove it before applying numeric boundaries
         # so, for example, the point ``4826`` matches ``4826.`` while decimal
@@ -530,6 +535,11 @@ def check_ods_cell_values(result: str, rules: Dict[str, Any]) -> float:
             return 0.
 
     return 1.
+
+
+def check_odt_cell_values(result: str, rules: Dict[str, Any]) -> float:
+    """Check a named table in an ODT file using ODF cell addresses."""
+    return check_ods_cell_values(result, rules)
 
 def check_csv(result: str, rules: Dict[str, List[Dict[str, str]]]) -> float:
     """

@@ -3,21 +3,11 @@
 set -u
 
 if (($# != 1)); then
-    echo "Usage: $0 <tars|locallstc>" >&2
+    echo "Usage: $0 <container-name>" >&2
     exit 2
 fi
 
-case "$1" in
-    tars|locallstc)
-        task_name="$1"
-        container_name="a11yarena-$task_name"
-        ;;
-    *)
-        echo "Unknown task: $1" >&2
-        echo "Usage: $0 <tars|locallstc>" >&2
-        exit 2
-        ;;
-esac
+container_name="$1"
 
 declare -A process_groups=()
 
@@ -57,7 +47,7 @@ if ((${#process_groups[@]})); then
         fi
     done
 else
-    echo "No matching $task_name run.sh process found"
+    echo "No matching run.sh process found for container $container_name"
 fi
 
 # Remove the matching container if it remains. A missing container is harmless.
@@ -66,4 +56,4 @@ if docker inspect "$container_name" >/dev/null 2>&1; then
     docker rm -f "$container_name" >/dev/null
 fi
 
-echo "$task_name process and container are stopped"
+echo "Process and container $container_name are stopped"

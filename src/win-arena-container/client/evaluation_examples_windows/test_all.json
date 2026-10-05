@@ -153,7 +153,7 @@
         "service-bank_investigation_period",
         "service-passport_application_post_office",
         "service-voter_certificate_link",
-        "service-voting_comment_links"
+        "service-reddit_monitor_post_count"
     ],
     "visual": [
         "access-chrome_zoom_150",

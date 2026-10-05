@@ -12,6 +12,11 @@ import textwrap
 import tokenize
 from typing import Optional, Dict, List, Tuple, Any
 from mm_agents.llm import AbstractLLM
+from mm_agents.llm import (
+    DIRECT_COORDINATE_GROUNDING_PROMPT,
+    DirectCoordinateActionAdapter,
+    uses_direct_coordinate_grounding,
+)
 from mm_agents.locallstc.api import APIRegistry
 from mm_agents.utils import serialize_json, get_change_roi
 from json_repair import repair_json
@@ -124,6 +129,11 @@ class LocalLSTC:
         self.client_password = client_password
         self.screen_width = screen_width
         self.screen_height = screen_height
+        # The VM capture size can differ from the configured control size
+        # (for example, configured 1280x720 but PNG frames are 1280x800).
+        # Grounding must follow the current image's native pixel space.
+        self.current_screen_width = screen_width
+        self.current_screen_height = screen_height
         self.sleep_after_execution = sleep_after_execution
         self.max_steps = max_steps
         self.result_dir = result_dir
@@ -164,6 +174,11 @@ class LocalLSTC:
         self.seed = seed
         self.top_p = top_p
         self.top_k = top_k
+        self.direct_coordinate_grounding = uses_direct_coordinate_grounding(
+            global_planner_model,
+            visual_grounder_model,
+        )
+        self.direct_coordinate_adapter = DirectCoordinateActionAdapter()
 
         self.logger = logging.getLogger("desktopenv")
         self.skills_dir = os.path.join(os.path.dirname(__file__), "skills")
@@ -785,6 +800,8 @@ print(output)
         sections.extend(self._build_action_channel_planner_sections())
         sections.extend(self._build_domain_planner_sections())
         sections.extend(self._build_recovery_planner_sections())
+        if self.direct_coordinate_grounding:
+            sections.append(DIRECT_COORDINATE_GROUNDING_PROMPT)
         return "\n\n".join(section.strip() for section in sections if section)
 
     def _normalize_subgoal(self, value: str) -> str:
@@ -1539,7 +1556,19 @@ print(output)
         evaluation_screenshot = self._wait_for_stable_screenshot(timeout_seconds=30.0)
         if evaluation_screenshot is None:
             self.logger.warning("Failed to capture any screenshot before evaluation; continuing anyway.")
-        self._force_save_office_document()
+        try:
+            self._force_save_office_document()
+        except Exception as save_error:
+            # Saving here is a best-effort safeguard.  The agent may already
+            # have saved the document and then closed LibreOffice, in which
+            # case the UNO document has no CurrentController.  Do not turn a
+            # valid file-based evaluation into a zero merely because this
+            # redundant save could not be issued.
+            self.logger.warning(
+                "Best-effort LibreOffice save before evaluation failed: %s. "
+                "Continuing with the persisted file.",
+                save_error,
+            )
         while True:
             attempt += 1
             try:
@@ -1842,6 +1871,10 @@ print(output)
 
         self.logger.info(f"Global Planner: {self.global_planner_model}")
         self.logger.info(f"Visual Grounder: {self.visual_grounder_model}")
+        self.logger.info(
+            "Direct coordinate grounding: %s",
+            self.direct_coordinate_grounding,
+        )
         self.logger.info(f"State Manager: {self.state_manager_model}")
         self.logger.info(f"Max steps: {self.max_steps}")
         self.logger.info(f"wo_l2s: {self.wo_l2s}")
@@ -3017,6 +3050,18 @@ print(output)
             raise ValueError(f"Failed to extract grounded coordinates from: {grounded_cmd}")
         return int(match.group(1)), int(match.group(2))
 
+    def _has_valid_direct_coordinates(self, code: str) -> bool:
+        """Validate planner coordinates in Qwen's normalized 0..1000 space."""
+        return self.direct_coordinate_adapter.has_valid_coordinates(code)
+
+    def _map_direct_coordinates_to_pixels(self, code: str) -> str:
+        """Convert direct planner coordinates from 0..1000 to screenshot pixels."""
+        return self.direct_coordinate_adapter.map_to_pixels(
+            code,
+            self.current_screen_width,
+            self.current_screen_height,
+        )
+
     def _ground_gui_code(self, code: str, description: str, screenshot: bytes) -> str:
         """Auto-ground mouse-position GUI tool code from action type and description."""
         if not isinstance(code, str) or not code.strip():
@@ -3030,6 +3075,14 @@ print(output)
                 "START_X_COORD", "START_Y_COORD", "END_X_COORD", "END_Y_COORD",
             ]
         )
+        if self.direct_coordinate_grounding:
+            with Image.open(io.BytesIO(screenshot)) as screenshot_image:
+                self.current_screen_width, self.current_screen_height = screenshot_image.size
+            return self.direct_coordinate_adapter.prepare(
+                grounded_code,
+                self.current_screen_width,
+                self.current_screen_height,
+            ).executed_action
         if has_placeholders:
             if not description:
                 raise ValueError("Grounding requires action intent, but thought was empty.")
@@ -3105,6 +3158,9 @@ print(output)
         """
         # Convert screenshot bytes to PIL Image
         img = Image.open(io.BytesIO(screenshot))
+        screenshot_width, screenshot_height = img.size
+        self.current_screen_width = screenshot_width
+        self.current_screen_height = screenshot_height
 
         def call_grounder(target_desc: str):
             scale = self.visual_grounder_scale if self.visual_grounder_llm.model_name.startswith("gta1") else 1.0
@@ -3114,8 +3170,8 @@ print(output)
                     "target_description": target_desc,
                     "code_template": code,
                     "environment": self.guest_platform,
-                    "screen_width": self.screen_width,
-                    "screen_height": self.screen_height,
+                    "screen_width": screenshot_width,
+                    "screen_height": screenshot_height,
                     "scale": scale,
                     "screenshot": "<omitted image bytes>",
                 },
@@ -3124,8 +3180,8 @@ print(output)
                 target_desc,
                 img,
                 environment=self.guest_platform,
-                screen_width=self.screen_width,
-                screen_height=self.screen_height,
+                screen_width=screenshot_width,
+                screen_height=screenshot_height,
                 scale=scale
             )
             self._dump_prompt_entry(
@@ -3583,6 +3639,7 @@ print(output)
             env_changed = False
             total_wait_elapsed = 0.0
             final_code_parts: List[str] = []
+            history_code_parts: List[str] = []
 
             for chunk_index, chunk in enumerate(chunks):
                 chunk_code = self._serialize_pyautogui_code(chunk)
@@ -3595,8 +3652,24 @@ print(output)
                 )
                 requires_grounding = self._chunk_requires_grounding(chunk)
                 effective_description = chunk_description if requires_grounding else ""
-                grounded_code = self._ground_gui_code(chunk_code, effective_description, current_screenshot)
-                final_chunk_code = postprocess_action(grounded_code)
+                if self.direct_coordinate_grounding:
+                    with Image.open(io.BytesIO(current_screenshot)) as screenshot_image:
+                        self.current_screen_width, self.current_screen_height = screenshot_image.size
+                    prepared_action = self.direct_coordinate_adapter.prepare(
+                        chunk_code,
+                        self.current_screen_width,
+                        self.current_screen_height,
+                    )
+                    history_chunk_code = prepared_action.history_action
+                    final_chunk_code = prepared_action.executed_action
+                else:
+                    grounded_code = self._ground_gui_code(
+                        chunk_code,
+                        effective_description,
+                        current_screenshot,
+                    )
+                    final_chunk_code = postprocess_action(grounded_code)
+                    history_chunk_code = final_chunk_code
                 self.logger.info(
                     "[gui_action] step=%s chunk=%s/%s grounded=%s",
                     step,
@@ -3615,11 +3688,13 @@ print(output)
                 env_changed = env_changed or chunk_changed
                 total_wait_elapsed += wait_elapsed
                 final_code_parts.append(final_chunk_code)
+                history_code_parts.append(history_chunk_code)
 
             with open(os.path.join(self.operations_dir, screenshot_file), "wb") as f:
                 f.write(after_screenshot)
 
             final_code = "; ".join(part for part in final_code_parts if part)
+            history_code = "; ".join(part for part in history_code_parts if part)
             eval_desc = final_code
             recovery_hint = f"no_visible_change after {total_wait_elapsed:.1f}s" if not env_changed else ""
             step_abstraction_summary = self._step_abstraction(
@@ -3635,17 +3710,25 @@ print(output)
 
             step_time = time.time() - step_start_time
             result_fingerprint = self._hash_text("success=True")
+            # Keep coordinates normalized for the planner while recording all
+            # other parameters after execution postprocessing. The native-pixel
+            # action remains available separately for diagnostics.
             self.action_logs.append({
                 "step": step,
                 "type": "gui_action",
                 "execution_success": True,
                 "screenshot": screenshot_file,
-                "detail": str(final_code),
+                "detail": str(history_code),
+                **(
+                    {"executed_detail": str(final_code)}
+                    if self.direct_coordinate_grounding
+                    else {}
+                ),
                 "compact": self._build_compact_log_entry(
                     step=step,
                     tool_type="gui_action",
                     success=True,
-                    detail=final_code,
+                    detail=history_code,
                     verification=(
                         (step_abstraction_summary.replace("Result: ", "") + f" Wait: {'changed' if env_changed else 'timeout/no visible change'} after {total_wait_elapsed:.1f}s.")
                         if step_abstraction_summary else f"wait={'changed' if env_changed else 'timeout'} after {total_wait_elapsed:.1f}s"
@@ -3667,7 +3750,7 @@ print(output)
             if not env_changed:
                 self.last_recovery_feedback_event = {
                     "type": "no_visible_change",
-                    "detail": str(final_code),
+                    "detail": str(history_code),
                 }
 
             return f"GUI Action Code: {final_code}\nStatus: Success\nWait: {'changed' if env_changed else 'timeout/no visible change'} after {total_wait_elapsed:.1f}s\n{step_abstraction_summary}"
@@ -4398,6 +4481,7 @@ except subprocess.TimeoutExpired as e:
                 "candidate_proposals_enabled": self._candidate_proposals_enabled(),
                 "actions_list_enabled": self._actions_list_enabled(),
                 "software_api_enabled": self.api_enabled,
+                "direct_coordinate_grounding": self.direct_coordinate_grounding,
                 "stall_loop_suppression_enabled": self._state_routing_enabled() and (not self.wo_sls),
                 "final_verification_enabled": self._state_routing_enabled() and (not self.wo_fv),
             },

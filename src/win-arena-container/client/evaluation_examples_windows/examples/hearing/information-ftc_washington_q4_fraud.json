@@ -118,6 +118,7 @@
       {
         "type": "rule",
         "rules": {
+          "ignore_case": true,
           "include": [
             "Identity Theft"
           ],

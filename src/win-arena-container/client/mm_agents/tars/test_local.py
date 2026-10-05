@@ -56,7 +56,7 @@ class LocalTarsTests(unittest.TestCase):
         registry_patch.start()
         self.addCleanup(registry_patch.stop)
         buffer = io.BytesIO()
-        Image.new("RGB", (1280, 720)).save(buffer, format="PNG")
+        Image.new("RGB", (1280, 800)).save(buffer, format="PNG")
         self.png = buffer.getvalue()
         FakeLLM.models = []
 
@@ -98,7 +98,10 @@ class LocalTarsTests(unittest.TestCase):
             task = TARS(env, directory, max_steps=5, screen_width=1920, screen_height=1080,
                         reset_wait=0, evaluation_wait=0)
             self.assertEqual(task.execute_task({"id": "test", "instruction": "Save"}), 1.0)
-            self.assertIn("x=480, y=270", env.actions[0])
+            # The configured size is deliberately stale. Grounding happens in
+            # canonical 1280x720 space, but execution must use the current
+            # 1280x800 screenshot, including its 800/720 vertical scale.
+            self.assertIn("x=320, y=200", env.actions[0])
             log = json.loads((Path(directory) / "execution_log.json").read_text())
             self.assertEqual(log["statistics"]["cua_steps"], 1)
             self.assertEqual(log["statistics"]["harness_steps"], 3)
@@ -111,7 +114,7 @@ class LocalTarsTests(unittest.TestCase):
             gui = [entry for entry in log["action_logs"] if entry["type"] == "gui_action"]
             self.assertEqual(len(gui), 1)
             self.assertTrue(gui[0]["execution_success"])
-            self.assertIn("x=480, y=270", gui[0]["action"])
+            self.assertIn("x=320, y=200", gui[0]["action"])
             self.assertEqual(log["statistics"]["prompt_tokens"], sum(
                 usage["prompt_tokens"] for usage in log["statistics"]["model_usage"].values()))
             self.assertEqual(set(FakeLLM.models), {"qwen3.8-27b", "gta1-7b"})

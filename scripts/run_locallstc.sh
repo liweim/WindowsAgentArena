@@ -24,7 +24,7 @@ nohup setsid env \
     --agent "$method" \
     --model qwen3.8-27b \
     --global_planner_model qwen3.8-27b \
-    --visual_grounder_model gta1-7b \
+    --visual_grounder_model qwen3.8-27b \
     --state_manager_model qwen3.8-27b \
     --max_steps 100 \
     --som-origin oss \
@@ -37,8 +37,9 @@ nohup setsid env \
     --browser-port 18113 \
     --rdp-port 13392 \
     --result-dir /locallstc/projects/WindowsAgentArena/results/locallstc_qwen3.8-27b \
-    --json-name evaluation_examples_windows/debug.json \
+    --json-name evaluation_examples_windows/test_one.json \
     --remove-container true \
+    --rerun \
     "$@" >"$LOG_FILE" 2>&1 < /dev/null &
 
 runner_pid=$!

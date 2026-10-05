@@ -18,8 +18,27 @@ python run_human.py \
     --browser-port 9016 \
     --rdp-port 3400
 
+起服务：
+nohup python -m vllm.entrypoints.openai.api_server \
+    --served-model-name qwen3.8-27b \
+    --model /home/weimingli/models/Qwen3.8-27B \
+    --gpu-memory-utilization 0.9 \
+    --max-model-len 131072 \
+    --max-num-seqs 10 \
+    --reasoning-parser qwen3 \
+    --host 0.0.0.0 \
+    --port 30000 \
+    > qwen.log 2>&1 &
+
+语音识别：
+PARAKEET_DEVICE=auto nohup python -m uvicorn \
+  mm_agents.parakeet_asr.server:app \
+  --app-dir /home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client \
+  --host 0.0.0.0 --port 18765 --workers 1 \
+  > /home/weimingli/projects/WindowsAgentArena/parakeet-asr.log 2>&1 &
+
 跑框架：cd scripts & ./run_locallstc.sh
-杀进程：./stop_run.sh locallstc
+杀进程：./stop_run.sh a11yarena-locallstc
 看结果：watch -n 60 python -m src.win-arena-container.client.mm_agents.utils
 
 git部分添加：git -C /home/weimingli/projects/WindowsAgentArena add -A -- . ':(exclude)src/win-arena-container/client/evaluation_examples_windows/examples/motor/**' ':(exclude)src/win-arena-container/client/evaluation_examples_windows/examples/visual/**'

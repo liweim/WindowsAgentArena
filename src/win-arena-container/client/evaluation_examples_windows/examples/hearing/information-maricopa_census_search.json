@@ -10,27 +10,18 @@
   ],
   "difficulty": "medium",
   "operation_time": 348.35,
-  "instruction": "Use Chrome Live Caption on the opened Census demonstration video, identify the area named there, then search for that area on the Census data website and leave the matching results visible.",
-  "source": "synthetic",
+  "instruction": "Use captions on the opened video to identify the area demonstrated there, then search for that area on the Census data website.",
+  "source": "https://www.census.gov/data/academy/data-gems/2026/visualize-data.html",
   "gt_steps": [
-    "Turn on Chrome Live Caption.",
-    "Play the local Census demonstration video and identify the exact source phrase `Maricopa County, Arizona`.",
-    "Open `https://data.census.gov/`.",
-    "Search for `Maricopa County, Arizona`.",
-    "Leave the matching Census results visible."
+    "Turn on an available caption feature for the video.",
+    "Play the opened video with captions and identify the demonstrated area: `Maricopa County, Arizona`.",
+    "Open https://data.census.gov/.",
+    "Click the website search box.",
+    "Enter `Maricopa County, Arizona`.",
+    "Submit the search.",
+    "Stay on the search results page."
   ],
   "config": [
-    {
-      "type": "upload_file",
-      "parameters": {
-        "files": [
-          {
-            "local_path": "assets/information-maricopa_census_search.mp4",
-            "path": "C:\\Users\\Docker\\Desktop\\CensusAreaDemo.mp4"
-          }
-        ]
-      }
-    },
     {
       "type": "launch",
       "parameters": {
@@ -52,17 +43,10 @@
       }
     },
     {
-      "type": "sleep",
+      "type": "chrome_prepare_video_for_caption",
       "parameters": {
-        "seconds": 1
-      }
-    },
-    {
-      "type": "chrome_open_tabs",
-      "parameters": {
-        "urls_to_open": [
-          "file:///C:/Users/Docker/Desktop/CensusAreaDemo.mp4"
-        ]
+        "url": "https://www.census.gov/data/academy/data-gems/2026/visualize-data.html",
+        "wait_seconds": 1
       }
     },
     {
@@ -83,7 +67,7 @@
     "conj": "and",
     "result": [
       {
-        "type": "live_caption_enabled"
+        "type": "browser_video_captions_enabled"
       },
       {
         "type": "active_tab_contains_text",
@@ -114,6 +98,5 @@
       ]
     }
   },
-  "proxy": true,
-  "transcript": "Census data demonstration. For this example, search for Maricopa County, Arizona. Keep the county and state together in the search field."
+  "proxy": true
 }

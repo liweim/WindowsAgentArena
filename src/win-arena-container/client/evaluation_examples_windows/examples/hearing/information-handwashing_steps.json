@@ -10,26 +10,15 @@
   ],
   "difficulty": "medium",
   "operation_time": 67.63,
-  "instruction": "Use Chrome Live Caption on the opened hand-washing video and record the physical sequence from wetting the hands through drying them in a Sticky Note. Include each hand area the video specifically says to wash.",
-  "source": "synthetic",
+  "instruction": "Use captions on the opened video and record the physical hand-washing sequence from wetting the hands through drying them in a Sticky Note. Include each hand area the video specifically says to wash.",
+  "source": "https://www.canada.ca/en/public-health/services/video/covid-19-hand-washing-heroes.html",
   "gt_steps": [
-    "Turn on Chrome Live Caption.",
-    "Play the local hand-washing video and read the captions.",
-    "Identify the source phrases `warm running water`, `Apply soap`, `fronts and backs of your hands`, `between your fingers`, `Rinse your hands thoroughly`, and `dry them with a clean towel`.",
-    "Switch to Sticky Notes and record the sequence in order."
+    "Turn on an available caption feature for the video.",
+    "Play the opened video with captions and identify the physical sequence from wetting through drying, including the specifically named hand areas.",
+    "Switch to Sticky Notes.",
+    "Write the phrases in a sticky note: `warm water\nsoap\nfront and back of your hands\nbetween your fingers\nrinse and dry`."
   ],
   "config": [
-    {
-      "type": "upload_file",
-      "parameters": {
-        "files": [
-          {
-            "local_path": "assets/information-handwashing_steps.mp4",
-            "path": "C:\\Users\\Docker\\Desktop\\HandWashingSteps.mp4"
-          }
-        ]
-      }
-    },
     {
       "type": "launch",
       "parameters": {
@@ -51,17 +40,10 @@
       }
     },
     {
-      "type": "sleep",
+      "type": "chrome_prepare_video_for_caption",
       "parameters": {
-        "seconds": 1
-      }
-    },
-    {
-      "type": "chrome_open_tabs",
-      "parameters": {
-        "urls_to_open": [
-          "file:///C:/Users/Docker/Desktop/HandWashingSteps.mp4"
-        ]
+        "url": "https://www.canada.ca/en/public-health/services/video/covid-19-hand-washing-heroes.html",
+        "wait_seconds": 1
       }
     },
     {
@@ -99,7 +81,7 @@
         "type": "sticky_notes_content"
       },
       {
-        "type": "live_caption_enabled"
+        "type": "browser_video_captions_enabled"
       }
     ],
     "expected": [
@@ -109,46 +91,40 @@
           "ignore_case": true,
           "points": [
             [
-              "warm running water",
-              "warm water"
+              "warm water",
+              "warm running water"
             ],
             [
-              "Apply soap",
-              "apply the soap",
               "soap"
             ],
             {
               "all_of": [
                 [
-                  "fronts",
-                  "front"
+                  "front",
+                  "fronts"
                 ],
                 [
-                  "backs",
-                  "back"
-                ],
-                [
-                  "hands",
-                  "hand"
+                  "back",
+                  "backs"
                 ]
               ]
             },
             [
               "between your fingers",
-              "between the fingers",
               "between fingers"
             ],
-            [
-              "Rinse your hands thoroughly",
-              "rinse your hands",
-              "rinse"
-            ],
-            [
-              "dry them with a clean towel",
-              "dry your hands with a clean towel",
-              "dry with a clean towel",
-              "dry"
-            ]
+            {
+              "all_of": [
+                [
+                  "rinse",
+                  "rinsing"
+                ],
+                [
+                  "dry",
+                  "drying"
+                ]
+              ]
+            }
           ]
         }
       },
@@ -168,6 +144,5 @@
       ]
     }
   },
-  "proxy": false,
-  "transcript": "Hand washing reminder. Wet your hands with warm running water. Apply soap. Wash the fronts and backs of your hands and between your fingers. Rinse your hands thoroughly, then dry them with a clean towel."
+  "proxy": true
 }

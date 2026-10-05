@@ -8,28 +8,18 @@
   "need_ids": [
     "H1"
   ],
-  "difficulty": "medium",
+  "difficulty": "easy",
   "operation_time": 87.97,
-  "instruction": "Use Chrome Live Caption on the opened Sydney travel video to identify the landmark from the spoken location and architectural clues, then open Street View for that landmark in Google Maps.",
-  "source": "synthetic",
+  "instruction": "Use captions on the opened video to identify the scenic place shown there, then open Street View for it in Google Maps.",
+  "source": "https://worldheritagejourney.com/unesco-sites-new-south-wales",
   "gt_steps": [
-    "Turn on Chrome Live Caption.",
-    "Play the local Sydney travel video and use the spoken clues `Bennelong Point`, `Sydney Harbour`, `performing arts complex`, and `white sail-shaped roofs` to identify Sydney Opera House.",
-    "Open Google Maps and search for `Sydney Opera House`.",
-    "Open Street View at Sydney Opera House and leave it visible."
+    "Turn on an available caption feature for the video.",
+    "Watch the opened video with captions and identify `Sydney Opera House`.",
+    "Open Google Maps.",
+    "Search for `Sydney Opera House`.",
+    "Drag Pegman onto the map near Sydney Opera House."
   ],
   "config": [
-    {
-      "type": "upload_file",
-      "parameters": {
-        "files": [
-          {
-            "local_path": "assets/mobility-opera_house_street_view.mp4",
-            "path": "C:\\Users\\Docker\\Desktop\\SydneyTravelClue.mp4"
-          }
-        ]
-      }
-    },
     {
       "type": "launch",
       "parameters": {
@@ -51,17 +41,10 @@
       }
     },
     {
-      "type": "sleep",
+      "type": "chrome_prepare_video_for_caption",
       "parameters": {
-        "seconds": 1
-      }
-    },
-    {
-      "type": "chrome_open_tabs",
-      "parameters": {
-        "urls_to_open": [
-          "file:///C:/Users/Docker/Desktop/SydneyTravelClue.mp4"
-        ]
+        "url": "https://worldheritagejourney.com/unesco-sites-new-south-wales",
+        "wait_seconds": 1
       }
     },
     {
@@ -82,7 +65,7 @@
     "conj": "and",
     "result": [
       {
-        "type": "live_caption_enabled"
+        "type": "browser_video_captions_enabled"
       },
       {
         "type": "google_maps_state",
@@ -115,6 +98,5 @@
       ]
     }
   },
-  "proxy": true,
-  "transcript": "Sydney travel clue. Your meeting point is at Bennelong Point beside Sydney Harbour. Look for the world-famous performing arts complex with white sail-shaped roofs. Use that landmark as your destination."
+  "proxy": true
 }

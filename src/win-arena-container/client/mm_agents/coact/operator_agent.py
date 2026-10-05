@@ -4,7 +4,9 @@
 import base64
 import glob
 import json
+import logging
 import os
+import re
 import traceback
 from typing import Any, Callable, Literal, Optional, Union
 
@@ -19,6 +21,28 @@ from .model_config import add_usage_entry, build_llm_config, extract_autogen_usa
 from mm_agents.utils import get_price
 
 ONLY_CUA = False  # False update
+logger = logging.getLogger("desktopenv")
+
+
+_ESTIMATED_COORDINATE_HINT = re.compile(
+    r"(?i)(?:at\s+)?(?:approximately|roughly|around|near|about)\s+"
+    r"(?:coordinates?\s*)?(?:\(?\s*)?x\s*=\s*-?\d+(?:\.\d+)?\s*[,;]\s*"
+    r"y\s*=\s*-?\d+(?:\.\d+)?\s*\)?"
+)
+
+
+def _prepare_gui_task(task: str) -> str:
+    """Remove coordinator-estimated coordinates before screenshot grounding."""
+    sanitized = _ESTIMATED_COORDINATE_HINT.sub(
+        "at the corresponding visible target in the current screenshot", task
+    )
+    return (
+        sanitized.rstrip()
+        + "\n\nGround every target from the current screenshot. Treat any remaining "
+        "screen-coordinate estimate in this delegated description as untrusted; "
+        "do not copy it into an action. For scrolling inside a menu, panel, or "
+        "dialog, include an x/y point visibly inside that region."
+    )
 
 class OrchestratorAgent(MultimodalConversableAgent):
     """(In preview) Captain agent, designed to solve a task with an agent or a group of agents."""
@@ -272,6 +296,10 @@ class OrchestratorUserProxyAgent(MultimodalConversableAgent):
         """Run a GUI agent to solve the task."""
         import time
 
+        prepared_task = _prepare_gui_task(task)
+        if prepared_task != task:
+            logger.info("Prepared GUI subtask for fresh screenshot grounding: %s", prepared_task)
+
         # Record start time for this GUI agent call
         gui_agent_start_time = time.time()
 
@@ -298,7 +326,7 @@ class OrchestratorUserProxyAgent(MultimodalConversableAgent):
 
         try:
             history_inputs, result, cost, input_tokens, output_tokens, image_count, step_details = run_cua(self.env,
-                                                   task,
+                                                   prepared_task,
                                                    save_path=cua_path,
                                                    max_steps=actual_max_steps,
                                                    sleep_after_execution=self.cua_config["sleep_after_execution"],

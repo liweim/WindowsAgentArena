@@ -219,7 +219,8 @@ def _add_planner_options(parser: argparse.ArgumentParser) -> None:
         "--global_planner_model", "--global-planner-model", default=None
     )
     parser.add_argument(
-        "--visual_grounder_model", "--visual-grounder-model", default="gta1-7b"
+        "--visual_grounder_model", "--visual-grounder-model", default=None,
+        help="Grounding model; defaults to the planner model and uses a separate image call.",
     )
     parser.add_argument("--state_manager_model", "--state-manager-model", default=None)
     parser.add_argument("--client_password", "--client-password", default="password")
@@ -359,7 +360,8 @@ def _add_tars_options(parser: argparse.ArgumentParser) -> None:
         "--global_planner_model", "--global-planner-model", default=None
     )
     parser.add_argument(
-        "--visual_grounder_model", "--visual-grounder-model", default="gta1-7b"
+        "--visual_grounder_model", "--visual-grounder-model", default=None,
+        help="Grounding model; defaults to the planner model and uses a separate image call.",
     )
     parser.add_argument("--client_password", "--client-password", default="password")
     parser.add_argument(
@@ -430,6 +432,9 @@ def _validate_method_options(args: argparse.Namespace, parser: argparse.Argument
             parser.error("TARS wait durations must be nonnegative")
         if args.global_planner_model:
             args.model = args.global_planner_model
+        args.visual_grounder_model = (
+            args.visual_grounder_model or args.global_planner_model or args.model
+        )
 
 
 def parse_agent_args(argv: Optional[List[str]] = None) -> argparse.Namespace:

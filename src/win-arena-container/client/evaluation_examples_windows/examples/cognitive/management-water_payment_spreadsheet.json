@@ -36,12 +36,9 @@
       }
     },
     {
-      "type": "launch",
+      "type": "open",
       "parameters": {
-        "command": [
-          "libreoffice",
-          "C:\\Users\\Docker\\Desktop\\Bills.ods"
-        ]
+        "path": "C:\\Users\\Docker\\Desktop\\Bills.ods"
       }
     },
     {

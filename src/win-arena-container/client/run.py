@@ -284,6 +284,12 @@ def test(
                 logger.error(f"Exception in {domain}/{example_id}: {e}")
                 error_traceback = traceback.format_exc()
                 logger.error(error_traceback)
+                # Keep fatal task failures visible to both the batch scheduler
+                # and summary(), matching the LocalLSTC error artifact format.
+                with open(os.path.join(example_result_dir, "result.txt"), "w", encoding="utf-8") as f:
+                    f.write("0.0")
+                with open(os.path.join(example_result_dir, "err_reason.txt"), "w", encoding="utf-8") as f:
+                    f.write(f"Fatal error: {e}\n\n{error_traceback}")
                 # env.controller.end_recording(os.path.join(example_result_dir, "recording.mp4"))
                 # Write error details to traj.jsonl
                 with open(os.path.join(example_result_dir, "traj.jsonl"), "a") as f:

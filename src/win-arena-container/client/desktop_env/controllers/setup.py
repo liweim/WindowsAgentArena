@@ -1072,6 +1072,37 @@ class SetupController:
             wait_seconds=wait_seconds,
         )
 
+        # Embedded YouTube players live in a cross-origin iframe, so the
+        # page-level script above cannot see their subtitle button.  Inspect
+        # every Playwright frame and explicitly turn the player's captions
+        # off, leaving the task in a neutral state for either caption method.
+        if disable_youtube_captions:
+            remote_debugging_url = f"http://{self.vm_ip}:9222"
+            try:
+                with sync_playwright() as p:
+                    browser = p.chromium.connect_over_cdp(remote_debugging_url)
+                    for context in browser.contexts:
+                        for page in context.pages:
+                            for frame in page.frames:
+                                try:
+                                    button = frame.query_selector('.ytp-subtitles-button')
+                                    if not button:
+                                        continue
+                                    title = (button.get_attribute('title') or '').lower()
+                                    pressed = button.get_attribute('aria-pressed')
+                                    classes = button.get_attribute('class') or ''
+                                    if (pressed == 'true' or 'ytp-button-active' in classes
+                                            or 'turn off' in title):
+                                        button.click()
+                                except Exception:
+                                    continue
+            except Exception as e:
+                logger.warning("Failed to disable embedded YouTube captions: %s", e)
+
+    def _chrome_prepare_video_for_caption_setup(self, **kwargs):
+        """Neutral task-facing alias for preparing an embedded video."""
+        self._chrome_prepare_youtube_for_live_caption_setup(**kwargs)
+
     def _chrome_pause_video_setup(
             self,
             url: str,

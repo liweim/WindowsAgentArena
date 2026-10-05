@@ -16,11 +16,11 @@ nohup setsid env \
     --connect false \
     --start-client true \
     --agent coact \
-    --model qwen3.5-9b \
-    --orchestrator_model qwen3.5-9b \
-    --coding_model qwen3.5-9b \
-    --summarizer_model qwen3.5-9b \
-    --cua_model uitars-1.5-7b \
+    --model qwen3.8-27b \
+    --orchestrator_model qwen3.8-27b \
+    --coding_model qwen3.8-27b \
+    --summarizer_model qwen3.8-27b \
+    --cua_model qwen3.8-27b \
     --orchestrator_max_steps 15 \
     --coding_max_steps 20 \
     --cua_max_steps 25 \
@@ -35,9 +35,10 @@ nohup setsid env \
     --container-name a11yarena-coact \
     --browser-port 18115 \
     --rdp-port 13394 \
-    --result-dir /locallstc/projects/WindowsAgentArena/results/coact_qwen3.5-9b \
+    --result-dir /locallstc/projects/WindowsAgentArena/results/coact_qwen3.8-27b \
     --json-name evaluation_examples_windows/test_one.json \
     --remove-container true \
+    --rerun \
     "$@" >"$LOG_FILE" 2>&1 < /dev/null &
 
 runner_pid=$!

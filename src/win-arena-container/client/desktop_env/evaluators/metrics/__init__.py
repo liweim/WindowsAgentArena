@@ -88,7 +88,8 @@ from .general import (
     compare_xlsx_items,
     compare_emergency_kit_items_xlsx,
     check_text_points,
-    check_ods_cell_values
+    check_ods_cell_values,
+    check_odt_cell_values
 )
 from .gimp import (
     check_structure_sim_resized,

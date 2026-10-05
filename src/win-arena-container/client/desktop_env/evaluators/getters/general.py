@@ -31,16 +31,34 @@ def get_magento_product_match(env, config):
         product_response.raise_for_status()
         product = product_response.json()
         stock = product.get("extension_attributes", {}).get("stock_item", {})
-        checks = [
-            product.get("sku") == config["sku"],
-            product.get("name") == config.get("name", product.get("name")),
-            product.get("type_id") == config.get("type_id", product.get("type_id")),
-            int(product.get("status", 0)) == int(config.get("status", product.get("status", 0))),
-            abs(float(product.get("price", 0)) - float(config.get("price", product.get("price", 0)))) < 1e-6,
-            abs(float(stock.get("qty", 0)) - float(config.get("qty", stock.get("qty", 0)))) < 1e-6,
-            bool(stock.get("is_in_stock")) == bool(config.get("is_in_stock", stock.get("is_in_stock"))),
-        ]
-        return "1" if all(checks) else "0"
+        requested_stock_fields = {"qty", "is_in_stock"}.intersection(config)
+        if requested_stock_fields.difference(stock):
+            stock_response = requests.get(
+                f"{base_url}/rest/V1/stockItems/{requests.utils.quote(config['sku'], safe='')}",
+                headers={"Authorization": f"Bearer {token}"},
+                timeout=20,
+            )
+            stock_response.raise_for_status()
+            stock = stock_response.json()
+
+        checks = {
+            "sku": product.get("sku") == config["sku"],
+            "name": product.get("name") == config.get("name", product.get("name")),
+            "type_id": product.get("type_id") == config.get("type_id", product.get("type_id")),
+            "status": int(product.get("status", 0)) == int(config.get("status", product.get("status", 0))),
+            "price": abs(float(product.get("price", 0)) - float(config.get("price", product.get("price", 0)))) < 1e-6,
+            "qty": abs(float(stock.get("qty", 0)) - float(config.get("qty", stock.get("qty", 0)))) < 1e-6,
+            "is_in_stock": bool(stock.get("is_in_stock")) == bool(config.get("is_in_stock", stock.get("is_in_stock"))),
+        }
+        if not all(checks.values()):
+            logger.warning(
+                "Magento product mismatch for %s: failed=%s product=%s stock=%s",
+                config.get("sku"),
+                [field for field, matched in checks.items() if not matched],
+                {field: product.get(field) for field in ("sku", "name", "type_id", "status", "price")},
+                {field: stock.get(field) for field in ("qty", "is_in_stock")},
+            )
+        return "1" if all(checks.values()) else "0"
     except (requests.RequestException, TypeError, ValueError, KeyError) as e:
         logger.error("Failed to validate Magento product through REST: %s", e)
         return "0"

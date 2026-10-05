@@ -1,8 +1,50 @@
 import json
 import logging
+import os
 from typing import Any, Dict
 
 logger = logging.getLogger("desktopenv.getters.thunderbird")
+
+
+def get_thunderbird_drafts(env, config: Dict[str, Any]):
+    """Fetch Drafts mbox files from legacy and standard Thunderbird profiles."""
+    script = r'''
+import glob
+import json
+import os
+
+appdata = os.environ.get("APPDATA", r"C:\Users\Docker\AppData\Roaming")
+patterns = [
+    os.path.join(appdata, ".thunderbird", "*", "Mail", "Local Folders", "Drafts"),
+    os.path.join(appdata, "Thunderbird", "Profiles", "*", "Mail", "Local Folders", "Drafts"),
+]
+paths = []
+for pattern in patterns:
+    for path in glob.glob(pattern):
+        if os.path.isfile(path) and path not in paths:
+            paths.append(path)
+print(json.dumps(paths))
+'''
+    try:
+        output = env.controller.execute_python_command(script)["output"].strip()
+        paths = json.loads(output) if output else []
+    except Exception as exc:
+        logger.error("Error locating Thunderbird drafts: %s", exc)
+        return []
+
+    local_paths = []
+    for index, path in enumerate(paths):
+        try:
+            content = env.controller.get_file(path)
+            if content is None:
+                continue
+            local_path = os.path.join(env.cache_dir, f"thunderbird-drafts-{index}.mbox")
+            with open(local_path, "wb") as file:
+                file.write(content)
+            local_paths.append(local_path)
+        except Exception as exc:
+            logger.warning("Failed to fetch Thunderbird draft file %s: %s", path, exc)
+    return local_paths
 
 
 def get_thunderbird_calendar_events(env, config: Dict[str, Any]):
@@ -25,10 +67,20 @@ import os
 import sqlite3
 
 profile = r"{profile_path}"
-db_candidates = [
-    os.path.join(profile, "calendar-data", "local.sqlite"),
-]
-db_candidates.extend(glob.glob(os.path.join(profile, "**", "local.sqlite"), recursive=True))
+appdata = os.environ.get("APPDATA", r"C:\Users\Docker\AppData\Roaming")
+profile_candidates = [profile]
+# Thunderbird may migrate/use its standard profile location even when setup
+# launches it with the legacy `.thunderbird` profile. Search both locations so
+# events visible in the UI are evaluated instead of silently returning [].
+profile_candidates.extend(glob.glob(os.path.join(appdata, "Thunderbird", "Profiles", "*")))
+profile_candidates.extend(glob.glob(os.path.join(appdata, ".thunderbird", "*")))
+
+db_candidates = []
+for candidate in profile_candidates:
+    db_candidates.append(os.path.join(candidate, "calendar-data", "local.sqlite"))
+    db_candidates.extend(
+        glob.glob(os.path.join(candidate, "**", "local.sqlite"), recursive=True)
+    )
 
 result = {{
     "today": datetime.date.today().isoformat(),

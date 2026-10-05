@@ -16,8 +16,8 @@ nohup setsid env \
     --connect false \
     --start-client true \
     --agent agents3 \
-    --model qwen3.5-9b \
-    --ground_model uitars-1.5-7b \
+    --model qwen3.8-27b \
+    --ground_model qwen3.8-27b \
     --provider_name docker \
     --headless \
     --max_steps 100 \
@@ -30,9 +30,10 @@ nohup setsid env \
     --container-name a11yarena-agents3 \
     --browser-port 18114 \
     --rdp-port 13393 \
-    --result-dir /locallstc/projects/WindowsAgentArena/results/agents3_qwen3.5-9b \
+    --result-dir /locallstc/projects/WindowsAgentArena/results/agents3_qwen3.8-27b \
     --json-name evaluation_examples_windows/test_one.json \
     --remove-container true \
+    --rerun \
     "$@" >"$LOG_FILE" 2>&1 < /dev/null &
 
 runner_pid=$!

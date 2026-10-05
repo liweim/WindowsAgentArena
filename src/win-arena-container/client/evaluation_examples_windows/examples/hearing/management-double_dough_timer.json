@@ -10,27 +10,17 @@
   ],
   "difficulty": "medium",
   "operation_time": 414.85,
-  "instruction": "Use Chrome Live Caption on the opened cooking video to determine about how long the pita dough should take to double in size, then use https://vclock.com to create a timer for that duration. Leave the timer visible in the browser.",
-  "source": "synthetic",
+  "instruction": "Use captions on the opened video to determine about how long the pita dough should take to double in size, then use https://vclock.com to create a timer for that duration. Leave the timer visible in the browser.",
+  "source": "https://foodwishes.blogspot.com/2013/04/pita-bread-whats-in-your-pocket.html",
   "gt_steps": [
-    "Turn on Chrome Live Caption.",
-    "Play the local cooking video and identify the source phrase `about two hours` for the dough to double in size.",
-    "Open `https://vclock.com` in the browser.",
-    "Create and start a 2-hour timer.",
+    "Turn on an available caption feature for the video.",
+    "Watch the opened video with captions and determine that the pita dough should take 2h to double in size.",
+    "Open https://vclock.com in the browser.",
+    "Click the Timer page.",
+    "Create and start a 2h timer.",
     "Leave the timer visible in the browser."
   ],
   "config": [
-    {
-      "type": "upload_file",
-      "parameters": {
-        "files": [
-          {
-            "local_path": "assets/management-double_dough_timer.mp4",
-            "path": "C:\\Users\\Docker\\Desktop\\PitaDoughDoubleTimer.mp4"
-          }
-        ]
-      }
-    },
     {
       "type": "launch",
       "parameters": {
@@ -52,17 +42,10 @@
       }
     },
     {
-      "type": "sleep",
+      "type": "chrome_prepare_video_for_caption",
       "parameters": {
-        "seconds": 1
-      }
-    },
-    {
-      "type": "chrome_open_tabs",
-      "parameters": {
-        "urls_to_open": [
-          "file:///C:/Users/Docker/Desktop/PitaDoughDoubleTimer.mp4"
-        ]
+        "url": "https://foodwishes.blogspot.com/2013/04/pita-bread-whats-in-your-pocket.html",
+        "wait_seconds": 1
       }
     },
     {
@@ -86,7 +69,7 @@
         "type": "active_tab_info_simple"
       },
       {
-        "type": "live_caption_enabled"
+        "type": "browser_video_captions_enabled"
       }
     ],
     "expected": [
@@ -114,6 +97,5 @@
       ]
     }
   },
-  "proxy": true,
-  "transcript": "Pita dough timing note. After the dough is mixed and covered, leave it in a warm place until it doubles in size. That should take about two hours."
+  "proxy": true
 }

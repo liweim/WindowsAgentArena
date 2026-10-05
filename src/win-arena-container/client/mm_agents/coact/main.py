@@ -29,6 +29,7 @@ LOCAL_ORCHESTRATOR_OUTPUT = """Return exactly one JSON object with this schema:
 Rules:
 - Use only one action per turn.
 - Use "call_coding_agent" first for file operation tasks when possible.
+- For "call_gui_agent", describe visible targets by their labels and visual context. Do not provide, estimate, or copy screen coordinates; the GUI agent must ground every target from its current screenshot.
 - Use "terminate" only when the task is completed.
 - Use "infeasible" only when the task cannot be completed.
 - Output valid JSON only. Do not wrap it in markdown.
@@ -200,6 +201,7 @@ After that, if anything is wrong, tell the programmer to modify it.
 Let a GUI agent to solve a subtask you assigned. 
 GUI agent can operate the computer by clicking and typing (but not accurate). 
 Require a detailed task description.
+Describe GUI targets using labels and surrounding UI context. Never estimate x/y coordinates for the GUI Operator; it receives the current screenshot and performs its own grounding.
 When you call GUI agent, it will only have a **20-step** budget to complete your task. Each step is a one-time interaction with OS like mouse click or keyboard typing. Please take this into account when you plan the actions.
 If you let GUI Operator to check the result, you MUST let it close and reopen the file because programmer's result will NOT be updated to the screen. 
 """

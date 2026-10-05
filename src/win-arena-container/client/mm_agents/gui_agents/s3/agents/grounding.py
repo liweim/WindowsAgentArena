@@ -237,7 +237,14 @@ class OSWorldACI(ACI):
         self.grounding_model.reset()
 
         # Configure the context, UI-TARS demo does not use system prompt
-        prompt = f"Query:{ref_expr}\nOutput only the coordinate of one point in your response.\n"
+        if self.engine_params_for_grounding.get("same_model_grounding"):
+            prompt = (
+                f"Query:{ref_expr}\n"
+                "Output only one point as (x,y) in a 0-to-1000 normalized "
+                "coordinate space relative to the attached screenshot.\n"
+            )
+        else:
+            prompt = f"Query:{ref_expr}\nOutput only the coordinate of one point in your response.\n"
         self.grounding_model.add_message(
             text_content=prompt, image_content=obs["screenshot"], put_text_last=True
         )
@@ -332,6 +339,10 @@ class OSWorldACI(ACI):
 
     def assign_screenshot(self, obs: Dict):
         self.obs = obs
+        screenshot_bytes = obs.get("screenshot") if isinstance(obs, dict) else None
+        if screenshot_bytes:
+            with Image.open(BytesIO(screenshot_bytes)) as screenshot:
+                self.width, self.height = screenshot.size
 
     def _get_code_from_cua(self, element_description: str) -> str:
         """
@@ -356,8 +367,11 @@ class OSWorldACI(ACI):
 
     # Resize from grounding model dim into OSWorld dim (1920 * 1080)
     def resize_coordinates(self, coordinates: List[int]) -> List[int]:
-        grounding_width = self.engine_params_for_grounding["grounding_width"]
-        grounding_height = self.engine_params_for_grounding["grounding_height"]
+        if self.engine_params_for_grounding.get("same_model_grounding"):
+            grounding_width = grounding_height = 1000
+        else:
+            grounding_width = self.engine_params_for_grounding["grounding_width"]
+            grounding_height = self.engine_params_for_grounding["grounding_height"]
 
         return [
             round(coordinates[0] * self.width / grounding_width),

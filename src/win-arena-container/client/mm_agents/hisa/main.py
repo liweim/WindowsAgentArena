@@ -7,6 +7,11 @@ import logging
 import traceback
 from typing import Optional, Dict, List, Tuple
 from mm_agents.llm import AbstractLLM
+from mm_agents.llm import (
+    DIRECT_COORDINATE_GROUNDING_PROMPT,
+    DirectCoordinateActionAdapter,
+    uses_direct_coordinate_grounding,
+)
 from mm_agents.utils import serialize_json, get_change_roi
 from json_repair import repair_json
 from mm_agents.utils import postprocess_action
@@ -675,6 +680,11 @@ class HiSA:
         self.wo_step = wo_step  # Skip step abstraction if True
         self.wo_refinement = wo_refinement  # Disable context refinement if True
         self.sliding_window_size = sliding_window_size  # Sliding window size for conversation history
+        self.direct_coordinate_grounding = uses_direct_coordinate_grounding(
+            global_planner_model,
+            visual_grounder_model,
+        )
+        self.direct_coordinate_adapter = DirectCoordinateActionAdapter()
 
         self.logger = logging.getLogger("desktopenv")
 
@@ -704,6 +714,12 @@ class HiSA:
         self.step_token_usage = {}  # Store token usage for current step
         self.current_thought = ""  # Store current step's thought for step_abstract
         self.last_tool_output = None  # Store last tool execution result for wo_step mode
+
+    def _planner_system_prompt(self) -> str:
+        prompt = GLOBAL_PLANNER_PROMPT.replace('{CLIENT_PASSWORD}', self.client_password)
+        if self.direct_coordinate_grounding:
+            prompt += "\n\n" + DIRECT_COORDINATE_GROUNDING_PROMPT
+        return prompt
 
     def _get_usage_snapshot(self) -> Dict:
         """Get current token usage snapshot from all LLMs."""
@@ -886,6 +902,10 @@ class HiSA:
 
         self.logger.info(f"Global Planner: {self.global_planner_model}")
         self.logger.info(f"Visual Grounder: {self.visual_grounder_model}")
+        self.logger.info(
+            "Direct coordinate grounding: %s",
+            self.direct_coordinate_grounding,
+        )
         self.logger.info(f"State Manager: {self.state_manager_model}")
         self.logger.info(f"Max steps: {self.max_steps}")
         self.logger.info(f"wo_step: {self.wo_step}")
@@ -1081,7 +1101,7 @@ class HiSA:
                 if self.wo_step:
                     # Use full conversation history approach
                     messages = [
-                        {"role": "system", "content": GLOBAL_PLANNER_PROMPT.replace('{CLIENT_PASSWORD}', self.client_password)},
+                        {"role": "system", "content": self._planner_system_prompt()},
                     ]
                     
                     # Build current query text
@@ -1183,7 +1203,7 @@ Based on the execution_history and current screenshot, decide the next action. A
 
                     # Build messages array
                     messages = [
-                        {"role": "system", "content": GLOBAL_PLANNER_PROMPT.replace('{CLIENT_PASSWORD}', self.client_password)},
+                        {"role": "system", "content": self._planner_system_prompt()},
                         {
                             "role": "user",
                             "content": [
@@ -1386,6 +1406,14 @@ Based on the execution_history and current screenshot, decide the next action. A
                 "START_X_COORD", "START_Y_COORD", "END_X_COORD", "END_Y_COORD",
             ]
         )
+        if self.direct_coordinate_grounding:
+            with Image.open(io.BytesIO(screenshot)) as screenshot_image:
+                width, height = screenshot_image.size
+            return self.direct_coordinate_adapter.prepare(
+                grounded_code,
+                width,
+                height,
+            ).executed_action
         if has_placeholders:
             if not description:
                 raise ValueError("Description required when using placeholders")
@@ -1476,6 +1504,7 @@ Based on the execution_history and current screenshot, decide the next action. A
         """
         # Convert screenshot bytes to PIL Image
         img = Image.open(io.BytesIO(screenshot))
+        screenshot_width, screenshot_height = img.size
         
         # Call visual grounder using call_cua
         if self.visual_grounder_llm.model_name.startswith("gta1"):
@@ -1486,8 +1515,8 @@ Based on the execution_history and current screenshot, decide the next action. A
             description, 
             img, 
             environment="linux", 
-            screen_width=self.screen_width, 
-            screen_height=self.screen_height,
+            screen_width=screenshot_width,
+            screen_height=screenshot_height,
             scale=scale
         )
         
@@ -1528,16 +1557,24 @@ Based on the execution_history and current screenshot, decide the next action. A
             with open(os.path.join(self.operations_dir, screenshot_file), "wb") as f:
                 f.write(before_screenshot)
 
-            code = self._ground_gui_code(code, description, before_screenshot)
+            if self.direct_coordinate_grounding:
+                with Image.open(io.BytesIO(before_screenshot)) as screenshot_image:
+                    width, height = screenshot_image.size
+                prepared_action = self.direct_coordinate_adapter.prepare(code, width, height)
+                history_code = prepared_action.history_action
+                final_code = prepared_action.executed_action
+            else:
+                grounded_code = self._ground_gui_code(code, description, before_screenshot)
+                final_code = postprocess_action(grounded_code)
+                history_code = final_code
 
             # Execute code
-            final_code = postprocess_action(code)
             obs, *_ = self.env.step(final_code, self.sleep_after_execution)
 
             after_screenshot = self._wait_for_stable_screenshot(timeout_seconds=self.sleep_after_execution) or obs['screenshot']
 
             # Create description for step abstraction
-            eval_desc = description if description else code
+            eval_desc = description if description else final_code
             
             # Skip step abstraction if wo_step is True
             if self.wo_step:
@@ -1551,9 +1588,9 @@ Based on the execution_history and current screenshot, decide the next action. A
             # Generate step_abstract
             thought_prefix = f"Thought: {self.current_thought} | " if self.current_thought else ""
             if description:
-                step_abstract = f"Step {step}: gui_action | {thought_prefix}Description: {description} | Code: {final_code} | {step_abstraction}"
+                step_abstract = f"Step {step}: gui_action | {thought_prefix}Description: {description} | Code: {history_code} | {step_abstraction}"
             else:
-                step_abstract = f"Step {step}: gui_action | {thought_prefix}Code: {final_code} | {step_abstraction}"
+                step_abstract = f"Step {step}: gui_action | {thought_prefix}Code: {history_code} | {step_abstraction}"
 
             # Calculate step execution time
             step_time = time.time() - step_start_time
@@ -1564,15 +1601,21 @@ Based on the execution_history and current screenshot, decide the next action. A
                 "execution_success": True,
                 "screenshot": screenshot_file,
                 "step_abstract": step_abstract,
+                "detail": history_code,
+                **(
+                    {"executed_detail": final_code}
+                    if self.direct_coordinate_grounding
+                    else {}
+                ),
                 "step_time": round(step_time, 2),
                 "token_usage": self.step_token_usage
             })
 
             # Return execution result text for wo_step mode
             if description:
-                return f"GUI Action: {description}\nCode: {final_code}\nStatus: Success\n{step_abstraction}"
+                return f"GUI Action: {description}\nCode: {history_code}\nStatus: Success\n{step_abstraction}"
             else:
-                return f"GUI Action Code: {final_code}\nStatus: Success\n{step_abstraction}"
+                return f"GUI Action Code: {history_code}\nStatus: Success\n{step_abstraction}"
 
         except Exception as e:
             self.logger.error(f"GUI action execution error: {e}")

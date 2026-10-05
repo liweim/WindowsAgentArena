@@ -16,10 +16,10 @@ nohup setsid env \
     --connect false \
     --start-client true \
     --agent hisa \
-    --model qwen3.5-9b \
-    --global_planner_model qwen3.5-9b \
-    --visual_grounder_model gta1-7b \
-    --state_manager_model qwen3.5-9b \
+    --model qwen3.8-27b \
+    --global_planner_model qwen3.8-27b \
+    --visual_grounder_model qwen3.8-27b \
+    --state_manager_model qwen3.8-27b \
     --wo_pattern \
     --headless \
     --max_steps 100 \
@@ -33,9 +33,10 @@ nohup setsid env \
     --container-name a11yarena-hisa \
     --browser-port 18117 \
     --rdp-port 13396 \
-    --result-dir /locallstc/projects/WindowsAgentArena/results/hisa_qwen3.5-9b_wo_pattern \
+    --result-dir /locallstc/projects/WindowsAgentArena/results/hisa_qwen3.8-27b_wo_pattern \
     --json-name evaluation_examples_windows/test_one.json \
     --remove-container true \
+    --rerun \
     "$@" >"$LOG_FILE" 2>&1 < /dev/null &
 
 runner_pid=$!

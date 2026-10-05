@@ -10,7 +10,7 @@
   ],
   "difficulty": "hard",
   "operation_time": 129.73,
-  "instruction": "Use `cms_product_record.xlsx` on the Desktop as a checklist. Fill its Value column with the current CMS details for `Joust Duffle Bag`, then save the spreadsheet. Use username `admin` and password `admin1234` to access the CMS admin site.",
+  "instruction": "Use `cms_product_record.xlsx` on the Desktop as a checklist. Fill the blank row beneath the `Name`, `Type`, `SKU`, `Price`, and `Quantity` headers with the current CMS details for `Joust Duffle Bag`, then save the spreadsheet. Use username `admin` and password `admin1234` to access the CMS admin site.",
   "source": "synthetic",
   "gt_steps": [
     "Open the self-hosted CMS admin site in Google Chrome.",
@@ -20,13 +20,11 @@
     "Open the product catalog without editing any product data.",
     "Find the product `Joust Duffle Bag`.",
     "Open `cms_product_record.xlsx` from the Desktop in LibreOffice Calc.",
-    "Enter the displayed CMS value for `ID` in the spreadsheet Value column.",
-    "Enter the displayed CMS value for `Thumbnail` in the spreadsheet Value column.",
-    "Enter the standard value `Joust Duffle Bag` for `Name`.",
-    "Enter the standard value `Simple Product` for `Type`.",
-    "Enter the standard value `24-MB01` for `SKU`.",
-    "Enter the standard value `$34.00` for `Price`.",
-    "Enter the standard value `100.0000` for `Quantity`.",
+    "Enter `Joust Duffle Bag` beneath the `Name` header.",
+    "Enter `Simple Product` beneath the `Type` header.",
+    "Enter `24-MB01` beneath the `SKU` header.",
+    "Enter `$34.00` beneath the `Price` header.",
+    "Enter `100.0000` beneath the `Quantity` header.",
     "Save `cms_product_record.xlsx`."
   ],
   "config": [

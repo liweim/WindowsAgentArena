@@ -12,7 +12,7 @@ import uuid
 
 from json_repair import repair_json
 from PIL import Image
-from mm_agents.llm import AbstractLLM
+from mm_agents.llm import AbstractLLM, SingleCallGroundingAdapter
 from ..runtime.task_log import dump_model_trace
 
 TARGETS = (("coordinate", "target"), ("start_coordinate", "start_target"),
@@ -102,6 +102,7 @@ class LLMClient:
                 raise RuntimeError("Cannot ground without a screenshot")
             if self.grounder is None:
                 self.grounder = AbstractLLM(os.getenv("TARS_GROUNDER_MODEL", "gta1-7b"), temperature=0)
+                self.grounding_adapter = SingleCallGroundingAdapter(self.grounder)
                 if hasattr(self.grounder, "client"):
                     self.grounder.client.cua_trace_callback = lambda stage, payload: dump_model_trace(
                         stage, payload, agent=self.name, model=self.grounder.model_name)
@@ -111,8 +112,12 @@ class LLMClient:
                             call["name"], inp[target], image.size)
                 # The existing role handlers expect coordinates in this space.
                 image = image.resize((1280, 720))
-                point, reason = self.grounder.call_cua(inp[target], image,
-                    environment="windows", screen_width=1280, screen_height=720)
+                if self.grounder.model_name.lower().startswith("gta1"):
+                    point, reason = self.grounder.call_cua(inp[target], image,
+                        environment="windows", screen_width=1280, screen_height=720)
+                else:
+                    point = self.grounding_adapter.ground_point(inp[target], image)
+                    reason = "Separate image-based grounding call"
                 logger.info("Grounding response: point=%s trace=%s", point,
                             getattr(getattr(self.grounder, "client", None), "last_gta1_trace", None))
             inp[coordinate] = normalize_grounded_point(point)

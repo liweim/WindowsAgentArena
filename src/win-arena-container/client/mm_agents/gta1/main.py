@@ -21,7 +21,7 @@ from google.api_core.exceptions import (
     BadRequest,
 )
 from requests.exceptions import SSLError
-from mm_agents.gta1_prompts import GTA1_PLANNER_SYSTEM_PROMPT, GTA1_GROUNDING_SYSTEM_PROMPT, GTA1_JUDGE_SYSTEM_PROMPT
+from mm_agents.gta1.prompts import GTA1_PLANNER_SYSTEM_PROMPT, GTA1_GROUNDING_SYSTEM_PROMPT, GTA1_JUDGE_SYSTEM_PROMPT
 from mm_agents.utils import smart_resize
 from pytesseract import Output
 import pytesseract
@@ -32,7 +32,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 import numpy as np
 from openai import APIConnectionError, APIError, RateLimitError
 import cv2
-from mm_agents.llm import AbstractLLM, encode_image as llm_encode_image
+from mm_agents.llm import AbstractLLM, SingleCallGroundingAdapter
 
 logger = None
 
@@ -555,7 +555,7 @@ class OSWorldACI:
             self.coords1 = self.generate_text_coords(args[0], obs, alignment="start")
             self.coords2 = self.generate_text_coords(args[1], obs, alignment="end")
 
-    # Resize from grounding model dim into OSWorld dim (1920 * 1080)
+    # Convert normalized grounding coordinates into the current screenshot space.
     def resize_coordinates(self, coordinates: List[int]) -> List[int]:
         return [
             round(coordinates[0] * self.width),
@@ -1225,6 +1225,7 @@ class GTA1Agent:
             max_tokens=256,
             logger=logging.getLogger("gta1.grounding"),
         )
+        self.grounding_adapter = SingleCallGroundingAdapter(self.grounding_llm)
         self.current_step = 1
         self.max_image_history_length = max_image_history_length
         self.N_SEQ=N_SEQ
@@ -1261,6 +1262,25 @@ class GTA1Agent:
         """
         Predict the next action(s) based on the current observation.
         """
+
+        # The VM screenshot size can differ from the configured screen size. The
+        # grounder normalizes coordinates against this screenshot, so actions must
+        # be converted back into the same pixel space.
+        with Image.open(BytesIO(obs["screenshot"])) as screenshot:
+            observation_width, observation_height = screenshot.size
+        if (self.agent.width, self.agent.height) != (
+            observation_width,
+            observation_height,
+        ):
+            logger.info(
+                "Updating action coordinate space from %dx%d to screenshot size %dx%d",
+                self.agent.width,
+                self.agent.height,
+                observation_width,
+                observation_height,
+            )
+            self.agent.width = observation_width
+            self.agent.height = observation_height
 
         user_prompt = (
             f"""Please generate the next move according to the UI screenshot and instruction. And you can refer to the previous actions and observations for reflection.\n\nInstruction: {instruction}\n\n""")
@@ -1426,28 +1446,11 @@ class GTA1Agent:
                 )
             assert C == 3
             resized_image = pil_image.resize((W, H))
-            messages=[
-                {
-                    "role": "system",
-                    "content": [
-                        {"type": "input_text", "text": GTA1_GROUNDING_SYSTEM_PROMPT.format(height=H, width=W)}
-                    ],
-                },
-                {
-                    "role":
-                    "user",
-                    "content": [
-                        {
-                            "type": "input_text",
-                            "text": prompt
-                        },
-                        {
-                            "type": "input_image",
-                            "image_url": llm_encode_image(resized_image),
-                        },
-                    ],
-                }]
-            result = self.grounding_llm(messages, max_retries=3) or ""
+            result = self.grounding_adapter(
+                prompt,
+                resized_image,
+                system_prompt=GTA1_GROUNDING_SYSTEM_PROMPT.format(height=H, width=W),
+            )
 
             matches = re.findall(r"\((-?\d*\.?\d+),\s*(-?\d*\.?\d+)\)", result)
             x,y =  [tuple(map(int, match)) for match in matches][0]
@@ -1491,7 +1494,7 @@ class GTA1Agent:
             min_pixels=1000,
             max_pixels=1000000000000,
             )
-        image = screenshot.resize((height, width))
+        image = screenshot.resize((width, height))
 
         system_promt = GTA1_JUDGE_SYSTEM_PROMPT.format(N_PLANNING=len(response), N_INDEX=len(response)-1,width=width,height=height, CLIENT_PASSWORD=self.client_password)
         lines = [

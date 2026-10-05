@@ -2,8 +2,11 @@
 
 from __future__ import annotations
 
+import io
 import logging
 from typing import TYPE_CHECKING, Any
+
+from PIL import Image
 
 if TYPE_CHECKING:
     from desktop_env.envs.desktop_env import DesktopEnv
@@ -84,6 +87,21 @@ class TarsAgent:
 
     def predict(self, obs: dict[str, Any] | None = None) -> HarnessReply:
         raw_png = obs.get("screenshot", b"") if obs else b""
+        if raw_png:
+            with Image.open(io.BytesIO(raw_png)) as screenshot:
+                actual_screen_size = screenshot.size
+            self.screen_size = actual_screen_size
+            resize_factor = (
+                actual_screen_size[0] / 1280,
+                actual_screen_size[1] / 720,
+            )
+            # Model-facing screenshots use TARS's canonical 1280x720 space.
+            # Refresh the mapping on every observation so GUI coordinates are
+            # always converted back into the current screenshot's pixel space.
+            if self.skill_gate is not None:
+                self.skill_gate.resize_factor = resize_factor
+            if self.task_runner is not None:
+                self.task_runner.resize_factor = resize_factor
         frame_b64 = resize_and_encode_png(raw_png) if raw_png else ""
         self.workflow.latest_screenshot_b64 = frame_b64
         self.workflow.step_count += 1

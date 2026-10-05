@@ -98,7 +98,7 @@ def _infer_provider(model_name: str, explicit_provider: Optional[str], default: 
 def build_step_agent(args, env):
     """Build an agent that follows the standard ``reset/predict`` protocol."""
     if args.agent_name == "gta1":
-        from mm_agents.gta1_agent import GTA1Agent
+        from mm_agents.gta1.main import GTA1Agent
 
         return GTA1Agent(
             platform="windows",
@@ -141,6 +141,10 @@ def build_step_agent(args, env):
             "api_key": args.ground_api_key,
             "grounding_width": args.grounding_width,
             "grounding_height": args.grounding_height,
+            "same_model_grounding": (
+                str(args.model).strip().lower()
+                == str(args.ground_model).strip().lower()
+            ),
         }
         grounding_agent = OSWorldACI(
             env=env,
@@ -284,7 +288,7 @@ def _run_hisa(env, example, args, example_result_dir) -> float:
 
 
 def _run_coact(env, example, args, example_result_dir) -> float:
-    from mm_agents.run_coact import process_task
+    from mm_agents.coact.main import process_task
 
     config_path = example.get("__task_config_path")
     if not config_path:

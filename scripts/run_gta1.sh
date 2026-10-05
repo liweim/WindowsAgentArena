@@ -16,9 +16,9 @@ nohup setsid env \
     --connect false \
     --start-client true \
     --agent gta1 \
-    --model qwen3.5-9b \
-    --judge_model qwen3.5-9b \
-    --ground_model gta1-7b \
+    --model qwen3.8-27b \
+    --judge_model qwen3.8-27b \
+    --ground_model qwen3.8-27b \
     --n_samples 3 \
     --headless \
     --max_steps 100 \
@@ -31,9 +31,10 @@ nohup setsid env \
     --container-name a11yarena-gta1 \
     --browser-port 18116 \
     --rdp-port 13395 \
-    --result-dir /locallstc/projects/WindowsAgentArena/results/gta1_qwen3.5-9b \
+    --result-dir /locallstc/projects/WindowsAgentArena/results/gta1_qwen3.8-27b \
     --json-name evaluation_examples_windows/test_one.json \
     --remove-container true \
+    --rerun \
     "$@" >"$LOG_FILE" 2>&1 < /dev/null &
 
 runner_pid=$!
