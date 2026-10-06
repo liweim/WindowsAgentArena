@@ -12,6 +12,7 @@ from urllib.parse import urlparse, parse_qs
 
 import lxml.etree
 import requests
+import websocket
 from lxml.cssselect import CSSSelector
 from lxml.etree import _Element
 from playwright.sync_api import sync_playwright, expect
@@ -1335,6 +1336,12 @@ def get_browser_video_captions_enabled(env, config: Dict[str, str]):
 
     remote_debugging_url = f"http://{env.vm_ip}:9222"
     script = """() => {
+        const player = document.querySelector('#movie_player');
+        if (player && typeof player.getOption === 'function') {
+            const track = player.getOption('captions', 'track');
+            if (track && Object.keys(track).length > 0) return true;
+        }
+        if (document.querySelector('.ytp-caption-segment')) return true;
         const button = document.querySelector('.ytp-subtitles-button');
         if (!button) return false;
         const title = (button.getAttribute('title') || '').toLowerCase();
@@ -1355,6 +1362,51 @@ def get_browser_video_captions_enabled(env, config: Dict[str, str]):
                             continue
         except Exception as e:
             logger.error("Failed to check browser video captions: %s", e)
+
+    # Chrome exposes cross-origin YouTube embeds as out-of-process iframe
+    # targets. Playwright 1.48 can omit these from page.frames, so inspect the
+    # player target directly as well. This also handles the mobile embed UI,
+    # which has no .ytp-subtitles-button even when a caption track is active.
+    try:
+        targets = requests.get(
+            f"{remote_debugging_url}/json", timeout=10
+        ).json()
+        youtube_domains = ("youtube.com/", "youtube-nocookie.com/")
+        for target in targets:
+            if target.get("type") not in {"iframe", "page"}:
+                continue
+            if not any(
+                domain in target.get("url", "")
+                for domain in youtube_domains
+            ):
+                continue
+            websocket_url = target.get("webSocketDebuggerUrl")
+            if not websocket_url:
+                continue
+            socket = websocket.create_connection(
+                websocket_url, suppress_origin=True, timeout=10
+            )
+            try:
+                socket.send(json.dumps({
+                    "id": 1,
+                    "method": "Runtime.evaluate",
+                    "params": {
+                        "expression": f"({script})()",
+                        "returnByValue": True,
+                    },
+                }))
+                while True:
+                    message = json.loads(socket.recv())
+                    if message.get("id") != 1:
+                        continue
+                    result = message.get("result", {}).get("result", {})
+                    if result.get("value") is True:
+                        return "true"
+                    break
+            finally:
+                socket.close()
+    except Exception as e:
+        logger.error("Failed to check YouTube OOPIF captions: %s", e)
     return "false"
 
 

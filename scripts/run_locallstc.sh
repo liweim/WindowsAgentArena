@@ -37,9 +37,8 @@ nohup setsid env \
     --browser-port 18113 \
     --rdp-port 13392 \
     --result-dir /locallstc/projects/WindowsAgentArena/results/locallstc_qwen3.8-27b \
-    --json-name evaluation_examples_windows/test_one.json \
+    --json-name evaluation_examples_windows/debug.json \
     --remove-container true \
-    --rerun \
     "$@" >"$LOG_FILE" 2>&1 < /dev/null &
 
 runner_pid=$!

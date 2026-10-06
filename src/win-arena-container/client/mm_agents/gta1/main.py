@@ -21,7 +21,7 @@ from google.api_core.exceptions import (
     BadRequest,
 )
 from requests.exceptions import SSLError
-from mm_agents.gta1.prompts import GTA1_PLANNER_SYSTEM_PROMPT, GTA1_GROUNDING_SYSTEM_PROMPT, GTA1_JUDGE_SYSTEM_PROMPT
+from mm_agents.gta1.prompts import GTA1_PLANNER_SYSTEM_PROMPT, GTA1_JUDGE_SYSTEM_PROMPT
 from mm_agents.utils import smart_resize
 from pytesseract import Output
 import pytesseract
@@ -1364,11 +1364,10 @@ class GTA1Agent:
                 })
             planner_response.extend(planner_response_)
 
-        valid_responses = [response for response in planner_response if self.isvalid(response)]
+        valid_responses, invalid_responses = self._partition_planner_responses(
+            planner_response, "initial"
+        )
         N = N - len(valid_responses)
-        planner_response = [response for response in planner_response if not self.isvalid(response)]
-        if planner_response:
-            planner_response = planner_response[0]
         retry_count = 0
         max_retries = 2
         while N > 0: 
@@ -1383,7 +1382,13 @@ class GTA1Agent:
             messages.append({
                 "role": "user",
                 "content": [
-                    {"type": "text", "text": """You didn't generate a valid "Observation:\n(.*?)\n" section, a valid "Thought:\n(.*?)\n" section,  or valid actions. Please try again."""} #"You didn't generate valid actions. Please try again."} 
+                    {
+                        "type": "text",
+                        "text": (
+                            "You didn't generate a valid Observation section, "
+                            "Thought section, or valid action. Please try again."
+                        ),
+                    }
                 ]
             })
                 
@@ -1397,12 +1402,12 @@ class GTA1Agent:
                     })
                 planner_response.extend(planner_response_)
 
-            valid_responses_ = [response for response in planner_response if self.isvalid(response)]
+            valid_responses_, invalid_responses_ = self._partition_planner_responses(
+                planner_response, f"retry-{retry_count + 1}"
+            )
             N = N - len(valid_responses_)
-            planner_response = [response for response in planner_response if not self.isvalid(response)]
-            if planner_response:
-                planner_response = planner_response[0]
             valid_responses.extend(valid_responses_)
+            invalid_responses.extend(invalid_responses_)
             retry_count += 1
             
         # assert len(valid_responses) > int(self.N_SEQ) * 0.8, f"Not enough valid responses generated {len(valid_responses)}"
@@ -1413,8 +1418,18 @@ class GTA1Agent:
             self.N_SEQ,
         )
         if not valid_responses:
-            logger.error("No valid planner responses generated after retries.")
-            raise RuntimeError("No valid planner responses generated")
+            last_reason = invalid_responses[-1][1] if invalid_responses else "no response"
+            last_response = invalid_responses[-1][0] if invalid_responses else "<empty>"
+            logger.error(
+                "No valid planner responses generated after retries. "
+                "Last validation error: %s\nLast raw planner response:\n%s",
+                last_reason,
+                last_response,
+            )
+            raise RuntimeError(
+                "No valid planner responses generated; "
+                f"last validation error: {last_reason}"
+            )
         if self.N_SEQ > 1:
             history_cache = [f"Observation:\n{o}\nThought:\n{t}\nAction:\n{a}" for a,t,o in zip(self.actions, self.thoughts, self.observation_captions)]
             planner_response = self.select(instruction, Image.open(BytesIO(obs['screenshot'])), valid_responses, history_cache)
@@ -1446,17 +1461,25 @@ class GTA1Agent:
                 )
             assert C == 3
             resized_image = pil_image.resize((W, H))
-            result = self.grounding_adapter(
-                prompt,
-                resized_image,
-                system_prompt=GTA1_GROUNDING_SYSTEM_PROMPT.format(height=H, width=W),
+            ground_x, ground_y = self.grounding_adapter.ground_point(
+                prompt, resized_image
             )
-
-            matches = re.findall(r"\((-?\d*\.?\d+),\s*(-?\d*\.?\d+)\)", result)
-            x,y =  [tuple(map(int, match)) for match in matches][0]
-            x = x/W
-            y = y/H
-            return x,y
+            normalized_x = ground_x / W
+            normalized_y = ground_y / H
+            logger.info(
+                "Grounded %r: model_image_pixel=(%d,%d), screenshot=%dx%d, "
+                "model_image=%dx%d, action_pixel=(%d,%d)",
+                prompt,
+                ground_x,
+                ground_y,
+                pil_image.width,
+                pil_image.height,
+                W,
+                H,
+                round(normalized_x * pil_image.width),
+                round(normalized_y * pil_image.height),
+            )
+            return normalized_x, normalized_y
         logger.info(f"Executing grounding")
         self.agent.assign_coordinates(planner_response, obs, request_vllm)
 
@@ -1549,25 +1572,67 @@ class GTA1Agent:
         logger.warning("Selection fallback triggered; returning the first candidate response.")
         return response[0]
     
-    def isvalid(self,planner_response):
+    def _validate_planner_response(self, planner_response):
+        if not isinstance(planner_response, str) or not planner_response.strip():
+            return False, "planner returned an empty response"
         try:
             self.agent.dummy_agent.assign_coordinates(planner_response, {"screenshot": None})
-        except Exception:
-            return False
+        except Exception as exc:
+            return False, f"action parsing failed: {type(exc).__name__}: {exc}"
         codes = self.parse_code_from_planner_response(planner_response)
+        if not codes:
+            return False, "missing fenced action code block"
         try:
             test_code = extract_first_agent_function("\n".join(codes))
             if not test_code:
-                return False
+                return False, "code block does not contain an agent.* action"
             test_code = "self.agent.dummy_agent." + test_code[6:]
             # Create a safe execution environment with necessary globals
             exec_globals = {"self": self, "__builtins__": __builtins__}
             eval(test_code, exec_globals)
-        except Exception:
-            return False
+        except Exception as exc:
+            return False, f"action validation failed: {type(exc).__name__}: {exc}"
         thought = self.parse_thought_from_planner_response(planner_response)
         observation_caption = self.parse_observation_caption_from_planner_response(planner_response)
-        return bool(codes and thought and observation_caption)
+        missing_sections = []
+        if not observation_caption:
+            missing_sections.append("Observation")
+        if not thought:
+            missing_sections.append("Thought")
+        if missing_sections:
+            return False, "missing or empty section(s): " + ", ".join(missing_sections)
+        return True, "valid"
+
+    def _partition_planner_responses(self, responses, phase):
+        valid = []
+        invalid = []
+        if not responses:
+            logger.warning("Planner phase %s returned no responses", phase)
+            return valid, invalid
+        for index, response in enumerate(responses, start=1):
+            is_valid, reason = self._validate_planner_response(response)
+            if is_valid:
+                valid.append(response)
+                logger.info(
+                    "Planner response %s sample %d is valid:\n%s",
+                    phase,
+                    index,
+                    response,
+                )
+            else:
+                invalid.append((response, reason))
+                logger.warning(
+                    "Planner response %s sample %d is invalid: %s\nRaw response:\n%s",
+                    phase,
+                    index,
+                    reason,
+                    response,
+                )
+        return valid, invalid
+
+    def isvalid(self, planner_response):
+        is_valid, _ = self._validate_planner_response(planner_response)
+        return is_valid
     
     def parse_code_from_planner_response(self, input_string: str) -> List[str]:
 
@@ -1590,17 +1655,35 @@ class GTA1Agent:
         self.current_step -= 1
         
     def parse_observation_caption_from_planner_response(self, input_string: str) -> str:
-        # Match from "Observation:" to the next section (Thought:, Action:) or end
-        pattern = r"Observation:\n(.*?)(?=\n(?:Thought:|Action:)|$)"
-        matches = re.findall(pattern, input_string, re.DOTALL)
+        # Accept both ``Observation:\n...`` and ``Observation: ...`` as well as
+        # the Step-N and Markdown-heading variants commonly emitted by Qwen.
+        pattern = (
+            r"^[ \t]*(?:Step[ \t]+\d+[ \t]+)?(?:\*\*)?Observation:"
+            r"(?:\*\*)?[ \t]*(.*?)"
+            r"(?=^[ \t]*(?:Step[ \t]+\d+[ \t]+)?(?:\*\*)?"
+            r"(?:Thought|Action|Grounded Action):(?:\*\*)?"
+            r"|^[ \t]*\(Grounded Action\)[ \t]*$|^[ \t]*```|\Z)"
+        )
+        matches = re.findall(
+            pattern, input_string, re.DOTALL | re.MULTILINE | re.IGNORECASE
+        )
         if matches:
             return matches[0].strip()
         return ""
 
     def parse_thought_from_planner_response(self, input_string: str) -> str:
-        # Match from "Thought:" to the next section (Action:) or end
-        pattern = r"Thought:\n(.*?)(?=\n(?:Action:)|$)"
-        matches = re.findall(pattern, input_string, re.DOTALL)
+        # Stop at an explicit action heading or the fenced action block. The
+        # latter is GTA1/Qwen's usual response format and has no Action: label.
+        pattern = (
+            r"^[ \t]*(?:Step[ \t]+\d+[ \t]+)?(?:\*\*)?Thought:"
+            r"(?:\*\*)?[ \t]*(.*?)"
+            r"(?=^[ \t]*(?:Step[ \t]+\d+[ \t]+)?(?:\*\*)?"
+            r"(?:Action|Grounded Action):(?:\*\*)?"
+            r"|^[ \t]*\(Grounded Action\)[ \t]*$|^[ \t]*```|\Z)"
+        )
+        matches = re.findall(
+            pattern, input_string, re.DOTALL | re.MULTILINE | re.IGNORECASE
+        )
         if matches:
             return matches[0].strip()
         return ""

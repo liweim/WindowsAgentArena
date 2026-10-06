@@ -13,8 +13,8 @@ bash run_win.sh
 conda activate winarena
 cd /home/weimingli/projects/WindowsAgentArena/scripts
 python run_human.py \
-    --example ../src/win-arena-container/client/evaluation_examples_windows/examples/accessibility/hearing/Information-child_visit_preparation.json \
-    --container-name winarena-$USER-human1 \
+    --example /home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client/evaluation_examples_windows/examples/hearing/mobility-opera_house_street_view.json \
+    --container-name winarena-human \
     --browser-port 9016 \
     --rdp-port 3400
 
@@ -42,3 +42,5 @@ PARAKEET_DEVICE=auto nohup python -m uvicorn \
 看结果：watch -n 60 python -m src.win-arena-container.client.mm_agents.utils
 
 git部分添加：git -C /home/weimingli/projects/WindowsAgentArena add -A -- . ':(exclude)src/win-arena-container/client/evaluation_examples_windows/examples/motor/**' ':(exclude)src/win-arena-container/client/evaluation_examples_windows/examples/visual/**'
+
+ssh -N -L 13400:127.0.0.1:3400 -L 19005:127.0.0.1:9005 weimingli@129.94.175.253

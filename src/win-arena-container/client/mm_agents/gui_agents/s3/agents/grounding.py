@@ -11,6 +11,7 @@ from mm_agents.gui_agents.s3.memory.procedural_memory import PROCEDURAL_MEMORY
 from mm_agents.gui_agents.s3.core.mllm import LMMAgent
 from mm_agents.gui_agents.s3.utils.common_utils import call_llm_safe
 from mm_agents.gui_agents.s3.agents.code_agent import CodeAgent
+from mm_agents.llm import SingleCallGroundingAdapter
 from mm_agents.utils import CUA_SYSTEM_PROMPT
 import logging
 
@@ -209,6 +210,15 @@ class OSWorldACI(ACI):
         # Configure the visual grounding model responsible for coordinate generation
         self.grounding_model = LMMAgent(engine_params_for_grounding)
         self.engine_params_for_grounding = engine_params_for_grounding
+        self.grounding_adapter = None
+        if self.engine_params_for_grounding.get("same_model_grounding"):
+            grounding_llm = getattr(self.grounding_model.engine, "abstract_llm", None)
+            if grounding_llm is None:
+                raise ValueError(
+                    "Same-model AgentS3 grounding requires an AbstractLLM-backed "
+                    "grounding engine"
+                )
+            self.grounding_adapter = SingleCallGroundingAdapter(grounding_llm)
 
         # Configure text grounding agent
         self.text_span_agent = LMMAgent(
@@ -233,18 +243,29 @@ class OSWorldACI(ACI):
     # Given the state and worker's referring expression, use the grounding model to generate (x,y)
     def generate_coords(self, ref_expr: str, obs: Dict) -> List[int]:
 
+        if self.grounding_adapter is not None:
+            with Image.open(BytesIO(obs["screenshot"])) as screenshot:
+                screenshot = screenshot.convert("RGB")
+                point = self.grounding_adapter.ground_point(ref_expr, screenshot)
+            sync_usage = getattr(
+                self.grounding_model.engine, "_sync_usage_from_abstract_llm", None
+            )
+            if sync_usage is not None:
+                sync_usage()
+            logger.info(
+                "AgentS3 separate grounding: target=%r screenshot=%dx%d pixel=%s",
+                ref_expr,
+                self.width,
+                self.height,
+                point,
+            )
+            return list(point)
+
         # Reset the grounding model state
         self.grounding_model.reset()
 
         # Configure the context, UI-TARS demo does not use system prompt
-        if self.engine_params_for_grounding.get("same_model_grounding"):
-            prompt = (
-                f"Query:{ref_expr}\n"
-                "Output only one point as (x,y) in a 0-to-1000 normalized "
-                "coordinate space relative to the attached screenshot.\n"
-            )
-        else:
-            prompt = f"Query:{ref_expr}\nOutput only the coordinate of one point in your response.\n"
+        prompt = f"Query:{ref_expr}\nOutput only the coordinate of one point in your response.\n"
         self.grounding_model.add_message(
             text_content=prompt, image_content=obs["screenshot"], put_text_last=True
         )
@@ -367,8 +388,11 @@ class OSWorldACI(ACI):
 
     # Resize from grounding model dim into OSWorld dim (1920 * 1080)
     def resize_coordinates(self, coordinates: List[int]) -> List[int]:
-        if self.engine_params_for_grounding.get("same_model_grounding"):
-            grounding_width = grounding_height = 1000
+        if self.grounding_adapter is not None:
+            # SingleCallGroundingAdapter already maps the model's normalized
+            # point into the actual screenshot's pixel space.
+            grounding_width = self.width
+            grounding_height = self.height
         else:
             grounding_width = self.engine_params_for_grounding["grounding_width"]
             grounding_height = self.engine_params_for_grounding["grounding_height"]

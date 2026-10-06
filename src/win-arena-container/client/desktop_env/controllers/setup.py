@@ -14,6 +14,7 @@ from typing import Any, Union, Optional
 from typing import Dict, List
 
 import requests
+import websocket
 from playwright.sync_api import sync_playwright, TimeoutError
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive, GoogleDriveFile, GoogleDriveFileList
@@ -1017,9 +1018,8 @@ class SetupController:
                 logger.warning("Failed to execute Chrome script on %s: %s", target_page.url, e)
 
     @staticmethod
-    def _build_youtube_live_caption_prep_script(
-            pause_video: bool = True,
-            disable_youtube_captions: bool = True
+    def _build_video_for_caption_prep_script(
+            pause_video: bool = True
     ) -> str:
         script_lines = [
             "async () => {",
@@ -1036,23 +1036,145 @@ class SetupController:
                 "    await sleep(500);",
                 "  }",
             ])
-        if disable_youtube_captions:
-            script_lines.extend([
-                "  for (let i = 0; i < 20; i++) {",
-                "    const captionsButton = document.querySelector('.ytp-subtitles-button');",
-                "    if (captionsButton) {",
-                "      const title = (captionsButton.getAttribute('title') || '').toLowerCase();",
-                "      const isOn = captionsButton.getAttribute('aria-pressed') === 'true'",
-                "        || captionsButton.classList.contains('ytp-button-active')",
-                "        || title.includes('turn off');",
-                "      if (isOn) captionsButton.click();",
-                "      break;",
-                "    }",
-                "    await sleep(500);",
-                "  }",
-            ])
         script_lines.append("}")
         return "\n".join(script_lines)
+
+    @staticmethod
+    def _build_disable_youtube_captions_script() -> str:
+        return """(async () => {
+            const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+            let playerSettleChecks = 0;
+            for (let i = 0; i < 40; i++) {
+                const player = document.querySelector('#movie_player');
+                if (player && typeof player.setOption === 'function') {
+                    try {
+                        const now = Date.now();
+                        localStorage.setItem(
+                            'yt-player-caption-persistence',
+                            JSON.stringify({
+                                data: 'false',
+                                expiration: now + 3153600000000,
+                                creation: now
+                            })
+                        );
+                    } catch (error) {
+                        // Clearing the active track still works when storage
+                        // is unavailable (for example, in a restricted embed).
+                    }
+                    player.setOption('captions', 'track', {});
+                    playerSettleChecks += 1;
+                    if (playerSettleChecks >= 8) return true;
+                    await sleep(250);
+                    continue;
+                }
+                const button = document.querySelector('.ytp-subtitles-button');
+                if (button) {
+                    const title = (
+                        button.getAttribute('title') || ''
+                    ).toLowerCase();
+                    const isOn = button.getAttribute('aria-pressed') === 'true'
+                        || button.classList.contains('ytp-button-active')
+                        || title.includes('turn off');
+                    if (isOn) button.click();
+                    return true;
+                }
+                await sleep(250);
+            }
+            return false;
+        })()"""
+
+    def _chrome_disable_youtube_captions_setup(
+            self,
+            timeout: int = 30000
+    ):
+        """Reusable setup action for disabling captions in all YouTube tabs."""
+        remote_debugging_url = f"http://{self.vm_ip}:9222"
+        script = self._build_disable_youtube_captions_script()
+        youtube_domains = ("youtube.com/", "youtube-nocookie.com/")
+        captions_disabled = False
+
+        # This covers direct YouTube pages and embeds exposed as ordinary
+        # Playwright frames.
+        try:
+            with sync_playwright() as p:
+                browser = self._connect_browser_over_cdp(
+                    p, remote_debugging_url, "Chrome"
+                )
+                if browser:
+                    for context in browser.contexts:
+                        for page in context.pages:
+                            for frame in page.frames:
+                                if not any(
+                                    domain in frame.url
+                                    for domain in youtube_domains
+                                ):
+                                    continue
+                                try:
+                                    if frame.evaluate(script):
+                                        captions_disabled = True
+                                except Exception:
+                                    continue
+        except Exception as e:
+            logger.warning("Failed to disable YouTube captions in frames: %s", e)
+
+        # Chrome exposes cross-origin YouTube embeds as out-of-process iframe
+        # targets. Playwright 1.48 omits those from page.frames, so evaluate
+        # the same script in each YouTube CDP target directly.
+        try:
+            deadline = time.monotonic() + timeout / 1000
+            while not captions_disabled and time.monotonic() < deadline:
+                targets = requests.get(
+                    f"{remote_debugging_url}/json",
+                    timeout=min(HTTP_REQUEST_TIMEOUT, timeout / 1000),
+                ).json()
+                youtube_targets = [
+                    target for target in targets
+                    if target.get("type") in {"iframe", "page"}
+                    and any(
+                        domain in target.get("url", "")
+                        for domain in youtube_domains
+                    )
+                    and target.get("webSocketDebuggerUrl")
+                ]
+                for target in youtube_targets:
+                    socket = websocket.create_connection(
+                        target["webSocketDebuggerUrl"],
+                        suppress_origin=True,
+                        timeout=max(1, timeout / 1000),
+                    )
+                    try:
+                        socket.send(json.dumps({
+                            "id": 1,
+                            "method": "Runtime.evaluate",
+                            "params": {
+                                "expression": script,
+                                "awaitPromise": True,
+                                "returnByValue": True,
+                            },
+                        }))
+                        while True:
+                            message = json.loads(socket.recv())
+                            if message.get("id") != 1:
+                                continue
+                            result = message.get("result", {}).get(
+                                "result", {}
+                            )
+                            if result.get("value") is True:
+                                captions_disabled = True
+                            break
+                    finally:
+                        socket.close()
+                if not captions_disabled:
+                    time.sleep(0.5)
+        except Exception as e:
+            logger.warning(
+                "Failed to disable captions in YouTube OOPIF targets: %s", e
+            )
+
+        if not captions_disabled:
+            logger.warning(
+                "No ready YouTube player was found while disabling captions"
+            )
 
     def _chrome_prepare_youtube_for_live_caption_setup(
             self,
@@ -1063,41 +1185,16 @@ class SetupController:
             disable_youtube_captions: bool = True
     ):
         self._chrome_execute_script_setup(
-            script=self._build_youtube_live_caption_prep_script(
-                pause_video=pause_video,
-                disable_youtube_captions=disable_youtube_captions,
+            script=self._build_video_for_caption_prep_script(
+                pause_video=pause_video
             ),
             url=url,
             timeout=timeout,
             wait_seconds=wait_seconds,
         )
 
-        # Embedded YouTube players live in a cross-origin iframe, so the
-        # page-level script above cannot see their subtitle button.  Inspect
-        # every Playwright frame and explicitly turn the player's captions
-        # off, leaving the task in a neutral state for either caption method.
         if disable_youtube_captions:
-            remote_debugging_url = f"http://{self.vm_ip}:9222"
-            try:
-                with sync_playwright() as p:
-                    browser = p.chromium.connect_over_cdp(remote_debugging_url)
-                    for context in browser.contexts:
-                        for page in context.pages:
-                            for frame in page.frames:
-                                try:
-                                    button = frame.query_selector('.ytp-subtitles-button')
-                                    if not button:
-                                        continue
-                                    title = (button.get_attribute('title') or '').lower()
-                                    pressed = button.get_attribute('aria-pressed')
-                                    classes = button.get_attribute('class') or ''
-                                    if (pressed == 'true' or 'ytp-button-active' in classes
-                                            or 'turn off' in title):
-                                        button.click()
-                                except Exception:
-                                    continue
-            except Exception as e:
-                logger.warning("Failed to disable embedded YouTube captions: %s", e)
+            self._chrome_disable_youtube_captions_setup(timeout=timeout)
 
     def _chrome_prepare_video_for_caption_setup(self, **kwargs):
         """Neutral task-facing alias for preparing an embedded video."""

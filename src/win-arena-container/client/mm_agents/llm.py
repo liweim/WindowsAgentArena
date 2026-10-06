@@ -1998,26 +1998,38 @@ class SingleCallGroundingAdapter:
         return response
 
     def ground_point(self, target: str, image: Image.Image) -> Tuple[int, int]:
-        """Locate a described target in a separate image call and return pixels."""
+        """Locate a described target and map Qwen's normalized point to pixels."""
         width, height = image.size
         prompt = (
             "Locate the center of this visible GUI target in the attached screenshot: "
-            f"{target!r}. The image is {width} pixels wide and {height} pixels high. "
-            "Return exactly one coordinate pair in image pixels as (x,y), with the "
-            "origin at the top-left. Do not include explanation or code."
+            f"{target!r}. Ignore any coordinate guesses in the target description and "
+            "locate it from the image itself. Return exactly one coordinate pair as "
+            "(x,y) in a 0-to-1000 normalized coordinate space for both axes, where "
+            "(0,0) is the top-left and (1000,1000) is the bottom-right. Do not return "
+            "image pixel coordinates or include explanation or code."
         )
         response = self(
             prompt,
             image,
             system_prompt=(
                 "You are a visual GUI grounding model. Identify the described target "
-                "in the screenshot and return its center point as (x,y) pixel coordinates."
+                "in the screenshot and return its center point as a single (x,y) pair "
+                "using 0-to-1000 normalized coordinates for both axes."
             ),
         )
         match = re.search(r"\((-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\)", response)
         if not match:
             raise ValueError(f"Grounding model did not return an (x,y) pair: {response!r}")
-        return round(float(match.group(1))), round(float(match.group(2)))
+        normalized_x, normalized_y = map(float, match.groups())
+        if not (0 <= normalized_x <= 1000 and 0 <= normalized_y <= 1000):
+            raise ValueError(
+                "Grounding coordinates must be in the 0-to-1000 range, "
+                f"got ({normalized_x}, {normalized_y}) from {response!r}"
+            )
+
+        pixel_x = min(max(0, width - 1), round(normalized_x * width / 1000))
+        pixel_y = min(max(0, height - 1), round(normalized_y * height / 1000))
+        return pixel_x, pixel_y
 
 
 def calculate_image_tokens():
@@ -2046,27 +2058,12 @@ def calculate_image_tokens():
 
 
 if __name__ == "__main__":
-    # client = AbstractLLM('qwen3.5-9b')
-    # messages = [
-    #     {
-    #         "role": "user",
-    #         "content": [
-    #             {"type": "input_text", "text": "hi"},
-    #             {"type": "input_text", "text": "hi"},
-    #         ]
-    #     }
-    # ]
-    # response = client(messages)
-    # print(response)
-
-    client = AbstractLLM('gta1-7b')
-    image = Image.open("/home/weimingli/projects/WindowsAgentArena/img/banner.png")
+    client = AbstractLLM('qwen3.8-27b')
     messages = [
         {
             "role": "user",
             "content": [
-                {"type": "input_text", "text": "what is in the image?"},
-                {"type": "input_image", "image_url": encode_image(image)},
+                {"type": "input_text", "text": "hi"},
             ]
         }
     ]

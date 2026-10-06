@@ -1478,13 +1478,6 @@ Here are some guidelines for you:
 My computer's password is '{CLIENT_PASSWORD}', feel free to use it when you need sudo rights.
 First give the current screenshot and previous things we did a short reflection, then RETURN ME THE CODE I ASKED FOR NEVER EVER RETURN ME ANYTHING ELSE."""
 
-GTA1_GROUNDING_SYSTEM_PROMPT = '''
-You are an expert UI element locator. Given a GUI image and a user's element description, provide the coordinates of the specified element as a single (x,y) point. The image resolution is height {height} and width {width}. For elements with area, return the center point.
-
-Output the coordinate pair exactly:
-(x,y)
-'''.strip()
-
 GTA1_JUDGE_SYSTEM_PROMPT='''
 You are an expert at evaluating the planning and reasoning of UI agents working toward achieving a goal.
 
