@@ -9,19 +9,17 @@
     "M3"
   ],
   "difficulty": "hard",
-  "instruction": "Enable Windows Filter Keys and keep them enabled. Using the provided 2024 and 2025 Economic Survey of Singapore reports, determine the difference between Singapore's Real GDP growth percentages for the two years. Save your answer in `answer.txt` on the Desktop.",
+  "instruction": "Enable Windows Filter Keys and keep them enabled. Using the provided 2024 and 2025 Economic Survey of Singapore reports, determine the difference between Singapore's Real GDP growth percentages for the two years, expressed in percentage points. Save your answer in `answer.txt` on the Desktop.",
   "source": "synthetic",
   "gt_steps": [
     "Enable Windows Filter Keys.",
     "Keep Filter Keys enabled throughout the task.",
     "Review the provided Economic Survey of Singapore 2024 report.",
     "Find Singapore's Real GDP growth percentage for 2024.",
-    "Identify the 2024 Real GDP growth percentage as 4.4%.",
     "Review the provided Economic Survey of Singapore 2025 report.",
     "Find Singapore's Real GDP growth percentage for 2025.",
-    "Identify the 2025 Real GDP growth percentage as 5.0%.",
-    "Determine the difference between the two percentages as 0.6 percentage points.",
-    "Save the answer in `answer.txt` on the Desktop.",
+    "Open Notepad and write `0.6 percentage points`.",
+    "Save the file as `answer.txt` on the Desktop.",
     "Leave Filter Keys enabled."
   ],
   "config": [
@@ -30,11 +28,11 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/information-singapore_real_gdp_comparison_2024.pdf",
+            "local_path": "../assets/information-singapore_real_gdp_comparison_2024.pdf",
             "path": "C:\\Users\\Docker\\Desktop\\EconomicSurveySingapore2024.pdf"
           },
           {
-            "local_path": "assets/information-singapore_real_gdp_comparison_2025.pdf",
+            "local_path": "../assets/information-singapore_real_gdp_comparison_2025.pdf",
             "path": "C:\\Users\\Docker\\Desktop\\EconomicSurveySingapore2025.pdf"
           }
         ]
@@ -111,7 +109,7 @@
           "points": [
             {
               "regex": [
-                "0\\.6\\s*%"
+                "0\\.6\\s+percentage\\s+points?"
               ]
             }
           ]

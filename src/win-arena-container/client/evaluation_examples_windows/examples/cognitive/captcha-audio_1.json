@@ -13,7 +13,7 @@
   "instruction": "Complete the audio CAPTCHA open in Chrome.",
   "source": "synthetic",
   "gt_steps": [
-    "Listen to the verification code, enter `33572`, and submit it."
+    "Listen to the verification code, enter the code, and submit it."
   ],
   "config": [
     {

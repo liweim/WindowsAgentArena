@@ -14,7 +14,7 @@
   "source": "https://www.canada.ca/en/public-health/services/video/covid-19-hand-washing-heroes.html",
   "gt_steps": [
     "Turn on an available caption feature for the video.",
-    "Play the opened video with captions and identify the physical sequence from wetting through drying, including the specifically named hand areas.",
+    "Play the opened video with captions enabled.",
     "Switch to Sticky Notes.",
     "Write the phrases in a sticky note: `warm water\nsoap\nfront and back of your hands\nbetween your fingers\nrinse and dry`."
   ],
@@ -111,6 +111,7 @@
             },
             [
               "between your fingers",
+              "between the fingers",
               "between fingers"
             ],
             {

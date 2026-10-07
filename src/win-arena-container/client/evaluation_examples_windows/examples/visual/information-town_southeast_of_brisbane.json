@@ -15,7 +15,6 @@
   "gt_steps": [
     "Turn on Windows Narrator.",
     "Locate Brisbane on the Australia map PDF.",
-    "Identify Gold Coast immediately southeast of Brisbane.",
     "Open Notepad and write Gold Coast.",
     "Save the file as answer.txt on the Desktop."
   ],
@@ -25,7 +24,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/information-town_southeast_of_brisbane.pdf",
+            "local_path": "../assets/information-town_southeast_of_brisbane.pdf",
             "path": "C:\\Users\\Docker\\Desktop\\Australia-Map.pdf"
           }
         ]

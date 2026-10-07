@@ -10,16 +10,26 @@
     "V1"
   ],
   "difficulty": "easy",
-  "instruction": "Turn on Windows Narrator. In Chrome, open https://www.smythstoys.com/, find swing sets priced at no more than £49.99, and leave the filtered results page open.",
-  "source": "https://www.smythstoys.com/",
+  "instruction": "Turn on Windows Narrator. In Chrome, use the provided swing-set catalogue to filter for swing sets priced at no more than £49.99, and leave the filtered results page open.",
+  "source": "synthetic",
   "gt_steps": [
     "Turn on Windows Narrator.",
-    "Open https://www.smythstoys.com/ in Chrome.",
-    "Find the swing-set category or search results.",
+    "Open the provided swing-set catalogue in Chrome.",
     "Set the maximum price to £49.99.",
     "Leave the filtered results page open."
   ],
   "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "../assets/consumption-swingset_price_filter.html",
+            "path": "C:\\Users\\Docker\\Desktop\\SwingSetCatalogue.html"
+          }
+        ]
+      }
+    },
     {
       "type": "launch",
       "parameters": {
@@ -27,7 +37,7 @@
           "google-chrome",
           "--remote-debugging-port=1337",
           "--force-renderer-accessibility",
-          "https://www.smythstoys.com/"
+          "file:///C:/Users/Docker/Desktop/SwingSetCatalogue.html"
         ]
       }
     },
@@ -54,7 +64,7 @@
   "evaluator": {
     "func": [
       "check_narrator_enabled",
-      "is_expected_url_pattern_match"
+      "check_page_visible_text"
     ],
     "conj": "and",
     "result": [
@@ -62,7 +72,9 @@
         "type": "narrator_status"
       },
       {
-        "type": "active_tab_info_simple"
+        "type": "page_info",
+        "url": "file:///C:/Users/Docker/Desktop/SwingSetCatalogue.html",
+        "load_state": "load"
       }
     ],
     "expected": [
@@ -73,14 +85,21 @@
       {
         "type": "rule",
         "rules": {
-          "expected": [
-            "https?://(www\\.)?smythstoys\\.com/.*/swings-and-slides/.*",
-            "priceRange",
-            "49\\.99"
+          "ignore_case": true,
+          "include": [
+            "Swing Sets",
+            "Price filter active: £49.99 maximum",
+            "Junior Nest Swing",
+            "Compact Toddler Swing"
+          ],
+          "exclude": [
+            "Garden Double Swing",
+            "Adventure Climbing Swing"
           ]
         }
       }
     ]
   },
-  "proxy": true
+  "proxy": false,
+  "possibility_of_env_change": "low"
 }

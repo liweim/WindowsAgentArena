@@ -14,7 +14,7 @@
   "source": "https://medlineplus.gov/medlineplus-videos/gluten-and-celiac-disease",
   "gt_steps": [
     "Turn on Chrome Live Caption.",
-    "Play the video and use Live Caption to identify the treatment mentioned for celiac disease.",
+    "Play the video with Live Caption enabled.",
     "Open Notepad.",
     "Write `gluten-free diet`.",
     "Save the file as `answer.txt` on the Desktop."

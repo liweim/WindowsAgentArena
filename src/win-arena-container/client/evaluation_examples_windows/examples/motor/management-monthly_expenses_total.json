@@ -18,7 +18,6 @@
     "Review the Amount Due and Status columns.",
     "Select cell B12.",
     "Enter a formula that sums the amounts for all rows whose status is `Unpaid`.",
-    "Verify that the calculated total in B12 is `648.49`.",
     "Save `MonthlyBills.ods`.",
     "Keep Filter Keys enabled."
   ],
@@ -28,7 +27,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/management-monthly_expenses_total.ods",
+            "local_path": "../assets/management-monthly_expenses_total.ods",
             "path": "C:\\Users\\Docker\\Desktop\\MonthlyBills.ods"
           }
         ]

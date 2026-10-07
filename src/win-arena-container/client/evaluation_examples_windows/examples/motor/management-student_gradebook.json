@@ -17,14 +17,9 @@
     "Open Grades.ods in LibreOffice Calc.",
     "Review the three students and their scores in cells A3:D5.",
     "Review the grading table in cells F2:H7.",
-    "Calculate each student's average and round it to two decimal places.",
-    "Calculate the averages: Aisha Khan `90.00`, Ben Carter `78.67`, Chloe Nguyen `70.00`.",
-    "Assign the grades: Aisha Khan `A`, Ben Carter `B`, Chloe Nguyen `C`.",
-    "Enter the students, average scores, and letter grades in cells A10:C12.",
-    "Sort the completed results by average score from highest to lowest.",
-    "Verify that Aisha Khan with `90.00` and grade `A` appears first.",
-    "Verify that Ben Carter with `78.67` and grade `B` appears second.",
-    "Verify that Chloe Nguyen with `70.00` and grade `C` appears third.",
+    "Enter `Aisha Khan`, `90.00`, and `A` in cells A10:C10.",
+    "Enter `Ben Carter`, `78.67`, and `B` in cells A11:C11.",
+    "Enter `Chloe Nguyen`, `70.00`, and `C` in cells A12:C12.",
     "Save `Grades.ods`.",
     "Keep Sticky Keys enabled."
   ],
@@ -34,7 +29,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/management-student_gradebook.ods",
+            "local_path": "../assets/management-student_gradebook.ods",
             "path": "C:\\Users\\Docker\\Desktop\\Grades.ods"
           }
         ]

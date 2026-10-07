@@ -23,7 +23,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/consumption-tomato_egg_shopping_list.xlsx",
+            "local_path": "../assets/consumption-tomato_egg_shopping_list.xlsx",
             "path": "C:\\Users\\Docker\\Desktop\\tomato_egg_shopping_list.xlsx"
           }
         ]

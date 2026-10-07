@@ -27,7 +27,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/consumption-order_substitution_audio.mp3",
+            "local_path": "../assets/consumption-order_substitution_audio.mp3",
             "path": "C:\\Users\\Docker\\Desktop\\OrderSubstitutionAudio.mp3"
           }
         ]
@@ -112,10 +112,12 @@
           "ignore_case": true,
           "points": [
             [
-              "oat yoghurt"
+              "oat yoghurt",
+              "oat yogurt"
             ],
             [
-              "plain soy yoghurt"
+              "plain soy yoghurt",
+              "plain soy yogurt"
             ],
             [
               "$6.50",

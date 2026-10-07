@@ -9,21 +9,16 @@
     "M1"
   ],
   "difficulty": "hard",
-  "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Draft, but do not send, a Thunderbird email to `alice@example.com` with subject `Meeting Agenda`, using `MeetingAgenda.odt` saved on Desktop to include the meeting date, time, location, all four agenda items, and the preparation requirement.",
+  "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Create and save, but do not send, a Thunderbird draft to `alice@example.com` with subject `Meeting Agenda`, using `MeetingAgenda.odt` saved on Desktop to include the meeting date, time, location, all four agenda items, and the preparation requirement.",
   "source": "synthetic",
   "gt_steps": [
     "Enable the Windows On-Screen Keyboard.",
     "Keep the On-Screen Keyboard open throughout the task.",
     "Open MeetingAgenda.odt in LibreOffice Writer.",
-    "Identify the meeting date as 20 October 2026.",
-    "Identify the meeting time as 10:00 AM to 11:00 AM.",
-    "Identify the location as Conference Room B.",
-    "Identify the four agenda items.",
-    "Identify the preparation requirement to bring the latest testing notes and an updated task list.",
     "Open Thunderbird and compose a new email.",
     "Set the recipient to alice@example.com.",
     "Set the subject to `Meeting Agenda`.",
-    "Include the meeting date, time, location, agenda items, and preparation requirement in the email body.",
+    "Enter the complete canonical meeting details in the email body: `Date: 20 October 2026`, `Time: 10:00 AM to 11:00 AM`, `Location: Conference Room B`, the agenda items `Review progress on the client dashboard`, `Discuss unresolved testing issues`, `Confirm responsibilities for the final presentation`, and `Agree on the next project milestone and deadline`, and the preparation requirement to bring the latest testing notes and an updated task list.",
     "Save the email as a draft.",
     "Do not send the email.",
     "Keep the On-Screen Keyboard open."
@@ -34,7 +29,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/communication-meeting_agenda_draft.odt",
+            "local_path": "../assets/communication-meeting_agenda_draft.odt",
             "path": "C:\\Users\\Docker\\Desktop\\MeetingAgenda.odt"
           }
         ]

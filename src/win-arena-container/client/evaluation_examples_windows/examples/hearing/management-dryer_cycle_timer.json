@@ -26,7 +26,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/management-dryer_cycle_timer.mp3",
+            "local_path": "../assets/management-dryer_cycle_timer.mp3",
             "path": "C:\\Users\\Docker\\Desktop\\DryerCycleUpdate.mp3"
           }
         ]
@@ -95,7 +95,7 @@
         "type": "rule",
         "rules": {
           "expected": [
-            "https?://(www\\.)?vclock\\.com/timer/#countdown=00:37:00(&|$)"
+            "https?://(www\\.)?vclock\\.com/(?:timer/#countdown=00:37:00(?:&|$)|set-timer-for-37-minutes/?(?:[?#].*)?)"
           ]
         }
       },

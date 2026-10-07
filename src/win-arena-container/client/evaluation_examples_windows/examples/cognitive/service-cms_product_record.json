@@ -33,7 +33,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/service-cms_product_record.xlsx",
+            "local_path": "../assets/service-cms_product_record.xlsx",
             "path": "C:\\Users\\Docker\\Desktop\\cms_product_record.xlsx"
           }
         ]

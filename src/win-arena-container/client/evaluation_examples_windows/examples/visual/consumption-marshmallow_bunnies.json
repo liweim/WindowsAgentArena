@@ -16,9 +16,8 @@
     "Open the shopping reminder PDF in Chrome.",
     "Turn on Windows Narrator.",
     "Use the screen reader to read the shopping reminder PDF.",
-    "Identify the requested product as Melster Candies Chocolatey Covered Chocolate Flavored Marshmallow Bunnies, 5-piece box, 1.87 oz.",
     "Switch to the shopping website.",
-    "Search for the requested product.",
+    "Search for Melster Candies Chocolatey Covered Chocolate Flavored Marshmallow Bunnies, 5-piece box, 1.87 oz.",
     "Open the correct product page.",
     "Add exactly one unit to the shopping cart.",
     "Open the shopping cart.",
@@ -34,7 +33,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/consumption-marshmallow_bunnies.pdf",
+            "local_path": "../assets/consumption-marshmallow_bunnies.pdf",
             "path": "C:\\Users\\Docker\\Desktop\\ShoppingReminder.pdf"
           }
         ]

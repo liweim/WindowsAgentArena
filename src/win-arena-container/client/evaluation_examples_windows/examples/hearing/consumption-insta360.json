@@ -16,7 +16,7 @@
   "gt_steps": [
     "Switch to the audio shopping reminder tab.",
     "Turn on Chrome Live Caption.",
-    "Play the audio and use the captions to identify the item to buy: Insta360 ONE X2 360 Degree Waterproof Action Camera.",
+    "Play the audio with Live Caption enabled.",
     "Switch back to the shopping website tab.",
     "Find the Insta360 ONE X2 waterproof action camera product on the website.",
     "Select the Standalone option and add the product to the shopping cart."
@@ -31,7 +31,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/consumption-insta360.mp3",
+            "local_path": "../assets/consumption-insta360.mp3",
             "path": "C:\\Users\\Docker\\Desktop\\ShoppingReminder.mp3"
           }
         ]

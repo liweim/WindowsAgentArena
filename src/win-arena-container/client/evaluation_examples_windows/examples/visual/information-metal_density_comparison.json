@@ -17,10 +17,8 @@
   ],
   "gt_steps": [
     "Turn on Windows Narrator.",
-    "Compare the density values on the Gold and Aluminium Wikipedia pages.",
-    "Identify Gold as the denser metal with density 19.3 g/cm³.",
     "Open Notepad.",
-    "Write Gold on the first line and 19.3 on the second line.",
+    "Write Gold on the first line and 19.3 g/cm³ on the second line.",
     "Save the file as answer.txt on the Desktop."
   ],
   "config": [

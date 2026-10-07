@@ -15,7 +15,7 @@
   "transcript": "Alright team, thanks for joining the sync. Regarding the new deployment workflow on the cloud cluster, there are three absolute deal-breakers you need to remember. First, under no circumstances should you manually delete the cluster cache—this will crash the live gateway. Second, please, never bypass the pre-check script before pushing your updates to staging. Um, and the last one, let's see... ah, yes, do not hardcode any API tokens in the configuration files, use the environment vault instead. Make sure to log these down so the rest of the team doesn't mess up.",
   "gt_steps": [
     "Turn on Chrome Live Caption.",
-    "Play the audio and use the captions to identify the three core warning phrases.",
+    "Play the audio with Live Caption enabled.",
     "Switch to Sticky Notes.",
     "Close the sign-in prompt if it appears.",
     "Create a sticky note.",
@@ -27,7 +27,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/communication-meeting_action_items.mp3",
+            "local_path": "../assets/communication-meeting_action_items.mp3",
             "path": "C:\\Users\\Docker\\Desktop\\Communication-meeting_action_items.mp3"
           }
         ]

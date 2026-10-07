@@ -36,7 +36,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/service-cms_update_voyage_stock_audio.mp3",
+            "local_path": "../assets/service-cms_update_voyage_stock_audio.mp3",
             "path": "C:\\Users\\Docker\\Desktop\\CMSStockUpdate.mp3"
           }
         ]

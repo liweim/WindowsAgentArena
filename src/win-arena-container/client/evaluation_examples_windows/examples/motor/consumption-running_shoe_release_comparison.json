@@ -22,9 +22,7 @@
     "Open the product page.",
     "Click `Add to Compare`.",
     "Open the comparison page.",
-    "Compare the release dates of the two shoes.",
-    "Determine that `Salomon Men's Predict Soc2 Running` (SKU `B08Y2SN6Y4`) is the shoe with the more recent release date.",
-    "Open the latest-release shoe if necessary.",
+    "Open the more recently released shoe, SKU `B08Y2SN6Y4`.",
     "Select the Black colour.",
     "Select size 12.",
     "Leave the quantity as 1.",
@@ -112,7 +110,13 @@
               "sku": "B08Y2SN6Y4",
               "quantity": 1
             }
-          ]
+          ],
+          "options": {
+            "B08Y2SN6Y4": {
+              "Color": "Black",
+              "Size": "12"
+            }
+          }
         }
       }
     ]

@@ -22,7 +22,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/service-real_id_infographic.pdf",
+            "local_path": "../assets/service-real_id_infographic.pdf",
             "path": "C:\\Users\\Docker\\Desktop\\RealIDInfographic.pdf"
           }
         ]

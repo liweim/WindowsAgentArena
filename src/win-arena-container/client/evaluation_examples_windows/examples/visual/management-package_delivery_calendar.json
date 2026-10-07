@@ -16,8 +16,6 @@
     "Keep Narrator enabled throughout the task.",
     "Open DeliveryConfirmation.jpg.",
     "Review the delivery confirmation image.",
-    "Identify the tracking number as HXAU-4827-1936.",
-    "Identify the expected delivery date as Thursday, 5 November 2026.",
     "Open Thunderbird Calendar.",
     "Create a new all-day calendar event.",
     "Set the event title to Package Delivery - HXAU-4827-1936.",
@@ -32,7 +30,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/management-package_delivery_calendar.jpg",
+            "local_path": "../assets/management-package_delivery_calendar.jpg",
             "path": "C:\\Users\\Docker\\Desktop\\DeliveryConfirmation.jpg"
           }
         ]

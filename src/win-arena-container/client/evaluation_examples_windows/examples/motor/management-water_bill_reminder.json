@@ -15,8 +15,6 @@
     "Enable the Windows On-Screen Keyboard and keep it open.",
     "Review the provided water bill PDF in Google Chrome.",
     "Find the bill payment due date.",
-    "Identify the bill due date as 11/01/24.",
-    "Calculate three days before the due date as 10/29/24.",
     "Open Thunderbird Calendar.",
     "In the Calendars list, enable the Home calendar if it is disabled.",
     "Create a calendar event for 10/29/24 at 10:00 AM.",
@@ -32,7 +30,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/management-water_bill_reminder.pdf",
+            "local_path": "../assets/management-water_bill_reminder.pdf",
             "path": "C:\\Users\\Docker\\Desktop\\WaterBill.pdf"
           }
         ]

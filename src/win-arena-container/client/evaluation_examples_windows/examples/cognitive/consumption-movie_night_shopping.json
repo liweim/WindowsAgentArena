@@ -29,7 +29,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/consumption-movie_night_shopping_list.txt",
+            "local_path": "../assets/consumption-movie_night_shopping_list.txt",
             "path": "C:\\Users\\Docker\\Desktop\\movie_night_note.txt"
           }
         ]

@@ -16,7 +16,6 @@
     "Open the provided shopping note in Chrome.",
     "Turn on Windows Narrator.",
     "Use the screen reader to read the shopping note.",
-    "Identify the requested product as ThinSlim Foods Keto Bread, Plain, Pack of 2.",
     "Open the shopping website.",
     "Search for the requested product.",
     "Open the correct ThinSlim Foods Keto Bread product page.",
@@ -32,7 +31,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/consumption-keto_bread.html",
+            "local_path": "../assets/consumption-keto_bread.html",
             "path": "C:\\Users\\Docker\\Desktop\\ShoppingNote.html"
           }
         ]

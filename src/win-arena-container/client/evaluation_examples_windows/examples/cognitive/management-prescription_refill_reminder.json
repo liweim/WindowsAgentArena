@@ -14,7 +14,6 @@
   "source": "synthetic",
   "gt_steps": [
     "Open `pharmacy_message.txt` on the Desktop.",
-    "Read the refill deadline `July 20, 2026`.",
     "Open Thunderbird Calendar.",
     "Enable the `Home` calendar if it is disabled.",
     "Create a new all-day event on `July 20, 2026`.",

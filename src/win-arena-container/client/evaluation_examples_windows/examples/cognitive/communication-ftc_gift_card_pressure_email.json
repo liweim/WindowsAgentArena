@@ -72,9 +72,7 @@
     "conj": "and",
     "result": [
       {
-        "type": "vm_file",
-        "path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release\\Mail\\Local Folders\\Drafts",
-        "dest": "thunderbird-drafts.mbox"
+        "type": "thunderbird_drafts"
       },
       {
         "type": "edge_immersive_reader_state",

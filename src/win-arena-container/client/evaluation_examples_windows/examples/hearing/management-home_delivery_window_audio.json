@@ -27,7 +27,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/management-home_delivery_window_audio.mp3",
+            "local_path": "../assets/management-home_delivery_window_audio.mp3",
             "path": "C:\\Users\\Docker\\Desktop\\HomeDeliveryAudio.mp3"
           }
         ]

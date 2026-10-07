@@ -24,6 +24,7 @@ from .chrome import (
     is_expected_url_pattern_match,
     is_added_to_steam_cart,
     is_page_contains_items,
+    check_page_visible_text,
     is_expected_installed_extensions,
     compare_pdf_images,
     check_chrome_weather_bookmark,

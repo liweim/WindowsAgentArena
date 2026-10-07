@@ -19,8 +19,6 @@
     "Return to the Quantum 600E manual PDF open in Google Chrome.",
     "Navigate to the Batteries and Charging section.",
     "Find the charging recommendation for daily use.",
-    "Determine that the recommended charging time is 8 to 14 hours after daily use.",
-    "Identify 8 hours as the minimum recommended charging time.",
     "Open https://vclock.com in Chrome.",
     "Open the Timer page.",
     "Create and start an 8-hour timer.",
@@ -33,7 +31,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/health-wheelchair_charging_timer.pdf",
+            "local_path": "../assets/health-wheelchair_charging_timer.pdf",
             "path": "C:\\Users\\Docker\\Downloads\\quantum-600e-manual.pdf"
           }
         ]
@@ -103,7 +101,7 @@
         "type": "rule",
         "rules": {
           "expected": [
-            "https?://(www\\.)?vclock\\.com/timer/#countdown=08:00:00(&|$)"
+            "https?://(www\\.)?vclock\\.com/(?:timer/#countdown=08:00:00(?:&|$)|set-timer-for-8-hours/?(?:[?#].*)?)"
           ]
         }
       }

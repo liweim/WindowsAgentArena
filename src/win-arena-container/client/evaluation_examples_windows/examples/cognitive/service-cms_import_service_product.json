@@ -10,7 +10,7 @@
   ],
   "difficulty": "hard",
   "operation_time": 159.40,
-  "instruction": "Use `ServiceProductImport.csv` on the Desktop as the approved, persistent import manifest. In the CMS, use the native product import workflow with import behavior `Add/Update` to check and import the table. Use username `admin` and password `admin1234`.",
+  "instruction": "Use `ServiceProductImport.csv` on the Desktop as the persistent import checklist. In the CMS, use the native product import workflow with import behavior `Add/Update` to check and import the table. After a successful import, add a `Status` column to the CSV, mark the `SERVICE-SETUP-30` row as `Imported`, and save it. Use username `admin` and password `admin1234`.",
   "source": "synthetic",
   "gt_steps": [
     "Review `ServiceProductImport.csv` in LibreOffice Calc.",
@@ -21,7 +21,7 @@
     "Select `ServiceProductImport.csv` from the Desktop as the file to import.",
     "Run Check Data and resolve no fields manually.",
     "Run Import after the file passes validation.",
-    "Verify that product SKU `SERVICE-SETUP-30` was created with name `30-Minute In-Store Setup Assistance`, type `virtual`, price `25.00`, and quantity `50`."
+    "Add a `Status` column to `ServiceProductImport.csv`, enter `Imported` for SKU `SERVICE-SETUP-30`, and save the CSV."
   ],
   "config": [
     {
@@ -35,7 +35,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/service-cms_import_service_product.csv",
+            "local_path": "../assets/service-cms_import_service_product.csv",
             "path": "C:\\Users\\Docker\\Desktop\\ServiceProductImport.csv"
           }
         ]
@@ -63,30 +63,46 @@
     "libreoffice_calc"
   ],
   "evaluator": {
-    "func": "exact_match",
-    "result": {
-      "type": "magento_product_match",
-      "sku": "SERVICE-SETUP-30",
-      "name": "30-Minute In-Store Setup Assistance",
-      "type_id": "virtual",
-      "price": 25.0,
-      "qty": 50.0,
-      "is_in_stock": true,
-      "status": 1
-    },
-    "expected": {
-      "type": "rule",
-      "rules": {
-        "expected": "1"
+    "func": [
+      "exact_match",
+      "check_include_exclude"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "magento_product_match",
+        "sku": "SERVICE-SETUP-30",
+        "name": "30-Minute In-Store Setup Assistance",
+        "type_id": "virtual",
+        "price": 25.0,
+        "qty": 50.0,
+        "is_in_stock": true,
+        "status": 1
+      },
+      {
+        "type": "vm_command_line",
+        "command": "powershell -NoProfile -Command \"$p=Join-Path $env:USERPROFILE 'Desktop\\ServiceProductImport.csv'; if (!(Test-Path $p)) { Write-Output 'MANIFEST_INCOMPLETE'; exit }; $row=Import-Csv $p | Where-Object { $_.sku -eq 'SERVICE-SETUP-30' -or $_.SKU -eq 'SERVICE-SETUP-30' } | Select-Object -First 1; if ($row -and $row.Status -eq 'Imported') { Write-Output 'MANIFEST_COMPLETE' } else { Write-Output 'MANIFEST_INCOMPLETE' }\"",
+        "shell": true
       }
-    },
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "expected": "1"
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "include": ["MANIFEST_COMPLETE"],
+          "exclude": ["MANIFEST_INCOMPLETE"]
+        }
+      }
+    ],
     "metric_roles": {
-      "task_outcome": [
-        0
-      ],
-      "access_requirement": [
-        0
-      ]
+      "task_outcome": [0, 1],
+      "access_requirement": [1]
     }
   },
   "proxy": false,

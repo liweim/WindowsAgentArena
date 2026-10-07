@@ -16,13 +16,8 @@
     "Keep the On-Screen Keyboard open throughout the task.",
     "Read the Harbor Freight catalog PDF already open in Chrome.",
     "Locate the polishing products section.",
-    "Identify the cheapest polisher in the catalog.",
-    "Find the product name `6\" PALM POLISHER`.",
-    "Find its price `$19.99`.",
     "Open Notepad.",
-    "Write the following exactly:",
-    "6\" PALM POLISHER",
-    "$19.99",
+    "Enter `6\" PALM POLISHER` on the first line and `$19.99` on the second line.",
     "Save the file as `answer.txt` on the Desktop.",
     "Leave the saved file on the Desktop.",
     "Leave the On-Screen Keyboard open."
@@ -33,7 +28,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/consumption-cheapest_polisher.pdf",
+            "local_path": "../assets/consumption-cheapest_polisher.pdf",
             "path": "C:\\Users\\Docker\\Downloads\\Nov2020Catalog_Full.pdf"
           }
         ]

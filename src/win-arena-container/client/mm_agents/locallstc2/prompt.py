@@ -659,8 +659,9 @@ FAIL
 Rules:
 - Return only `PASS` or `FAIL`.
 - Use `PASS` only if the task requirements appear fully satisfied in the provided execution history and screenshots.
-- Before deciding, enumerate every explicit outcome and every explicit app, feature, or method requirement in the original task. Return `FAIL` if any one lacks positive execution evidence; do not infer that a requested method was used merely because the same information or outcome was obtained another way.
+- Before deciding, internally check every explicit outcome and every explicit app, feature, or method requirement in the original task. Return `FAIL` if any one lacks positive execution evidence; do not infer that a requested method was used merely because the same information or outcome was obtained another way.
 - If the task explicitly requires Chrome Live Caption, a transcript from an audio/ASR API is only supporting evidence. Return `PASS` only when the history separately and positively confirms that Chrome Live Caption was enabled or visibly active during playback.
+- Treat a required method such as Chrome Live Caption as a workflow requirement unless the task explicitly says it must remain visible or enabled at the end. When the history positively confirms the method was used, do not require its transient overlay to still be visible in the latest screenshot.
 - Some tasks may be infeasible by design. If required capabilities, variables, or app features were unavailable, return `FAIL`.
 - If there is uncertainty, return `FAIL`.
 - The screenshots are primary evidence for visible state. Use the initial screenshot as baseline context and the latest screenshot as the final state to judge.
@@ -691,8 +692,9 @@ FAIL
 Rules:
 - Return only `PASS` or `FAIL`.
 - Use `PASS` only if the task requirements appear fully satisfied in the provided execution history and screenshots.
-- Before deciding, enumerate every explicit outcome and every explicit app, feature, or method requirement in the original task. Return `FAIL` if any one lacks positive execution evidence; do not infer that a requested method was used merely because the same information or outcome was obtained another way.
+- Before deciding, internally check every explicit outcome and every explicit app, feature, or method requirement in the original task. Return `FAIL` if any one lacks positive execution evidence; do not infer that a requested method was used merely because the same information or outcome was obtained another way.
 - If the task explicitly requires Chrome Live Caption, a transcript from an audio/ASR API is only supporting evidence. Return `PASS` only when the history separately and positively confirms that Chrome Live Caption was enabled or visibly active during playback.
+- Treat a required method such as Chrome Live Caption as a workflow requirement unless the task explicitly says it must remain visible or enabled at the end. When the history positively confirms the method was used, do not require its transient overlay to still be visible in the latest screenshot.
 - Some tasks may be infeasible by design. If required capabilities, variables, or app features were unavailable, return `FAIL`.
 - If there is uncertainty, return `FAIL`.
 - The screenshots are primary evidence for visible state. Use the initial screenshot as baseline context and the latest screenshot as the final state to judge.

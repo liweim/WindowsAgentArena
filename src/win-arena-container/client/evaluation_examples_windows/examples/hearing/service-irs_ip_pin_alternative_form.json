@@ -27,7 +27,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/service-irs_ip_pin_alternative_form.mp3",
+            "local_path": "../assets/service-irs_ip_pin_alternative_form.mp3",
             "path": "C:\\Users\\Docker\\Desktop\\IRSIPPINRequest.mp3"
           }
         ]
@@ -91,7 +91,7 @@
         "type": "rule",
         "rules": {
           "expected": [
-            "https?://(www\\.)?irs\\.gov/pub/irs-pdf/f15227\\.pdf.*"
+            "https?://(www\\.)?irs\\.gov/(?:pub/irs-pdf/f15227\\.pdf.*|dmaf/form/f15227/?(?:[?#].*)?)"
           ]
         }
       },

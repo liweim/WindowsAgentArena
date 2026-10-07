@@ -23,7 +23,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/health-drug_facts_package.jpeg",
+            "local_path": "../assets/health-drug_facts_package.jpeg",
             "path": "C:\\Users\\Docker\\Desktop\\DrugFactsPackage.jpg"
           }
         ]

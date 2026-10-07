@@ -17,7 +17,7 @@
     "Open the OneStopShop website already available in Chrome.",
     "Search for `wireless mouse`.",
     "Open the first product in the search results.",
-    "Verify that the first result is `LED Wireless Mouse,Wireless Mouse for MacBook Air/Wireless Mouse for MacBook Pro/Mac/Laptop/MacBook/iPad,Bluetooth Mouse for MacBook Air/Pro/Mac/ipad/ipad pro (Rose Gold)`.",
+    "Select the Black colour option.",
     "Leave the quantity as 1.",
     "Add the product to the shopping cart."
   ],
@@ -103,7 +103,12 @@
               "sku": "B08FMSC383",
               "quantity": 1
             }
-          ]
+          ],
+          "options": {
+            "B08FMSC383": {
+              "Color": "Black"
+            }
+          }
         }
       }
     ]

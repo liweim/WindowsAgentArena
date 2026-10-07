@@ -27,7 +27,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/health-medication_change_calendar.txt",
+            "local_path": "../assets/health-medication_change_calendar.txt",
             "path": "C:\\Users\\Docker\\Desktop\\MedicationChange.txt"
           }
         ]

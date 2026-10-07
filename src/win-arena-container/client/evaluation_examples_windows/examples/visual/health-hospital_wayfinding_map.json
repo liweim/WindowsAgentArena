@@ -23,7 +23,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/health-hospital_wayfinding_map.pdf",
+            "local_path": "../assets/health-hospital_wayfinding_map.pdf",
             "path": "C:\\Users\\Docker\\Desktop\\HospitalMap.pdf"
           }
         ]

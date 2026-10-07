@@ -494,6 +494,20 @@ def is_page_contains_items(active_tab_info, rule):
     return matched / denominator
 
 
+def check_page_visible_text(active_tab_info, rule):
+    """Check rendered page text while ignoring script, style, and hidden nodes."""
+    if not active_tab_info or not isinstance(active_tab_info, dict):
+        return 0.
+    soup = BeautifulSoup(active_tab_info.get("content", ""), "html.parser")
+    for node in soup.select("script, style, noscript, [hidden], [aria-hidden='true']"):
+        node.decompose()
+    ignore_case = rule.get("ignore_case", True)
+    page_text = normalize_text(soup.get_text(" "), ignore_case=ignore_case)
+    includes = [normalize_text(value, ignore_case=ignore_case) for value in rule.get("include", [])]
+    excludes = [normalize_text(value, ignore_case=ignore_case) for value in rule.get("exclude", [])]
+    return 1. if all(value in page_text for value in includes) and all(value not in page_text for value in excludes) else 0.
+
+
 def _score_shopping_cart_db(rule):
     host = rule.get("db_host", "host.docker.internal")
     port = str(rule.get("db_port", 13306))

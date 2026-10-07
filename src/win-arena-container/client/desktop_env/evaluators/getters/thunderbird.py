@@ -14,15 +14,18 @@ import json
 import os
 
 appdata = os.environ.get("APPDATA", r"C:\Users\Docker\AppData\Roaming")
-patterns = [
-    os.path.join(appdata, ".thunderbird", "*", "Mail", "Local Folders", "Drafts"),
-    os.path.join(appdata, "Thunderbird", "Profiles", "*", "Mail", "Local Folders", "Drafts"),
+profile_patterns = [
+    os.path.join(appdata, ".thunderbird", "*"),
+    os.path.join(appdata, "Thunderbird", "Profiles", "*"),
 ]
 paths = []
-for pattern in patterns:
-    for path in glob.glob(pattern):
-        if os.path.isfile(path) and path not in paths:
-            paths.append(path)
+for profile_pattern in profile_patterns:
+    for profile in glob.glob(profile_pattern):
+        for store in ("Mail", "ImapMail"):
+            pattern = os.path.join(profile, store, "**", "Drafts")
+            for path in glob.glob(pattern, recursive=True):
+                if os.path.isfile(path) and path not in paths:
+                    paths.append(path)
 print(json.dumps(paths))
 '''
     try:

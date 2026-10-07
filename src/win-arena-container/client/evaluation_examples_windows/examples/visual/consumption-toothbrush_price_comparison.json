@@ -17,10 +17,7 @@
     "Turn on Windows Narrator.",
     "Use the screen reader to navigate the catalogue.",
     "Find the Oral-B Complete Deep Clean Toothbrush, Medium, 6 Count.",
-    "Identify its catalogue price as $11.99.",
     "Find the Colgate SlimSoft Floss-Tip Charcoal Toothbrush, Pack of 6.",
-    "Identify its catalogue price as $10.72.",
-    "Compare the two prices and determine that the Colgate SlimSoft toothbrush is cheaper.",
     "Switch to the opened shopping website.",
     "Search for the Colgate SlimSoft Floss-Tip Charcoal Toothbrush, Pack of 6.",
     "Open the correct product page.",
@@ -39,7 +36,7 @@
         "files": [
           {
             "path": "C:\\Users\\Docker\\Desktop\\Consumption-toothbrush_price_catalog.png",
-            "local_path": "assets/consumption-toothbrush_price_comparison.png"
+            "local_path": "../assets/consumption-toothbrush_price_comparison.png"
           }
         ]
       }

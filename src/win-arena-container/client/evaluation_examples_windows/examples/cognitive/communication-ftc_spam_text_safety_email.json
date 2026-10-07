@@ -71,9 +71,7 @@
     "conj": "and",
     "result": [
       {
-        "type": "vm_file",
-        "path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release\\Mail\\Local Folders\\Drafts",
-        "dest": "thunderbird-drafts.mbox"
+        "type": "thunderbird_drafts"
       },
       {
         "type": "edge_immersive_reader_state",
@@ -87,13 +85,11 @@
           "to": "family@example.org",
           "subject": "Spam text safety",
           "body_points": [
-            [
-              "don't click on any links"
-            ],
-            [
-              "contact the company using a phone number or website you know is real",
-              "Not the information in the text message"
-            ]
+            {
+              "regex": [
+                "^don't click on any links contact the company using a phone number or website you know is real not the information in the text message$"
+              ]
+            }
           ]
         }
       },

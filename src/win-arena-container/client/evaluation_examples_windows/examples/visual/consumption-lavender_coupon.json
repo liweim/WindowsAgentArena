@@ -17,11 +17,9 @@
     "Turn on Windows Narrator.",
     "Use the screen reader to navigate the visually complex catalogue.",
     "Find the featured lavender product.",
-    "Identify the product as French Provence Lavender with blue flowers, supplied as one live plant in a 2.5-quart pot.",
-    "Identify the catalogue coupon code as LAVENDER20.",
     "Switch to the opened shopping website.",
     "Search for the matching French Provence Lavender product.",
-    "Open the correct product page.",
+    "Open the matching French Provence Lavender with blue flowers, supplied as one live plant in a 2.5-quart pot, product page.",
     "Add exactly one unit of the product to the shopping cart.",
     "Open the shopping cart.",
     "Expand the coupon or discount section if necessary.",
@@ -39,7 +37,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/consumption-lavender_coupon.html",
+            "local_path": "../assets/consumption-lavender_coupon.html",
             "path": "C:\\Users\\Docker\\Desktop\\Consumption-lavender_coupon_catalog.html"
           }
         ]

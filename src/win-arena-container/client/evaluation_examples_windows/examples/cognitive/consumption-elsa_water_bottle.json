@@ -14,7 +14,7 @@
   "source": "synthetic",
   "gt_steps": [
     "Open `school_shopping_list.txt` and find Elsa's unchecked water-bottle item and its listed requirements.",
-    "Identify `Disney Frozen 2 Elsa 24 oz. Tritan Water Bottle` (SKU `B09LMSGJW6`) as the standard answer and add that exact product to the shopping cart.",
+    "Add `Disney Frozen 2 Elsa 24 oz. Tritan Water Bottle` (SKU `B09LMSGJW6`) to the shopping cart.",
     "Return to the list, change Elsa's water-bottle item from `[ ]` to `[x]`, and save it."
   ],
   "config": [
@@ -23,7 +23,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/consumption-elsa_water_bottle_shopping_list.txt",
+            "local_path": "../assets/consumption-elsa_water_bottle_shopping_list.txt",
             "path": "C:\\Users\\Docker\\Desktop\\school_shopping_list.txt"
           }
         ]

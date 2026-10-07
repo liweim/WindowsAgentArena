@@ -17,10 +17,8 @@
     "Open the OneStopShop website already available in Chrome.",
     "Open the `Home & Kitchen` category.",
     "Navigate to the `Bath` and then go to `Bathroom Accessories` subcategory.",
-    "Sort the products by price from low to high, or compare the displayed prices.",
-    "Identify the cheapest item in the category.",
-    "Open the cheapest product.",
-    "Confirm that its SKU is `B07QRRDZJ5`.",
+    "Sort the products by price from low to high.",
+    "Open the cheapest product, SKU `B07QRRDZJ5`.",
     "Leave the quantity as 1.",
     "Add the product to the shopping cart."
   ],

@@ -249,6 +249,12 @@ def check_text_points(result: str, rules: Dict[str, Any]) -> float:
         # source wording such as "10 p.m." while their reference answer uses
         # "10 pm"; the punctuation does not change the time.
         text = re.sub(r"\b([ap])\s*\.\s*m\s*\.?\b", r"\1m", text)
+        # Normalize common clock-time presentation variants without treating
+        # arbitrary decimal numbers as times: ``4.30 pm`` -> ``4:30 pm`` and
+        # ``8am`` -> ``8 am``.
+        text = re.sub(r"\b(\d{1,2})\.(\d{2})(?=\s*[ap]m\b)", r"\1:\2", text)
+        text = re.sub(r"\b(\d{1,2}(?::\d{2})?)([ap]m)\b", r"\1 \2", text)
+        text = re.sub(r"(?<![:\d])(\d{1,2})\s+([ap]m)\b", r"\1:00 \2", text)
         # A full stop ending a sentence is presentation punctuation, not part
         # of the preceding fact. Remove it before applying numeric boundaries
         # so, for example, the point ``4826`` matches ``4826.`` while decimal

@@ -14,8 +14,7 @@
   "source": "synthetic",
   "gt_steps": [
     "Open `ginger_ale_shopping_list.xlsx` and find the pending ginger ale item and its preferences.",
-    "Use the product details and customer reviews to identify `Q Mixers Premium Ginger Ale: Real Ingredients & Less Sweet, 6.7 Fl Oz (24 Bottles)` (SKU `B071KC37VD`) as the standard answer; confirm that it is less sweet, has a noticeable ginger flavor, and is enjoyable on its own.",
-    "Add that exact ginger ale to the shopping cart.",
+    "Add `Q Mixers Premium Ginger Ale: Real Ingredients & Less Sweet, 6.7 Fl Oz (24 Bottles)` (SKU `B071KC37VD`) to the shopping cart.",
     "Return to the spreadsheet, change the Ginger ale row status from `Pending` to `Done`, and save the file."
   ],
   "config": [
@@ -24,7 +23,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/consumption-ginger_ale_shopping_list.xlsx",
+            "local_path": "../assets/consumption-ginger_ale_shopping_list.xlsx",
             "path": "C:\\Users\\Docker\\Desktop\\ginger_ale_shopping_list.xlsx"
           }
         ]

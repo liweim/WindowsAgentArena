@@ -22,7 +22,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/mobility-cta_airport_transfer.pdf",
+            "local_path": "../assets/mobility-cta_airport_transfer.pdf",
             "path": "C:\\Users\\Docker\\Desktop\\CTALRailSystemDiagram.pdf"
           }
         ]

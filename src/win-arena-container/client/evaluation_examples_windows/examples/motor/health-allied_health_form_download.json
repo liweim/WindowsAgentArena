@@ -10,7 +10,7 @@
   ],
   "difficulty": "medium",
   "instruction": "Enable Windows Mouse Keys and keep them enabled. Download the Allied Health Treatment Request form from the SIRA website and save the PDF on the Desktop as `answer.pdf`.",
-  "source": "https://www.sira.nsw.gov.au/",
+  "source": "https://www.sira.nsw.gov.au/resources-library/for-healthcare-providers/allied-health-treatment-request-ahtr-downloads",
   "gt_steps": [
     "Open Windows Settings.",
     "Navigate to Accessibility.",
@@ -71,7 +71,7 @@
       },
       {
         "type": "vm_command_line",
-        "command": "powershell -NoProfile -Command \"$file='C:\\Users\\Docker\\Desktop\\answer.pdf'; if (Test-Path $file) { Write-Output 'FILE_EXISTS' } else { Write-Output 'FILE_MISSING' }\"",
+        "command": "C:\\Users\\Docker\\AppData\\Local\\Programs\\Python\\Python310\\python.exe -c \"from pathlib import Path; from pypdf import PdfReader; p=Path.home()/'Desktop'/'answer.pdf'; text=' '.join((page.extract_text() or '') for page in PdfReader(str(p)).pages) if p.is_file() else ''; normalized=' '.join(text.lower().split()); print('FORM_CORRECT' if 'allied health treatment request' in normalized and ('state insurance regulatory authority' in normalized or 'sira' in normalized) else 'FORM_INCORRECT')\"",
         "shell": true
       }
     ],
@@ -91,10 +91,10 @@
         "type": "rule",
         "rules": {
           "include": [
-            "FILE_EXISTS"
+            "FORM_CORRECT"
           ],
           "exclude": [
-            "FILE_MISSING"
+            "FORM_INCORRECT"
           ]
         }
       }

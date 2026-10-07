@@ -15,21 +15,12 @@
   "gt_steps": [
     "Enable Windows Narrator.",
     "Open ElectricityBill.pdf.",
-    "Identify the provider as BluePeak Utilities.",
-    "Identify the due date as 18 August 2026.",
-    "Identify the total amount due as $184.65.",
     "Open WaterBill.pdf.",
-    "Identify the provider as ClearFlow Water Services.",
-    "Identify the due date as 2 September 2026.",
-    "Identify the total amount due as $96.40.",
     "Open GasBill.pdf.",
-    "Identify the provider as GreenFlame Energy.",
-    "Identify the due date as 7 September 2026.",
-    "Identify the total amount due as $128.75.",
     "Open BillSummary.odt in LibreOffice Writer.",
-    "Enter the electricity bill details in the first bill row.",
-    "Enter the water bill details in the second bill row.",
-    "Enter the gas bill details in the third bill row.",
+    "Enter BluePeak Utilities, 18 August 2026, and $184.65 in the electricity row.",
+    "Enter ClearFlow Water Services, 2 September 2026, and $96.40 in the water row.",
+    "Enter GreenFlame Energy, 7 September 2026, and $128.75 in the gas row.",
     "Save BillSummary.odt.",
     "Keep Windows Narrator enabled."
   ],
@@ -39,19 +30,19 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/management-utility_bill_summary_electricity.pdf",
+            "local_path": "../assets/management-utility_bill_summary_electricity.pdf",
             "path": "C:\\Users\\Docker\\Desktop\\ElectricityBill.pdf"
           },
           {
-            "local_path": "assets/management-utility_bill_summary_water.pdf",
+            "local_path": "../assets/management-utility_bill_summary_water.pdf",
             "path": "C:\\Users\\Docker\\Desktop\\WaterBill.pdf"
           },
           {
-            "local_path": "assets/management-utility_bill_summary_gas.pdf",
+            "local_path": "../assets/management-utility_bill_summary_gas.pdf",
             "path": "C:\\Users\\Docker\\Desktop\\GasBill.pdf"
           },
           {
-            "local_path": "assets/management-utility_bill_summary.odt",
+            "local_path": "../assets/management-utility_bill_summary.odt",
             "path": "C:\\Users\\Docker\\Desktop\\BillSummary.odt"
           }
         ]

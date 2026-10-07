@@ -24,7 +24,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/health-morning_care_reminders.txt",
+            "local_path": "../assets/health-morning_care_reminders.txt",
             "path": "C:\\Users\\Docker\\Desktop\\MorningCarePlan.txt"
           }
         ]

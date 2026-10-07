@@ -29,7 +29,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/management-service_appointment_audio.mp3",
+            "local_path": "../assets/management-service_appointment_audio.mp3",
             "path": "C:\\Users\\Docker\\Desktop\\ServiceAppointmentAudio.mp3"
           }
         ]
@@ -102,7 +102,6 @@
     }
   ],
   "related_apps": [
-    "settings",
     "chrome",
     "thunderbird"
   ],

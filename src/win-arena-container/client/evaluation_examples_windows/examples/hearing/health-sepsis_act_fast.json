@@ -15,7 +15,6 @@
   "gt_steps": [
     "Turn on Chrome Live Caption.",
     "On the opened CDC `Sepsis: The Domino Effect` page, play the short English video.",
-    "Use Chrome Live Caption to identify the original phrases `a deadly chain reaction called sepsis\nknow the risks\nspot the symptoms`, and `act fast`.",
     "Open Notepad.",
     "Enter `a deadly chain reaction called sepsis\nknow the risks\nspot the symptoms\nact fast` in `answer.txt`.",
     "Save `answer.txt` on the Desktop.",

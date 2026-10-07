@@ -14,7 +14,7 @@
   "source": "https://foodwishes.blogspot.com/2013/04/pita-bread-whats-in-your-pocket.html",
   "gt_steps": [
     "Turn on an available caption feature for the video.",
-    "Watch the opened video with captions and determine that the quick sponge should sit for 15 minutes before checking whether the yeast is active.",
+    "Watch the opened video with captions enabled.",
     "Open https://vclock.com in the browser.",
     "Click the Timer page.",
     "Create and start a 15 minute timer.",
@@ -77,7 +77,7 @@
         "type": "rule",
         "rules": {
           "expected": [
-            "https?://(www\\.)?vclock\\.com/timer/#countdown=00:15:00(&|$)"
+            "https?://(www\\.)?vclock\\.com/(?:timer/#countdown=00:15:00(?:&|$)|set-timer-for-15-minutes/?(?:[?#].*)?)"
           ]
         }
       },

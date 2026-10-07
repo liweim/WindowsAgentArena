@@ -42,7 +42,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/consumption-shopping_list_cart.ods",
+            "local_path": "../assets/consumption-shopping_list_cart.ods",
             "path": "C:\\Users\\Docker\\Desktop\\ShoppingList.ods"
           }
         ]

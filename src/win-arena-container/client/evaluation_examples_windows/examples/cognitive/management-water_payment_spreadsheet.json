@@ -25,11 +25,11 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/management-water_payment_spreadsheet.ods",
+            "local_path": "../assets/management-water_payment_spreadsheet.ods",
             "path": "C:\\Users\\Docker\\Desktop\\Bills.ods"
           },
           {
-            "local_path": "assets/management-water_payment_confirmation.txt",
+            "local_path": "../assets/management-water_payment_confirmation.txt",
             "path": "C:\\Users\\Docker\\Desktop\\PaymentActivity.txt"
           }
         ]

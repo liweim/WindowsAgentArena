@@ -16,7 +16,7 @@
   "gt_steps": [
     "Switch to the audio shopping reminder tab.",
     "Turn on Chrome Live Caption.",
-    "Play the audio and use the captions to identify the item to buy: Sony Alpha a7R IV Mirrorless Digital Camera (V2) with FE 24-70mm f/2.8 GM Lens Bundle with Backpack.",
+    "Play the audio with Live Caption enabled.",
     "Switch back to the shopping website tab.",
     "Find the Sony Alpha a7R IV V2 camera bundle product on the website.",
     "Add the product to the shopping cart."
@@ -31,7 +31,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/consumption-sony_alpha.mp3",
+            "local_path": "../assets/consumption-sony_alpha.mp3",
             "path": "C:\\Users\\Docker\\Desktop\\ShoppingReminder.mp3"
           }
         ]

@@ -23,7 +23,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/health-nutrition_facts_label.jpg",
+            "local_path": "../assets/health-nutrition_facts_label.jpg",
             "path": "C:\\Users\\Docker\\Desktop\\NutritionFacts.jpg"
           }
         ]

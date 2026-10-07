@@ -21,9 +21,8 @@
     "Navigate to the M category.",
     "Find the `Monitor` forum.",
     "Click `View More` for `Monitor`.",
-    "Identify the total number of posts in the Monitor forum.",
     "Open a text editor.",
-    "Enter only the number of posts.",
+    "Enter `5` in `answer.txt`.",
     "Save the file as `answer.txt` on the Desktop.",
     "Leave Mouse Keys enabled."
   ],
@@ -88,7 +87,7 @@
       },
       {
         "type": "vm_command_line",
-        "command": "powershell -NoProfile -Command \"$path = Join-Path ([Environment]::GetFolderPath('Desktop')) 'answer.txt'; if (Test-Path $path) { Get-Content -Raw $path } else { Write-Output 'FILE_MISSING' }\"",
+        "command": "powershell -NoProfile -Command \"$path=Join-Path ([Environment]::GetFolderPath('Desktop')) 'answer.txt'; if (!(Test-Path $path)) { Write-Output 'ANSWER_INCORRECT'; exit }; $text=Get-Content -Raw $path; if ($text -match '^\\s*5\\s*$') { Write-Output 'ANSWER_CORRECT' } else { Write-Output 'ANSWER_INCORRECT' }\"",
         "shell": true
       }
     ],
@@ -108,10 +107,10 @@
         "type": "rule",
         "rules": {
           "include": [
-            "5"
+            "ANSWER_CORRECT"
           ],
           "exclude": [
-            "FILE_MISSING"
+            "ANSWER_INCORRECT"
           ]
         }
       }

@@ -18,9 +18,8 @@
     "Return to the Department of Psychology Undergraduate Student Handbook PDF already open in Chrome.",
     "Find the section about submission of coursework.",
     "Locate the maximum file upload size.",
-    "Identify the maximum file upload size as 50MB.",
     "Open Notepad.",
-    "Write the maximum upload size in the text file.",
+    "Write `50 MB` in the text file.",
     "Save the file as `answer.txt` on the Desktop.",
     "Leave the saved file on the Desktop.",
     "Leave Filter Keys enabled."
@@ -31,7 +30,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/information-psychology_coursework_upload_limit.pdf",
+            "local_path": "../assets/information-psychology_coursework_upload_limit.pdf",
             "path": "C:\\Users\\Docker\\Desktop\\PsychologyHandbook.pdf"
           }
         ]

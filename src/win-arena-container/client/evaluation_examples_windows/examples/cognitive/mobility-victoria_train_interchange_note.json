@@ -15,7 +15,7 @@
   "gt_steps": [
     "Open Sticky Notes.",
     "Create a new note.",
-    "Use `Start line: Frankston Line\nInterchange: Caulfield\nOnward line: Pakenham Line\nDestination: Pakenham` as the standard answer.",
+    "Enter `Start line: Frankston Line`, `Interchange: Caulfield`, `Onward line: Pakenham Line`, and `Destination: Pakenham`, one per line.",
     "Keep the completed note saved in Sticky Notes."
   ],
   "config": [
@@ -24,7 +24,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/mobility-victoria_train_interchange_note.pdf",
+            "local_path": "../assets/mobility-victoria_train_interchange_note.pdf",
             "path": "C:\\Users\\Docker\\Desktop\\VictorianTrainNetworkMap.pdf"
           }
         ]

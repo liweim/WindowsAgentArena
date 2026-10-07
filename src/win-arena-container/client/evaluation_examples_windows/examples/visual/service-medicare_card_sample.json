@@ -22,7 +22,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/service-medicare_card_sample.jpg",
+            "local_path": "../assets/service-medicare_card_sample.jpg",
             "path": "C:\\Users\\Docker\\Desktop\\MedicareCard.jpg"
           }
         ]

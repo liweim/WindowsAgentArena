@@ -14,7 +14,7 @@
   "source": "https://www.canada.ca/en/health-canada/services/video/making-vaccinations-more-comfortable.html",
   "gt_steps": [
     "Turn on Chrome Live Caption.",
-    "Play the audio and use Live Caption to identify every recommendation in the requested checklist categories.",
+    "Play the audio with Live Caption enabled.",
     "Switch to Sticky Notes.",
     "Write the phrases in a sticky note: `short sleeve shirt\neasy to remove\nholding and talking\nbreastfeeding\nfavourite toy\nmusic\nbook\nbandage\nreward\nvaccination record\n15 minutes`."
   ],
@@ -24,7 +24,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/health-child_visit_preparation.mp3",
+            "local_path": "../assets/health-child_visit_preparation.mp3",
             "path": "C:\\Users\\Docker\\Desktop\\ChildVisitPreparation.mp3"
           }
         ]

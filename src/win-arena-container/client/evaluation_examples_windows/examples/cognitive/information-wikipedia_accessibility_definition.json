@@ -16,9 +16,8 @@
     "Open the local Kiwix Wikipedia site in Google Chrome.",
     "Search for the `Accessibility` article.",
     "Locate the sentence that defines accessibility as a design concept.",
-    "Use `accessibility is the design of products, devices, services, vehicles, or environments so as to be usable by people with disabilities` as the standard answer.",
     "Switch to the open `accessibility_definition_paper.docx` document in LibreOffice Writer.",
-    "Replace `[add definition here]` with the standard answer only.",
+    "Replace `[add definition here]` with `accessibility is the design of products, devices, services, vehicles, or environments so as to be usable by people with disabilities`.",
     "Save `accessibility_definition_paper.docx`."
   ],
   "config": [
@@ -27,7 +26,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/information-wikipedia_accessibility_definition.docx",
+            "local_path": "../assets/information-wikipedia_accessibility_definition.docx",
             "path": "C:\\Users\\Docker\\Desktop\\accessibility_definition_paper.docx"
           }
         ]
@@ -84,7 +83,7 @@
         "parameters": {
           "files": [
             {
-              "local_path": "assets/information-wikipedia_accessibility_definition_gold.docx",
+              "local_path": "../assets/information-wikipedia_accessibility_definition_gold.docx",
               "path": "C:\\Users\\Docker\\AppData\\Local\\Temp\\accessibility_definition_paper_gold.docx"
             }
           ]

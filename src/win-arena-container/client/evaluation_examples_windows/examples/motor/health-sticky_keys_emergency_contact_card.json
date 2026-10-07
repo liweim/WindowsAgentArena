@@ -25,7 +25,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/health-sticky_keys_emergency_contact_card.pdf",
+            "local_path": "../assets/health-sticky_keys_emergency_contact_card.pdf",
             "path": "C:\\Users\\Docker\\Desktop\\BackpackEmergencyCard.pdf"
           }
         ]

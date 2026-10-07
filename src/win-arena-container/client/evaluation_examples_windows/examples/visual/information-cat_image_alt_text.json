@@ -10,11 +10,11 @@
     "V5"
   ],
   "difficulty": "medium",
-  "instruction": "Add image alt text in the provided `information-image_to_text_cat.docx` file so it describes the image. Write the descriptive text both in alt text and description boxes, then save the document.",
+  "instruction": "Add descriptive alternative text to the image in the provided `information-image_to_text_cat.docx` file so it describes the image, then save the document.",
   "source": "synthetic",
   "gt_steps": [
     "Select the image in information-image_to_text_cat.docx.",
-    "Add alt text describing a cat sitting on the hood of a red car.",
+    "Enter alternative text describing a cat sitting on the hood of a red car in the image description field.",
     "Save `information-image_to_text_cat.docx`."
   ],
   "config": [
@@ -23,7 +23,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/information-cat_image_alt_text.docx",
+            "local_path": "../assets/information-cat_image_alt_text.docx",
             "path": "C:\\Users\\Docker\\Desktop\\information-image_to_text_cat.docx"
           }
         ]

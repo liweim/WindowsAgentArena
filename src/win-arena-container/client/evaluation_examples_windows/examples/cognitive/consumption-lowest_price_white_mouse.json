@@ -14,8 +14,8 @@
   "source": "synthetic",
   "gt_steps": [
     "Open `computer_accessories.xlsx` and read the pending Mouse row.",
-    "Compare the matching standalone wireless mice and identify `Wireless Mouse, 3 Adjustable DPI Innovative Stylish Portable Gaming Mouse, Suitable for Notebook, PC, Computer Office Home Work` (SKU `B09443ZWQD`) as the lowest-priced standard answer.",
-    "Select `White` for the `Color` option and add that exact mouse to the shopping cart.",
+    "Open `Wireless Mouse, 3 Adjustable DPI Innovative Stylish Portable Gaming Mouse, Suitable for Notebook, PC, Computer Office Home Work` (SKU `B09443ZWQD`).",
+    "Select `White` for the `Color` option and add the mouse to the shopping cart.",
     "Return to the spreadsheet, change the Mouse row status from `Pending` to `Done`, and save the file."
   ],
   "config": [
@@ -24,7 +24,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/consumption-white_mouse_shopping_list.xlsx",
+            "local_path": "../assets/consumption-white_mouse_shopping_list.xlsx",
             "path": "C:\\Users\\Docker\\Desktop\\computer_accessories.xlsx"
           }
         ]

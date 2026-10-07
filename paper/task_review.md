@@ -54,7 +54,6 @@ Check the following for every task:
 
 * [ ] There are no duplicate files that differ only by letter case.
 
-* [ ] After renaming a file, add the old file to `DELETED_FILES.txt`. Do not simply add the new file while keeping the old one.
 
 ### 3. `related_apps`
 
@@ -255,4 +254,4 @@ In the final review report, list the exact task IDs that were modified because o
 
 9. Re-parse all JSON files and check for duplicate ids and case-only duplicate filenames.
 
-10. The final ZIP must **contain only the files actually modified in the current round**. Do not accumulate and repackage changes that were already delivered in previous rounds. Include `DELETED_FILES.txt` only when files were deleted or renamed in the current round.
+10. The final ZIP must **contain only the files actually modified in the current round**. Do not accumulate and repackage changes that were already delivered in previous rounds.

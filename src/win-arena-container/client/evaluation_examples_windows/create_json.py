@@ -8,7 +8,11 @@ def get_directory_structure(base_dir, filter_out_categories=None):
     total_files_count = 0
 
     subdirectories = sorted(
-        (entry for entry in os.scandir(base_dir) if entry.is_dir()),
+        (
+            entry
+            for entry in os.scandir(base_dir)
+            if entry.is_dir() and entry.name != "assets"
+        ),
         key=lambda entry: entry.name,
     )
     for subdirectory in subdirectories:

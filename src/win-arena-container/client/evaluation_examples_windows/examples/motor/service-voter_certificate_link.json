@@ -14,9 +14,7 @@
   "gt_steps": [
     "Enable the Windows On-Screen Keyboard and keep it open.",
     "Return to the PDF already open in Chrome.",
-    "Find the voter authority certificate application website link.",
-    "Identify the link as `https://www.gov.uk/apply-for-photo-id-voter-authority-certificate`.",
-    "Open the link in a new Chrome tab.",
+    "Open the voter authority certificate application website link from the PDF in a new Chrome tab.",
     "Leave the linked website tab open.",
     "Leave the On-Screen Keyboard open."
   ],
@@ -26,7 +24,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/service-voter_certificate_link.pdf",
+            "local_path": "../assets/service-voter_certificate_link.pdf",
             "path": "C:\\Users\\Docker\\Downloads\\ER_How_to_apply_online_final.pdf"
           }
         ]

@@ -27,7 +27,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/service-council_document_pickup_audio.mp3",
+            "local_path": "../assets/service-council_document_pickup_audio.mp3",
             "path": "C:\\Users\\Docker\\Desktop\\CouncilPickupAudio.mp3"
           }
         ]
@@ -75,7 +75,6 @@
     }
   ],
   "related_apps": [
-    "settings",
     "chrome",
     "notepad"
   ],
@@ -122,7 +121,7 @@
             },
             {
               "regex": [
-                "\\b9(?::00)?\\s*(?:am)?\\s*(?:-|to)\\s*4:30\\s*pm\\b"
+                "\\b9(?::00)?\\s*(?:am)?\\s*(?:-|to)\\s*4[:.]30\\s*pm\\b"
               ]
             },
             [

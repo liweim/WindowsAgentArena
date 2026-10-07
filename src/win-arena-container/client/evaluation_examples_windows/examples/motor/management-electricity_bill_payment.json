@@ -27,7 +27,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/management-electricity_bill_payment.ods",
+            "local_path": "../assets/management-electricity_bill_payment.ods",
             "path": "C:\\Users\\Docker\\Desktop\\Bills.ods"
           }
         ]

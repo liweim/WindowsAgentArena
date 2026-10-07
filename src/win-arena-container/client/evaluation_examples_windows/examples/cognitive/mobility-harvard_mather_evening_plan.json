@@ -16,9 +16,7 @@
   "source": "https://prod-transportation.drupalsites.harvard.edu/sites/g/files/omnuum12016/files/2025-08/All%20Shuttle%20Routes.pdf",
   "gt_steps": [
     "Find the evening Mather–Crimson–Overnight timetable in the Harvard Shuttle PDF.",
-    "Find the first Mather House departure after 9:15 pm: 9:20 pm.",
-    "Use `Mather House: 9:20 pm\nQuad: 9:40 pm\nLaw School: 9:45 pm\nLamont Library: 9:53 pm` as the standard answer.",
-    "Create a Sticky Note containing the four checkpoints in order."
+    "Create a Sticky Note containing `Mather House: 9:20 pm`, `Quad: 9:40 pm`, `Law School: 9:45 pm`, and `Lamont Library: 9:53 pm`, one per line in that order."
   ],
   "config": [
     {
@@ -26,7 +24,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/mobility-harvard_mather_evening_plan.pdf",
+            "local_path": "../assets/mobility-harvard_mather_evening_plan.pdf",
             "path": "C:\\Users\\Docker\\Desktop\\Harvard_Shuttle_Routes.pdf"
           }
         ]

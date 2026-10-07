@@ -91,6 +91,8 @@
           "minute": 0,
           "duration_minutes": 30,
           "title": "Review automatic payments",
+          "body_ordered": true,
+          "body_line_based": true,
           "body_points": [
             [
               "Call and write the company"

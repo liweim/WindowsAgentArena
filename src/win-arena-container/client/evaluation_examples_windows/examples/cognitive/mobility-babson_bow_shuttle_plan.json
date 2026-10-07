@@ -16,8 +16,7 @@
   "source": "https://www.babson.edu/media/babson/assets/isss/AY-2025-2026-BOW-Shuttle-Schedule.pdf",
   "gt_steps": [
     "Read the weekday Babson–Olin–Wellesley shuttle timetable.",
-    "Use `Olin College East Hall: 8:52 am\nBabson College Hollister Parking Lot: 8:55 am\nFounders Parking Lot Gates: 9:05 am\nWellesley College Campus Center: 9:07 am` as the standard answer.",
-    "Open Notepad and enter the four requested items, one per line.",
+    "Open Notepad and enter `Olin College East Hall: 8:52 am`, `Babson College Hollister Parking Lot: 8:55 am`, `Founders Parking Lot Gates: 9:05 am`, and `Wellesley College Campus Center: 9:07 am`, one per line.",
     "Save the file as `answer.txt` on the Desktop."
   ],
   "config": [
@@ -26,7 +25,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/mobility-babson_bow_shuttle_plan.pdf",
+            "local_path": "../assets/mobility-babson_bow_shuttle_plan.pdf",
             "path": "C:\\Users\\Docker\\Desktop\\Babson_BOW_Shuttle_Schedule.pdf"
           }
         ]

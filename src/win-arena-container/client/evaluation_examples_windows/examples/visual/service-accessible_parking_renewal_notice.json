@@ -26,7 +26,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/service-accessible_parking_renewal_notice.png",
+            "local_path": "../assets/service-accessible_parking_renewal_notice.png",
             "path": "C:\\Users\\Docker\\Desktop\\ParkingRenewalNotice.png"
           }
         ]

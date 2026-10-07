@@ -9,12 +9,12 @@
     "V5"
   ],
   "difficulty": "hard",
-  "instruction": "Turn on Windows Narrator and use it while editing the provided `ChicagoConferenceTravelGuide.docx`. On page 2, use the CTA rail map to add missing alternative text that describes the O'Hare-to-Midway rail connection. The description must mention the origin airport, its CTA line, the downtown transfer station, the onward CTA line, and the destination airport. Wording, punctuation, and order may vary. Write the description in both alternative text and description fields. Keep Narrator running and save the document.",
+  "instruction": "Turn on Windows Narrator and use it while editing the provided `ChicagoConferenceTravelGuide.docx`. On page 2, use the CTA rail map to add missing alternative text that describes the O'Hare-to-Midway rail connection. The description must mention the origin airport, its CTA line, the downtown transfer station, the onward CTA line, and the destination airport. Wording, punctuation, and order may vary. Keep Narrator running and save the document.",
   "source": "synthetic",
   "gt_steps": [
     "Open Windows Narrator running.",
     "In LibreOffice Writer, select the CTA rail system map image on page 2.",
-    "Open the image's properties and enter the following alternative and description text:\n`Chicago CTA rail map: O'Hare is on the Blue Line, change at Clark/Lake to the Orange Line for Midway.`",
+    "Open the image's properties and enter the following text in the alternative-text description field:\n`Chicago CTA rail map: O'Hare is on the Blue Line, change at Clark/Lake to the Orange Line for Midway.`",
     "Save `ChicagoConferenceTravelGuide.docx`."
   ],
   "config": [
@@ -23,7 +23,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/access-cta_rail_map_alt_text.docx",
+            "local_path": "../assets/access-cta_rail_map_alt_text.docx",
             "path": "C:\\Users\\Docker\\Desktop\\ChicagoConferenceTravelGuide.docx"
           }
         ]

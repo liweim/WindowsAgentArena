@@ -14,7 +14,7 @@
   "source": "https://medlineplus.gov/medlineplus-videos/histamine-the-stuff-allergies-are-made-of",
   "gt_steps": [
     "Turn on Chrome Live Caption.",
-    "Play the video and use Live Caption to identify the medicine needed for anaphylaxis.",
+    "Play the video with Live Caption enabled.",
     "Open Notepad.",
     "Write `epinephrine`.",
     "Save the file as `answer.txt` on the Desktop."

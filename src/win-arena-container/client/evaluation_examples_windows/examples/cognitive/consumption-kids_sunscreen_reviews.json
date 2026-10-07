@@ -14,8 +14,8 @@
   "source": "synthetic",
   "gt_steps": [
     "Open `family_trip_shopping.txt` and read the unchecked kids sunscreen item and its requirements.",
-    "Identify `Banana Boat Kids Vanishing Color Sunscreen` as the standard answer: select `Mineral Foam` for `Pattern Name` and `SPF 50 - Twin Pack` for `Style`; confirm that customer reviews describe it as non-stinging and non-sticky.",
-    "Add that exact product and option combination to the shopping cart.",
+    "Select `Mineral Foam` for `Pattern Name` and `SPF 50 - Twin Pack` for `Style` on the `Banana Boat Kids Vanishing Color Sunscreen` product.",
+    "Add that product and option combination to the shopping cart.",
     "Return to the list, change the kids sunscreen item from `[ ]` to `[x]`, and save it."
   ],
   "config": [
@@ -24,7 +24,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/consumption-kids_sunscreen_shopping_list.txt",
+            "local_path": "../assets/consumption-kids_sunscreen_shopping_list.txt",
             "path": "C:\\Users\\Docker\\Desktop\\family_trip_shopping.txt"
           }
         ]

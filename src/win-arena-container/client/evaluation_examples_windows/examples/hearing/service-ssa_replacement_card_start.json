@@ -27,7 +27,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/service-ssa_replacement_card_start.mp3",
+            "local_path": "../assets/service-ssa_replacement_card_start.mp3",
             "path": "C:\\Users\\Docker\\Desktop\\SSAReplacementRequest.mp3"
           }
         ]

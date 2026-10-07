@@ -15,15 +15,9 @@
     "Enable Windows Sticky Keys.",
     "Keep Sticky Keys enabled throughout the task.",
     "Read the Coles catalogue PDF already open in Chrome.",
-    "Find the body wash products and compare their advertised prices.",
-    "Identify every product with `Body Wash` in its full product name that costs less than $9.",
-    "Identify `Palmolive Naturals Body Wash 1 Litre` priced at $6.50.",
-    "Identify `Dove Serum Body Wash 300mL` priced at $7.50.",
-    "Identify `Sukin Botanical Body Wash 1 Litre` priced at $8.97.",
-    "Identify `Thankyou Body Wash 1 Litre` priced at $8.97.",
-    "Identify `Nivea Shower Body Wash 1 Litre` priced at $8.50.",
+    "Review the body wash products and their advertised prices.",
     "Open Notepad.",
-    "Write each full product name exactly as shown in the PDF, with one product per line.",
+    "Enter `Palmolive Naturals Body Wash 1 Litre`, `Dove Serum Body Wash 300mL`, `Sukin Botanical Body Wash 1 Litre`, `Thankyou Body Wash 1 Litre`, and `Nivea Shower Body Wash 1 Litre`, one per line in that order.",
     "Do not include prices, products costing exactly $9, or products costing more than $9.",
     "Save the file as `answer.txt` on the Desktop.",
     "Leave the saved file on the Desktop.",
@@ -35,7 +29,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/consumption-half_price_body_wash.pdf",
+            "local_path": "../assets/consumption-half_price_body_wash.pdf",
             "path": "C:\\Users\\Docker\\Downloads\\COLNSWMETRO_220726_AQCAZRS1.pdf"
           }
         ]

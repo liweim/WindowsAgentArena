@@ -16,9 +16,6 @@
     "Keep Narrator enabled throughout the task.",
     "Open AppointmentLetter.docx.",
     "Use Narrator to review the appointment letter.",
-    "Identify the appointment date as Tuesday, 20 October 2026.",
-    "Identify the appointment time as 10:30 AM.",
-    "Identify the location as Cardiology Clinic, Level 3, Riverside Medical Centre.",
     "Open Thunderbird Calendar.",
     "Create a new calendar event named Cardiology Appointment.",
     "Set the event date to 20 October 2026.",
@@ -34,7 +31,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/management-cardiology_appointment_reminder.docx",
+            "local_path": "../assets/management-cardiology_appointment_reminder.docx",
             "path": "C:\\Users\\Docker\\Desktop\\AppointmentLetter.docx"
           }
         ]

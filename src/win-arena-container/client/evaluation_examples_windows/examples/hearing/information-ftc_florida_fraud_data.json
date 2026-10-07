@@ -14,7 +14,7 @@
   "source": "https://www.ftc.gov/media/video-0194-explore-data-ftc",
   "gt_steps": [
     "Turn on Chrome Live Caption.",
-    "Play the video and use Live Caption to identify the FTC Explore Data address.",
+    "Play the video with Live Caption enabled.",
     "Open https://ftc.gov/exploredata.",
     "Go to State and Metro Area Maps.",
     "Open Fraud & ID Theft by State.",
@@ -27,7 +27,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/information-ftc_2024_fraud_reports.mp4",
+            "local_path": "../assets/information-ftc_2024_fraud_reports.mp4",
             "path": "C:\\Users\\Docker\\Desktop\\FTCExploreData.mp4"
           }
         ]

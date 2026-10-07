@@ -14,7 +14,7 @@
   "source": "https://www.census.gov/data/academy/data-gems/2026/visualize-data.html",
   "gt_steps": [
     "Turn on an available caption feature for the video.",
-    "Play the opened video with captions and identify the demonstrated area: `Maricopa County, Arizona`.",
+    "Play the opened video with captions enabled.",
     "Open https://data.census.gov/.",
     "Click the website search box.",
     "Enter `Maricopa County, Arizona`.",

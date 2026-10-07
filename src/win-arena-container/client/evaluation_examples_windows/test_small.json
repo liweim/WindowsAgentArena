@@ -34,9 +34,9 @@
         "access-chrome_live_caption_language"
     ],
     "motor": [
-        "service-voter_certificate_link",
+        "service-reddit_monitor_post_count",
         "captcha-robot_checkbox_1",
-        "mobility-nearest_passport_office_gwagwalada",
+        "mobility-nearest_accessible_beach",
         "health-sticky_keys_emergency_contact_card",
         "consumption-shopping_list_cart",
         "consumption-cheapest_bathroom_accessory",
@@ -52,19 +52,19 @@
     ],
     "visual": [
         "information-wikipedia_image_person",
-        "captcha-math_2",
-        "access-high_contrast_aquatic",
-        "mobility-walking_route_opera_house",
-        "health-drug_facts_package",
+        "captcha-patch_select_2",
+        "access-windows_color_filter_grayscale_inverted",
+        "mobility-walking_route_wat_arun",
+        "health-hospital_wayfinding_map",
         "information-invitation_image_alt_text",
-        "access-windows_magnifier_open",
-        "consumption-lavender_coupon",
-        "access-windows_font_size_140",
+        "access-windows_narrator_open",
+        "consumption-marshmallow_bunnies",
+        "access-windows_magnifier_200",
         "information-metal_density_comparison",
-        "captcha-robot_checkbox_2",
-        "consumption-keto_bread",
+        "captcha-slide_puzzle_2",
+        "consumption-lavender_coupon",
         "information-second_gold_rush",
-        "captcha-distorted_text_1",
-        "access-windows_color_filter_protanopia"
+        "captcha-geometry_click_2",
+        "access-windows_font_size_140"
     ]
 }

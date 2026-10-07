@@ -30,7 +30,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/information-touchpad_cleaning_instructions.pdf",
+            "local_path": "../assets/information-touchpad_cleaning_instructions.pdf",
             "path": "C:\\Users\\Docker\\Downloads\\desk_laptop_ug_en-us.pdf"
           }
         ]

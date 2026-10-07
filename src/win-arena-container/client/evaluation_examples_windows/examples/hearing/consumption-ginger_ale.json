@@ -16,7 +16,7 @@
   "gt_steps": [
     "Switch to the audio shopping reminder tab.",
     "Turn on Chrome Live Caption.",
-    "Play the audio and use the captions to identify the item to buy: Q Mixers Premium Ginger Ale, 6.7 fl oz, 24 bottles.",
+    "Play the audio with Live Caption enabled.",
     "Switch back to the shopping website tab.",
     "Find the Q Mixers ginger ale product on the website.",
     "Add the product to the shopping cart."
@@ -31,7 +31,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/consumption-ginger_ale.mp3",
+            "local_path": "../assets/consumption-ginger_ale.mp3",
             "path": "C:\\Users\\Docker\\Desktop\\ShoppingReminder.mp3"
           }
         ]

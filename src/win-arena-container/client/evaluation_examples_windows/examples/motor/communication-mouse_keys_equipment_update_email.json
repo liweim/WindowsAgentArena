@@ -9,16 +9,12 @@
     "M4"
   ],
   "difficulty": "medium",
-  "instruction": "Enable Windows Mouse Keys and keep them enabled. Use the official Quantum 600E owner’s manual saved on the Desktop to draft a Thunderbird email to `equipmentdesk@example.org` with subject `Quantum 600E charging guidance`. Include the battery type and voltage, the required charger, and the extension-cord warning. Do not send it.",
+  "instruction": "Enable Windows Mouse Keys and keep them enabled. Use the official Quantum 600E owner’s manual saved on the Desktop to create and save a Thunderbird draft to `equipmentdesk@example.org` with subject `Quantum 600E charging guidance`. Include the battery type and voltage, the required charger, and the extension-cord warning. Do not send it.",
   "source": "https://www.quantumrehab.com/pdf/owners-manuals/us_q600e_om.pdf",
   "gt_steps": [
     "Enable Windows Mouse Keys and leave them enabled.",
     "Switch to the Quantum 600E owner's manual open in Chrome.",
     "Use the PDF find control to search for `BATTERIES AND CHARGING` and navigate to Section VI, `BATTERIES AND CHARGING`, on manual page 29.",
-    "At the beginning of Section VI on page 29, identify that the Quantum 600E uses two 12-volt, deep-cycle batteries.",
-    "In the same paragraph, identify that the batteries are sealed and maintenance free.",
-    "On page 29 under `Charging the Batteries`, identify the warning that the batteries must be recharged with the supplied off-board battery charger.",
-    "On page 29 under `Charging the Batteries`, identify the prohibited-action warning stating never to use an extension cord to plug in the battery charger.",
     "Open Thunderbird and create a new email.",
     "Set To to `equipmentdesk@example.org`.",
     "Set Subject to `Quantum 600E charging guidance`.",
@@ -35,7 +31,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/communication-mouse_keys_equipment_update_email.pdf",
+            "local_path": "../assets/communication-mouse_keys_equipment_update_email.pdf",
             "path": "C:\\Users\\Docker\\Desktop\\Quantum600EManual.pdf"
           }
         ]

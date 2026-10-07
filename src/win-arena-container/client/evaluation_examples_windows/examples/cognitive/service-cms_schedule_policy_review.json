@@ -16,7 +16,6 @@
     "Sign in to the CMS admin site.",
     "Open Content > Pages and use the keyword `Privacy Policy` to filter the existing Pages table.",
     "Open the existing page titled `Privacy Policy`.",
-    "Read its URL key `privacy-policy-cookie-restriction-mode` from the CMS page settings.",
     "Open Thunderbird Calendar.",
     "Create an event titled `Review CMS privacy policy` on September 22, 2026 at 9:00 AM with a duration of 30 minutes.",
     "Enter `URL key: privacy-policy-cookie-restriction-mode` in the event description.",

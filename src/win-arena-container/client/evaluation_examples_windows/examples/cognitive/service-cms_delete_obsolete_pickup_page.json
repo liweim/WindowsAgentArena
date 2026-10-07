@@ -16,7 +16,6 @@
     "Sign in to the CMS admin site.",
     "Open Content > Pages and search for the keyword `Pickup`.",
     "Open the matching obsolete page titled `Old Pickup Instructions`.",
-    "Read the URL key `old-pickup-instructions` from the page settings and read `North Desk` and `NP-41` from the page content.",
     "Create a Sticky Note containing `Deleted page: Old Pickup Instructions\nURL key: old-pickup-instructions\nPrevious desk: North Desk\nPrevious code: NP-41`, one field per line and in that order.",
     "Delete the obsolete page and confirm the deletion."
   ],

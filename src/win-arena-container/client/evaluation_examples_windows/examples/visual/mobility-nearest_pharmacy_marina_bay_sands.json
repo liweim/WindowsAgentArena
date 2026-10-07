@@ -9,19 +9,27 @@
     "V1"
   ],
   "difficulty": "medium",
-  "instruction": "Turn on Windows Narrator. In Google Maps, set Marina Bay Sands, Singapore as the current location. Search for pharmacies and choose the pharmacy with the shortest displayed walking distance from Marina Bay Sands; if distances tie, choose the shorter walking time. Open that pharmacy's place details and leave them open.",
+  "instruction": "Turn on Windows Narrator. In the provided walking-distance directory, use Marina Bay Sands, Singapore as the current location and choose the pharmacy with the shortest displayed walking distance; if distances tie, choose the shorter walking time. Open that pharmacy's place details and leave them open.",
   "source": "synthetic",
   "gt_steps": [
     "Turn on Windows Narrator.",
-    "Open Google Maps in Chrome.",
-    "Set Marina Bay Sands, Singapore as the current location.",
-    "Search for pharmacies near the set current location.",
-    "Compare the displayed walking distances from Marina Bay Sands to the nearby pharmacies.",
-    "Identify Guardian Health & Beauty + Pharmacy  Marina Bay Sands (Click & Collect), located at 2 Bayfront Ave, B2-49, The Shoppes at Marina Bay Sands, Singapore 018972, as the nearest pharmacy.",
+    "Open the provided walking-distance directory in Chrome.",
+    "Review the pharmacies listed for Marina Bay Sands, Singapore.",
     "Open the Guardian Health & Beauty + Pharmacy  Marina Bay Sands (Click & Collect) place details.",
     "Leave the place details open."
   ],
   "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "../assets/mobility-nearest_pharmacy_marina_bay_sands.html",
+            "path": "C:\\Users\\Docker\\Desktop\\MarinaBayPharmacyDirectory.html"
+          }
+        ]
+      }
+    },
     {
       "type": "launch",
       "parameters": {
@@ -52,7 +60,7 @@
       "type": "chrome_open_tabs",
       "parameters": {
         "urls_to_open": [
-          "https://www.google.com/maps"
+          "file:///C:/Users/Docker/Desktop/MarinaBayPharmacyDirectory.html"
         ]
       }
     }
@@ -63,7 +71,7 @@
   "evaluator": {
     "func": [
       "check_narrator_enabled",
-      "exact_match"
+      "check_page_visible_text"
     ],
     "conj": "and",
     "result": [
@@ -71,14 +79,9 @@
         "type": "narrator_status"
       },
       {
-        "type": "google_maps_state",
-        "mode": "place_details",
-        "required_text": [
-          [
-            "Guardian Health & Beauty + Pharmacy",
-            "Marina Bay Sands"
-          ]
-        ]
+        "type": "page_info",
+        "url": "file:///C:/Users/Docker/Desktop/MarinaBayPharmacyDirectory.html",
+        "load_state": "load"
       }
     ],
     "expected": [
@@ -89,7 +92,18 @@
       {
         "type": "rule",
         "rules": {
-          "expected": "true"
+          "ignore_case": true,
+          "include": [
+            "Pharmacy place details",
+            "Guardian Health & Beauty + Pharmacy Marina Bay Sands (Click & Collect)",
+            "2 Bayfront Ave, B2-49",
+            "Walking distance from Marina Bay Sands: 0.3 km",
+            "Walking time: 4 minutes"
+          ],
+          "exclude": [
+            "Watsons Marina Bay",
+            "Unity Pharmacy Downtown"
+          ]
         }
       }
     ]

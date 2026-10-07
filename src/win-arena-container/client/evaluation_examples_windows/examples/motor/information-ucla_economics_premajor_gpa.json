@@ -17,9 +17,8 @@
     "Return to the UCLA Economics Undergraduate Handbook PDF already open in Chrome.",
     "Find the UCLA Economics major requirements.",
     "Find the minimum pre-major GPA requirement.",
-    "Identify the minimum pre-major GPA as 2.5.",
     "Open Notepad.",
-    "Write the minimum pre-major GPA in the text file.",
+    "Write `2.5` in the text file.",
     "Save the file as `answer.txt` on the Desktop.",
     "Leave the saved file on the Desktop.",
     "Leave Sticky Keys enabled."
@@ -30,7 +29,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/information-ucla_economics_premajor_gpa.pdf",
+            "local_path": "../assets/information-ucla_economics_premajor_gpa.pdf",
             "path": "C:\\Users\\Docker\\Desktop\\UCLAEconomicsHandbook.pdf"
           }
         ]

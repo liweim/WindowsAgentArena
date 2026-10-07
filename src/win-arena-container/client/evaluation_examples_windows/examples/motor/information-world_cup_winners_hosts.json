@@ -57,7 +57,7 @@
       },
       {
         "type": "vm_command_line",
-        "command": "powershell -NoProfile -Command \"$file='C:\\Users\\Docker\\Desktop\\answer.txt'; if (!(Test-Path $file)) { Write-Output 'ANSWER_INCORRECT'; exit }; $text=Get-Content $file -Raw; $a='Winner 2022: Argentina and Host Country 2022: Qatar'; $b='Winner 2018: France and Host Country 2018: Russia'; $c='Winner 2014: Germany and Host Country 2014: Brazil'; if ($text.Contains($a) -and $text.Contains($b) -and $text.Contains($c)) { Write-Output 'ANSWER_CORRECT' } else { Write-Output 'ANSWER_INCORRECT' }\"",
+        "command": "powershell -NoProfile -Command \"$file='C:\\Users\\Docker\\Desktop\\answer.txt'; if (!(Test-Path $file)) { Write-Output 'ANSWER_INCORRECT'; exit }; $text=(Get-Content $file -Raw) -replace '\\r\\n?',\"`n\"; $text=$text -replace \"`n$\",''; $expected=\"Winner 2022: Argentina and Host Country 2022: Qatar`nWinner 2018: France and Host Country 2018: Russia`nWinner 2014: Germany and Host Country 2014: Brazil\"; if ($text -ceq $expected) { Write-Output 'ANSWER_CORRECT' } else { Write-Output 'ANSWER_INCORRECT' }\"",
         "shell": true
       }
     ],

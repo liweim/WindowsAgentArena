@@ -25,11 +25,11 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/service-accessible_transport_request_template.txt",
+            "local_path": "../assets/service-accessible_transport_request_template.txt",
             "path": "C:\\Users\\Docker\\Desktop\\TransportRequest.txt"
           },
           {
-            "local_path": "assets/service-accessible_transport_request_details.txt",
+            "local_path": "../assets/service-accessible_transport_request_details.txt",
             "path": "C:\\Users\\Docker\\Desktop\\TransportRequestDetails.txt"
           }
         ]

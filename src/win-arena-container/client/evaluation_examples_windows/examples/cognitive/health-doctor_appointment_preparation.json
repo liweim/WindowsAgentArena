@@ -19,10 +19,8 @@
   "gt_steps": [
     "Open the appointment-preparation AP News article in Microsoft Edge.",
     "Activate Immersive Reader.",
-    "Find the article's advice about which medicines and related health products to include when filling out paperwork at home.",
     "Open Thunderbird Calendar.",
     "Enable the `Home` calendar if it is disabled.",
-    "Determine tomorrow's date from the Windows system date.",
     "Create a new calendar event for tomorrow at `9:00 AM`.",
     "Set the event duration to `2 hours`.",
     "Set the event title to `Doctor appointment`.",

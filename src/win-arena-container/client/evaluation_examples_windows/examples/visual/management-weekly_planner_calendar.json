@@ -1,5 +1,5 @@
 {
-  "id": "management-weekly_planner_calendar_italy",
+  "id": "management-weekly_planner_calendar",
   "manual_evaluation": true,
   "operation_time": 474.62,
   "user_group": "visual",
@@ -16,7 +16,6 @@
     "Set Windows text size to 150%.",
     "Keep text size at 150% throughout the task.",
     "Open WeeklyPlanner.odt in LibreOffice Writer.",
-    "Identify all six appointments in the weekly planner.",
     "Open Thunderbird Calendar.",
     "Create Dental Check-up on 9 November 2026 at 9:00 AM for 30 minutes at Studio Dentistico Milano, Via Torino 45.",
     "Create Honours Supervisor Meeting on 10 November 2026 at 2:30 PM for 45 minutes at Biblioteca Nazionale Braidense, Milan.",
@@ -33,7 +32,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/management-weekly_planner_calendar.odt",
+            "local_path": "../assets/management-weekly_planner_calendar.odt",
             "path": "C:\\Users\\Docker\\Desktop\\WeeklyPlanner.odt"
           }
         ]

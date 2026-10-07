@@ -30,7 +30,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/health-sunscreen_reference.xlsx",
+            "local_path": "../assets/health-sunscreen_reference.xlsx",
             "path": "C:\\Users\\Docker\\Desktop\\health-sunscreen_reference.xlsx"
           }
         ]

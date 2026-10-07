@@ -16,9 +16,7 @@
   "source": "https://www.wmata.com/content/dam/wmata-com/Timetables/A49_timetable.pdf",
   "gt_steps": [
     "Read the A49 weekday eastbound timetable.",
-    "Find the first Glen Carlyn Dr + Vista Dr departure after 7:05 am: 7:20 am.",
-    "Use `Glen Carlyn Dr + Vista Dr: 7:20 am\nColumbia Pike + George Mason Dr: 7:35 am\n18 St + C St NW: 8:07 am\nMetro Center: 8:29 am` as the standard answer.",
-    "Open Notepad and enter the four requested checkpoints, one per line.",
+    "Open Notepad and enter `Glen Carlyn Dr + Vista Dr: 7:20 am`, `Columbia Pike + George Mason Dr: 7:35 am`, `18 St + C St NW: 8:07 am`, and `Metro Center: 8:29 am`, one per line.",
     "Save the file as `answer.txt` on the Desktop."
   ],
   "config": [
@@ -27,7 +25,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/mobility-wmata_a49_morning_plan.pdf",
+            "local_path": "../assets/mobility-wmata_a49_morning_plan.pdf",
             "path": "C:\\Users\\Docker\\Desktop\\WMATA_A49_Timetable.pdf"
           }
         ]

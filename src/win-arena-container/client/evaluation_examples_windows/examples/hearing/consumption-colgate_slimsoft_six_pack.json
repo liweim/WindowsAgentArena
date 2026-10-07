@@ -30,7 +30,7 @@
       "parameters": {
         "files": [
           {
-            "local_path": "assets/consumption-colgate_slimsoft_six_pack.mp3",
+            "local_path": "../assets/consumption-colgate_slimsoft_six_pack.mp3",
             "path": "C:\\Users\\Docker\\Desktop\\ColgateShoppingReminder.mp3"
           }
         ]

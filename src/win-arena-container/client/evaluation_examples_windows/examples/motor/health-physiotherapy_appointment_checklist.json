@@ -18,7 +18,6 @@
     "Read all four listed common mistakes.",
     "Open Thunderbird Calendar.",
     "In the Calendars list, enable the Home calendar if it is disabled.",
-    "Determine tomorrow's date from the system date.",
     "Create a 1-hour calendar event for tomorrow at 10:00 AM.",
     "Set the title to `Physiotherapy Appointment`.",
     "Copy all four common mistakes from the webpage into the event description without paraphrasing.",
@@ -126,18 +125,21 @@
           "minute": 0,
           "duration_minutes": 60,
           "title": "Physiotherapy Appointment",
+          "ignore_case": false,
+          "body_ordered": true,
+          "body_line_based": true,
           "body_points": [
             [
-              "wearing restrictive clothes that limit movement"
+              "Wearing restrictive clothes that limit movement"
             ],
             [
-              "forgetting to bring referral letters or medical scans"
+              "Forgetting to bring referral letters or medical scans"
             ],
             [
-              "arriving late, rushed, or anxious — take a few minutes beforehand to relax"
+              "Arriving late, rushed, or anxious — take a few minutes beforehand to relax"
             ],
             [
-              "holding back information about pain, medication, or past injuries"
+              "Holding back information about pain, medication, or past injuries"
             ]
           ]
         }
