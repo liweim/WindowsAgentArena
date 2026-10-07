@@ -3,7 +3,7 @@
 set -e
 
 cd "$(dirname "$0")"
-LOG_FILE="$(pwd)/../nohup_tars.out"
+LOG_FILE="$(pwd)/nohup_tars.out"
 
 nohup setsid env \
     PYTHONUNBUFFERED=1 \
@@ -19,7 +19,7 @@ nohup setsid env \
     --model qwen3.8-27b \
     --global-planner-model qwen3.8-27b \
     --visual-grounder-model qwen3.8-27b \
-    --max-steps 100 \
+    --max-steps 50 \
     --som-origin oss \
     --a11y-backend uia \
     --clean-results false \

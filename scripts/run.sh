@@ -205,6 +205,8 @@ invoke_docker_container() {
     docker_command+=" -e LOCAL_API_URL=http://host.docker.internal:30000/v1 -e GTA1_API_URL=http://host.docker.internal:1234/v1 -e UITARS_API_URL=http://host.docker.internal:1235/v1"
     if [ -n "${MM_AGENTS_EXTRA_ARGS:-}" ]; then docker_command+=" -e MM_AGENTS_EXTRA_ARGS"; fi
     if [ -n "${LOCALLSTC_EXTRA_ARGS:-}" ]; then docker_command+=" -e LOCALLSTC_EXTRA_ARGS"; fi
+    if [ -n "${PARAKEET_ASR_URL:-}" ]; then docker_command+=" -e PARAKEET_ASR_URL"; fi
+    if [ -n "${PARAKEET_ASR_TIMEOUT:-}" ]; then docker_command+=" -e PARAKEET_ASR_TIMEOUT"; fi
     if [ -n "${LOCALLSTC_HOST_UID:-}" ]; then docker_command+=" -e LOCALLSTC_HOST_UID"; fi
     if [ -n "${LOCALLSTC_HOST_GID:-}" ]; then docker_command+=" -e LOCALLSTC_HOST_GID"; fi
     docker_command+=" --cap-add NET_ADMIN --stop-timeout 120 --entrypoint /bin/bash"

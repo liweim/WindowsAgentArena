@@ -3,7 +3,7 @@
 set -e
 
 cd "$(dirname "$0")"
-LOG_FILE="$(pwd)/../nohup_hisa.out"
+LOG_FILE="$(pwd)/nohup_hisa.out"
 
 nohup setsid env \
     PYTHONUNBUFFERED=1 \
@@ -22,7 +22,7 @@ nohup setsid env \
     --state_manager_model qwen3.8-27b \
     --wo_pattern \
     --headless \
-    --max_steps 100 \
+    --max_steps 50 \
     --bash_timeout 180 \
     --som-origin oss \
     --a11y-backend uia \

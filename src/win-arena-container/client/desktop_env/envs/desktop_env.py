@@ -257,6 +257,7 @@ class DesktopEnv(gym.Env):
         self._traj_no += 1
         self._step_no = 0
         self.action_history.clear()
+        self.last_evaluation = None
 
         logger.info("Reverting to snapshot to {}...".format(self.snapshot_name))
 

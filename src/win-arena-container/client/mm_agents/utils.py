@@ -754,11 +754,9 @@ def calculate_resolution_token_increase(result_dir: str) -> Dict[str, float]:
 def summary(result_dir, test_all_meta):
     """Generate aggregate result statistics.
 
-    For AccessCUA runs, each completed task may contain ``evaluation.json`` with
-    ``task_outcome``, ``access_requirement`` and ``success_rate``. ``result.txt``
-    remains the backward-compatible source for the traditional success rate.
-    Legacy result directories without ``evaluation.json`` are treated as
-    coincident tasks, so all three metrics fall back to the value in result.txt.
+    AccessCUA evaluation details are stored under ``evaluation`` in each task's
+    ``execution_log.json``. ``result.txt`` remains the final fallback for runs
+    without a detailed evaluation, which are treated as coincident tasks.
     """
     if not os.path.exists(result_dir):
         print(f"Result directory not found: {result_dir}")
@@ -776,10 +774,14 @@ def summary(result_dir, test_all_meta):
         test_all_meta = meta_dict
 
     all_task_outcomes = []
+    all_task_outcomes_15 = []
+    all_task_outcomes_50 = []
     all_access_requirements = []
     all_success_rates = []
     all_success_rates_15 = []
     all_success_rates_50 = []
+    all_access_requirements_15 = []
+    all_access_requirements_50 = []
     all_costs = []
     all_prompt_tokens = []
     all_completion_tokens = []
@@ -811,12 +813,24 @@ def summary(result_dir, test_all_meta):
         return task_dir
 
     def read_evaluation(task_result_dir, fallback_success_rate):
-        evaluation_file = os.path.join(task_result_dir, "evaluation.json")
-        if not os.path.exists(evaluation_file):
+        evaluation = None
+        evaluation_source = None
+
+        execution_log_file = os.path.join(task_result_dir, "execution_log.json")
+        if os.path.exists(execution_log_file):
+            try:
+                with open(execution_log_file, "r", encoding="utf-8") as f:
+                    execution_log = json.load(f)
+                evaluation = execution_log.get("evaluation")
+                if evaluation is not None:
+                    evaluation_source = execution_log_file
+            except Exception as e:
+                print(f"Warning: could not read {execution_log_file}: {e}")
+
+        if evaluation is None:
             return fallback_success_rate, fallback_success_rate, fallback_success_rate
+
         try:
-            with open(evaluation_file, "r", encoding="utf-8") as f:
-                evaluation = json.load(f)
             success_rate = float(
                 evaluation.get(
                     "success_rate",
@@ -829,7 +843,7 @@ def summary(result_dir, test_all_meta):
             ) * 100
             return task_outcome, access_requirement, success_rate
         except Exception as e:
-            print(f"Warning: could not read {evaluation_file}: {e}")
+            print(f"Warning: invalid evaluation in {evaluation_source}: {e}")
             return fallback_success_rate, fallback_success_rate, fallback_success_rate
 
     for domain in test_all_meta:
@@ -876,6 +890,10 @@ def summary(result_dir, test_all_meta):
 
             success_rate_15 = 0.0
             success_rate_50 = 0.0
+            task_outcome_15 = 0.0
+            task_outcome_50 = 0.0
+            access_requirement_15 = 0.0
+            access_requirement_50 = 0.0
             if has_completed_score:
                 all_task_outcomes.append(task_outcome)
                 all_access_requirements.append(access_requirement)
@@ -888,8 +906,12 @@ def summary(result_dir, test_all_meta):
                 print(f"Error file exists: {error_file}")
                 assert success_rate == 0, f"Success rate is not 0 when error file exists: {error_file}"
                 count_errors += 1
+                all_task_outcomes_15.append(task_outcome_15)
+                all_task_outcomes_50.append(task_outcome_50)
                 all_success_rates_15.append(success_rate_15)
                 all_success_rates_50.append(success_rate_50)
+                all_access_requirements_15.append(access_requirement_15)
+                all_access_requirements_50.append(access_requirement_50)
                 continue
 
             if os.path.exists(execution_log_file):
@@ -964,31 +986,51 @@ def summary(result_dir, test_all_meta):
                     stats[domain]["image_counts"].append(image_count)
                     if total_task_steps <= 15:
                         success_rate_15 = success_rate
+                        task_outcome_15 = task_outcome
+                        access_requirement_15 = access_requirement
                     if total_task_steps <= 50:
                         success_rate_50 = success_rate
+                        task_outcome_50 = task_outcome
+                        access_requirement_50 = access_requirement
+                    all_task_outcomes_15.append(task_outcome_15)
+                    all_task_outcomes_50.append(task_outcome_50)
                     all_success_rates_15.append(success_rate_15)
                     all_success_rates_50.append(success_rate_50)
+                    all_access_requirements_15.append(access_requirement_15)
+                    all_access_requirements_50.append(access_requirement_50)
                 except Exception:
                     print(f"error loading execution_log_file: {execution_log_file}")
                     if has_completed_score:
+                        all_task_outcomes_15.append(task_outcome_15)
+                        all_task_outcomes_50.append(task_outcome_50)
                         all_success_rates_15.append(success_rate_15)
                         all_success_rates_50.append(success_rate_50)
+                        all_access_requirements_15.append(access_requirement_15)
+                        all_access_requirements_50.append(access_requirement_50)
                     continue
             else:
                 if has_completed_score:
                     print(f"not found: {execution_log_file}")
+                    all_task_outcomes_15.append(task_outcome_15)
+                    all_task_outcomes_50.append(task_outcome_50)
                     all_success_rates_15.append(success_rate_15)
                     all_success_rates_50.append(success_rate_50)
+                    all_access_requirements_15.append(access_requirement_15)
+                    all_access_requirements_50.append(access_requirement_50)
                 continue
 
     num_tasks = sum(len(example_ids) for example_ids in test_all_meta.values())
     num_completed_scores = len(all_success_rates)
     num_tasks_with_log = len(all_costs)
     avg_task_outcome = np.mean(all_task_outcomes) if num_completed_scores > 0 else 0
+    avg_task_outcome_15 = np.mean(all_task_outcomes_15) if num_completed_scores > 0 else 0
+    avg_task_outcome_50 = np.mean(all_task_outcomes_50) if num_completed_scores > 0 else 0
     avg_access_requirement = np.mean(all_access_requirements) if num_completed_scores > 0 else 0
     avg_success_rate = np.mean(all_success_rates) if num_completed_scores > 0 else 0
     avg_success_rate_15 = np.mean(all_success_rates_15) if num_completed_scores > 0 else 0
     avg_success_rate_50 = np.mean(all_success_rates_50) if num_completed_scores > 0 else 0
+    avg_access_requirement_15 = np.mean(all_access_requirements_15) if num_completed_scores > 0 else 0
+    avg_access_requirement_50 = np.mean(all_access_requirements_50) if num_completed_scores > 0 else 0
     total_cost = sum(all_costs)
 
     total_gui_steps = sum(sum(stats[domain]["gui_steps"]) for domain in stats)
@@ -1017,10 +1059,14 @@ def summary(result_dir, test_all_meta):
     detailed_stats = {
         "summary": {
             "task_outcome": avg_task_outcome,
+            "task_outcome_15": avg_task_outcome_15,
+            "task_outcome_50": avg_task_outcome_50,
             "access_requirement": avg_access_requirement,
             "success_rate": avg_success_rate,
             "success_rate_15": avg_success_rate_15,
             "success_rate_50": avg_success_rate_50,
+            "access_requirement_15": avg_access_requirement_15,
+            "access_requirement_50": avg_access_requirement_50,
             "total_tasks": num_tasks,
             "completed_tasks": num_completed_scores,
             "left_tasks": count_remain,
@@ -1040,10 +1086,14 @@ def summary(result_dir, test_all_meta):
             },
             "average": {
                 "task_outcome": avg_task_outcome,
+                "task_outcome_15": avg_task_outcome_15,
+                "task_outcome_50": avg_task_outcome_50,
                 "access_requirement": avg_access_requirement,
                 "success_rate": avg_success_rate,
                 "success_rate_15": avg_success_rate_15,
                 "success_rate_50": avg_success_rate_50,
+                "access_requirement_15": avg_access_requirement_15,
+                "access_requirement_50": avg_access_requirement_50,
                 "cost": avg_cost,
                 "tokens": avg_total_tokens,
                 "prompt_tokens": avg_prompt_tokens,
@@ -1101,10 +1151,12 @@ def summary(result_dir, test_all_meta):
         f"Error tasks: {summary_stats['error_tasks']}"
     )
     print(
-        "method, task_outcome, access_requirement, success_rate, success_rate_50, "
-        "success_rate_15, tokens, prompt_tokens, completion_tokens, steps, execution_time:\n"
-        f"{result_dir},{avg_task_outcome:.1f},{avg_access_requirement:.1f},{avg_success_rate:.1f},"
-        f"{avg_success_rate_50:.1f},{avg_success_rate_15:.1f},{avg_total_tokens:.1f},"
+        "method, final_50, task_50, a11y_50, "
+        "final_15, task_15, a11y_15, "
+        "tokens, prompt_tokens, completion_tokens, steps, execution_time\n"
+        f"{result_dir},{avg_success_rate_50:.1f},{avg_task_outcome_50:.1f},{avg_access_requirement_50:.1f},"
+        f"{avg_success_rate_15:.1f},{avg_task_outcome_15:.1f},"
+        f"{avg_access_requirement_15:.1f},{avg_total_tokens:.1f},"
         f"{avg_prompt_tokens:.1f},{avg_completion_tokens:.1f},{avg_steps:.1f},{avg_execution_time:.1f}"
     )
     print('*' * 50)
@@ -1174,5 +1226,8 @@ def save_detail_results():
 
 
 if __name__ == "__main__":
-    summary('/home/weimingli/projects/WindowsAgentArena/results/locallstc_qwen3.8-27b_grounder', '/home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client/evaluation_examples_windows/debug.json')
+    # summary('/home/weimingli/projects/WindowsAgentArena/results/locallstc_qwen3.8-27b_grounder', '/home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client/evaluation_examples_windows/debug.json')
+    summary('/home/weimingli/projects/WindowsAgentArena/results/locallstc_qwen3.8-27b', '/home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client/evaluation_examples_windows/debug.json')
+    summary('/home/weimingli/projects/WindowsAgentArena/results/locallstc_qwen3.8-27b', '/home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client/evaluation_examples_windows/debug2.json')
+    summary('/home/weimingli/projects/WindowsAgentArena/results/locallstc2_qwen3.8-27b', '/home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client/evaluation_examples_windows/debug2.json')
     # summary('/home/weimingli/projects/WindowsAgentArena/results/tars_qwen3.8-27b', '/home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client/evaluation_examples_windows/debug.json')

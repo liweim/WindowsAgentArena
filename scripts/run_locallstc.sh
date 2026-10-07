@@ -2,9 +2,8 @@
 
 set -e
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-cd "$SCRIPT_DIR"
-LOG_FILE="$(dirname "$SCRIPT_DIR")/nohup_locallstc.out"
+cd "$(dirname "$0")"
+LOG_FILE="$(pwd)/nohup_locallstc.out"
 
 method="${1:-locallstc}"
 if [ "$#" -gt 0 ]; then
@@ -26,7 +25,7 @@ nohup setsid env \
     --global_planner_model qwen3.8-27b \
     --visual_grounder_model qwen3.8-27b \
     --state_manager_model qwen3.8-27b \
-    --max_steps 100 \
+    --max_steps 50 \
     --som-origin oss \
     --a11y-backend uia \
     --clean-results false \

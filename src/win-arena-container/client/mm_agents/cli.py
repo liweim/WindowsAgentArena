@@ -386,6 +386,7 @@ METHOD_CONFIGURERS: Dict[str, Optional[ParserConfigurer]] = {
     "gta1": _add_gta1_options,
     "agents3": _add_agents3_options,
     "locallstc": _add_locallstc_options,
+    "locallstc2": _add_locallstc_options,
     "hisa": _add_hisa_options,
     "coact": _add_coact_options,
     "tars": _add_tars_options,
@@ -397,7 +398,7 @@ def _validate_method_options(args: argparse.Namespace, parser: argparse.Argument
         args.grounding_width = args.grounding_width or args.screen_width
         args.grounding_height = args.grounding_height or args.screen_height
 
-    if args.agent_name == "locallstc":
+    if args.agent_name in {"locallstc", "locallstc2"}:
         enabled = [
             name
             for name in (
@@ -447,11 +448,12 @@ def parse_agent_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
         raw_argv.extend(extra_argv)
 
     selected = _extract_agent_name(raw_argv)
-    if selected == "locallstc":
-        extra_args = os.environ.get("LOCALLSTC_EXTRA_ARGS", "").strip()
+    if selected in {"locallstc", "locallstc2"}:
+        env_name = "LOCALLSTC2_EXTRA_ARGS" if selected == "locallstc2" else "LOCALLSTC_EXTRA_ARGS"
+        extra_args = os.environ.get(env_name, "").strip()
         if extra_args:
             extra_argv = shlex.split(extra_args)
-            logger.info("Applying LOCALLSTC_EXTRA_ARGS: %s", extra_argv)
+            logger.info("Applying %s: %s", env_name, extra_argv)
             raw_argv.extend(extra_argv)
 
     if selected not in METHOD_CONFIGURERS:

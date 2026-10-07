@@ -3,7 +3,7 @@
 set -e
 
 cd "$(dirname "$0")"
-LOG_FILE="$(pwd)/../nohup_agents3.out"
+LOG_FILE="$(pwd)/nohup_agents3.out"
 
 nohup setsid env \
     PYTHONUNBUFFERED=1 \
@@ -20,7 +20,7 @@ nohup setsid env \
     --ground_model qwen3.8-27b \
     --provider_name docker \
     --headless \
-    --max_steps 100 \
+    --max_steps 50 \
     --som-origin oss \
     --a11y-backend uia \
     --clean-results false \
@@ -31,9 +31,8 @@ nohup setsid env \
     --browser-port 18114 \
     --rdp-port 13393 \
     --result-dir /locallstc/projects/WindowsAgentArena/results/agents3_qwen3.8-27b \
-    --json-name evaluation_examples_windows/test_one.json \
+    --json-name evaluation_examples_windows/debug.json \
     --remove-container true \
-    --rerun \
     "$@" >"$LOG_FILE" 2>&1 < /dev/null &
 
 runner_pid=$!

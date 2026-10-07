@@ -92,8 +92,18 @@ def run_single_example(agent, env, example, max_steps, instruction, args, exampl
 
     with open(os.path.join(example_result_dir, "result.txt"), "w", encoding="utf-8") as f:
         f.write(f"{result}\n")
-    with open(os.path.join(example_result_dir, "evaluation.json"), "w", encoding="utf-8") as f:
-        json.dump(evaluation, f, indent=2, ensure_ascii=False)
+    execution_log = {
+        "statistics": {
+            "score": result,
+            "total_steps": step_idx,
+            "cua_steps": step_idx,
+            "execution_time": (datetime.datetime.now() - start_time).total_seconds(),
+        },
+        "task_config": example,
+        "evaluation": evaluation,
+    }
+    with open(os.path.join(example_result_dir, "execution_log.json"), "w", encoding="utf-8") as f:
+        json.dump(execution_log, f, indent=2, ensure_ascii=False)
         f.write("\n")
     
     # Record final results

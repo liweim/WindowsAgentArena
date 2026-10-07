@@ -1,5 +1,12 @@
 {
-  "msedge": [
-"4d34ff3b-5cc8-44b2-a272-fb07927e996e-WOS"
-]
+  "hearing": [
+    "captcha-audio_3",
+    "communication-meeting_action_items",
+    "consumption-ginger_ale",
+    "consumption-insta360",
+    "consumption-order_substitution_audio",
+    "consumption-sony_alpha",
+    "health-child_visit_preparation",
+    "information-apartment_maintenance"
+  ]
 }

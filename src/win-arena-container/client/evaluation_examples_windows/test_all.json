@@ -146,14 +146,14 @@
         "management-student_gradebook",
         "management-water_bill_reminder",
         "mobility-accessible_grade1_walks",
+        "mobility-mouse_keys_dubai_shortest_walking_route",
         "mobility-mouse_keys_google_maps_route",
         "mobility-nearest_accessible_beach",
-        "mobility-nearest_passport_office_gwagwalada",
         "service-accessible_transport_request",
         "service-bank_investigation_period",
         "service-passport_application_post_office",
-        "service-voter_certificate_link",
-        "service-reddit_monitor_post_count"
+        "service-reddit_monitor_post_count",
+        "service-voter_certificate_link"
     ],
     "visual": [
         "access-chrome_zoom_150",
@@ -202,7 +202,7 @@
         "mobility-cta_airport_transfer",
         "mobility-nearest_pharmacy_unsw_library",
         "mobility-transit_route_grand_central_to_liberty",
-        "mobility-walking_route_opera_house",
+        "mobility-walking_route_wat_arun",
         "service-accessible_parking_renewal_notice",
         "service-medicare_card_sample",
         "service-real_id_infographic"

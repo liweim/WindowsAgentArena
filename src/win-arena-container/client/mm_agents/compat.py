@@ -4,6 +4,7 @@ This module intentionally keeps framework imports lazy.  Navi users should
 not need optional dependencies used only by HiSA, Agent-S3, or CoAct.
 """
 
+import json
 import logging
 import os
 from typing import Dict, Optional
@@ -18,10 +19,12 @@ AGENT_ALIASES = {
     "gta1_agent": "gta1",
     "local-lstc": "locallstc",
     "local_lstc": "locallstc",
+    "local-lstc2": "locallstc2",
+    "local_lstc2": "locallstc2",
     "tars_agent": "tars",
 }
 STEP_AGENT_NAMES = frozenset({"gta1", "agents3"})
-FRAMEWORK_AGENT_NAMES = frozenset({"locallstc", "hisa", "coact", "tars"})
+FRAMEWORK_AGENT_NAMES = frozenset({"locallstc", "locallstc2", "hisa", "coact", "tars"})
 SUPPORTED_AGENT_NAMES = frozenset(
     {"navi", "claude"} | STEP_AGENT_NAMES | FRAMEWORK_AGENT_NAMES
 )
@@ -31,6 +34,7 @@ FRAMEWORK_DEFAULT_MODELS = {
     "agents3": "gpt-4o",
     "hisa": "gpt-5-mini",
     "locallstc": "gpt-5-mini",
+    "locallstc2": "gpt-5-mini",
     "tars": "qwen3.8-27b",
 }
 
@@ -210,7 +214,10 @@ def run_step_agent_example(
 
 
 def _run_locallstc(env, example, args, example_result_dir) -> float:
-    from mm_agents.locallstc.main import LocalLSTC
+    if args.agent_name == "locallstc2":
+        from mm_agents.locallstc2.main import LocalLSTC
+    else:
+        from mm_agents.locallstc.main import LocalLSTC
 
     model = args.global_planner_model or args.model
     framework = LocalLSTC(
@@ -354,7 +361,7 @@ def run_framework_example(
     scores,
 ) -> float:
     """Run a framework that owns its complete task execution loop."""
-    if args.agent_name == "locallstc":
+    if args.agent_name in {"locallstc", "locallstc2"}:
         score = _run_locallstc(env, example, args, example_result_dir)
     elif args.agent_name == "hisa":
         score = _run_hisa(env, example, args, example_result_dir)
@@ -365,9 +372,44 @@ def run_framework_example(
     else:
         raise ValueError("{} is not a framework agent".format(args.agent_name))
 
+    write_evaluation_to_execution_log(
+        env,
+        example_result_dir,
+        example,
+        score,
+    )
     scores.append(float(score))
     result_path = os.path.join(example_result_dir, "result.txt")
     if not os.path.exists(result_path):
         with open(result_path, "w", encoding="utf-8") as result_file:
             result_file.write("{}\n".format(score))
     return float(score)
+
+
+def write_evaluation_to_execution_log(
+    env,
+    example_result_dir: str,
+    example: Dict,
+    score: float,
+) -> None:
+    """Store a framework task's evaluation breakdown in its execution log."""
+    numeric_score = float(score)
+    evaluation = getattr(env, "last_evaluation", None) or {
+        "task_outcome": numeric_score,
+        "access_requirement": numeric_score,
+        "success_rate": numeric_score,
+        "requirement_relation": "coincident",
+    }
+    execution_log_path = os.path.join(example_result_dir, "execution_log.json")
+    if os.path.exists(execution_log_path):
+        with open(execution_log_path, "r", encoding="utf-8") as execution_log_file:
+            execution_log = json.load(execution_log_file)
+    else:
+        execution_log = {
+            "statistics": {"score": numeric_score},
+            "task_config": example,
+        }
+
+    execution_log["evaluation"] = evaluation
+    with open(execution_log_path, "w", encoding="utf-8") as execution_log_file:
+        json.dump(execution_log, execution_log_file, indent=2, ensure_ascii=False)

@@ -3,7 +3,7 @@
 set -e
 
 cd "$(dirname "$0")"
-LOG_FILE="$(pwd)/../nohup_coact.out"
+LOG_FILE="$(pwd)/nohup_coact.out"
 
 nohup setsid env \
     PYTHONUNBUFFERED=1 \
@@ -24,7 +24,7 @@ nohup setsid env \
     --orchestrator_max_steps 15 \
     --coding_max_steps 20 \
     --cua_max_steps 25 \
-    --cut_off_steps 100 \
+    --cut_off_steps 50 \
     --headless \
     --som-origin oss \
     --a11y-backend uia \

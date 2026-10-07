@@ -3,7 +3,7 @@
 set -e
 
 cd "$(dirname "$0")"
-LOG_FILE="$(pwd)/../nohup_gta1.out"
+LOG_FILE="$(pwd)/nohup_gta1.out"
 
 nohup setsid env \
     PYTHONUNBUFFERED=1 \
@@ -21,7 +21,7 @@ nohup setsid env \
     --ground_model qwen3.8-27b \
     --n_samples 3 \
     --headless \
-    --max_steps 100 \
+    --max_steps 50 \
     --som-origin oss \
     --a11y-backend uia \
     --clean-results false \

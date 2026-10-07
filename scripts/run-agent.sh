@@ -3,7 +3,7 @@
 set -e
 
 cd "$(dirname "$0")"
-LOG_FILE="$(pwd)/../nohup.out"
+LOG_FILE="$(pwd)/nohup.out"
 
 method="${1:-locallstc}"
 if [ "$#" -gt 0 ]; then
@@ -25,7 +25,7 @@ nohup setsid env \
     --global_planner_model qwen3.5-9b \
     --visual_grounder_model gta1-7b \
     --state_manager_model qwen3.5-9b \
-    --max_steps 100 \
+    --max_steps 50 \
     --som-origin oss \
     --a11y-backend uia \
     --clean-results false \

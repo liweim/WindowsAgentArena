@@ -290,6 +290,23 @@ def test(
                     f.write("0.0")
                 with open(os.path.join(example_result_dir, "err_reason.txt"), "w", encoding="utf-8") as f:
                     f.write(f"Fatal error: {e}\n\n{error_traceback}")
+                execution_log_path = os.path.join(example_result_dir, "execution_log.json")
+                if os.path.exists(execution_log_path):
+                    with open(execution_log_path, "r", encoding="utf-8") as f:
+                        execution_log = json.load(f)
+                else:
+                    execution_log = {
+                        "statistics": {"score": 0.0},
+                        "task_config": example,
+                    }
+                execution_log["evaluation"] = {
+                    "task_outcome": 0.0,
+                    "access_requirement": 0.0,
+                    "success_rate": 0.0,
+                    "requirement_relation": "coincident",
+                }
+                with open(execution_log_path, "w", encoding="utf-8") as f:
+                    json.dump(execution_log, f, indent=2, ensure_ascii=False)
                 # env.controller.end_recording(os.path.join(example_result_dir, "recording.mp4"))
                 # Write error details to traj.jsonl
                 with open(os.path.join(example_result_dir, "traj.jsonl"), "a") as f:
