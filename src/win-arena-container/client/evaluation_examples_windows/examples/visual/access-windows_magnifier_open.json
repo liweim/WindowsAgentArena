@@ -1,15 +1,15 @@
 {
   "id": "access-windows_magnifier_open",
-  "_comment": "",
-  "manual_evaluation": true,
-  "operation_time": 13.77,
   "user_group": "visual",
-  "subgroup_ids": ["V-S2"],
+  "subgroup_ids": [
+    "V-S2"
+  ],
   "category": "access",
   "need_ids": [
     "V2"
   ],
   "difficulty": "easy",
+  "operation_time": 13.77,
   "instruction": "Open Windows Magnifier and leave it open.",
   "source": "synthetic",
   "gt_steps": [

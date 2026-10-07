@@ -1,14 +1,16 @@
 {
   "id": "service-real_id_infographic",
   "user_group": "visual",
-  "manual_evaluation": true,
-  "operation_time": 99.26,
-  "subgroup_ids": ["V-S1", "V-S2"],
+  "subgroup_ids": [
+    "V-S1",
+    "V-S2"
+  ],
   "category": "service",
   "need_ids": [
     "V5"
   ],
   "difficulty": "medium",
+  "operation_time": 99.26,
   "instruction": "Use the original California DMV REAL ID decision infographic PDF on the Desktop. Create a Sticky Note recording the travel/federal-facility question, what the chart says when a traveler already has a valid passport, military ID, or other federally approved document, what it says when the traveler does not have one, and the in-person action shown for getting a REAL ID.",
   "source": "https://qr.dmv.ca.gov/portal/file/real-id-infographic-english/",
   "gt_steps": [

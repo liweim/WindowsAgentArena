@@ -1,14 +1,15 @@
 {
   "id": "mobility-nearest_accessible_beach",
-  "manually_evaluated": true,
-  "operation_time": 63.56,
   "user_group": "motor",
-  "subgroup_ids": ["M-S1"],
+  "subgroup_ids": [
+    "M-S1"
+  ],
   "category": "mobility",
   "need_ids": [
     "M1"
   ],
   "difficulty": "hard",
+  "operation_time": 63.56,
   "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Using the provided Accessible Beaches NSW directory, identify the nearest beach within 5 km of Bondi, Australia, and save its name followed by the six accessibility features shown on its NSW directory card to `answer.txt` on the Desktop. Put the beach name on the first line and the features on the next lines in directory order without paraphrasing.",
   "source": "https://accessiblebeaches.com/beach-directory/category/NSW",
   "gt_steps": [

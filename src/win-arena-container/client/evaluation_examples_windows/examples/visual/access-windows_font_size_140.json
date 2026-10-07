@@ -1,15 +1,15 @@
 {
   "id": "access-windows_font_size_140",
-  "_comment": "",
-  "manual_evaluation": true,
-  "operation_time": 18.41,
   "user_group": "visual",
-  "subgroup_ids": ["V-S2"],
+  "subgroup_ids": [
+    "V-S2"
+  ],
   "category": "access",
   "need_ids": [
     "V2"
   ],
   "difficulty": "easy",
+  "operation_time": 18.41,
   "instruction": "Set the Windows text size to 140% and apply the change.",
   "source": "synthetic",
   "gt_steps": [

@@ -1,15 +1,17 @@
 {
   "id": "captcha-slide_puzzle_1",
-  "manually_evaluated": true,
-  "operation_time": 20.22,
   "user_group": "motor",
-  "subgroup_ids": ["M-S2", "M-S3"],
+  "subgroup_ids": [
+    "M-S2",
+    "M-S3"
+  ],
   "category": "captcha",
   "need_ids": [
     "M5",
     "M7"
   ],
   "difficulty": "easy",
+  "operation_time": 20.22,
   "instruction": "Complete the puzzle slider CAPTCHA verification in Microsoft Edge.",
   "source": "synthetic",
   "gt_steps": [

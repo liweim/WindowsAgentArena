@@ -1,14 +1,15 @@
 {
   "id": "management-next_meeting_calendar",
-  "manually_evaluated": true,
-  "operation_time": 20.21,
   "user_group": "motor",
-  "subgroup_ids": ["M-S2"],
+  "subgroup_ids": [
+    "M-S2"
+  ],
   "category": "management",
   "need_ids": [
     "M4"
   ],
   "difficulty": "medium",
+  "operation_time": 20.21,
   "instruction": "Enable Windows Mouse Keys and keep them enabled. Using the next-meeting details in the provided meeting minutes PDF, create a one-hour Thunderbird Calendar appointment at the listed date and time, with the meeting place as the title.",
   "source": "synthetic",
   "gt_steps": [

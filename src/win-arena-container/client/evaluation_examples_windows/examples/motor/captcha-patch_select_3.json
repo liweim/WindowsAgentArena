@@ -1,14 +1,16 @@
 {
   "id": "captcha-patch_select_3",
-  "manually_evaluated": true,
-  "operation_time": 31.96,
   "user_group": "motor",
-  "subgroup_ids": ["M-S2", "M-S3"],
+  "subgroup_ids": [
+    "M-S2",
+    "M-S3"
+  ],
   "category": "captcha",
   "need_ids": [
     "M7"
   ],
   "difficulty": "medium",
+  "operation_time": 31.96,
   "instruction": "Complete the patch-select CAPTCHA verification in Microsoft Edge.",
   "source": "synthetic",
   "gt_steps": [

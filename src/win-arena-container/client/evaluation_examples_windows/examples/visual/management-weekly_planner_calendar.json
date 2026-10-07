@@ -1,14 +1,15 @@
 {
   "id": "management-weekly_planner_calendar",
-  "manual_evaluation": true,
-  "operation_time": 474.62,
   "user_group": "visual",
-  "subgroup_ids": ["V-S2"],
+  "subgroup_ids": [
+    "V-S2"
+  ],
   "category": "management",
   "need_ids": [
     "V2"
   ],
   "difficulty": "hard",
+  "operation_time": 474.62,
   "instruction": "Set Windows text size to 150% and keep it at 150%. Create a separate Thunderbird Calendar event for every appointment in `WeeklyPlanner.odt`, using each appointment name as the title and preserving its date, start time, duration, and location exactly.",
   "source": "synthetic",
   "gt_steps": [

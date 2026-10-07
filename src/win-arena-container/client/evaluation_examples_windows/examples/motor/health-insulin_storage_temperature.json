@@ -1,14 +1,15 @@
 {
   "id": "health-insulin_storage_temperature",
-  "manually_evaluated": true,
-  "operation_time": 97.25,
   "user_group": "motor",
-  "subgroup_ids": ["M-S1"],
+  "subgroup_ids": [
+    "M-S1"
+  ],
   "category": "health",
   "need_ids": [
     "M1"
   ],
   "difficulty": "medium",
+  "operation_time": 97.25,
   "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Save only the recommended refrigerated temperature range for unopened insulin from the provided insulin-storage PDF in `answer.txt` on the Desktop.",
   "source": "synthetic",
   "gt_steps": [

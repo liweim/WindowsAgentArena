@@ -1,14 +1,15 @@
 {
   "id": "mobility-mouse_keys_google_maps_route",
-  "manually_evaluated": true,
-  "operation_time": 97.41,
   "user_group": "motor",
-  "subgroup_ids": ["M-S2"],
+  "subgroup_ids": [
+    "M-S2"
+  ],
   "category": "mobility",
   "need_ids": [
     "M4"
   ],
   "difficulty": "easy",
+  "operation_time": 97.41,
   "instruction": "Enable Windows Mouse Keys and keep them enabled. In Google Maps, show walking directions from Victoria Station, London, UK to Westminster Abbey, Dean's Yard, London SW1P 3PA, United Kingdom. Leave the walking directions visible.",
   "source": "synthetic",
   "gt_steps": [

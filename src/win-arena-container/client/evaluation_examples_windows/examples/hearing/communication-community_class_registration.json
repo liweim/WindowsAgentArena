@@ -1,6 +1,5 @@
 {
   "id": "communication-community_class_registration",
-  "manually_evaluated": true,
   "user_group": "hearing",
   "subgroup_ids": [
     "H-S1"
@@ -13,7 +12,6 @@
   "operation_time": 61.51,
   "instruction": "Use Chrome Live Caption to identify the free class, its start date, and the required registration card in the community-center audio, then compose a new Thunderbird email to the Riverside Community Center registration desk at `registration@riversidecommunitycenter.example` with subject `Free Workshop Registration` and include those three details in the body. Save it as a draft and do not send it.",
   "source": "synthetic",
-  "transcript": "Hey neighbors! Exciting news from the center. Registration opens next Monday for our summer workshops. We have baking, oil painting, and our super popular Beginner Pottery Class. Great news: the Pottery class is completely free this month! It officially starts on July 6th. Due to high demand, spots are limited. To register, please email us and make sure to bring your Local Library Card on the first day to verify your residency. See you there!",
   "gt_steps": [
     "Turn on Chrome Live Caption.",
     "Play the community-center audio with Live Caption enabled.",

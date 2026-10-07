@@ -1,14 +1,15 @@
 {
   "id": "information-psychology_coursework_upload_limit",
-  "manually_evaluated": true,
-  "operation_time": 68.24,
   "user_group": "motor",
-  "subgroup_ids": ["M-S3"],
+  "subgroup_ids": [
+    "M-S3"
+  ],
   "category": "information",
   "need_ids": [
     "M3"
   ],
   "difficulty": "medium",
+  "operation_time": 68.24,
   "instruction": "Enable Windows Filter Keys and keep them enabled. Find the maximum coursework file upload size in the provided Department of Psychology Undergraduate Student Handbook and save it in `answer.txt` on the Desktop.",
   "source": "synthetic",
   "gt_steps": [

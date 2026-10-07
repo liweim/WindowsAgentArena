@@ -1,14 +1,15 @@
 {
   "id": "mobility-walking_route_wat_arun",
-  "manual_evaluation": true,
-  "operation_time": 99.48,
   "user_group": "visual",
-  "subgroup_ids": ["V-S1"],
+  "subgroup_ids": [
+    "V-S1"
+  ],
   "category": "mobility",
   "need_ids": [
     "V1"
   ],
   "difficulty": "medium",
+  "operation_time": 99.48,
   "instruction": "Turn on Windows Narrator. Use it to navigate Google Maps and find walking directions from Sanam Chai MRT Station, Bangkok, Thailand to Wat Arun, Bangkok, Thailand. Leave the walking directions open.",
   "source": "synthetic",
   "gt_steps": [

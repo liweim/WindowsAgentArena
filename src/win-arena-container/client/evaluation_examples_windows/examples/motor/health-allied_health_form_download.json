@@ -1,14 +1,15 @@
 {
   "id": "health-allied_health_form_download",
-  "manually_evaluated": true,
-  "operation_time": 97.28,
   "user_group": "motor",
-  "subgroup_ids": ["M-S2"],
+  "subgroup_ids": [
+    "M-S2"
+  ],
   "category": "health",
   "need_ids": [
     "M4"
   ],
   "difficulty": "medium",
+  "operation_time": 97.28,
   "instruction": "Enable Windows Mouse Keys and keep them enabled. Download the Allied Health Treatment Request form from the SIRA website and save the PDF on the Desktop as `answer.pdf`.",
   "source": "https://www.sira.nsw.gov.au/resources-library/for-healthcare-providers/allied-health-treatment-request-ahtr-downloads",
   "gt_steps": [

@@ -12,7 +12,6 @@
   "operation_time": 42.83,
   "instruction": "Use Chrome Live Caption to identify the exact item in the audio shopping reminder, then find the standalone version on the shopping website and add it to the cart.",
   "source": "synthetic",
-  "transcript": "Leo, the kayak rental finally confirmed our Saturday slot, so I need to replace the old action cam before we go. Can you order the Insta360 ONE X2 from the shopping site? I want that model for the paddle trip.",
   "gt_steps": [
     "Switch to the audio shopping reminder tab.",
     "Turn on Chrome Live Caption.",

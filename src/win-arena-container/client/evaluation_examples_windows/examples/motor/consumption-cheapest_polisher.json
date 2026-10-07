@@ -1,14 +1,15 @@
 {
   "id": "consumption-cheapest_polisher",
-  "manually_evaluated": true,
-  "operation_time": 64,
   "user_group": "motor",
-  "subgroup_ids": ["M-S1"],
+  "subgroup_ids": [
+    "M-S1"
+  ],
   "category": "consumption",
   "need_ids": [
     "M1"
   ],
   "difficulty": "medium",
+  "operation_time": 64,
   "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Find the cheapest polisher in the provided Harbor Freight catalogue and save its full product name exactly as shown on the first line and its price on the second line of `answer.txt` on the Desktop.",
   "source": "synthetic",
   "gt_steps": [

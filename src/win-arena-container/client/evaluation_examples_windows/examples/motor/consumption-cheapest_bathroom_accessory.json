@@ -1,14 +1,15 @@
 {
   "id": "consumption-cheapest_bathroom_accessory",
-  "manually_evaluated": true,
-  "operation_time": 113.87,
   "user_group": "motor",
-  "subgroup_ids": ["M-S1"],
+  "subgroup_ids": [
+    "M-S1"
+  ],
   "category": "consumption",
   "need_ids": [
     "M1"
   ],
   "difficulty": "medium",
+  "operation_time": 113.87,
   "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Add exactly one unit of the cheapest item in OneStopShop's `Bathroom Accessories` category to the shopping cart.",
   "source": "synthetic",
   "gt_steps": [

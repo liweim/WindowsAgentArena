@@ -1,15 +1,15 @@
 {
   "id": "information-metal_density_comparison",
-  "_comment": "",
-  "manual_evaluation": true,
-  "operation_time": 58.74,
   "user_group": "visual",
-  "subgroup_ids": ["V-S1"],
+  "subgroup_ids": [
+    "V-S1"
+  ],
   "category": "information",
   "need_ids": [
     "V1"
   ],
   "difficulty": "medium",
+  "operation_time": 58.74,
   "instruction": "Turn on Windows Narrator. Compare the densities of gold and aluminium using the two Wikipedia pages already open in Chrome. Save `answer.txt` on the Desktop with the denser metal name on the first line and its density value on the second line.",
   "source": [
     "http://host.docker.internal:8888/wikipedia_en_all_maxi_2022-05/A/Gold",

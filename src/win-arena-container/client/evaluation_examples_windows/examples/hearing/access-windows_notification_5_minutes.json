@@ -1,6 +1,5 @@
 {
   "id": "access-windows_notification_5_minutes",
-  "manually_evaluated": false,
   "user_group": "hearing",
   "subgroup_ids": [
     "H-S1"
@@ -43,5 +42,6 @@
       ]
     }
   },
-  "proxy": false
+  "proxy": false,
+  "possibility_of_env_change": "low"
 }

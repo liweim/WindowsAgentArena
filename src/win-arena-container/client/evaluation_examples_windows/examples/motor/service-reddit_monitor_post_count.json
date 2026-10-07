@@ -1,14 +1,15 @@
 {
   "id": "service-reddit_monitor_post_count",
-  "manually_evaluated": true,
-  "operation_time": 85.08,
   "user_group": "motor",
-  "subgroup_ids": ["M-S2"],
+  "subgroup_ids": [
+    "M-S2"
+  ],
   "category": "service",
   "need_ids": [
     "M4"
   ],
   "difficulty": "medium",
+  "operation_time": 85.08,
   "instruction": "Enable Windows Mouse Keys and keep them enabled. In Reddit, open the Forums tab and sort the forums alphabetically. Under the M category, click `monitor` to see more details. Find the total number of posts in the Monitor forum and save only that number to `answer.txt` on the Desktop.",
   "source": "synthetic",
   "gt_steps": [

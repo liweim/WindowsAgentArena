@@ -1,14 +1,15 @@
 {
   "id": "captcha-robot_checkbox_1",
-  "manually_evaluated": true,
-  "operation_time": 13.27,
   "user_group": "motor",
-  "subgroup_ids": ["M-S2"],
+  "subgroup_ids": [
+    "M-S2"
+  ],
   "category": "captcha",
   "need_ids": [
     "M4"
   ],
   "difficulty": "easy",
+  "operation_time": 13.27,
   "instruction": "Complete the I'm-not-a-robot CAPTCHA verification in Microsoft Edge.",
   "source": "synthetic",
   "gt_steps": [

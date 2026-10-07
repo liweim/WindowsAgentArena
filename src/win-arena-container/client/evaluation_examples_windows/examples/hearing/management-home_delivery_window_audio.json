@@ -12,7 +12,6 @@
   "operation_time": 33.01,
   "instruction": "Use Chrome Live Caption to read the delivery reminder on the Desktop. Create a Sticky Note containing the delivery date, arrival window, preparation instruction, and delivery reference.",
   "source": "synthetic",
-  "transcript": "Delivery reminder. Your mobility equipment delivery is scheduled for Thursday, September 24, 2026. The arrival window is 1:20 PM to 2:10 PM. Keep the side gate clear. Delivery reference DL-731.",
   "gt_steps": [
     "Turn on Chrome Live Caption.",
     "Play `HomeDeliveryAudio.mp3` in Chrome with Live Caption enabled.",

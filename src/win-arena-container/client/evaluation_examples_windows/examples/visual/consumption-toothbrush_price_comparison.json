@@ -1,15 +1,15 @@
 {
   "id": "consumption-toothbrush_price_comparison",
-  "_comment": "",
-  "manual_evaluation": true,
-  "operation_time": 60.99,
   "user_group": "visual",
-  "subgroup_ids": ["V-S1"],
+  "subgroup_ids": [
+    "V-S1"
+  ],
   "category": "consumption",
   "need_ids": [
     "V1"
   ],
   "difficulty": "hard",
+  "operation_time": 60.99,
   "instruction": "Turn on Windows Narrator. Using the provided oral-care catalogue, identify the cheaper of the two six-count toothbrush products and add exactly one unit of it to the shopping cart. Leave the cart page open.",
   "source": "synthetic",
   "gt_steps": [

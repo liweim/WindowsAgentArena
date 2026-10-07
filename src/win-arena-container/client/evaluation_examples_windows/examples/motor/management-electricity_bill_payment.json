@@ -1,14 +1,15 @@
 {
   "id": "management-electricity_bill_payment",
-  "manually_evaluated": true,
-  "operation_time": 64.31,
   "user_group": "motor",
-  "subgroup_ids": ["M-S1"],
+  "subgroup_ids": [
+    "M-S1"
+  ],
   "category": "management",
   "need_ids": [
     "M1"
   ],
   "difficulty": "easy",
+  "operation_time": 64.31,
   "instruction": "Enable the Windows On-Screen Keyboard and keep it open. In the provided `Bills.ods`, change the Electricity bill status from `Unpaid` to `Paid`, set the payment date to `15/10/2026`, and save the spreadsheet.",
   "source": "synthetic",
   "gt_steps": [

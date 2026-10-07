@@ -12,7 +12,6 @@
   "operation_time": 38.10,
   "instruction": "Use Chrome Live Caption to identify the exact toothbrush and quantity in the opened shopping reminder, then add that item to the shopping cart and leave the cart page open.",
   "source": "https://www.colgate.com/en-sg/products/toothbrush/colgate-slimsoft-charcoal",
-  "transcript": "Shopping reminder. I compared the six-count toothbrush options. Skip the Oral-B Complete Deep Clean pack. Buy the Colgate Slimsoft Floss-Tip Charcoal Toothbrush, Pack of 6. Add exactly one pack to the cart.",
   "gt_steps": [
     "Turn on Chrome Live Caption.",
     "Play the shopping reminder in Chrome.",

@@ -1,14 +1,15 @@
 {
   "id": "mobility-nearest_pharmacy_marina_bay_sands",
-  "manual_evaluation": true,
-  "operation_time": 99.19,
   "user_group": "visual",
-  "subgroup_ids": ["V-S1"],
+  "subgroup_ids": [
+    "V-S1"
+  ],
   "category": "mobility",
   "need_ids": [
     "V1"
   ],
   "difficulty": "medium",
+  "operation_time": 99.19,
   "instruction": "Turn on Windows Narrator. In the provided walking-distance directory, use Marina Bay Sands, Singapore as the current location and choose the pharmacy with the shortest displayed walking distance; if distances tie, choose the shorter walking time. Open that pharmacy's place details and leave them open.",
   "source": "synthetic",
   "gt_steps": [

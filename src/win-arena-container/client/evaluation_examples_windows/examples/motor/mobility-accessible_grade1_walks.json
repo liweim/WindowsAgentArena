@@ -1,14 +1,15 @@
 {
   "id": "mobility-accessible_grade1_walks",
-  "manually_evaluated": true,
-  "operation_time": 239.77,
   "user_group": "motor",
-  "subgroup_ids": ["M-S1"],
+  "subgroup_ids": [
+    "M-S1"
+  ],
   "category": "mobility",
   "need_ids": [
     "M1"
   ],
   "difficulty": "hard",
+  "operation_time": 239.77,
   "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Save every walk title on the provided NSW National Parks webpage that is Grade 1 with a maximum listed walking time of 45 minutes or less to `answer.txt` on the Desktop, one title per line in webpage order.",
   "source": "https://www.nationalparks.nsw.gov.au/access-friendly/access-friendly-walking-tracks",
   "gt_steps": [

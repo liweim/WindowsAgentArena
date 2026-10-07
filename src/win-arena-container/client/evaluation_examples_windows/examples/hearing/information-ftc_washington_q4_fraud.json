@@ -135,5 +135,6 @@
       ]
     }
   },
-  "proxy": true
+  "proxy": true,
+  "possibility_of_env_change": "low"
 }

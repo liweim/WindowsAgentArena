@@ -1,15 +1,15 @@
 {
   "id": "communication-add_contact",
-  "_comment": "",
-  "manual_evaluation": true,
-  "operation_time": 68.36,
   "user_group": "visual",
-  "subgroup_ids": ["V-S2"],
+  "subgroup_ids": [
+    "V-S2"
+  ],
   "category": "communication",
   "need_ids": [
     "V2"
   ],
   "difficulty": "easy",
+  "operation_time": 68.36,
   "instruction": "Enable Windows Magnifier and keep it enabled. Add `Olivia Brown` with email `olivia.brown@example.com` to the contact list in the provided `Contacts.odt`, then save the document.",
   "source": "synthetic",
   "gt_steps": [

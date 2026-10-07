@@ -12,7 +12,6 @@
   "operation_time": 74.06,
   "instruction": "Use Chrome Live Caption to read the service appointment recording on the Desktop. Create a 45-minute Thunderbird Calendar event titled `Home support assessment` at the stated date and time.",
   "source": "synthetic",
-  "transcript": "Your home support assessment is booked for Tuesday, September 29, 2026 at 1:15 PM. Allow forty-five minutes for the appointment. The appointment title is Home support assessment.",
   "gt_steps": [
     "Turn on Chrome Live Caption.",
     "Play `ServiceAppointmentAudio.mp3` in Chrome with Chrome Live Caption enabled.",

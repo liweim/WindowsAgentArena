@@ -1,6 +1,5 @@
 {
   "id": "access-windows_mono_audio_screen_flash",
-  "manually_evaluated": false,
   "user_group": "hearing",
   "subgroup_ids": [
     "H-S1"
@@ -63,5 +62,6 @@
       ]
     }
   },
-  "proxy": false
+  "proxy": false,
+  "possibility_of_env_change": "low"
 }

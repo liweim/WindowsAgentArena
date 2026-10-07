@@ -1,14 +1,15 @@
 {
   "id": "consumption-wireless_mouse_search_result",
-  "manually_evaluated": true,
-  "operation_time": 91.94,
   "user_group": "motor",
-  "subgroup_ids": ["M-S1"],
+  "subgroup_ids": [
+    "M-S1"
+  ],
   "category": "consumption",
   "need_ids": [
     "M2"
   ],
   "difficulty": "easy",
+  "operation_time": 91.94,
   "instruction": "Enable Windows Sticky Keys and keep them enabled. Add exactly one unit of the first OneStopShop search result for `wireless mouse` to the shopping cart and choose the black one for the colour.",
   "source": "synthetic",
   "gt_steps": [

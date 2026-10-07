@@ -1,14 +1,15 @@
 {
   "id": "mobility-mouse_keys_dubai_shortest_walking_route",
-  "manually_evaluated": true,
-  "operation_time": 115.36,
   "user_group": "motor",
-  "subgroup_ids": ["M-S2"],
+  "subgroup_ids": [
+    "M-S2"
+  ],
   "category": "mobility",
   "need_ids": [
     "M4"
   ],
   "difficulty": "medium",
+  "operation_time": 115.36,
   "instruction": "Enable Windows Mouse Keys and keep them enabled. Using the provided walking-route directory, compare the routes from Dubai Mall, Downtown Dubai, Dubai, United Arab Emirates to Dubai Frame, Museum of the Future, and Jumeirah Mosque. Among the destinations with a walking route of less than 6 km, choose the one with the shortest walking time. Leave the walking directions to that destination visible.",
   "source": "synthetic",
   "gt_steps": [

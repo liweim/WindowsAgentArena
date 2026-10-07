@@ -1,15 +1,15 @@
 {
   "id": "consumption-keto_bread",
-  "_comment": "",
-  "manual_evaluation": true,
-  "operation_time": 86.57,
   "user_group": "visual",
-  "subgroup_ids": ["V-S1"],
+  "subgroup_ids": [
+    "V-S1"
+  ],
   "category": "consumption",
   "need_ids": [
     "V1"
   ],
   "difficulty": "easy",
+  "operation_time": 86.57,
   "instruction": "Turn on Windows Narrator. Use it to read the provided shopping note in Chrome and identify the requested product. Find that product on the opened shopping website, open its product page, and leave the page open.",
   "source": "synthetic",
   "gt_steps": [

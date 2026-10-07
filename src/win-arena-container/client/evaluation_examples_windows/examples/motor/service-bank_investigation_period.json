@@ -1,14 +1,15 @@
 {
   "id": "service-bank_investigation_period",
-  "manually_evaluated": true,
-  "operation_time": 202.76,
   "user_group": "motor",
-  "subgroup_ids": ["M-S1"],
+  "subgroup_ids": [
+    "M-S1"
+  ],
   "category": "service",
   "need_ids": [
     "M2"
   ],
   "difficulty": "medium",
+  "operation_time": 202.76,
   "instruction": "Enable Windows Sticky Keys and keep them enabled. Save only the maximum investigation period for a complaint or question(regarding new accounts, point-of-sale, etc) from the provided bank statement PDF in `answer.txt` on the Desktop.",
   "source": "https://www.carsonbank.com/",
   "gt_steps": [

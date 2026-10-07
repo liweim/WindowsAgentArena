@@ -1,15 +1,15 @@
 {
   "id": "access-high_contrast_aquatic",
-  "_comment": "High Contrast mode does not need to open url.",
-  "manual_evaluation": true,
-  "operation_time": 58.78,
   "user_group": "visual",
-  "subgroup_ids": ["V-S2"],
+  "subgroup_ids": [
+    "V-S2"
+  ],
   "category": "access",
   "need_ids": [
     "V3"
   ],
   "difficulty": "easy",
+  "operation_time": 58.78,
   "instruction": "Set the Windows contrast theme to Aquatic.",
   "source": "synthetic",
   "gt_steps": [

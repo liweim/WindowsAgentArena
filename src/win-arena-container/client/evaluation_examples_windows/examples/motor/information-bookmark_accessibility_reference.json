@@ -1,14 +1,15 @@
 {
   "id": "information-bookmark_accessibility_reference",
-  "manually_evaluated": true,
-  "operation_time": 35.13,
   "user_group": "motor",
-  "subgroup_ids": ["M-S2"],
+  "subgroup_ids": [
+    "M-S2"
+  ],
   "category": "information",
   "need_ids": [
     "M4"
   ],
   "difficulty": "easy",
+  "operation_time": 35.13,
   "instruction": "Enable Windows Mouse Keys and keep them enabled. Add the opened local Wikipedia `Accessibility` article to Chrome's Other bookmarks folder.",
   "source": "synthetic",
   "gt_steps": [

@@ -1,14 +1,15 @@
 {
   "id": "management-student_gradebook",
-  "manually_evaluated": true,
-  "operation_time": 166.76,
   "user_group": "motor",
-  "subgroup_ids": ["M-S1"],
+  "subgroup_ids": [
+    "M-S1"
+  ],
   "category": "management",
   "need_ids": [
     "M2"
   ],
   "difficulty": "hard",
+  "operation_time": 166.76,
   "instruction": "Enable Windows Sticky Keys and keep them enabled. Complete the grade summary in the provided `Grades.ods` by calculating each student's average to two decimal places, assigning the letter grade from the spreadsheet's grading table, and listing the three students in descending average-score order with their averages and letter grades. Save the spreadsheet.",
   "source": "synthetic",
   "gt_steps": [

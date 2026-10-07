@@ -1,14 +1,16 @@
 {
   "id": "mobility-cta_airport_transfer",
-  "manual_evaluation": true,
-  "operation_time": 97.83,
   "user_group": "visual",
-  "subgroup_ids": ["V-S1", "V-S2"],
+  "subgroup_ids": [
+    "V-S1",
+    "V-S2"
+  ],
   "category": "mobility",
   "need_ids": [
     "V5"
   ],
   "difficulty": "hard",
+  "operation_time": 97.83,
   "instruction": "Use the CTA L rail system map saved locally on the Desktop to trace a trip from O'Hare to Midway using the downtown transfer shown on the map. Save `answer.txt` with the start, first line, transfer station, second line, and destination, one item per line in that order.",
   "source": "https://www.transitchicago.com/assets/1/6/ctamap_Lsystem.pdf",
   "gt_steps": [

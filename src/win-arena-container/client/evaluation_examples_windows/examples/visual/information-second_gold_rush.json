@@ -1,15 +1,15 @@
 {
   "id": "information-second_gold_rush",
-  "_comment": "",
-  "manual_evaluation": true,
-  "operation_time": 54.75,
   "user_group": "visual",
-  "subgroup_ids": ["V-S1"],
+  "subgroup_ids": [
+    "V-S1"
+  ],
   "category": "information",
   "need_ids": [
     "V1"
   ],
   "difficulty": "medium",
+  "operation_time": 54.75,
   "instruction": "Turn on Windows Narrator. On the Gold rush Wikipedia page already open in Chrome, use the gold rush events listed by date on that page, identify the second ever listed gold rush in the world, open that gold rush's linked Wikipedia page, and leave it open.",
   "source": "synthetic",
   "gt_steps": [

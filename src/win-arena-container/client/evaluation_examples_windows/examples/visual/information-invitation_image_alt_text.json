@@ -1,15 +1,16 @@
 {
   "id": "information-invitation_image_alt_text",
-  "_comment": "",
-  "manual_evaluation": true,
-  "operation_time": 109.20,
   "user_group": "visual",
-  "subgroup_ids": ["V-S1", "V-S2"],
+  "subgroup_ids": [
+    "V-S1",
+    "V-S2"
+  ],
   "category": "information",
   "need_ids": [
     "V5"
   ],
   "difficulty": "hard",
+  "operation_time": 109.20,
   "instruction": "Add alternative text to the invitation image in the provided `information-image_to_text_invitation.docx` file. Include the restaurant name, grand-opening purpose, date, time, full address, and RSVP phone number, then save the document.",
   "source": "synthetic",
   "gt_steps": [

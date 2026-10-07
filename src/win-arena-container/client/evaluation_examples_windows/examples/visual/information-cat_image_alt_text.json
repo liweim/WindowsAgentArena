@@ -1,15 +1,16 @@
 {
   "id": "information-cat_image_alt_text",
-  "_comment": "",
-  "manual_evaluation": true,
-  "operation_time": 140.62,
   "user_group": "visual",
-  "subgroup_ids": ["V-S1", "V-S2"],
+  "subgroup_ids": [
+    "V-S1",
+    "V-S2"
+  ],
   "category": "information",
   "need_ids": [
     "V5"
   ],
   "difficulty": "medium",
+  "operation_time": 140.62,
   "instruction": "Add descriptive alternative text to the image in the provided `information-image_to_text_cat.docx` file so it describes the image, then save the document.",
   "source": "synthetic",
   "gt_steps": [

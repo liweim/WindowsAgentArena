@@ -1,14 +1,16 @@
 {
   "id": "captcha-distorted_text_1",
-  "manual_evaluation": true,
-  "operation_time": 18.87,
   "user_group": "visual",
-  "subgroup_ids": ["V-S1", "V-S2"],
+  "subgroup_ids": [
+    "V-S1",
+    "V-S2"
+  ],
   "category": "captcha",
   "need_ids": [
     "V6"
   ],
   "difficulty": "easy",
+  "operation_time": 18.87,
   "instruction": "Complete the CAPTCHA verification in Microsoft Edge.",
   "source": "synthetic",
   "gt_steps": [

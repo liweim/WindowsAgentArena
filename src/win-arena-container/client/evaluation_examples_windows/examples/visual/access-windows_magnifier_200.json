@@ -1,15 +1,15 @@
 {
   "id": "access-windows_magnifier_200",
-  "_comment": "",
-  "manual_evaluation": true,
-  "operation_time": 22.00,
   "user_group": "visual",
-  "subgroup_ids": ["V-S2"],
+  "subgroup_ids": [
+    "V-S2"
+  ],
   "category": "access",
   "need_ids": [
     "V2"
   ],
   "difficulty": "easy",
+  "operation_time": 22.00,
   "instruction": "Open Windows Magnifier, set the zoom level to 200%, and leave Magnifier open.",
   "source": "synthetic",
   "gt_steps": [

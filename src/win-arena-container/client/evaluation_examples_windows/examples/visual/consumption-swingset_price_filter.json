@@ -1,15 +1,15 @@
 {
   "id": "consumption-swingset_price_filter",
-  "_comment": "",
-  "manual_evaluation": true,
-  "operation_time": 49.93,
   "user_group": "visual",
-  "subgroup_ids": ["V-S1"],
+  "subgroup_ids": [
+    "V-S1"
+  ],
   "category": "consumption",
   "need_ids": [
     "V1"
   ],
   "difficulty": "easy",
+  "operation_time": 49.93,
   "instruction": "Turn on Windows Narrator. In Chrome, use the provided swing-set catalogue to filter for swing sets priced at no more than £49.99, and leave the filtered results page open.",
   "source": "synthetic",
   "gt_steps": [

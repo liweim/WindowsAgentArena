@@ -1,15 +1,15 @@
 {
   "id": "access-windows_color_filter_grayscale_inverted",
-  "_comment": "",
-  "manual_evaluation": true,
-  "operation_time": 49.03,
   "user_group": "visual",
-  "subgroup_ids": ["V-S2"],
+  "subgroup_ids": [
+    "V-S2"
+  ],
   "category": "access",
   "need_ids": [
     "V3"
   ],
   "difficulty": "easy",
+  "operation_time": 49.03,
   "instruction": "Set the Windows color filter to Grayscale inverted.",
   "source": "synthetic",
   "gt_steps": [

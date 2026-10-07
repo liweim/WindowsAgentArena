@@ -1,14 +1,15 @@
 {
   "id": "management-cardiology_appointment_reminder",
-  "manual_evaluation": true,
-  "operation_time": 113.54,
   "user_group": "visual",
-  "subgroup_ids": ["V-S1"],
+  "subgroup_ids": [
+    "V-S1"
+  ],
   "category": "management",
   "need_ids": [
     "V1"
   ],
   "difficulty": "medium",
+  "operation_time": 113.54,
   "instruction": "Turn on Windows Narrator and keep it enabled. Create a Thunderbird Calendar event from `AppointmentLetter.docx` with title `Cardiology Appointment`, the appointment date and time, the full clinic location, and a reminder exactly one day before the appointment.",
   "source": "https://www.england.nhs.uk/wp-content/uploads/2023/02/B2012iii-patient-letter-template-appointment-confirmation.docx",
   "gt_steps": [

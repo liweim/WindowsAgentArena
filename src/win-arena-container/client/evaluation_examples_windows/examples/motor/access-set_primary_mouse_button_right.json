@@ -1,14 +1,15 @@
 {
   "id": "access-set_primary_mouse_button_right",
-  "manually_evaluated": true,
-  "operation_time": 30.50,
   "user_group": "motor",
-  "subgroup_ids": ["M-S2"],
+  "subgroup_ids": [
+    "M-S2"
+  ],
   "category": "access",
   "need_ids": [
     "M6"
   ],
   "difficulty": "easy",
+  "operation_time": 30.50,
   "instruction": "Set the primary mouse button to Right and leave it set that way.",
   "source": "synthetic",
   "gt_steps": [

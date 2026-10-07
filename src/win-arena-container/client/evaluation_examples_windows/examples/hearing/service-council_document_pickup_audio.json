@@ -12,7 +12,6 @@
   "operation_time": 29.84,
   "instruction": "Turn on Chrome Live Caption to read the council service recording on the Desktop. Save the pickup location, collection hours, item to bring, and reference number to `answer.txt`, one item per line.",
   "source": "synthetic",
-  "transcript": "Council service update. Your parking permit documents are ready for pickup at the Civic Service Centre, counter 4. Collection hours are 9:00 AM to 4:30 PM. Bring photo ID. Reference number PS-482.",
   "gt_steps": [
     "Turn on Chrome Live Caption.",
     "Play `CouncilPickupAudio.mp3` in Chrome with Chrome Live Caption enabled.",

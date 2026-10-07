@@ -1,14 +1,15 @@
 {
   "id": "information-singapore_real_gdp_comparison",
-  "manually_evaluated": true,
-  "operation_time": 184.42,
   "user_group": "motor",
-  "subgroup_ids": ["M-S3"],
+  "subgroup_ids": [
+    "M-S3"
+  ],
   "category": "information",
   "need_ids": [
     "M3"
   ],
   "difficulty": "hard",
+  "operation_time": 184.42,
   "instruction": "Enable Windows Filter Keys and keep them enabled. Using the provided 2024 and 2025 Economic Survey of Singapore reports, determine the difference between Singapore's Real GDP growth percentages for the two years, expressed in percentage points. Save your answer in `answer.txt` on the Desktop.",
   "source": "synthetic",
   "gt_steps": [

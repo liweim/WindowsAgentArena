@@ -1,14 +1,15 @@
 {
   "id": "consumption-running_shoe_release_comparison",
   "user_group": "motor",
-  "manually_evaluated": true,
-  "operation_time": 58.21,
-  "subgroup_ids": ["M-S3"],
+  "subgroup_ids": [
+    "M-S3"
+  ],
   "category": "consumption",
   "need_ids": [
     "M3"
   ],
   "difficulty": "hard",
+  "operation_time": 58.21,
   "instruction": "Enable Windows Filter Keys and keep them enabled. Compare the release dates of `Salomon Men's Predict Soc2 Running` and `Nike Men's Stroke Running Shoe, 6.5 us`. For the more recently released shoe, select Black, size 12, and add exactly one unit to the shopping cart.",
   "source": "synthetic",
   "gt_steps": [

@@ -1,6 +1,5 @@
 {
   "id": "information-apartment_maintenance",
-  "manually_evaluated": true,
   "user_group": "hearing",
   "subgroup_ids": [
     "H-S1"
@@ -13,7 +12,6 @@
   "operation_time": 54.52,
   "instruction": "Use Chrome Live Caption to identify the two items that must be turned off and the deadline in the apartment maintenance audio, then record all three details in a Sticky Note.",
   "source": "synthetic",
-  "transcript": "Hi, this is the building management team. We have an urgent emergency water pipe repair on your floor tomorrow morning. To avoid any flooding, please ensure you shut off the main blue valve under your kitchen sink, and also turn off the water heater switch in the laundry closet. Um, please complete this before 8:00 AM tomorrow. Thanks for your cooperation.",
   "gt_steps": [
     "Turn on Chrome Live Caption.",
     "Play the audio with Live Caption enabled.",

@@ -1,16 +1,17 @@
 {
   "id": "communication-community_event_rsvp",
-  "comment": "",
-  "manual_evaluation": true,
-  "operation_time": 113.7,
   "user_group": "visual",
-  "subgroup_ids": ["V-S1", "V-S2"],
+  "subgroup_ids": [
+    "V-S1",
+    "V-S2"
+  ],
   "category": "communication",
   "need_ids": [
     "V1",
     "V2"
   ],
   "difficulty": "medium",
+  "operation_time": 113.7,
   "instruction": "Turn on Windows Narrator and keep it enabled. Read the community workshop invitation on the Desktop, then draft a Thunderbird email to `rsvp@example.org` with subject `Workshop RSVP` confirming attendance and including the event date, start time, venue, and a request for a large-print handout. Save it as draft. Do not send it.",
   "source": "synthetic",
   "gt_steps": [

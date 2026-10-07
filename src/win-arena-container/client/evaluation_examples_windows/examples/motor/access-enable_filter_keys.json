@@ -1,14 +1,15 @@
 {
   "id": "access-enable_filter_keys",
-  "manually_evaluated": true,
-  "operation_time": 26.41,
   "user_group": "motor",
-  "subgroup_ids": ["M-S3"],
+  "subgroup_ids": [
+    "M-S3"
+  ],
   "category": "access",
   "need_ids": [
     "M3"
   ],
   "difficulty": "easy",
+  "operation_time": 26.41,
   "instruction": "Enable Filter Keys and keep it enabled.",
   "source": "synthetic",
   "gt_steps": [

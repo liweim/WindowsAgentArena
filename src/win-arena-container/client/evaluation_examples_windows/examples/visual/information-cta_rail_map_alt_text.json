@@ -1,14 +1,16 @@
 {
   "id": "information-cta_rail_map_alt_text",
-  "manual_evaluation": "evaluation 0.9, will check again",
-  "operation_time": 64.03,
   "user_group": "visual",
-  "subgroup_ids": ["V-S1", "V-S2"],
+  "subgroup_ids": [
+    "V-S1",
+    "V-S2"
+  ],
   "category": "information",
   "need_ids": [
     "V5"
   ],
   "difficulty": "hard",
+  "operation_time": 64.03,
   "instruction": "Turn on Windows Narrator and use it while editing the provided `ChicagoConferenceTravelGuide.docx`. On page 2, use the CTA rail map to add missing alternative text that describes the O'Hare-to-Midway rail connection. The description must mention the origin airport, its CTA line, the downtown transfer station, the onward CTA line, and the destination airport. Wording, punctuation, and order may vary. Keep Narrator running and save the document.",
   "source": "synthetic",
   "gt_steps": [

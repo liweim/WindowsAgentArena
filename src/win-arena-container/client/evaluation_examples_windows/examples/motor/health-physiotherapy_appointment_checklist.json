@@ -1,14 +1,15 @@
 {
   "id": "health-physiotherapy_appointment_checklist",
-  "manually_evaluated": true,
-  "operation_time": 278.76,
   "user_group": "motor",
-  "subgroup_ids": ["M-S1"],
+  "subgroup_ids": [
+    "M-S1"
+  ],
   "category": "health",
   "need_ids": [
     "M1"
   ],
   "difficulty": "hard",
+  "operation_time": 278.76,
   "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Create a 1-hour Thunderbird Calendar event for 10:00 AM tomorrow titled `Physiotherapy Appointment`, with every item from the provided webpage's `Common Mistakes to Avoid` section copied exactly into the description.",
   "source": "https://inclinehealth.com.au/how-to-prepare-for-first-appointment/",
   "gt_steps": [

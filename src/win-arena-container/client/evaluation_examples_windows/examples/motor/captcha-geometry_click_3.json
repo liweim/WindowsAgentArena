@@ -1,14 +1,16 @@
 {
   "id": "captcha-geometry_click_3",
-  "manually_evaluated": true,
-  "operation_time": 36.80,
   "user_group": "motor",
-  "subgroup_ids": ["M-S2", "M-S3"],
+  "subgroup_ids": [
+    "M-S2",
+    "M-S3"
+  ],
   "category": "captcha",
   "need_ids": [
     "M7"
   ],
   "difficulty": "easy",
+  "operation_time": 36.80,
   "instruction": "Complete the geometry-click CAPTCHA verification in Microsoft Edge.",
   "source": "synthetic",
   "gt_steps": [

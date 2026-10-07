@@ -1,15 +1,16 @@
 {
   "id": "information-wikipedia_image_person",
-  "_comment": "",
-  "manual_evaluation": true,
-  "operation_time": 201.47,
   "user_group": "visual",
-  "subgroup_ids": ["V-S1", "V-S2"],
+  "subgroup_ids": [
+    "V-S1",
+    "V-S2"
+  ],
   "category": "information",
   "need_ids": [
     "V5"
   ],
   "difficulty": "medium",
+  "operation_time": 201.47,
   "instruction": "Turn on Windows Narrator. Use the Wikipedia page already open in Chrome to identify the person shown in the first image, open that person's Wikipedia page, and leave it open.",
   "source": "synthetic",
   "gt_steps": [

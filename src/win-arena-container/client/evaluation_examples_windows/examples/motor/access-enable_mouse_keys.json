@@ -1,14 +1,15 @@
 {
   "id": "access-enable_mouse_keys",
-  "manually_evaluated": true,
-  "operation_time": 41.75,
   "user_group": "motor",
-  "subgroup_ids": ["M-S2"],
+  "subgroup_ids": [
+    "M-S2"
+  ],
   "category": "access",
   "need_ids": [
     "M4"
   ],
   "difficulty": "easy",
+  "operation_time": 41.75,
   "instruction": "Enable Mouse Keys and keep it enabled.",
   "source": "synthetic",
   "gt_steps": [

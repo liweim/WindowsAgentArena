@@ -1,15 +1,15 @@
 {
   "id": "access-chrome_zoom_150",
-  "_comment": "The URL should be opened during initialization. The instruction can simply say, “Increase the page zoom level to 150%.” The evaluator can skip checking the URL, since opening it isn’t the main point of this task.",
-  "manual_evaluation": true,
-  "operation_time": 22.24,
   "user_group": "visual",
-  "subgroup_ids": ["V-S2"],
+  "subgroup_ids": [
+    "V-S2"
+  ],
   "category": "access",
   "need_ids": [
     "V2"
   ],
   "difficulty": "easy",
+  "operation_time": 22.24,
   "instruction": "Set the Chrome page zoom to 150% on https://www.digital.nsw.gov.au/delivery/accessibility-and-inclusivity-toolkit and leave the page open.",
   "source": "https://www.digital.nsw.gov.au/delivery/accessibility-and-inclusivity-toolkit",
   "gt_steps": [

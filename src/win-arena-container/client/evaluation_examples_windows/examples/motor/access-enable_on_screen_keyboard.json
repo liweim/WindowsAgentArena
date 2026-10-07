@@ -1,14 +1,15 @@
 {
   "id": "access-enable_on_screen_keyboard",
-  "manually_evaluated": true,
-  "operation_time": 25.18,
   "user_group": "motor",
-  "subgroup_ids": ["M-S1"],
+  "subgroup_ids": [
+    "M-S1"
+  ],
   "category": "access",
   "need_ids": [
     "M1"
   ],
   "difficulty": "easy",
+  "operation_time": 25.18,
   "instruction": "Enable the Windows On-Screen Keyboard and keep it open.",
   "source": "synthetic",
   "gt_steps": [

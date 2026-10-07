@@ -95,14 +95,23 @@
       {
         "type": "rule",
         "rules": {
-          "include": ["MANIFEST_COMPLETE"],
-          "exclude": ["MANIFEST_INCOMPLETE"]
+          "include": [
+            "MANIFEST_COMPLETE"
+          ],
+          "exclude": [
+            "MANIFEST_INCOMPLETE"
+          ]
         }
       }
     ],
     "metric_roles": {
-      "task_outcome": [0, 1],
-      "access_requirement": [1]
+      "task_outcome": [
+        0,
+        1
+      ],
+      "access_requirement": [
+        1
+      ]
     }
   },
   "proxy": false,

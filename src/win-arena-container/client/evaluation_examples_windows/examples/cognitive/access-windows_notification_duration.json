@@ -1,6 +1,5 @@
 {
   "id": "access-windows_notification_duration",
-  "manually_evaluated": false,
   "user_group": "cognitive",
   "subgroup_ids": [
     "C-S3"

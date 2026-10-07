@@ -1,14 +1,15 @@
 {
   "id": "communication-filter_keys_volunteer_email",
-  "manually_evaluated": true,
-  "operation_time": 146.63,
   "user_group": "motor",
-  "subgroup_ids": ["M-S3"],
+  "subgroup_ids": [
+    "M-S3"
+  ],
   "category": "communication",
   "need_ids": [
     "M3"
   ],
   "difficulty": "medium",
+  "operation_time": 146.63,
   "instruction": "Enable Windows Filter Keys and keep them enabled. Use the official 2026 Yosemite Volunteer Catalog saved on the Desktop to create and save a Thunderbird draft to `volunteers@example.org` with subject `Campground Cleanup details`. Include the project number and name, campground, check-in date, check-out date, project schedule date, and maximum number of volunteers for the September `Campground Cleanup` entry. Do not send it.",
   "source": "https://www.nps.gov/yose/getinvolved/supportyourpark/upload/2026-YOSE-VIP-Catalog.pdf",
   "gt_steps": [

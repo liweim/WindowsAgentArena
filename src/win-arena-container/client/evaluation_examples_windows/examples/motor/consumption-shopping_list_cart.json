@@ -1,14 +1,15 @@
 {
   "id": "consumption-shopping_list_cart",
   "user_group": "motor",
-  "manually_evaluated": true,
-  "operation_time": 92.77,
-  "subgroup_ids": ["M-S3"],
+  "subgroup_ids": [
+    "M-S3"
+  ],
   "category": "consumption",
   "need_ids": [
     "M3"
   ],
   "difficulty": "hard",
+  "operation_time": 92.77,
   "instruction": "Enable Windows Filter Keys and keep them enabled. Add the products and quantities listed in the provided `ShoppingList.ods` on Desktop to the OneStopMarket cart, with no additional products.",
   "source": "synthetic",
   "gt_steps": [

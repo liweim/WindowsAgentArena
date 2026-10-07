@@ -1,15 +1,16 @@
 {
   "id": "health-nutrition_facts_label",
-  "_comment": "changed paint to msedge to open the image",
-  "manual_evaluation": true,
-  "operation_time": 51.47,
   "user_group": "visual",
-  "subgroup_ids": ["V-S1", "V-S2"],
+  "subgroup_ids": [
+    "V-S1",
+    "V-S2"
+  ],
   "category": "health",
   "need_ids": [
     "V5"
   ],
   "difficulty": "medium",
+  "operation_time": 51.47,
   "instruction": "Use the original FDA Nutrition Facts label image opened on the Microsoft Edge and save `answer.txt` with the serving size, calories, sodium, and added sugars, one item per line in that order.",
   "source": "https://www.fda.gov/files/nutrition-facts-label-download-image2.jpg",
   "gt_steps": [

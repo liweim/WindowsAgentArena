@@ -12,7 +12,6 @@
   "operation_time": 34.77,
   "instruction": "Use Chrome Live Caption to read the opened laundry update, then create and start a vclock.com timer for the dryer time remaining in the recording. Leave the timer visible.",
   "source": "synthetic",
-  "transcript": "Laundry update. The dryer display shows thirty-seven minutes remaining on the current load. Ignore the fifty-minute manual setting in the paper guide; that is not the time remaining. Start a timer for the remaining time so the load is not left sitting in the dryer.",
   "gt_steps": [
     "Turn on Chrome Live Caption.",
     "Play the laundry update in Chrome.",

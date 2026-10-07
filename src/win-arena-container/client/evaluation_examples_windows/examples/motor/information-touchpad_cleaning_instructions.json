@@ -1,14 +1,15 @@
 {
   "id": "information-touchpad_cleaning_instructions",
-  "manually_evaluated": true,
-  "operation_time": 64.72,
   "user_group": "motor",
-  "subgroup_ids": ["M-S1"],
+  "subgroup_ids": [
+    "M-S1"
+  ],
   "category": "information",
   "need_ids": [
     "M1"
   ],
   "difficulty": "medium",
+  "operation_time": 64.72,
   "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Copy the touchpad-cleaning instructions from the provided Dell User's Guide exactly as written into `answer.txt` on the Desktop.",
   "source": "synthetic",
   "gt_steps": [

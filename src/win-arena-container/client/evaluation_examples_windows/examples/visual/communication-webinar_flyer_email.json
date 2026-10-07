@@ -1,15 +1,16 @@
 {
   "id": "communication-webinar_flyer_email",
-  "comment": "",
-  "manual_evaluation": true,
-  "operation_time": 50.00,
   "user_group": "visual",
-  "subgroup_ids": ["V-S1", "V-S2"],
+  "subgroup_ids": [
+    "V-S1",
+    "V-S2"
+  ],
   "category": "communication",
   "need_ids": [
     "V5"
   ],
   "difficulty": "medium",
+  "operation_time": 50.00,
   "instruction": "Use the webinar flyer image on the Desktop to draft a Thunderbird email to `researchteam@example.org` with subject `Archived webinar details`. Include the webinar date, time, and both featured speaker names. Save the draft and do not send it.",
   "source": "https://www.niddk.nih.gov/-/media/Files/News/Meetings/NIDDK_AI-Workshop_SpeakerSeries_Flyer_2024_10_17_Series1.pdf",
   "gt_steps": [
@@ -74,7 +75,7 @@
   "evaluator": {
     "func": "check_thunderbird_email_composition",
     "result": {
-        "type": "thunderbird_drafts"
+      "type": "thunderbird_drafts"
     },
     "expected": {
       "type": "rule",

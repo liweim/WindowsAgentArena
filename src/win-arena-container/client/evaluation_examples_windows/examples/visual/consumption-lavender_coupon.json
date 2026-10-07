@@ -1,15 +1,15 @@
 {
   "id": "consumption-lavender_coupon",
-  "_comment": "",
-  "manual_evaluation": true,
-  "operation_time": 50.24,
   "user_group": "visual",
-  "subgroup_ids": ["V-S1"],
+  "subgroup_ids": [
+    "V-S1"
+  ],
   "category": "consumption",
   "need_ids": [
     "V1"
   ],
   "difficulty": "hard",
+  "operation_time": 50.24,
   "instruction": "Turn on Windows Narrator. Using the provided garden catalogue, identify the featured lavender product and coupon code. Add exactly one unit of the matching product to the shopping cart, enter the catalogue coupon code without applying it, and leave the cart page open.",
   "source": "synthetic",
   "gt_steps": [

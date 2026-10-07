@@ -1,14 +1,15 @@
 {
   "id": "access-enable_clicklock",
-  "manually_evaluated": true,
-  "operation_time": 74.29,
   "user_group": "motor",
-  "subgroup_ids": ["M-S2"],
+  "subgroup_ids": [
+    "M-S2"
+  ],
   "category": "access",
   "need_ids": [
     "M5"
   ],
   "difficulty": "easy",
+  "operation_time": 74.29,
   "instruction": "Enable Mouse ClickLock and leave it enabled.",
   "source": "synthetic",
   "gt_steps": [

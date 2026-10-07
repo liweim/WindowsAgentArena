@@ -1,14 +1,15 @@
 {
   "id": "information-skill_building_hobbies",
-  "manually_evaluated": true,
-  "operation_time": 162.73,
   "user_group": "motor",
-  "subgroup_ids": ["M-S1"],
+  "subgroup_ids": [
+    "M-S1"
+  ],
   "category": "information",
   "need_ids": [
     "M1"
   ],
   "difficulty": "hard",
+  "operation_time": 162.73,
   "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Save the 11 hobby topics from the provided Covey webpage's `11 Examples of Skill-Building Hobbies for Adults with Disabilities` section to `answer.txt` on the Desktop, one topic per line, exactly as written in order but in lowercase, with no numbers, bullet symbols, or descriptions.",
   "source": "https://covey.org/11-skill-building-hobbies-for-adults-with-disabilities/",
   "gt_steps": [
