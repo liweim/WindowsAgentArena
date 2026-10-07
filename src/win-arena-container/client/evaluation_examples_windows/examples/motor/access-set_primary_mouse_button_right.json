@@ -1,6 +1,7 @@
 {
   "id": "access-set_primary_mouse_button_right",
   "manually_evaluated": true,
+  "operation_time": 30.50,
   "user_group": "motor",
   "subgroup_ids": ["M-S2"],
   "category": "access",

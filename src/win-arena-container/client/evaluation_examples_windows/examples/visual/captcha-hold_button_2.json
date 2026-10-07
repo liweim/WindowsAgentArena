@@ -1,5 +1,7 @@
 {
   "id": "captcha-hold_button_2",
+  "manual_evaluation": true,
+  "operation_time": 48.92,
   "user_group": "visual",
   "subgroup_ids": ["V-S1", "V-S2"],
   "category": "captcha",

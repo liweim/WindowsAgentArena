@@ -1,5 +1,7 @@
 {
   "id": "communication-filter_keys_volunteer_email",
+  "manually_evaluated": true,
+  "operation_time": 146.63,
   "user_group": "motor",
   "subgroup_ids": ["M-S3"],
   "category": "communication",
@@ -103,9 +105,7 @@
         "shell": true
       },
       {
-        "type": "vm_file",
-        "path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release\\Mail\\Local Folders\\Drafts",
-        "dest": "thunderbird-drafts.mbox"
+        "type": "thunderbird_drafts"
       }
     ],
     "expected": [
@@ -138,19 +138,13 @@
               "Yellow Pine"
             ],
             [
-              "September 11, 2026",
-              "9/11/26",
-              "09/11/2026"
+              "September 11, 2026"
             ],
             [
-              "September 13, 2026",
-              "9/13/26",
-              "09/13/2026"
+              "September 13, 2026"
             ],
             [
-              "September 12, 2026",
-              "9/12/26",
-              "09/12/2026"
+              "September 12, 2026"
             ],
             [
               "20 volunteers",

@@ -1,5 +1,8 @@
 {
   "id": "health-nutrition_facts_label",
+  "_comment": "changed paint to msedge to open the image",
+  "manual_evaluation": true,
+  "operation_time": 51.47,
   "user_group": "visual",
   "subgroup_ids": ["V-S1", "V-S2"],
   "category": "health",
@@ -7,7 +10,7 @@
     "V5"
   ],
   "difficulty": "medium",
-  "instruction": "Use the original FDA Nutrition Facts label image on the Desktop and save `answer.txt` with the serving size, calories, sodium, and added sugars, one item per line in that order.",
+  "instruction": "Use the original FDA Nutrition Facts label image opened on the Microsoft Edge and save `answer.txt` with the serving size, calories, sodium, and added sugars, one item per line in that order.",
   "source": "https://www.fda.gov/files/nutrition-facts-label-download-image2.jpg",
   "gt_steps": [
     "Open Notepad.",
@@ -30,14 +33,15 @@
       "type": "launch",
       "parameters": {
         "command": [
-          "C:\\Windows\\System32\\mspaint.exe",
-          "C:\\Users\\Docker\\Desktop\\NutritionFacts.jpg"
+          "cmd",
+          "/c",
+          "start msedge file:///C:\\Users\\Docker\\Desktop\\NutritionFacts.jpg"
         ]
       }
     }
   ],
   "related_apps": [
-    "paint",
+    "msedge",
     "notepad"
   ],
   "evaluator": {
@@ -60,18 +64,21 @@
               ],
               [
                 "2/3 cup",
-                "⅔ cup"
+                "⅔ cup",
+                "2 by 3 cup"
               ],
               [
                 "55g",
-                "55 g"
+                "55 g",
+                "55 grams"
               ]
             ]
           },
           {
             "all_of": [
               [
-                "calories"
+                "calories",
+                "cal"
               ],
               [
                 "230"
@@ -97,7 +104,8 @@
               ],
               [
                 "10g",
-                "10 g"
+                "10 g",
+                "10 grams"
               ]
             ]
           }

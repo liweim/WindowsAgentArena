@@ -1,6 +1,8 @@
 {
   "id": "consumption-swingset_price_filter",
   "_comment": "",
+  "manual_evaluation": true,
+  "operation_time": 49.93,
   "user_group": "visual",
   "subgroup_ids": ["V-S1"],
   "category": "consumption",
@@ -47,7 +49,6 @@
     }
   ],
   "related_apps": [
-    "narrator",
     "chrome"
   ],
   "evaluator": {

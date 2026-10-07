@@ -1,7 +1,7 @@
 {
   "id": "mobility-accessible_grade1_walks",
-  "_comment": "",
-  "manually_evaluated": false,
+  "manually_evaluated": true,
+  "operation_time": 239.77,
   "user_group": "motor",
   "subgroup_ids": ["M-S1"],
   "category": "mobility",
@@ -62,14 +62,13 @@
     }
   ],
   "related_apps": [
-    "on_screen_keyboard",
     "chrome",
     "notepad"
   ],
   "evaluator": {
     "func": [
       "check_include_exclude",
-      "exact_match"
+      "check_include_exclude"
     ],
     "conj": "and",
     "result": [
@@ -79,10 +78,9 @@
         "shell": true
       },
       {
-        "type": "is_file_saved_desktop",
-        "filename": "answer.txt",
-        "textcontent": "Fairfax Heritage walking track\nJennifer Street boardwalk\nThree Sisters walk\nBungoona lookout and path\nPalm Valley Currenbah walking track\nVictoria Park boardwalk\nDevils Hole lookout walk and picnic area\nPoint lookout walking track\nRainforest walking track\nWhitegum lookout walking track",
-        "exact": true
+        "type": "vm_command_line",
+        "command": "powershell -NoProfile -Command \"$file='C:\\Users\\Docker\\Desktop\\answer.txt'; if (!(Test-Path $file)) { Write-Output 'ANSWER_INCORRECT'; exit }; $actual=@(Get-Content $file | ForEach-Object { $_.Trim() } | Where-Object { $_ -ne '' }); $expected=@('Fairfax Heritage walking track','Jennifer Street boardwalk','Three Sisters walk','Bungoona lookout and path','Palm Valley Currenbah walking track','Victoria Park boardwalk','Devils Hole lookout walk and picnic area','Point lookout walking track','Rainforest walking track','Whitegum lookout walking track'); $ok=($actual.Count -eq $expected.Count); if($ok) { for($i=0; $i -lt $expected.Count; $i++) { if($actual[$i] -cne $expected[$i]) { $ok=$false; break } } }; if($ok) { Write-Output 'ANSWER_CORRECT' } else { Write-Output 'ANSWER_INCORRECT' }\"",
+        "shell": true
       }
     ],
     "expected": [
@@ -100,7 +98,12 @@
       {
         "type": "rule",
         "rules": {
-          "expected": "true"
+          "include": [
+            "ANSWER_CORRECT"
+          ],
+          "exclude": [
+            "ANSWER_INCORRECT"
+          ]
         }
       }
     ]

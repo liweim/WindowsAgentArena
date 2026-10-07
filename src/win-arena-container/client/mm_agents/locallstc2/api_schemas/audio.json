@@ -3,22 +3,35 @@
     "type": "function",
     "function": {
       "name": "AudioTools.transcribe",
-      "description": "Transcribe an audio file stored in the VM with the local Parakeet ASR service and return its text to the agent.",
+      "description": "Transcribe an audio or video file stored in the VM with the local Parakeet ASR service and return plain text. Video audio is extracted as 16 kHz mono WAV with FFmpeg first.",
       "parameters": {
         "type": "object",
         "properties": {
           "vm_path": {
             "type": "string",
-            "description": "Absolute path of the audio file inside the VM. In API calls, use forward slashes for Windows paths, for example C:/Users/Docker/Desktop/Message.mp3, to avoid Python backslash escape errors."
-          },
-          "timestamps": {
-            "type": "boolean",
-            "description": "Whether to include word timestamps in the transcription response. Defaults to false."
+            "description": "Absolute path of the audio or video file inside the VM. Supported video formats are MP4, MOV, and MKV. In API calls, use forward slashes for Windows paths, for example C:/Users/Docker/Desktop/Meeting.mp4, to avoid Python backslash escape errors."
           }
         },
         "required": [
           "vm_path"
         ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "AudioTools.transcribe_web_video",
+      "description": "Transcribe speech from a video embedded in the currently opened Chrome webpage and return plain text. The API discovers the current page when page_url is omitted, downloads the first embedded or streaming video with yt-dlp, and converts its audio to 16 kHz mono WAV before using Parakeet.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "page_url": {
+            "type": "string",
+            "description": "Optional HTTP(S) webpage or direct video URL. Omit this argument to use the webpage currently opened in Chrome."
+          }
+        },
+        "required": []
       }
     }
   }

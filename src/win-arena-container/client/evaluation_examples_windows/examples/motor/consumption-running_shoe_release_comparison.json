@@ -1,8 +1,8 @@
 {
   "id": "consumption-running_shoe_release_comparison",
-  "_comment": "",
-  "manually_evaluated": false,
   "user_group": "motor",
+  "manually_evaluated": true,
+  "operation_time": 58.21,
   "subgroup_ids": ["M-S3"],
   "category": "consumption",
   "need_ids": [
@@ -10,7 +10,7 @@
   ],
   "difficulty": "hard",
   "instruction": "Enable Windows Filter Keys and keep them enabled. Compare the release dates of `Salomon Men's Predict Soc2 Running` and `Nike Men's Stroke Running Shoe, 6.5 us`. For the more recently released shoe, select Black, size 12, and add exactly one unit to the shopping cart.",
-  "source": "http://host.docker.internal:7770",
+  "source": "synthetic",
   "gt_steps": [
     "Enable Windows Filter Keys.",
     "Keep Filter Keys enabled throughout the task.",
@@ -31,6 +31,10 @@
     "Add the product to the shopping cart."
   ],
   "config": [
+    {
+      "type": "reset_shopping_cart",
+      "parameters": {}
+    },
     {
       "type": "launch",
       "parameters": {
@@ -54,7 +58,7 @@
     {
       "type": "sleep",
       "parameters": {
-        "seconds": 1
+        "seconds": 10
       }
     },
     {
@@ -79,7 +83,7 @@
     "result": [
       {
         "type": "vm_command_line",
-        "command": "powershell -NoProfile -Command \"$flags=[int](Get-ItemPropertyValue -Path 'HKCU:\\Control Panel\\Accessibility\\Keyboard Response' -Name 'Flags' -ErrorAction SilentlyContinue); if (($flags -band 1) -eq 1) { Write-Output 'FILTER_KEYS_ENABLED' } else { Write-Output 'FILTER_KEYS_DISABLED' }\"",
+        "command": "powershell -NoProfile -Command \"$src='using System; using System.Runtime.InteropServices; public class FK { [StructLayout(LayoutKind.Sequential)] public struct FILTERKEYS { public uint cbSize; public uint dwFlags; public uint iWaitMSec; public uint iDelayMSec; public uint iRepeatMSec; public uint iBounceMSec; } [DllImport(\\\"user32.dll\\\", SetLastError=true)] public static extern bool SystemParametersInfo(uint uiAction, uint uiParam, ref FILTERKEYS pvParam, uint fWinIni); }'; Add-Type -TypeDefinition $src; $fk=New-Object FK+FILTERKEYS; $fk.cbSize=[Runtime.InteropServices.Marshal]::SizeOf($fk); $ok=[FK]::SystemParametersInfo(0x0032,$fk.cbSize,[ref]$fk,0); if ($ok -and (($fk.dwFlags -band 0x1) -ne 0)) { Write-Output 'FILTER_KEYS_ENABLED' } else { Write-Output 'FILTER_KEYS_DISABLED' }\"",
         "shell": true
       },
       {
@@ -108,13 +112,7 @@
               "sku": "B08Y2SN6Y4",
               "quantity": 1
             }
-          ],
-          "options": {
-            "B08Y2SN6Y4": {
-              "Color": "Black",
-              "Size": "12"
-            }
-          }
+          ]
         }
       }
     ]

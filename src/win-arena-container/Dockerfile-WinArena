@@ -18,6 +18,8 @@ FROM build_${DEPLOY_MODE}
 
 ARG DEPLOY_MODE="azure"
 ENV DEPLOY_MODE=${DEPLOY_MODE}
+ARG YT_DLP_VERSION="2026.08.19"
+ARG YT_DLP_LINUX_SHA256="58162f9bfdc27458ea47bfcb311cf47028f17d8154a8bf7d689861d46399230a"
 
 RUN echo "FOLDER_NAME: ${FOLDER_NAME}"
 RUN echo "DEPLOY_MODE: ${DEPLOY_MODE}"
@@ -50,7 +52,13 @@ RUN find / -maxdepth 3 -type f -name "*.sh" -exec dos2unix {} \; && chmod +x /*.
 RUN apt-get update && apt-get install -y \
     fuse \
     default-mysql-client \
-    && rm -rf /var/lib/apt/lists/*
+    ffmpeg \
+    wget \
+    && rm -rf /var/lib/apt/lists/* \
+    && wget -q "https://github.com/yt-dlp/yt-dlp/releases/download/${YT_DLP_VERSION}/yt-dlp_linux" -O /usr/local/bin/yt-dlp \
+    && echo "${YT_DLP_LINUX_SHA256}  /usr/local/bin/yt-dlp" | sha256sum -c - \
+    && chmod +x /usr/local/bin/yt-dlp \
+    && yt-dlp --version
 
 ENV YRES="900"
 ENV XRES="1440"

@@ -1,6 +1,8 @@
 {
-  "id": "captcha-audio_3",
+  "id": "captcha-audio_4",
   "user_group": "visual",
+  "manual_evaluation": true,
+  "operation_time": 29.24,
   "subgroup_ids": ["V-S1", "V-S2"],
   "category": "captcha",
   "need_ids": [
@@ -19,7 +21,7 @@
         "command": [
           "cmd",
           "/c",
-          "start msedge http://host.docker.internal:8765/captcha?type=audio^&seed=access-audio-003^&session=access-captcha-audio"
+          "start msedge http://host.docker.internal:8765/captcha?type=audio^&seed=access-audio-004^&session=access-captcha-audio"
         ]
       }
     }
@@ -36,7 +38,7 @@
       "type": "rule",
       "rules": {
         "expected": [
-          "https?://host\\.docker\\.internal:8765/success\\?type=audio&seed=access-audio-003&session=access-captcha-audio"
+          "https?://host\\.docker\\.internal:8765/success\\?type=audio&seed=access-audio-004&session=access-captcha-audio"
         ]
       }
     }

@@ -1,6 +1,8 @@
 {
   "id": "consumption-toothbrush_price_comparison",
   "_comment": "",
+  "manual_evaluation": true,
+  "operation_time": 60.99,
   "user_group": "visual",
   "subgroup_ids": ["V-S1"],
   "category": "consumption",
@@ -15,9 +17,9 @@
     "Turn on Windows Narrator.",
     "Use the screen reader to navigate the catalogue.",
     "Find the Oral-B Complete Deep Clean Toothbrush, Medium, 6 Count.",
-    "Identify its catalogue price as $18.99.",
+    "Identify its catalogue price as $11.99.",
     "Find the Colgate SlimSoft Floss-Tip Charcoal Toothbrush, Pack of 6.",
-    "Identify its catalogue price as $14.49.",
+    "Identify its catalogue price as $10.72.",
     "Compare the two prices and determine that the Colgate SlimSoft toothbrush is cheaper.",
     "Switch to the opened shopping website.",
     "Search for the Colgate SlimSoft Floss-Tip Charcoal Toothbrush, Pack of 6.",
@@ -28,12 +30,16 @@
   ],
   "config": [
     {
+      "type": "reset_shopping_cart",
+      "parameters": {}
+    },
+    {
       "type": "upload_file",
       "parameters": {
         "files": [
           {
-            "local_path": "assets/consumption-toothbrush_price_comparison.html",
-            "path": "C:\\Users\\Docker\\Desktop\\Consumption-toothbrush_price_catalog.html"
+            "path": "C:\\Users\\Docker\\Desktop\\Consumption-toothbrush_price_catalog.png",
+            "local_path": "assets/consumption-toothbrush_price_comparison.png"
           }
         ]
       }
@@ -68,14 +74,13 @@
       "type": "chrome_open_tabs",
       "parameters": {
         "urls_to_open": [
-          "file:///C:/Users/Docker/Desktop/Consumption-toothbrush_price_catalog.html",
+          "file:///C:/Users/Docker/Desktop/Consumption-toothbrush_price_catalog.png",
           "http://host.docker.internal:7770"
         ]
       }
     }
   ],
   "related_apps": [
-    "narrator",
     "chrome"
   ],
   "evaluator": {

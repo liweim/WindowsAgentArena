@@ -1,7 +1,7 @@
 {
-  "id": "mobility-walking_route_opera_house",
-  "comment": "Try to use places outside Australia",
-  "manually_evaluated": false,
+  "id": "mobility-walking_route_wat_arun",
+  "manual_evaluation": true,
+  "operation_time": 99.48,
   "user_group": "visual",
   "subgroup_ids": ["V-S1"],
   "category": "mobility",
@@ -9,15 +9,15 @@
     "V1"
   ],
   "difficulty": "medium",
-  "instruction": "Turn on Windows Narrator. Use it to navigate Google Maps and find walking directions from Circular Quay Station to the Sydney Opera House. Leave the walking directions open.",
+  "instruction": "Turn on Windows Narrator. Use it to navigate Google Maps and find walking directions from Sanam Chai MRT Station, Bangkok, Thailand to Wat Arun, Bangkok, Thailand. Leave the walking directions open.",
   "source": "synthetic",
   "gt_steps": [
     "Open Google Maps in Chrome.",
     "Turn on Windows Narrator.",
     "Use the screen reader to navigate Google Maps.",
     "Open the directions interface.",
-    "Set `Circular Quay Station` as the starting location.",
-    "Set `Sydney Opera House` as the destination.",
+    "Set `Sanam Chai MRT Station, Bangkok, Thailand` as the starting location.",
+    "Set `Wat Arun, Bangkok, Thailand` as the destination.",
     "Select walking as the travel mode.",
     "Leave the walking directions open."
   ],
@@ -58,7 +58,6 @@
     }
   ],
   "related_apps": [
-    "narrator",
     "chrome"
   ],
   "evaluator": {
@@ -76,11 +75,13 @@
         "mode": "directions_walking",
         "required_text": [
           [
-            "Circular Quay Station",
-            "Circular Quay"
+            "Sanam Chai MRT Station, Bangkok, Thailand",
+            "Sanam Chai MRT Station",
+            "Sanam Chai"
           ],
           [
-            "Sydney Opera House"
+            "Wat Arun, Bangkok, Thailand",
+            "Wat Arun"
           ]
         ]
       }

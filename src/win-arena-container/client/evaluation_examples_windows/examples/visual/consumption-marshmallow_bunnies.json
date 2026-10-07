@@ -1,6 +1,8 @@
 {
   "id": "consumption-marshmallow_bunnies",
   "_comment": "",
+  "manual_evaluation": true,
+  "operation_time": 73.23,
   "user_group": "visual",
   "subgroup_ids": ["V-S1"],
   "category": "consumption",
@@ -24,12 +26,16 @@
   ],
   "config": [
     {
+      "type": "reset_shopping_cart",
+      "parameters": {}
+    },
+    {
       "type": "upload_file",
       "parameters": {
         "files": [
           {
             "local_path": "assets/consumption-marshmallow_bunnies.pdf",
-            "path": "C:\\Users\\Docker\\Desktop\\Consumption-marshmallow_bunnies_reminder.pdf"
+            "path": "C:\\Users\\Docker\\Desktop\\ShoppingReminder.pdf"
           }
         ]
       }
@@ -64,14 +70,13 @@
       "type": "chrome_open_tabs",
       "parameters": {
         "urls_to_open": [
-          "file:///C:/Users/Docker/Desktop/Consumption-marshmallow_bunnies_reminder.pdf",
-          "http://host.docker.internal:7770"
+          "http://host.docker.internal:7770",
+          "file:///C:/Users/Docker/Desktop/ShoppingReminder.pdf"
         ]
       }
     }
   ],
   "related_apps": [
-    "narrator",
     "chrome"
   ],
   "evaluator": {
@@ -105,7 +110,7 @@
         "rules": {
           "items": [
             {
-              "name": "Melster Candies Chocolatey Covered Chocolate Flavored Marshmallow Bunnies",
+              "name": "Melster Candies (1) 5pc Box Chocolatey Covered Chocolate Flavored Marshmallow Bunnies Easter Candy 1.87 oz",
               "quantity": 1
             }
           ]

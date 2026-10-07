@@ -1,7 +1,7 @@
 {
   "id": "mobility-transit_route_grand_central_to_liberty",
-  "_comment": "",
-  "manually_evaluated": false,
+  "manual_evaluation": true,
+  "operation_time": 84.33,
   "user_group": "visual",
   "subgroup_ids": ["V-S1"],
   "category": "mobility",
@@ -58,7 +58,6 @@
     }
   ],
   "related_apps": [
-    "narrator",
     "chrome"
   ],
   "evaluator": {

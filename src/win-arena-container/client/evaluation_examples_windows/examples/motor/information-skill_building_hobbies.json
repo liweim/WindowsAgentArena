@@ -1,7 +1,7 @@
 {
   "id": "information-skill_building_hobbies",
-  "_comment": "",
   "manually_evaluated": true,
+  "operation_time": 162.73,
   "user_group": "motor",
   "subgroup_ids": ["M-S1"],
   "category": "information",
@@ -9,7 +9,7 @@
     "M1"
   ],
   "difficulty": "hard",
-  "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Save the 11 hobby topics from the provided Covey webpage's `11 Examples of Skill-Building Hobbies for Adults with Disabilities` section to `answer.txt` on the Desktop, one topic per line, exactly as written but in lowercase, with no numbers, bullet symbols, or descriptions.",
+  "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Save the 11 hobby topics from the provided Covey webpage's `11 Examples of Skill-Building Hobbies for Adults with Disabilities` section to `answer.txt` on the Desktop, one topic per line, exactly as written in order but in lowercase, with no numbers, bullet symbols, or descriptions.",
   "source": "https://covey.org/11-skill-building-hobbies-for-adults-with-disabilities/",
   "gt_steps": [
     "Open Windows Accessibility keyboard settings.",
@@ -18,17 +18,7 @@
     "Find the section titled `11 Examples of Skill-Building Hobbies for Adults with Disabilities`.",
     "Identify the 11 hobby topics.",
     "Open Notepad.",
-    "Write `biking` on its own line.",
-    "Write `book club` on its own line.",
-    "Write `art` on its own line.",
-    "Write `swimming` on its own line.",
-    "Write `gardening` on its own line.",
-    "Write `cooking or baking` on its own line.",
-    "Write `adaptive sports` on its own line.",
-    "Write `dancing` on its own line.",
-    "Write `photography` on its own line.",
-    "Write `music` on its own line.",
-    "Write `volunteering` on its own line.",
+    "Write `biking\nbook club\nart\nswimming\ngardening\ncooking or baking\nadaptive sports\ndancing\nphotography\nmusic\nvolunteering` in the file, one item per line.",
     "Save the file as `answer.txt` on the Desktop.",
     "Leave the saved file on the Desktop.",
     "Leave the On-Screen Keyboard open."
@@ -65,8 +55,7 @@
   "related_apps": [
     "settings",
     "chrome",
-    "notepad",
-    "on_screen_keyboard"
+    "notepad"
   ],
   "evaluator": {
     "func": [

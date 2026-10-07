@@ -1,6 +1,7 @@
 {
   "id": "access-enable_on_screen_keyboard",
   "manually_evaluated": true,
+  "operation_time": 25.18,
   "user_group": "motor",
   "subgroup_ids": ["M-S1"],
   "category": "access",
@@ -18,8 +19,7 @@
   ],
   "config": [],
   "related_apps": [
-    "settings",
-    "on_screen_keyboard"
+    "settings"
   ],
   "evaluator": {
     "func": "check_include_exclude",

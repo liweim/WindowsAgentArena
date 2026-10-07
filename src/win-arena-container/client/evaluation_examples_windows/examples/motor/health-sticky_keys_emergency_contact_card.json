@@ -1,5 +1,7 @@
 {
   "id": "health-sticky_keys_emergency_contact_card",
+  "manually_evaluated": true,
+  "operation_time": 204.06,
   "user_group": "motor",
   "subgroup_ids": ["M-S1"],
   "category": "health",

@@ -1,7 +1,7 @@
 {
   "id": "consumption-cheapest_bathroom_accessory",
-  "_comment": "",
-  "manually_evaluated": false,
+  "manually_evaluated": true,
+  "operation_time": 113.87,
   "user_group": "motor",
   "subgroup_ids": ["M-S1"],
   "category": "consumption",
@@ -10,13 +10,13 @@
   ],
   "difficulty": "medium",
   "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Add exactly one unit of the cheapest item in OneStopShop's `Bathroom Accessories` category to the shopping cart.",
-  "source": "http://host.docker.internal:7770",
+  "source": "synthetic",
   "gt_steps": [
     "Enable the Windows On-Screen Keyboard.",
     "Keep the On-Screen Keyboard open throughout the task.",
     "Open the OneStopShop website already available in Chrome.",
     "Open the `Home & Kitchen` category.",
-    "Navigate to the `Bathroom Accessories` subcategory.",
+    "Navigate to the `Bath` and then go to `Bathroom Accessories` subcategory.",
     "Sort the products by price from low to high, or compare the displayed prices.",
     "Identify the cheapest item in the category.",
     "Open the cheapest product.",
@@ -25,6 +25,10 @@
     "Add the product to the shopping cart."
   ],
   "config": [
+    {
+      "type": "reset_shopping_cart",
+      "parameters": {}
+    },
     {
       "type": "launch",
       "parameters": {
@@ -48,7 +52,7 @@
     {
       "type": "sleep",
       "parameters": {
-        "seconds": 1
+        "seconds": 10
       }
     },
     {
@@ -62,8 +66,7 @@
   ],
   "related_apps": [
     "settings",
-    "chrome",
-    "on_screen_keyboard"
+    "chrome"
   ],
   "evaluator": {
     "func": [

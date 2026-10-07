@@ -1,5 +1,7 @@
 {
   "id": "captcha-slide_puzzle_1",
+  "manually_evaluated": true,
+  "operation_time": 20.22,
   "user_group": "motor",
   "subgroup_ids": ["M-S2", "M-S3"],
   "category": "captcha",

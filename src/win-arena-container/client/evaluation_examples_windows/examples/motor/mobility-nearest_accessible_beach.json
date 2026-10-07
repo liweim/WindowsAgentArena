@@ -1,7 +1,7 @@
 {
   "id": "mobility-nearest_accessible_beach",
-  "_comment": "",
-  "manually_evaluated": false,
+  "manually_evaluated": true,
+  "operation_time": 63.56,
   "user_group": "motor",
   "subgroup_ids": ["M-S1"],
   "category": "mobility",
@@ -9,7 +9,7 @@
     "M1"
   ],
   "difficulty": "hard",
-  "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Using the provided Accessible Beaches NSW directory, identify the nearest beach within 5 km of Bondi, Australia, and save its name followed by all six listed accessibility features to `answer.txt` on the Desktop. Put the beach name on the first line and the features on the next six lines in directory order without paraphrasing.",
+  "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Using the provided Accessible Beaches NSW directory, identify the nearest beach within 5 km of Bondi, Australia, and save its name followed by all six listed accessibility features to `answer.txt` on the Desktop. Put the beach name on the first line and the features on the next lines in directory order without paraphrasing.",
   "source": "https://accessiblebeaches.com/beach-directory/category/NSW",
   "gt_steps": [
     "Enable the Windows On-Screen Keyboard and keep it open.",
@@ -19,13 +19,7 @@
     "Open the Bondi Beach details page using Read More.",
     "Find all available accessibility features.",
     "Open Notepad.",
-    "Write `Bondi Beach` on the first line.",
-    "Write `Accessible Beach Matting` on the second line.",
-    "Write `Beach Wheelchair availability` on the third line.",
-    "Write `Accessible Bathroom` on the fourth line.",
-    "Write `Accessible Shower` on the fifth line.",
-    "Write `Accessible Parking` on the sixth line.",
-    "Write `Retail within 150 metres` on the seventh line.",
+    "Write `Bondi Beach\\nAccessible Beach Matting\\nBeach Wheelchair availability\\nAccessible Bathroom\\nAccessible Shower\\nAccessible Parking\\nRetail within 150 metres` in the file, one item per line.",
     "Do not paraphrase any of the accessibility features.",
     "Save the file as `answer.txt` on the Desktop.",
     "Leave the saved file on the Desktop.",
@@ -61,14 +55,13 @@
     }
   ],
   "related_apps": [
-    "on_screen_keyboard",
     "chrome",
     "notepad"
   ],
   "evaluator": {
     "func": [
       "check_include_exclude",
-      "exact_match"
+      "check_include_exclude"
     ],
     "conj": "and",
     "result": [
@@ -78,10 +71,9 @@
         "shell": true
       },
       {
-        "type": "is_file_saved_desktop",
-        "filename": "answer.txt",
-        "textcontent": "Bondi Beach\nAccessible Beach Matting\nBeach Wheelchair availability\nAccessible Bathroom\nAccessible Shower\nAccessible Parking\nRetail within 150 metres",
-        "exact": true
+        "type": "vm_command_line",
+        "command": "powershell -NoProfile -Command \"$file='C:\\Users\\Docker\\Desktop\\answer.txt'; if (!(Test-Path $file)) { Write-Output 'ANSWER_INCORRECT'; exit }; $actual=@(Get-Content $file | ForEach-Object { $_.Trim() } | Where-Object { $_ -ne '' }); $expected=@('Bondi Beach','Accessible Beach Matting','Beach Wheelchair availability','Accessible Bathroom','Accessible Shower','Accessible Parking','Retail within 150 metres'); $ok=($actual.Count -eq $expected.Count); if($ok) { for($i=0; $i -lt $expected.Count; $i++) { if($actual[$i] -cne $expected[$i]) { $ok=$false; break } } }; if($ok) { Write-Output 'ANSWER_CORRECT' } else { Write-Output 'ANSWER_INCORRECT' }\"",
+        "shell": true
       }
     ],
     "expected": [
@@ -99,7 +91,12 @@
       {
         "type": "rule",
         "rules": {
-          "expected": "true"
+          "include": [
+            "ANSWER_CORRECT"
+          ],
+          "exclude": [
+            "ANSWER_INCORRECT"
+          ]
         }
       }
     ]

@@ -1,7 +1,7 @@
 {
   "id": "health-insulin_storage_temperature",
-  "manually_evaluated": false,
-  "_comment": "",
+  "manually_evaluated": true,
+  "operation_time": 97.25,
   "user_group": "motor",
   "subgroup_ids": ["M-S1"],
   "category": "health",
@@ -64,7 +64,6 @@
     }
   ],
   "related_apps": [
-    "on_screen_keyboard",
     "chrome",
     "notepad"
   ],

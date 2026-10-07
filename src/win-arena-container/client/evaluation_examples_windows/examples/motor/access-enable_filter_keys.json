@@ -1,6 +1,7 @@
 {
   "id": "access-enable_filter_keys",
   "manually_evaluated": true,
+  "operation_time": 26.41,
   "user_group": "motor",
   "subgroup_ids": ["M-S3"],
   "category": "access",

@@ -1,6 +1,7 @@
 {
   "id": "access-enable_sticky_keys",
   "manually_evaluated": true,
+  "operation_time": 27.01,
   "user_group": "motor",
   "subgroup_ids": ["M-S1"],
   "category": "access",

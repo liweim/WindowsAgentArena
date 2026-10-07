@@ -1,6 +1,8 @@
 {
   "id": "information-metal_density_comparison",
   "_comment": "",
+  "manual_evaluation": true,
+  "operation_time": 58.74,
   "user_group": "visual",
   "subgroup_ids": ["V-S1"],
   "category": "information",
@@ -59,7 +61,6 @@
     }
   ],
   "related_apps": [
-    "narrator",
     "chrome",
     "notepad"
   ],

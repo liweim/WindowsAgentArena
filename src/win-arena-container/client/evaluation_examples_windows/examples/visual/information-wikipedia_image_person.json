@@ -1,6 +1,8 @@
 {
   "id": "information-wikipedia_image_person",
   "_comment": "",
+  "manual_evaluation": true,
+  "operation_time": 201.47,
   "user_group": "visual",
   "subgroup_ids": ["V-S1", "V-S2"],
   "category": "information",
@@ -9,7 +11,7 @@
   ],
   "difficulty": "medium",
   "instruction": "Turn on Windows Narrator. Use the Wikipedia page already open in Chrome to identify the person shown in the first image, open that person's Wikipedia page, and leave it open.",
-  "source": "http://host.docker.internal:8888/wikipedia_en_all_maxi_2022-05/A/I_Have_a_Dream",
+  "source": "synthetic",
   "gt_steps": [
     "Open the Wikipedia page about the I Have a Dream speech.",
     "Turn on Windows Narrator.",
@@ -56,7 +58,6 @@
     }
   ],
   "related_apps": [
-    "narrator",
     "chrome"
   ],
   "evaluator": {

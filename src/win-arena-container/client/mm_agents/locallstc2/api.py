@@ -3,6 +3,7 @@ import ast
 import json
 import os
 import re
+import subprocess
 import tempfile
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
@@ -17,6 +18,7 @@ from mm_agents.parakeet_asr.request import transcribe_audio
 DEFAULT_CONTAINER_PARAKEET_URL = DEFAULT_PARAKEET_URL.replace(
     "127.0.0.1", "host.docker.internal"
 )
+VIDEO_SUFFIXES = {".mkv", ".mov", ".mp4"}
 
 
 class APIRegistry:
@@ -603,15 +605,161 @@ class APIRegistry:
 
         raise ValueError(f"Unsupported Google Drive api tool: {method_name}")
 
+    @staticmethod
+    def _extract_audio_to_wav(input_path: str, output_path: str, source_label: str) -> None:
+        try:
+            completed = subprocess.run(
+                [
+                    "ffmpeg",
+                    "-hide_banner",
+                    "-loglevel",
+                    "error",
+                    "-y",
+                    "-i",
+                    input_path,
+                    "-vn",
+                    "-ac",
+                    "1",
+                    "-ar",
+                    "16000",
+                    output_path,
+                ],
+                check=False,
+                capture_output=True,
+                text=True,
+                timeout=600,
+            )
+        except FileNotFoundError as exc:
+            raise RuntimeError(
+                "Cannot transcribe video because ffmpeg is not installed in the agent container"
+            ) from exc
+        except subprocess.TimeoutExpired as exc:
+            raise RuntimeError(f"FFmpeg timed out while extracting audio from {source_label}") from exc
+        if completed.returncode != 0:
+            detail = (completed.stderr or completed.stdout or "unknown error").strip()
+            raise RuntimeError(
+                f"FFmpeg failed to extract audio from {source_label}: {detail[:1000]}"
+            )
+        if not os.path.getsize(output_path):
+            raise RuntimeError(f"FFmpeg produced an empty audio stream for {source_label}")
+
+    @staticmethod
+    def _transcribe_local_audio(audio_path: str) -> Dict[str, Any]:
+        asr_url = os.environ.get("PARAKEET_ASR_URL", DEFAULT_CONTAINER_PARAKEET_URL)
+        asr_timeout = float(os.environ.get("PARAKEET_ASR_TIMEOUT", "300"))
+        result = transcribe_audio(
+            audio_path,
+            url=asr_url,
+            timestamps=False,
+            timeout=asr_timeout,
+        )
+        transcript = str(result.get("text", "") or "").strip()
+        if not transcript:
+            raise RuntimeError(f"Parakeet returned no transcript text: {result!r}")
+        return {
+            "execution_mode": "vm",
+            "payload": {
+                "status": "success",
+                "output": transcript,
+                "parsed": {"ok": True, "text": transcript},
+            },
+            "observation": transcript,
+            "raw_result": transcript,
+        }
+
+    @staticmethod
+    def _get_open_browser_page_url(env) -> str:
+        setup_controller = getattr(env, "setup_controller", None)
+        vm_ip = str(getattr(setup_controller, "vm_ip", "") or "").strip()
+        if not vm_ip:
+            raise RuntimeError(
+                "Cannot discover the opened web video because setup_controller.vm_ip is unavailable"
+            )
+        try:
+            response = requests.get(f"http://{vm_ip}:9222/json", timeout=(5, 15))
+            response.raise_for_status()
+            targets = response.json()
+        except (requests.RequestException, ValueError) as exc:
+            raise RuntimeError(f"Failed to inspect opened Chrome pages through CDP: {exc}") from exc
+
+        page_urls = [
+            str(target.get("url", "") or "").strip()
+            for target in targets
+            if target.get("type") == "page"
+            and str(target.get("url", "") or "").startswith(("http://", "https://"))
+        ]
+        if not page_urls:
+            raise RuntimeError("No open HTTP(S) page was found in Chrome for web-video transcription")
+        return page_urls[0]
+
+    @staticmethod
+    def _download_web_video_audio(source_url: str, output_dir: str) -> str:
+        if not re.match(r"^https?://", source_url, flags=re.IGNORECASE):
+            raise ValueError(
+                "AudioTools.transcribe_web_video page_url must use http:// or https://"
+            )
+        output_template = os.path.join(output_dir, "web-video.%(ext)s")
+        timeout = float(os.environ.get("WEB_VIDEO_DOWNLOAD_TIMEOUT", "600"))
+        try:
+            completed = subprocess.run(
+                [
+                    "yt-dlp",
+                    "--no-playlist",
+                    "--playlist-items",
+                    "1",
+                    "--no-progress",
+                    "--no-warnings",
+                    "--format",
+                    "bestaudio/best",
+                    "--output",
+                    output_template,
+                    source_url,
+                ],
+                check=False,
+                capture_output=True,
+                text=True,
+                timeout=timeout,
+            )
+        except FileNotFoundError as exc:
+            raise RuntimeError(
+                "Cannot transcribe an embedded web video because yt-dlp is not installed "
+                "in the agent container"
+            ) from exc
+        except subprocess.TimeoutExpired as exc:
+            raise RuntimeError(
+                f"yt-dlp timed out while downloading media from {source_url!r}"
+            ) from exc
+        if completed.returncode != 0:
+            detail = (completed.stderr or completed.stdout or "unknown error").strip()
+            raise RuntimeError(
+                f"yt-dlp failed to download media from {source_url!r}: {detail[-1500:]}"
+            )
+
+        candidates = [
+            path
+            for path in Path(output_dir).iterdir()
+            if path.is_file() and not path.name.endswith((".part", ".ytdl"))
+        ]
+        if not candidates:
+            raise RuntimeError(f"yt-dlp produced no media file for {source_url!r}")
+        return str(max(candidates, key=lambda path: path.stat().st_size))
+
     def _invoke_audio(self, method_name: str, arguments: Dict[str, Any], env) -> Dict[str, Any]:
-        if method_name != "transcribe":
+        if method_name not in {"transcribe", "transcribe_web_video"}:
             raise ValueError(f"Unsupported audio api tool: {method_name}")
+
+        if method_name == "transcribe_web_video":
+            page_url = str(arguments.get("page_url", "") or "").strip()
+            source_url = page_url or self._get_open_browser_page_url(env)
+            with tempfile.TemporaryDirectory(prefix="locallstc2-web-video-") as temp_dir:
+                media_path = self._download_web_video_audio(source_url, temp_dir)
+                wav_path = os.path.join(temp_dir, "audio-16khz-mono.wav")
+                self._extract_audio_to_wav(media_path, wav_path, repr(source_url))
+                return self._transcribe_local_audio(wav_path)
 
         vm_path = str(arguments.get("vm_path", "") or "").strip()
         if not vm_path:
             raise ValueError("AudioTools.transcribe requires a non-empty vm_path")
-        timestamps = bool(arguments.get("timestamps", False))
-
         setup_controller = getattr(env, "setup_controller", None)
         http_server = str(getattr(setup_controller, "http_server", "") or "").rstrip("/")
         if not http_server:
@@ -632,45 +780,31 @@ class APIRegistry:
                 f"vm_path={vm_path!r}, status={response.status_code}, response={response_detail!r}"
             )
 
-        suffix = os.path.splitext(vm_path)[1] or ".mp3"
+        suffix = os.path.splitext(vm_path)[1].lower() or ".mp3"
         with tempfile.NamedTemporaryFile(suffix=suffix, delete=False) as tmp_file:
             tmp_file.write(response.content)
             tmp_local_path = tmp_file.name
 
+        extracted_audio_path: Optional[str] = None
         try:
-            asr_url = os.environ.get(
-                "PARAKEET_ASR_URL", DEFAULT_CONTAINER_PARAKEET_URL
-            )
-            asr_timeout = float(os.environ.get("PARAKEET_ASR_TIMEOUT", "300"))
-            result = transcribe_audio(
-                tmp_local_path,
-                url=asr_url,
-                timestamps=timestamps,
-                timeout=asr_timeout,
-            )
+            asr_input_path = tmp_local_path
+            if suffix in VIDEO_SUFFIXES:
+                with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as wav_file:
+                    extracted_audio_path = wav_file.name
+                self._extract_audio_to_wav(
+                    tmp_local_path,
+                    extracted_audio_path,
+                    repr(vm_path),
+                )
+                asr_input_path = extracted_audio_path
+            return self._transcribe_local_audio(asr_input_path)
         finally:
-            try:
-                os.remove(tmp_local_path)
-            except OSError:
-                pass
-
-        transcript = str(result.get("text", "") or "").strip()
-        if not transcript:
-            raise RuntimeError(f"Parakeet returned no transcript text: {result!r}")
-        output = json.dumps(
-            {"vm_path": vm_path, "text": transcript, "transcription": result},
-            ensure_ascii=False,
-        )
-        return {
-            "execution_mode": "vm",
-            "payload": {
-                "status": "success",
-                "output": output,
-                "parsed": {"ok": True, "result": result},
-            },
-            "observation": f"Audio transcript: {transcript}",
-            "raw_result": result,
-        }
+            for temp_path in (extracted_audio_path, tmp_local_path):
+                if temp_path:
+                    try:
+                        os.remove(temp_path)
+                    except OSError:
+                        pass
 
     def _invoke_via_vm(
         self,

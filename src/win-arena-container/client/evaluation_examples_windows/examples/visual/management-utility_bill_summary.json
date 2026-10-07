@@ -1,7 +1,8 @@
 {
   "id": "management-utility_bill_summary",
   "_comment": "",
-  "manually_evaluated": false,
+  "manually_evaluated": true,
+  "operation_time": "157.88",
   "user_group": "visual",
   "subgroup_ids": ["V-S1"],
   "category": "management",
@@ -9,26 +10,28 @@
     "V1"
   ],
   "difficulty": "hard",
-  "instruction": "Enable Windows Narrator and keep it enabled. Populate the provided `BillSummary.ods` with the provider, due date, and total amount due from each of the three provided utility bills, then save the spreadsheet as `answer.ods` on the Desktop.",
+  "instruction": "Enable Windows Narrator and keep it enabled. Populate the provided `BillSummary.odt` with the provider, due date, and total amount due from each of the three provided utility bills in the following order (electricity, water, gas), then save the document.",
   "source": "synthetic",
   "gt_steps": [
     "Enable Windows Narrator.",
-    "Open BluePeak_Electricity_Bill.pdf.",
+    "Open ElectricityBill.pdf.",
     "Identify the provider as BluePeak Utilities.",
     "Identify the due date as 18 August 2026.",
     "Identify the total amount due as $184.65.",
-    "Open ClearFlow_Water_Bill.pdf.",
+    "Open WaterBill.pdf.",
     "Identify the provider as ClearFlow Water Services.",
     "Identify the due date as 2 September 2026.",
     "Identify the total amount due as $96.40.",
-    "Open GreenFlame_Gas_Bill.pdf.",
+    "Open GasBill.pdf.",
     "Identify the provider as GreenFlame Energy.",
     "Identify the due date as 7 September 2026.",
     "Identify the total amount due as $128.75.",
-    "Open BillSummary.ods.",
-    "Enter all three bills into the spreadsheet.",
-    "Save the spreadsheet as `answer.ods` on the Desktop.",
-    "Keep Narrator enabled."
+    "Open BillSummary.odt in LibreOffice Writer.",
+    "Enter the electricity bill details in the first bill row.",
+    "Enter the water bill details in the second bill row.",
+    "Enter the gas bill details in the third bill row.",
+    "Save BillSummary.odt.",
+    "Keep Windows Narrator enabled."
   ],
   "config": [
     {
@@ -37,19 +40,19 @@
         "files": [
           {
             "local_path": "assets/management-utility_bill_summary_electricity.pdf",
-            "path": "C:\\Users\\Docker\\Desktop\\BluePeak_Electricity_Bill.pdf"
+            "path": "C:\\Users\\Docker\\Desktop\\ElectricityBill.pdf"
           },
           {
             "local_path": "assets/management-utility_bill_summary_water.pdf",
-            "path": "C:\\Users\\Docker\\Desktop\\ClearFlow_Water_Bill.pdf"
+            "path": "C:\\Users\\Docker\\Desktop\\WaterBill.pdf"
           },
           {
             "local_path": "assets/management-utility_bill_summary_gas.pdf",
-            "path": "C:\\Users\\Docker\\Desktop\\GreenFlame_Gas_Bill.pdf"
+            "path": "C:\\Users\\Docker\\Desktop\\GasBill.pdf"
           },
           {
-            "local_path": "assets/management-utility_bill_summary.ods",
-            "path": "C:\\Users\\Docker\\Desktop\\BillSummary.ods"
+            "local_path": "assets/management-utility_bill_summary.odt",
+            "path": "C:\\Users\\Docker\\Desktop\\BillSummary.odt"
           }
         ]
       }
@@ -58,9 +61,26 @@
       "type": "launch",
       "parameters": {
         "command": [
-          "libreoffice",
-          "C:\\Users\\Docker\\Desktop\\BillSummary.ods"
+          "google-chrome",
+          "--remote-debugging-port=1337",
+          "--force-renderer-accessibility"
         ]
+      }
+    },
+    {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    },
+    {
+      "type": "open",
+      "parameters": {
+        "path": "C:\\Users\\Docker\\Desktop\\BillSummary.odt"
       }
     },
     {
@@ -68,57 +88,56 @@
       "parameters": {
         "seconds": 3
       }
+    },
+    {
+      "type": "chrome_open_tabs",
+      "parameters": {
+        "urls_to_open": [
+          "file:///C:\\Users\\Docker\\Desktop\\ElectricityBill.pdf",
+          "file:///C:\\Users\\Docker\\Desktop\\WaterBill.pdf",
+          "file:///C:\\Users\\Docker\\Desktop\\GasBill.pdf"
+        ]
+      }
     }
   ],
   "related_apps": [
-    "narrator",
-    "msedge",
-    "libreoffice_calc"
+    "chrome",
+    "libreoffice_writer"
   ],
   "evaluator": {
     "func": [
-      "check_include_exclude",
-      "check_ods_cell_values"
+      "check_narrator_enabled",
+      "check_odt_cell_values"
     ],
     "conj": "and",
     "result": [
       {
-        "type": "vm_command_line",
-        "command": "powershell -Command \"if (Get-Process Narrator -ErrorAction SilentlyContinue){'NARRATOR_OPEN'}else{'NARRATOR_CLOSED'}\"",
-        "shell": true
+        "type": "narrator_status"
       },
       {
         "type": "vm_file",
-        "path": "C:\\Users\\Docker\\Desktop\\answer.ods",
-        "dest": "answer.ods"
+        "path": "C:\\Users\\Docker\\Desktop\\BillSummary.odt",
+        "dest": "BillSummary.odt"
       }
     ],
     "expected": [
       {
         "type": "rule",
-        "rules": {
-          "include": [
-            "NARRATOR_OPEN"
-          ],
-          "exclude": [
-            "NARRATOR_CLOSED"
-          ]
-        }
+        "rules": {}
       },
       {
         "type": "rule",
         "rules": {
-          "sheet": "Bill Summary",
           "cells": {
             "B4": "BluePeak Utilities",
-            "C4": "18 August 2026",
-            "D4": "$184.65",
+			      "C4": "18 August 2026",
+            "D4": 184.65,
             "B5": "ClearFlow Water Services",
             "C5": "2 September 2026",
-            "D5": "$96.40",
+            "D5": 96.40,
             "B6": "GreenFlame Energy",
             "C6": "7 September 2026",
-            "D6": "$128.75"
+            "D6": 128.75
           }
         }
       }

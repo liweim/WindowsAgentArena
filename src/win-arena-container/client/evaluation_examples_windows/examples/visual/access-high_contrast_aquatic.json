@@ -1,6 +1,8 @@
 {
-  "id": "access-high_contrast_aquatic_7news",
+  "id": "access-high_contrast_aquatic",
   "_comment": "High Contrast mode does not need to open url.",
+  "manual_evaluation": true,
+  "operation_time": 58.78,
   "user_group": "visual",
   "subgroup_ids": ["V-S2"],
   "category": "access",
@@ -8,18 +10,14 @@
     "V3"
   ],
   "difficulty": "easy",
-  "instruction": "Set the Windows contrast theme to Aquatic, open https://7news.com.au/ in Chrome, and leave the 7News homepage open with the Aquatic theme enabled.",
-  "source": "https://7news.com.au/",
+  "instruction": "Set the Windows contrast theme to Aquatic.",
+  "source": "synthetic",
   "gt_steps": [
     "Open Windows Settings.",
     "Navigate to Accessibility settings.",
     "Open Contrast Themes settings.",
     "Choose Aquatic as the contrast theme.",
-    "Apply the theme and wait for it to take effect.",
-    "Switch to Google Chrome.",
-    "Navigate to https://7news.com.au/.",
-    "Wait for the 7News homepage to load.",
-    "Leave the homepage open."
+    "Apply the theme and wait for it to take effect."
   ],
   "config": [
     {
@@ -31,16 +29,6 @@
           "--force-renderer-accessibility"
         ]
       }
-    },
-    {
-      "type": "launch",
-      "parameters": {
-        "command": [
-          "socat",
-          "tcp-listen:9222,fork",
-          "tcp:localhost:1337"
-        ]
-      }
     }
   ],
   "related_apps": [
@@ -50,8 +38,7 @@
   "evaluator": {
     "func": [
       "check_include_exclude",
-      "check_include_exclude",
-      "is_expected_active_tab"
+      "check_include_exclude"
     ],
     "conj": "and",
     "result": [
@@ -64,10 +51,6 @@
         "type": "vm_command_line",
         "command": "reg query \"HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\" /v CurrentTheme",
         "shell": true
-      },
-      {
-        "type": "active_tab_info",
-        "goto_prefix": "https://"
       }
     ],
     "expected": [
@@ -87,13 +70,6 @@
             "hcblack.theme"
           ],
           "exclude": []
-        }
-      },
-      {
-        "type": "rule",
-        "rules": {
-          "type": "url",
-          "url": "https://7news.com.au/"
         }
       }
     ]

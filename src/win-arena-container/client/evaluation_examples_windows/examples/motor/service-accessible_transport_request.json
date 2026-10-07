@@ -1,5 +1,7 @@
 {
   "id": "service-accessible_transport_request",
+  "manually_evaluated": true,
+  "operation_time": 100.37,
   "user_group": "motor",
   "subgroup_ids": ["M-S1"],
   "category": "service",
@@ -7,14 +9,14 @@
     "M1"
   ],
   "difficulty": "medium",
-  "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Complete the accessible transport request template on the Desktop using the supplied request details, then save the completed form as `answer.txt` on the Desktop.",
+  "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Complete `TransportRequest.txt` on the Desktop using the supplied request details, then save the file.",
   "source": "synthetic",
   "gt_steps": [
     "Enable the Windows On-Screen Keyboard and leave it open.",
     "Open `TransportRequestDetails.txt` on the Desktop.",
     "Open `TransportRequest.txt` in Notepad.",
     "Replace the template placeholders so the document reads `ACCESSIBLE TRANSPORT REQUEST\\nName: Morgan Lee\\nMember ID: AT-20491\\nPickup date: 24 September 2026\\nMobility aid: folding wheelchair`.",
-    "Save the completed document as `answer.txt` on the Desktop.",
+    "Save `TransportRequest.txt`.",
     "Leave the Windows On-Screen Keyboard open."
   ],
   "config": [
@@ -44,7 +46,6 @@
     }
   ],
   "related_apps": [
-    "on_screen_keyboard",
     "notepad"
   ],
   "evaluator": {
@@ -61,7 +62,7 @@
       },
       {
         "type": "is_file_saved_desktop",
-        "filename": "answer.txt",
+        "filename": "TransportRequest.txt",
         "textcontent": "ACCESSIBLE TRANSPORT REQUEST\nName: Morgan Lee\nMember ID: AT-20491\nPickup date: 24 September 2026\nMobility aid: folding wheelchair",
         "exact": true
       }

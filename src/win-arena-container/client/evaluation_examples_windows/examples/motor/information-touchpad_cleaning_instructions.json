@@ -1,7 +1,7 @@
 {
   "id": "information-touchpad_cleaning_instructions",
-  "_comment": "You need to put the answer in the `gt_steps`. You also need to specify how multiple lines should be connected; in other words, use \n to separate them.",
-  "manually_evaluated": false,
+  "manually_evaluated": true,
+  "operation_time": 64.72,
   "user_group": "motor",
   "subgroup_ids": ["M-S1"],
   "category": "information",
@@ -66,7 +66,6 @@
   ],
   "related_apps": [
     "settings",
-    "on_screen_keyboard",
     "chrome",
     "notepad"
   ],

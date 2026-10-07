@@ -1,5 +1,7 @@
 {
   "id": "information-bookmark_accessibility_reference",
+  "manually_evaluated": true,
+  "operation_time": 35.13,
   "user_group": "motor",
   "subgroup_ids": ["M-S2"],
   "category": "information",
@@ -7,13 +9,15 @@
     "M4"
   ],
   "difficulty": "easy",
-  "instruction": "Enable Windows Mouse Keys and keep them enabled. Add the opened local Wikipedia `Accessibility` article to Chrome's bookmark bar.",
-  "source": "http://host.docker.internal:8888/wikipedia_en_all_maxi_2022-05/A/Accessibility",
+  "instruction": "Enable Windows Mouse Keys and keep them enabled. Add the opened local Wikipedia `Accessibility` article to Chrome's Other bookmarks folder.",
+  "source": "synthetic",
   "gt_steps": [
     "Enable Windows Mouse Keys.",
+    "Keep Windows Mouse Keys enabled throughout the task.",
     "In Chrome, keep the opened local Wikipedia `Accessibility` article active.",
     "Add the current page as a Chrome bookmark.",
-    "Save the bookmark with URL `http://host.docker.internal:8888/wikipedia_en_all_maxi_2022-05/A/Accessibility` in the Chrome bookmark bar.",
+    "Set the bookmark location to `Other bookmarks`.",
+    "Save the bookmark with URL `http://host.docker.internal:8888/wikipedia_en_all_maxi_2022-05/A/Accessibility`.",
     "Leave Windows Mouse Keys enabled."
   ],
   "config": [
@@ -38,6 +42,12 @@
       }
     },
     {
+      "type": "sleep",
+      "parameters": {
+        "seconds": 5
+      }
+    },
+    {
       "type": "chrome_open_tabs",
       "parameters": {
         "urls_to_open": [
@@ -53,17 +63,19 @@
   "evaluator": {
     "func": [
       "check_include_exclude",
-      "is_expected_bookmarks"
+      "check_include_exclude"
     ],
     "conj": "and",
     "result": [
       {
         "type": "vm_command_line",
-        "command": "powershell -NoProfile -Command \"$flags = [int](Get-ItemPropertyValue -Path 'HKCU:\\Control Panel\\Accessibility\\MouseKeys' -Name 'Flags'); if (($flags -band 1) -eq 1) { Write-Output 'MOUSE_KEYS_ENABLED' } else { Write-Output 'MOUSE_KEYS_DISABLED' }\"",
+        "command": "powershell -NoProfile -Command \"$flags = [int](Get-ItemPropertyValue -Path 'HKCU:\\Control Panel\\Accessibility\\MouseKeys' -Name 'Flags' -ErrorAction SilentlyContinue); if (($flags -band 1) -eq 1) { Write-Output 'MOUSE_KEYS_ENABLED' } else { Write-Output 'MOUSE_KEYS_DISABLED' }\"",
         "shell": true
       },
       {
-        "type": "bookmarks"
+        "type": "vm_command_line",
+        "command": "powershell -NoProfile -Command \"$url='http://host.docker.internal:8888/wikipedia_en_all_maxi_2022-05/A/Accessibility'; $paths=@('C:\\Users\\Docker\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\Bookmarks','C:\\Temp\\winarena-chrome-user-data\\Default\\Bookmarks'); $found=$false; foreach($path in $paths) { if(Test-Path $path) { try { $json=Get-Content $path -Raw | ConvertFrom-Json; $items=@($json.roots.other.children); foreach($item in $items) { if($item.url -eq $url) { $found=$true } } } catch {} } }; if($found) { Write-Output 'BOOKMARK_FOUND' } else { Write-Output 'BOOKMARK_NOT_FOUND' }\"",
+        "shell": true
       }
     ],
     "expected": [
@@ -81,9 +93,11 @@
       {
         "type": "rule",
         "rules": {
-          "type": "bookmark_bar_websites_urls",
-          "urls": [
-            "http://host.docker.internal:8888/wikipedia_en_all_maxi_2022-05/A/Accessibility"
+          "include": [
+            "BOOKMARK_FOUND"
+          ],
+          "exclude": [
+            "BOOKMARK_NOT_FOUND"
           ]
         }
       }

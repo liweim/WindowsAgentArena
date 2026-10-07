@@ -1,6 +1,7 @@
 {
   "id": "service-voter_certificate_link",
-  "_comment": "",
+  "manually_evaluated": true,
+  "operation_time": 61.49,
   "user_group": "motor",
   "subgroup_ids": ["M-S1"],
   "category": "service",
@@ -16,7 +17,8 @@
     "Find the voter authority certificate application website link.",
     "Identify the link as `https://www.gov.uk/apply-for-photo-id-voter-authority-certificate`.",
     "Open the link in a new Chrome tab.",
-    "Leave the linked website tab and the On-Screen Keyboard open."
+    "Leave the linked website tab open.",
+    "Leave the On-Screen Keyboard open."
   ],
   "config": [
     {
@@ -52,6 +54,12 @@
       }
     },
     {
+      "type": "sleep",
+      "parameters": {
+        "seconds": 3
+      }
+    },
+    {
       "type": "activate_window",
       "parameters": {
         "window_name": "Google Chrome"
@@ -60,24 +68,24 @@
   ],
   "related_apps": [
     "settings",
-    "on_screen_keyboard",
     "chrome"
   ],
   "evaluator": {
     "func": [
       "check_include_exclude",
-      "is_expected_active_tab"
+      "check_include_exclude"
     ],
     "conj": "and",
     "result": [
       {
         "type": "vm_command_line",
-        "command": "powershell -Command \"if (Get-Process osk -ErrorAction SilentlyContinue) { Write-Output 'OSK_OPEN' }\"",
+        "command": "powershell -NoProfile -Command \"$osk = Get-Process -Name osk -ErrorAction SilentlyContinue | Where-Object { $_.MainWindowHandle -ne 0 }; if ($osk) { Write-Output 'OSK_OPEN' } else { Write-Output 'OSK_NOT_OPEN' }\"",
         "shell": true
       },
       {
-        "type": "active_tab_info",
-        "goto_prefix": "https://"
+        "type": "vm_command_line",
+        "command": "powershell -NoProfile -Command \"$target='https://www.gov.uk/apply-for-photo-id-voter-authority-certificate'; try { $tabs=Invoke-RestMethod -Uri 'http://localhost:1337/json'; $found=$false; foreach($tab in $tabs) { if ($tab.url -eq $target -or $tab.url.StartsWith($target + '?') -or $tab.url.StartsWith($target + '#')) { $found=$true; break } }; if($found) { Write-Output 'TARGET_TAB_OPEN' } else { Write-Output 'TARGET_TAB_NOT_OPEN' } } catch { Write-Output 'TARGET_TAB_NOT_OPEN' }\"",
+        "shell": true
       }
     ],
     "expected": [
@@ -86,14 +94,21 @@
         "rules": {
           "include": [
             "OSK_OPEN"
+          ],
+          "exclude": [
+            "OSK_NOT_OPEN"
           ]
         }
       },
       {
         "type": "rule",
         "rules": {
-          "type": "url",
-          "url": "https://www.gov.uk/apply-for-photo-id-voter-authority-certificate"
+          "include": [
+            "TARGET_TAB_OPEN"
+          ],
+          "exclude": [
+            "TARGET_TAB_NOT_OPEN"
+          ]
         }
       }
     ]

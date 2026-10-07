@@ -1,5 +1,7 @@
 {
   "id": "captcha-robot_checkbox_2",
+  "manual_evaluation": false,
+  "operation_time": 15.31,
   "user_group": "visual",
   "subgroup_ids": ["V-S1", "V-S2"],
   "category": "captcha",

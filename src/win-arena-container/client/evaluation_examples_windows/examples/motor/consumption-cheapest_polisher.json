@@ -1,7 +1,7 @@
 {
   "id": "consumption-cheapest_polisher",
-  "_comment": "",
-  "manually_evaluated": false,
+  "manually_evaluated": true,
+  "operation_time": 64,
   "user_group": "motor",
   "subgroup_ids": ["M-S1"],
   "category": "consumption",
@@ -69,7 +69,6 @@
   ],
   "related_apps": [
     "settings",
-    "on_screen_keyboard",
     "chrome",
     "notepad"
   ],

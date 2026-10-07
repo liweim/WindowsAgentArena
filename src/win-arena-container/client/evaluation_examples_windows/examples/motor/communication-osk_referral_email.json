@@ -1,5 +1,7 @@
 {
   "id": "communication-osk_referral_email",
+  "manually_evaluated": true,
+  "operation_time": 66.99,
   "user_group": "motor",
   "subgroup_ids": ["M-S1"],
   "category": "communication",
@@ -79,7 +81,6 @@
     }
   ],
   "related_apps": [
-    "on_screen_keyboard",
     "chrome",
     "thunderbird"
   ],
@@ -96,9 +97,7 @@
         "shell": true
       },
       {
-        "type": "vm_file",
-        "path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release\\Mail\\Local Folders\\Drafts",
-        "dest": "thunderbird-drafts.mbox"
+        "type": "thunderbird_drafts"
       }
     ],
     "expected": [

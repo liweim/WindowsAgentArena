@@ -1,6 +1,8 @@
 {
   "id": "access-windows_font_size_140",
   "_comment": "",
+  "manual_evaluation": true,
+  "operation_time": 18.41,
   "user_group": "visual",
   "subgroup_ids": ["V-S2"],
   "category": "access",

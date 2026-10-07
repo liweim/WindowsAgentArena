@@ -1,6 +1,8 @@
 {
   "id": "consumption-saute_pan",
   "_comment": "",
+  "manual_evaluation": true,
+  "operation_time": 73.23,
   "user_group": "visual",
   "subgroup_ids": ["V-S1"],
   "category": "consumption",
@@ -24,6 +26,10 @@
     "Leave the shopping cart page open."
   ],
   "config": [
+    {
+      "type": "reset_shopping_cart",
+      "parameters": {}
+    },
     {
       "type": "upload_file",
       "parameters": {
@@ -65,14 +71,13 @@
       "type": "chrome_open_tabs",
       "parameters": {
         "urls_to_open": [
-          "file:///C:/Users/Docker/Desktop/Consumption-kitchen_catalog.html",
-          "http://host.docker.internal:7770"
+          "http://host.docker.internal:7770",
+          "file:///C:/Users/Docker/Desktop/Consumption-kitchen_catalog.html"
         ]
       }
     }
   ],
   "related_apps": [
-    "narrator",
     "chrome"
   ],
   "evaluator": {
@@ -106,7 +111,7 @@
         "rules": {
           "items": [
             {
-              "name": "Thunder Group Saute Pan 7 Quart",
+              "name": "Thunder Group Saute Pan, 7-Quart",
               "quantity": 1
             }
           ]

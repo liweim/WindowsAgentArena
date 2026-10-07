@@ -1,5 +1,8 @@
 {
   "id": "communication-webinar_flyer_email",
+  "comment": "",
+  "manual_evaluation": true,
+  "operation_time": 50.00,
   "user_group": "visual",
   "subgroup_ids": ["V-S1", "V-S2"],
   "category": "communication",
@@ -47,8 +50,9 @@
       "type": "launch",
       "parameters": {
         "command": [
-          "msedge",
-          "file:///C:/Users/Docker/Desktop/WebinarFlyer.pdf"
+          "cmd",
+          "/c",
+          "start msedge file:///C:/Users/Docker/Desktop/WebinarFlyer.pdf"
         ]
       }
     },
@@ -70,9 +74,7 @@
   "evaluator": {
     "func": "check_thunderbird_email_composition",
     "result": {
-      "type": "vm_file",
-      "path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release\\Mail\\Local Folders\\Drafts",
-      "dest": "thunderbird-drafts.mbox"
+        "type": "thunderbird_drafts"
     },
     "expected": {
       "type": "rule",
@@ -81,8 +83,7 @@
         "subject": "Archived webinar details",
         "body_points": [
           [
-            "October 17, 2024",
-            "17 October 2024"
+            "October 17, 2024"
           ],
           [
             "11:00 AM",

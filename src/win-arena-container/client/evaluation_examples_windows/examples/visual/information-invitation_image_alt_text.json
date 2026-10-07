@@ -1,6 +1,8 @@
 {
   "id": "information-invitation_image_alt_text",
-  "_comment": "I suggest to use existing webpage with image.",
+  "_comment": "",
+  "manual_evaluation": true,
+  "operation_time": 109.20,
   "user_group": "visual",
   "subgroup_ids": ["V-S1", "V-S2"],
   "category": "information",
@@ -8,14 +10,14 @@
     "V5"
   ],
   "difficulty": "hard",
-  "instruction": "Add descriptive alt text to the invitation image in the provided DOCX file. Include the restaurant name, grand-opening purpose, date, time, full address, and RSVP phone number, then save the completed file as `answer.docx` on the Desktop in Word format.",
+  "instruction": "Add alt text to the invitation image in the provided `information-image_to_text_invitation.docx` file. Include the restaurant name, grand-opening purpose, date, time, full address, and RSVP phone number. Write them in both alt text and description boxes, then save the document.",
   "source": "synthetic",
   "gt_steps": [
     "Select the invitation image in information-image_to_text_invitation.docx.",
     "Add alt text stating that The Coastal Spoon is holding a grand opening on Thursday, July 16, 2026 at 11:00 AM.",
     "Include the address 123 Harbour View St., Sydney, 2000.",
     "Include the RSVP phone number +61-456-789-000.",
-    "Save the completed file as `answer.docx` on the Desktop in Word format."
+    "Save `information-image_to_text_invitation.docx`."
   ],
   "config": [
     {
@@ -43,8 +45,8 @@
     "func": "check_docx_image_alt_text",
     "result": {
       "type": "vm_file",
-      "path": "C:\\Users\\Docker\\Desktop\\answer.docx",
-      "dest": "answer.docx"
+      "path": "C:\\Users\\Docker\\Desktop\\information-image_to_text_invitation.docx",
+      "dest": "information-image_to_text_invitation.docx"
     },
     "expected": {
       "type": "rule",
@@ -62,9 +64,7 @@
             "grand opening of our restaurant"
           ],
           [
-            "July 16, 2026",
-            "July 16 2026",
-            "July 16, 2026,"
+            "July 16, 2026"
           ],
           [
             "11:00 AM.",

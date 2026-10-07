@@ -1,6 +1,8 @@
 {
   "id": "service-real_id_infographic",
   "user_group": "visual",
+  "manual_evaluation": true,
+  "operation_time": 99.26,
   "subgroup_ids": ["V-S1", "V-S2"],
   "category": "service",
   "need_ids": [
@@ -30,8 +32,9 @@
       "type": "launch",
       "parameters": {
         "command": [
-          "msedge",
-          "file:///C:/Users/Docker/Desktop/RealIDInfographic.pdf"
+          "cmd",
+          "/c",
+          "start msedge file:///C:/Users/Docker/Desktop/RealIDInfographic.pdf"
         ]
       }
     }
@@ -80,6 +83,7 @@
           {
             "all_of": [
               [
+                "federally approved document: NO",
                 "without a federally approved document",
                 "no federally approved document",
                 "do not have a federally approved document"

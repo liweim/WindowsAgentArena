@@ -1,5 +1,7 @@
 {
   "id": "captcha-image_recognition_1",
+  "manual_evaluation": true,
+  "operation_time": 24.66,
   "user_group": "visual",
   "subgroup_ids": ["V-S1", "V-S2"],
   "category": "captcha",

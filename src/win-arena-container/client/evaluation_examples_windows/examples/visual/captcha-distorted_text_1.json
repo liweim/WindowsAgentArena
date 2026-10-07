@@ -1,5 +1,7 @@
 {
   "id": "captcha-distorted_text_1",
+  "manual_evaluation": true,
+  "operation_time": 18.87,
   "user_group": "visual",
   "subgroup_ids": ["V-S1", "V-S2"],
   "category": "captcha",

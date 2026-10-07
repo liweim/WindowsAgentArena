@@ -1,5 +1,7 @@
 {
   "id": "captcha-patch_select_2",
+  "manual_evaluation": false,
+  "operation_time": 23.98,
   "user_group": "visual",
   "subgroup_ids": ["V-S1", "V-S2"],
   "category": "captcha",
@@ -19,7 +21,7 @@
         "command": [
           "cmd",
           "/c",
-          "start msedge http://host.docker.internal:8765/captcha?type=patch_select^&seed=access-patch-select-002^&session=access-captcha-patch-select"
+          "start msedge http://host.docker.internal:8765/captcha?type=patch_select^&seed=access-patch-select-003^&session=access-captcha-patch-select"
         ]
       }
     }
@@ -36,7 +38,7 @@
       "type": "rule",
       "rules": {
         "expected": [
-          "https?://host\\.docker\\.internal:8765/success\\?type=patch_select&seed=access-patch-select-002&session=access-captcha-patch-select"
+          "https?://host\\.docker\\.internal:8765/success\\?type=patch_select&seed=access-patch-select-003&session=access-captcha-patch-select"
         ]
       }
     }

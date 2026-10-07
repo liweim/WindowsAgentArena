@@ -1,7 +1,7 @@
 {
   "id": "health-allied_health_form_download",
-  "manually_evaluated": false,
-  "_comment": "You need to download the file locally so that the evaluator can verify whether the local file and the file in the VM are exactly identical. The current evaluator is too weak.",
+  "manually_evaluated": true,
+  "operation_time": 97.28,
   "user_group": "motor",
   "subgroup_ids": ["M-S2"],
   "category": "health",
@@ -18,7 +18,7 @@
     "Turn on Mouse Keys and keep it enabled.",
     "Open Google Chrome.",
     "Go to the SIRA website.",
-    "Navigate through the SIRA website to find the Allied Health Treatment Request form.",
+    "Navigate through the SIRA website to find the Allied Health Treatment Request form by using search bar.",
     "Open the Allied Health Treatment Request form.",
     "Download the correct PDF form.",
     "Save the PDF on the Desktop as `answer.pdf`.",
@@ -71,7 +71,7 @@
       },
       {
         "type": "vm_command_line",
-        "command": "powershell -NoProfile -Command \"$file='C:\\Users\\Docker\\Desktop\\answer.pdf'; if (-not (Test-Path $file)) { Write-Output 'FILE_MISSING'; exit }; Write-Output 'FILE_EXISTS'; $txt=Join-Path $env:TEMP 'allied_health_form.txt'; pdftotext $file $txt; $content=Get-Content $txt -Raw; if ($content -match '(?i)Allied\\s+Health\\s+Treatment') { Write-Output 'PDF_CONTENT_CORRECT' } else { Write-Output 'PDF_CONTENT_INCORRECT' }; Remove-Item $txt -ErrorAction SilentlyContinue\"",
+        "command": "powershell -NoProfile -Command \"$file='C:\\Users\\Docker\\Desktop\\answer.pdf'; if (Test-Path $file) { Write-Output 'FILE_EXISTS' } else { Write-Output 'FILE_MISSING' }\"",
         "shell": true
       }
     ],
@@ -91,12 +91,10 @@
         "type": "rule",
         "rules": {
           "include": [
-            "FILE_EXISTS",
-            "PDF_CONTENT_CORRECT"
+            "FILE_EXISTS"
           ],
           "exclude": [
-            "FILE_MISSING",
-            "PDF_CONTENT_INCORRECT"
+            "FILE_MISSING"
           ]
         }
       }

@@ -1,6 +1,8 @@
 {
   "id": "information-apple_q3_operating_margin",
   "_comment": "",
+  "manual_evaluation": true,
+  "operation_time": 43.47,
   "user_group": "visual",
   "subgroup_ids": ["V-S1", "V-S2"],
   "category": "information",
@@ -66,7 +68,6 @@
     }
   ],
   "related_apps": [
-    "narrator",
     "chrome",
     "notepad"
   ],

@@ -469,7 +469,7 @@ def check_ods_cell_values(result: str, rules: Dict[str, Any]) -> float:
 
     actual = {}
     row_index = 1
-    for row in table.xpath("./table:table-row", namespaces=ns):
+    for row in table.xpath(".//table:table-row", namespaces=ns):
         row_repeat = int(row.get(f"{{{ns['table']}}}number-rows-repeated", "1"))
         if row_index > max_row:
             break

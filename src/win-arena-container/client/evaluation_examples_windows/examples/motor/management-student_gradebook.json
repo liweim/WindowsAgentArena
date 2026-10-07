@@ -1,7 +1,7 @@
 {
   "id": "management-student_gradebook",
-  "_comment": "",
-  "manually_evaluated": false,
+  "manually_evaluated": true,
+  "operation_time": 166.76,
   "user_group": "motor",
   "subgroup_ids": ["M-S1"],
   "category": "management",
@@ -9,7 +9,7 @@
     "M2"
   ],
   "difficulty": "hard",
-  "instruction": "Enable Windows Sticky Keys and keep them enabled. Complete the grade summary in the provided `Grades.ods` by calculating each student's average, assigning the letter grade from the spreadsheet's grading table, and listing the three students in descending average-score order with their averages and letter grades. Save the spreadsheet as `answer.ods` on the Desktop.",
+  "instruction": "Enable Windows Sticky Keys and keep them enabled. Complete the grade summary in the provided `Grades.ods` by calculating each student's average to two decimal places, assigning the letter grade from the spreadsheet's grading table, and listing the three students in descending average-score order with their averages and letter grades. Save the spreadsheet.",
   "source": "synthetic",
   "gt_steps": [
     "Enable Windows Sticky Keys.",
@@ -17,12 +17,15 @@
     "Open Grades.ods in LibreOffice Calc.",
     "Review the three students and their scores in cells A3:D5.",
     "Review the grading table in cells F2:H7.",
-    "Calculate the averages: Aisha Khan `90`, Ben Carter `78.6666666667`, Chloe Nguyen `70`.",
+    "Calculate each student's average and round it to two decimal places.",
+    "Calculate the averages: Aisha Khan `90.00`, Ben Carter `78.67`, Chloe Nguyen `70.00`.",
     "Assign the grades: Aisha Khan `A`, Ben Carter `B`, Chloe Nguyen `C`.",
     "Enter the students, average scores, and letter grades in cells A10:C12.",
     "Sort the completed results by average score from highest to lowest.",
-    "Verify that Aisha Khan appears first, Ben Carter appears second, and Chloe Nguyen appears third.",
-    "Save the spreadsheet as `answer.ods` on the Desktop.",
+    "Verify that Aisha Khan with `90.00` and grade `A` appears first.",
+    "Verify that Ben Carter with `78.67` and grade `B` appears second.",
+    "Verify that Chloe Nguyen with `70.00` and grade `C` appears third.",
+    "Save `Grades.ods`.",
     "Keep Sticky Keys enabled."
   ],
   "config": [
@@ -38,12 +41,9 @@
       }
     },
     {
-      "type": "launch",
+      "type": "open",
       "parameters": {
-        "command": [
-          "libreoffice",
-          "C:\\Users\\Docker\\Desktop\\Grades.ods"
-        ]
+        "path": "C:\\Users\\Docker\\Desktop\\Grades.ods"
       }
     }
   ],
@@ -65,8 +65,8 @@
       },
       {
         "type": "vm_file",
-        "path": "C:\\Users\\Docker\\Desktop\\answer.ods",
-        "dest": "answer.ods"
+        "path": "C:\\Users\\Docker\\Desktop\\Grades.ods",
+        "dest": "Grades.ods"
       }
     ],
     "expected": [
@@ -90,7 +90,7 @@
             "B10": 90,
             "C10": "A",
             "A11": "Ben Carter",
-            "B11": 78.6666666667,
+            "B11": 78.67,
             "C11": "B",
             "A12": "Chloe Nguyen",
             "B12": 70,

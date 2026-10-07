@@ -1,7 +1,8 @@
 {
   "id": "communication-add_contact",
   "_comment": "",
-  "manually_evaluated": false,
+  "manual_evaluation": true,
+  "operation_time": 68.36,
   "user_group": "visual",
   "subgroup_ids": ["V-S2"],
   "category": "communication",
@@ -9,7 +10,7 @@
     "V2"
   ],
   "difficulty": "easy",
-  "instruction": "Enable Windows Magnifier and keep it enabled. Add `Olivia Bennett` with email `olivia.bennett@example.com` to the contact list in the provided `Contacts.odt`, then save the updated file as `answer.odt` on the Desktop.",
+  "instruction": "Enable Windows Magnifier and keep it enabled. Add `Olivia Brown` with email `olivia.brown@example.com` to the contact list in the provided `Contacts.odt`, then save the document.",
   "source": "synthetic",
   "gt_steps": [
     "Enable Windows Magnifier.",
@@ -17,9 +18,9 @@
     "Open Contacts.odt in LibreOffice Writer.",
     "Review the existing contact list.",
     "Add a new contact entry.",
-    "Enter the name Olivia Bennett.",
-    "Enter the email address olivia.bennett@example.com.",
-    "Save the updated document as `answer.odt` on the Desktop.",
+    "Enter the name Olivia Brown.",
+    "Enter the email address olivia.brown@example.com.",
+    "Save `Contacts.odt`.",
     "Keep Magnifier enabled."
   ],
   "config": [
@@ -35,30 +36,20 @@
       }
     },
     {
-      "type": "launch",
+      "type": "open",
       "parameters": {
-        "command": [
-          "libreoffice",
-          "C:\\Users\\Docker\\Desktop\\Contacts.odt"
-        ]
-      }
-    },
-    {
-      "type": "sleep",
-      "parameters": {
-        "seconds": 3
+        "path": "C:\\Users\\Docker\\Desktop\\Contacts.odt"
       }
     }
   ],
   "related_apps": [
-    "magnifier",
     "libreoffice_writer"
   ],
   "evaluator": {
     "func": "check_include_exclude",
     "result": {
       "type": "vm_command_line",
-      "command": "powershell -NoProfile -Command \"$file='C:\\Users\\Docker\\Desktop\\answer.odt'; $mag=Get-Process Magnify -ErrorAction SilentlyContinue; if ($mag) { Write-Output 'MAGNIFIER_ENABLED' } else { Write-Output 'MAGNIFIER_DISABLED' }; if (Test-Path $file) { $tmp=Join-Path $env:TEMP ('contacts_eval_' + [guid]::NewGuid().ToString()); New-Item -ItemType Directory -Path $tmp | Out-Null; $zip=Join-Path $tmp 'Contacts.zip'; Copy-Item $file $zip; Expand-Archive -Path $zip -DestinationPath $tmp -Force; $xml=Get-Content (Join-Path $tmp 'content.xml') -Raw; if (($xml -match 'Olivia Bennett') -and ($xml -match 'olivia.bennett@example.com')) { Write-Output 'CONTACT_ADDED' } else { Write-Output 'CONTACT_MISSING' }; Remove-Item $tmp -Recurse -Force } else { Write-Output 'FILE_MISSING' }\"",
+      "command": "powershell -NoProfile -Command \"$file='C:\\Users\\Docker\\Desktop\\Contacts.odt'; $mag=Get-Process Magnify -ErrorAction SilentlyContinue; if ($mag) { Write-Output 'MAGNIFIER_ENABLED' } else { Write-Output 'MAGNIFIER_DISABLED' }; if (Test-Path $file) { $tmp=Join-Path $env:TEMP ('contacts_eval_' + [guid]::NewGuid().ToString()); New-Item -ItemType Directory -Path $tmp | Out-Null; $zip=Join-Path $tmp 'Contacts.zip'; Copy-Item $file $zip; Expand-Archive -Path $zip -DestinationPath $tmp -Force; $xml=Get-Content (Join-Path $tmp 'content.xml') -Raw; if (($xml -match 'Olivia Brown') -and ($xml -match 'olivia.brown@example.com')) { Write-Output 'CONTACT_ADDED' } else { Write-Output 'CONTACT_MISSING' }; Remove-Item $tmp -Recurse -Force } else { Write-Output 'FILE_MISSING' }\"",
       "shell": true
     },
     "expected": {

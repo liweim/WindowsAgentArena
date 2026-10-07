@@ -1,6 +1,8 @@
 {
   "id": "access-windows_magnifier_open",
   "_comment": "",
+  "manual_evaluation": true,
+  "operation_time": 13.77,
   "user_group": "visual",
   "subgroup_ids": ["V-S2"],
   "category": "access",
@@ -16,7 +18,7 @@
   ],
   "config": [],
   "related_apps": [
-    "magnifier"
+    "settings"
   ],
   "evaluator": {
     "func": "check_magnifier_ui_open",

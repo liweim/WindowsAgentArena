@@ -1,14 +1,15 @@
 {
   "id": "consumption-shopping_list_cart",
-  "_comment": "",
   "user_group": "motor",
+  "manually_evaluated": true,
+  "operation_time": 92.77,
   "subgroup_ids": ["M-S3"],
   "category": "consumption",
   "need_ids": [
     "M3"
   ],
   "difficulty": "hard",
-  "instruction": "Enable Windows Filter Keys and keep them enabled. Add the products and quantities listed in the provided `ShoppingList.ods` to the OneStopMarket cart, with no additional products.",
+  "instruction": "Enable Windows Filter Keys and keep them enabled. Add the products and quantities listed in the provided `ShoppingList.ods` on Desktop to the OneStopMarket cart, with no additional products.",
   "source": "synthetic",
   "gt_steps": [
     "Enable Windows Filter Keys.",
@@ -33,6 +34,10 @@
   ],
   "config": [
     {
+      "type": "reset_shopping_cart",
+      "parameters": {}
+    },
+    {
       "type": "upload_file",
       "parameters": {
         "files": [
@@ -44,12 +49,21 @@
       }
     },
     {
-      "type": "launch",
+      "type": "sleep",
       "parameters": {
-        "command": [
-          "libreoffice",
-          "C:\\Users\\Docker\\Desktop\\ShoppingList.ods"
-        ]
+        "seconds": 3
+      }
+    },
+    {
+      "type": "open",
+      "parameters": {
+        "path": "C:\\Users\\Docker\\Desktop\\ShoppingList.ods"
+      }
+    },
+    {
+      "type": "sleep",
+      "parameters": {
+        "seconds": 5
       }
     },
     {
@@ -58,8 +72,7 @@
         "command": [
           "google-chrome",
           "--remote-debugging-port=1337",
-          "--force-renderer-accessibility",
-          "http://host.docker.internal:7770/"
+          "--force-renderer-accessibility"
         ]
       }
     },
@@ -68,8 +81,22 @@
       "parameters": {
         "command": [
           "socat",
-          "TCP-LISTEN:9222,fork,reuseaddr",
-          "TCP:localhost:1337"
+          "tcp-listen:9222,fork,reuseaddr",
+          "tcp:localhost:1337"
+        ]
+      }
+    },
+    {
+      "type": "sleep",
+      "parameters": {
+        "seconds": 5
+      }
+    },
+    {
+      "type": "chrome_open_tabs",
+      "parameters": {
+        "urls_to_open": [
+          "http://host.docker.internal:7770/"
         ]
       }
     }
@@ -88,7 +115,7 @@
     "result": [
       {
         "type": "vm_command_line",
-        "command": "powershell -NoProfile -Command \"$flags=[int](Get-ItemPropertyValue -Path 'HKCU:\\Control Panel\\Accessibility\\Keyboard Response' -Name 'Flags' -ErrorAction SilentlyContinue); if (($flags -band 1) -eq 1) { Write-Output 'FILTER_KEYS_ENABLED' } else { Write-Output 'FILTER_KEYS_DISABLED' }\"",
+        "command": "powershell -NoProfile -Command \"$src='using System; using System.Runtime.InteropServices; public class FK { [StructLayout(LayoutKind.Sequential)] public struct FILTERKEYS { public uint cbSize; public uint dwFlags; public uint iWaitMSec; public uint iDelayMSec; public uint iRepeatMSec; public uint iBounceMSec; } [DllImport(\\\"user32.dll\\\", SetLastError=true)] public static extern bool SystemParametersInfo(uint uiAction, uint uiParam, ref FILTERKEYS pvParam, uint fWinIni); }'; Add-Type -TypeDefinition $src; $fk=New-Object FK+FILTERKEYS; $fk.cbSize=[Runtime.InteropServices.Marshal]::SizeOf($fk); $ok=[FK]::SystemParametersInfo(0x0032,$fk.cbSize,[ref]$fk,0); if ($ok -and (($fk.dwFlags -band 0x1) -ne 0)) { Write-Output 'FILTER_KEYS_ENABLED' } else { Write-Output 'FILTER_KEYS_DISABLED' }\"",
         "shell": true
       },
       {

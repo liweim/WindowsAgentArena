@@ -1,12 +1,13 @@
 {
-  "id": "captcha-slide_puzzle_2",
-  "manual_evaluation": false,
-  "operation_time": 23.56,
-  "user_group": "visual",
-  "subgroup_ids": ["V-S1", "V-S2"],
+  "id": "captcha-slide_puzzle_3",
+  "manually_evaluated": true,
+  "operation_time": 15.89,
+  "user_group": "motor",
+  "subgroup_ids": ["M-S2", "M-S3"],
   "category": "captcha",
   "need_ids": [
-    "V6"
+    "M5",
+    "M7"
   ],
   "difficulty": "easy",
   "instruction": "Complete the puzzle slider CAPTCHA verification in Microsoft Edge.",
@@ -21,7 +22,7 @@
         "command": [
           "cmd",
           "/c",
-          "start msedge http://host.docker.internal:8765/captcha?type=slide_puzzle^&seed=access-slide-puzzle-002^&session=access-captcha-slide-puzzle"
+          "start msedge http://host.docker.internal:8765/captcha?type=slide_puzzle^&seed=access-slide-puzzle-003^&session=access-captcha-slide-puzzle"
         ]
       }
     }
@@ -38,7 +39,7 @@
       "type": "rule",
       "rules": {
         "expected": [
-          "https?://host\\.docker\\.internal:8765/success\\?type=slide_puzzle&seed=access-slide-puzzle-002&session=access-captcha-slide-puzzle"
+          "https?://host\\.docker\\.internal:8765/success\\?type=slide_puzzle&seed=access-slide-puzzle-003&session=access-captcha-slide-puzzle"
         ]
       }
     }

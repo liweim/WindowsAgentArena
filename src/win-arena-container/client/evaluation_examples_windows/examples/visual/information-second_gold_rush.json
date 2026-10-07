@@ -1,6 +1,8 @@
 {
   "id": "information-second_gold_rush",
   "_comment": "",
+  "manual_evaluation": true,
+  "operation_time": 54.75,
   "user_group": "visual",
   "subgroup_ids": ["V-S1"],
   "category": "information",
@@ -8,8 +10,8 @@
     "V1"
   ],
   "difficulty": "medium",
-  "instruction": "Turn on Windows Narrator. On the Gold rush Wikipedia page already open in Chrome, use the gold-rush examples in the order presented on that page, identify the second listed gold rush, open that gold rush's linked Wikipedia page, and leave it open.",
-  "source": "http://host.docker.internal:8888/wikipedia_en_all_maxi_2022-05/A/Gold_rush",
+  "instruction": "Turn on Windows Narrator. On the Gold rush Wikipedia page already open in Chrome, use the gold rush events listed by date on that page, identify the second ever listed gold rush in the world, open that gold rush's linked Wikipedia page, and leave it open.",
+  "source": "synthetic",
   "gt_steps": [
     "Turn on Windows Narrator.",
     "Read the Gold rush Wikipedia article in Chrome.",
@@ -54,7 +56,6 @@
     }
   ],
   "related_apps": [
-    "narrator",
     "chrome"
   ],
   "evaluator": {

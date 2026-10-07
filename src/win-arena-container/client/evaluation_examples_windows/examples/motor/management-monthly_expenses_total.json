@@ -1,7 +1,7 @@
 {
   "id": "management-monthly_expenses_total",
-  "_comment": "",
-  "manually_evaluated": false,
+  "manually_evaluated": true,
+  "operation_time": 151.38,
   "user_group": "motor",
   "subgroup_ids": ["M-S3"],
   "category": "management",
@@ -9,7 +9,7 @@
     "M3"
   ],
   "difficulty": "medium",
-  "instruction": "Enable Windows Filter Keys and keep them enabled. In the provided `MonthlyBills.ods`, use a formula in cell B12 to calculate the total amount due for all bills with status `Unpaid`, then save the spreadsheet as `answer.ods` on the Desktop.",
+  "instruction": "Enable Windows Filter Keys and keep them enabled. In the provided `MonthlyBills.ods`, use a formula in cell B12 to calculate the total amount due for all bills with status `Unpaid`, then save the spreadsheet.",
   "source": "synthetic",
   "gt_steps": [
     "Enable Windows Filter Keys.",
@@ -19,7 +19,7 @@
     "Select cell B12.",
     "Enter a formula that sums the amounts for all rows whose status is `Unpaid`.",
     "Verify that the calculated total in B12 is `648.49`.",
-    "Save the spreadsheet as `answer.ods` on the Desktop.",
+    "Save `MonthlyBills.ods`.",
     "Keep Filter Keys enabled."
   ],
   "config": [
@@ -35,12 +35,9 @@
       }
     },
     {
-      "type": "launch",
+      "type": "open",
       "parameters": {
-        "command": [
-          "libreoffice",
-          "C:\\Users\\Docker\\Desktop\\MonthlyBills.ods"
-        ]
+        "path": "C:\\Users\\Docker\\Desktop\\MonthlyBills.ods"
       }
     }
   ],
@@ -62,8 +59,8 @@
       },
       {
         "type": "vm_file",
-        "path": "C:\\Users\\Docker\\Desktop\\answer.ods",
-        "dest": "answer.ods"
+        "path": "C:\\Users\\Docker\\Desktop\\MonthlyBills.ods",
+        "dest": "MonthlyBills.ods"
       }
     ],
     "expected": [

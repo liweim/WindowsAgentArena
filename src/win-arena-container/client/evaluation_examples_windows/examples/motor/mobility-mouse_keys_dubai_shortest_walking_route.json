@@ -1,15 +1,15 @@
 {
-  "id": "mobility-mouse_keys_google_maps_route",
+  "id": "mobility-mouse_keys_dubai_shortest_walking_route",
   "manually_evaluated": true,
-  "operation_time": 97.41,
+  "operation_time": 115.36,
   "user_group": "motor",
   "subgroup_ids": ["M-S2"],
   "category": "mobility",
   "need_ids": [
     "M4"
   ],
-  "difficulty": "easy",
-  "instruction": "Enable Windows Mouse Keys and keep them enabled. In Google Maps, show walking directions from Victoria Station, London, UK to Westminster Abbey, Dean's Yard, London SW1P 3PA, United Kingdom. Leave the walking directions visible.",
+  "difficulty": "medium",
+  "instruction": "Enable Windows Mouse Keys and keep them enabled. Using Google Maps, compare the walking routes from Dubai Mall, Downtown Dubai, Dubai, United Arab Emirates to Dubai Frame, Museum of the Future, and Jumeirah Mosque. Among the destinations that can be reached by a walking route of less than 6 km, choose the one with the shortest walking time. Leave the walking directions to that destination visible.",
   "source": "synthetic",
   "gt_steps": [
     "Open Windows Settings.",
@@ -18,11 +18,22 @@
     "Turn on `Mouse Keys`.",
     "Switch to the Google Maps tab in Chrome.",
     "Open the Directions interface.",
-    "Set `Victoria Station, London, UK` as the starting location.",
-    "Set `Westminster Abbey, Dean's Yard, London SW1P 3PA, United Kingdom` as the destination.",
+    "Set `Dubai Mall, Downtown Dubai, Dubai, United Arab Emirates` as the starting location.",
+    "Set `Dubai Frame` as the destination.",
     "Select walking as the travel mode.",
-    "Confirm that the route shown starts at Victoria Station and ends at Westminster Abbey.",
-    "Leave the walking directions open with Mouse Keys enabled."
+    "Record or remember the walking distance and walking time to Dubai Frame.",
+    "Change the destination to `Museum of the Future`.",
+    "Keep walking as the travel mode.",
+    "Record or remember the walking distance and walking time to Museum of the Future.",
+    "Change the destination to `Jumeirah Mosque`.",
+    "Keep walking as the travel mode.",
+    "Record or remember the walking distance and walking time to Jumeirah Mosque.",
+    "Exclude any destination whose walking route is 6 km or longer.",
+    "Compare the walking times of the remaining destinations.",
+    "Identify the eligible destination with the shortest walking time.",
+    "Set that destination as the final destination.",
+    "Leave the walking directions from Dubai Mall to the selected destination visible.",
+    "Keep Mouse Keys enabled."
   ],
   "config": [
     {
@@ -81,13 +92,13 @@
         "mode": "directions_walking",
         "required_text": [
           [
-            "Victoria Station, London, UK",
-            "Victoria Station",
-            "London Victoria"
+            "Dubai Mall, Downtown Dubai, Dubai, United Arab Emirates",
+            "Dubai Mall",
+            "The Dubai Mall"
           ],
           [
-            "Westminster Abbey, Dean's Yard, London SW1P 3PA, United Kingdom",
-            "Westminster Abbey"
+            "Museum of the Future, Sheikh Zayed Road, Trade Centre 2, Dubai, United Arab Emirates",
+            "Museum of the Future"
           ]
         ]
       }
@@ -113,5 +124,5 @@
     ]
   },
   "proxy": true,
-  "possibility_of_env_change": "low"
+  "possibility_of_env_change": "medium"
 }

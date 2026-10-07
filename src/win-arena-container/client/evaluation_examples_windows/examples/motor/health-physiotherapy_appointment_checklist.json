@@ -1,7 +1,7 @@
 {
   "id": "health-physiotherapy_appointment_checklist",
-  "manually_evaluated": false,
-  "_comment": "You need to download the file locally so that the evaluator can verify whether the local file and the file in the VM are exactly identical. The current evaluator is too weak.",
+  "manually_evaluated": true,
+  "operation_time": 278.76,
   "user_group": "motor",
   "subgroup_ids": ["M-S1"],
   "category": "health",
@@ -86,7 +86,6 @@
     }
   ],
   "related_apps": [
-    "on_screen_keyboard",
     "chrome",
     "thunderbird"
   ],

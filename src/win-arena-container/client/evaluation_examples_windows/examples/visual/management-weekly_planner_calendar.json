@@ -1,7 +1,7 @@
 {
-  "id": "management-weekly_planner_calendar",
-  "_comment": "",
-  "manually_evaluated": false,
+  "id": "management-weekly_planner_calendar_italy",
+  "manual_evaluation": true,
+  "operation_time": 474.62,
   "user_group": "visual",
   "subgroup_ids": ["V-S2"],
   "category": "management",
@@ -18,12 +18,12 @@
     "Open WeeklyPlanner.odt in LibreOffice Writer.",
     "Identify all six appointments in the weekly planner.",
     "Open Thunderbird Calendar.",
-    "Create Dental Check-up on 9 November 2026 at 9:00 AM for 30 minutes at Bright Smile Dental, Suite 4.",
-    "Create Honours Supervisor Meeting on 10 November 2026 at 2:30 PM for 45 minutes at UNSW Library, Room 215.",
-    "Create Physiotherapy Session on 11 November 2026 at 11:15 AM for 30 minutes at Harbour Health Clinic.",
+    "Create Dental Check-up on 9 November 2026 at 9:00 AM for 30 minutes at Studio Dentistico Milano, Via Torino 45.",
+    "Create Honours Supervisor Meeting on 10 November 2026 at 2:30 PM for 45 minutes at Biblioteca Nazionale Braidense, Milan.",
+    "Create Physiotherapy Session on 11 November 2026 at 11:15 AM for 30 minutes at Centro Fisioterapia Milano.",
     "Create Project Team Review on 12 November 2026 at 4:00 PM for 60 minutes at Online – Teams.",
-    "Create Career Adviser Appointment on 13 November 2026 at 10:30 AM for 30 minutes at UNSW Careers Office.",
-    "Create Car Service Booking on 14 November 2026 at 1:00 PM for 45 minutes at City Toyota Service Centre.",
+    "Create Career Adviser Appointment on 13 November 2026 at 10:30 AM for 30 minutes at University Career Service, Milan.",
+    "Create Car Service Booking on 14 November 2026 at 1:00 PM for 45 minutes at Milano Auto Service Centre.",
     "Save all six calendar events.",
     "Keep Windows text size at 150%."
   ],
@@ -55,12 +55,9 @@
       "parameters": {}
     },
     {
-      "type": "launch",
+      "type": "open",
       "parameters": {
-        "command": [
-          "libreoffice",
-          "C:\\Users\\Docker\\Desktop\\WeeklyPlanner.odt"
-        ]
+        "path": "C:\\Users\\Docker\\Desktop\\WeeklyPlanner.odt"
       }
     },
     {
@@ -150,7 +147,7 @@
           "hour": 9,
           "minute": 0,
           "duration_minutes": 30,
-          "location": "Bright Smile Dental, Suite 4"
+          "location": "Studio Dentistico Milano, Via Torino 45"
         }
       },
       {
@@ -161,7 +158,7 @@
           "hour": 14,
           "minute": 30,
           "duration_minutes": 45,
-          "location": "UNSW Library, Room 215"
+          "location": "Biblioteca Nazionale Braidense, Milan"
         }
       },
       {
@@ -172,7 +169,7 @@
           "hour": 11,
           "minute": 15,
           "duration_minutes": 30,
-          "location": "Harbour Health Clinic"
+          "location": "Centro Fisioterapia Milano"
         }
       },
       {
@@ -194,7 +191,7 @@
           "hour": 10,
           "minute": 30,
           "duration_minutes": 30,
-          "location": "UNSW Careers Office"
+          "location": "University Career Service, Milan"
         }
       },
       {
@@ -205,7 +202,7 @@
           "hour": 13,
           "minute": 0,
           "duration_minutes": 45,
-          "location": "City Toyota Service Centre"
+          "location": "Milano Auto Service Centre"
         }
       }
     ]

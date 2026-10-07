@@ -1,6 +1,8 @@
 {
   "id": "consumption-lavender_coupon",
   "_comment": "",
+  "manual_evaluation": true,
+  "operation_time": 50.24,
   "user_group": "visual",
   "subgroup_ids": ["V-S1"],
   "category": "consumption",
@@ -28,6 +30,10 @@
     "Leave the shopping cart page open."
   ],
   "config": [
+    {
+      "type": "reset_shopping_cart",
+      "parameters": {}
+    },
     {
       "type": "upload_file",
       "parameters": {
@@ -76,7 +82,6 @@
     }
   ],
   "related_apps": [
-    "narrator",
     "chrome"
   ],
   "evaluator": {

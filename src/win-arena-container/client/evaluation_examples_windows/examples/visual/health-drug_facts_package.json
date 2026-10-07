@@ -1,5 +1,8 @@
 {
   "id": "health-drug_facts_package",
+  "_comment": "changed paint to msedge to open the image",
+  "manual_evaluation": true,
+  "operation_time": 37.54,
   "user_group": "visual",
   "subgroup_ids": ["V-S1", "V-S2"],
   "category": "health",
@@ -7,7 +10,7 @@
     "V5"
   ],
   "difficulty": "medium",
-  "instruction": "Use the original Drug Facts carton image on the Desktop to create a Sticky Note containing both active ingredients with their amounts and the acetaminophen warning shown on the carton.",
+  "instruction": "Use the original Drug Facts carton image opened on the Microsoft Edge to create a Sticky Note containing both active ingredients with their amounts and the acetaminophen warning shown on the carton.",
   "source": "https://dailymed.nlm.nih.gov/dailymed/image.cfm?name=aceta-ibu-fig2.jpg&setid=b39fb93f-c140-40ab-8247-9559ef6df50a",
   "gt_steps": [
     "Open Sticky Notes and create a new note.",
@@ -30,14 +33,15 @@
       "type": "launch",
       "parameters": {
         "command": [
-          "C:\\Windows\\System32\\mspaint.exe",
-          "C:\\Users\\Docker\\Desktop\\DrugFactsPackage.jpg"
+          "cmd",
+          "/c",
+          "start msedge file:///C:\\Users\\Docker\\Desktop\\DrugFactsPackage.jpg"
         ]
       }
     }
   ],
   "related_apps": [
-    "paint",
+    "msedge",
     "sticky_notes"
   ],
   "evaluator": {

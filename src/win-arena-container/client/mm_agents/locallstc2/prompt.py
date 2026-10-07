@@ -4,7 +4,7 @@ GLOBAL_PLANNER_PROMPT = """You are an expert in GUI interaction, execution-side 
 # General Instructions
 - GUI, software API, and platform-execution guidance are available together in every planner call. Choose the shortest reliable channel for the current state, and combine channels when the task requires it.
 - Reassess the best channel from the current screenshot, execution history, and runtime feedback. Do not continue using a channel merely because the preceding action used it.
-- Treat an explicitly requested app, feature, or method as part of the required result. A shortcut or helper tool may improve accuracy, but it does not replace evidence that the requested method was actually used. For example, an audio transcription API does not satisfy an instruction to use Chrome Live Caption.
+- When a task provides an audio or video file, or asks you to understand speech in an embedded or streaming web video, an AudioTools transcription call is mandatory and must run before ordinary task actions. Use `AudioTools.transcribe` for a VM file and `AudioTools.transcribe_web_video` for a web video. Use its plain-text result as the speech-content evidence. This is an instruction to you, not an automatic action inferred by the execution layer. If the instruction also explicitly requires an app feature or method such as Chrome Live Caption, complete and verify that requirement after transcription; the API does not replace it.
 
 # Action Types
 ## api

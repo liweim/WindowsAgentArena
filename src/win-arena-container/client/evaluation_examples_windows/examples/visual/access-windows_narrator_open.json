@@ -1,6 +1,8 @@
 {
   "id": "access-windows_narrator_open",
   "_comment": "",
+  "manual_evaluation": true,
+  "operation_time": 22.14,
   "user_group": "visual",
   "subgroup_ids": ["V-S1"],
   "category": "access",
@@ -16,7 +18,7 @@
   ],
   "config": [],
   "related_apps": [
-    "narrator"
+    "settings"
   ],
   "evaluator": {
     "func": "check_narrator_enabled",

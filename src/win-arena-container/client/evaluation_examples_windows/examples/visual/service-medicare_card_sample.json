@@ -1,5 +1,7 @@
 {
   "id": "service-medicare_card_sample",
+  "manual_evaluation": true,
+  "operation_time": 109.10,
   "user_group": "visual",
   "subgroup_ids": ["V-S1", "V-S2"],
   "category": "service",
@@ -80,10 +82,7 @@
                 "hospital coverage"
               ],
               [
-                "03-01-2016",
-                "03/01/2016",
-                "March 1, 2016",
-                "1 March 2016"
+                "03-01-2016"
               ]
             ]
           },
@@ -97,10 +96,7 @@
                 "medical coverage"
               ],
               [
-                "03-01-2016",
-                "03/01/2016",
-                "March 1, 2016",
-                "1 March 2016"
+                "03-01-2016"
               ]
             ]
           }

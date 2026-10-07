@@ -1,7 +1,7 @@
 {
   "id": "consumption-wireless_mouse_search_result",
-  "_comment": "",
-  "manually_evaluated": false,
+  "manually_evaluated": true,
+  "operation_time": 91.94,
   "user_group": "motor",
   "subgroup_ids": ["M-S1"],
   "category": "consumption",
@@ -9,8 +9,8 @@
     "M2"
   ],
   "difficulty": "easy",
-  "instruction": "Enable Windows Sticky Keys and keep them enabled. Add exactly one unit of the first OneStopShop search result for `wireless mouse` to the shopping cart.",
-  "source": "http://host.docker.internal:7770",
+  "instruction": "Enable Windows Sticky Keys and keep them enabled. Add exactly one unit of the first OneStopShop search result for `wireless mouse` to the shopping cart and choose the black one for the colour.",
+  "source": "synthetic",
   "gt_steps": [
     "Enable Windows Sticky Keys.",
     "Keep Sticky Keys enabled throughout the task.",
@@ -22,6 +22,10 @@
     "Add the product to the shopping cart."
   ],
   "config": [
+    {
+      "type": "reset_shopping_cart",
+      "parameters": {}
+    },
     {
       "type": "launch",
       "parameters": {

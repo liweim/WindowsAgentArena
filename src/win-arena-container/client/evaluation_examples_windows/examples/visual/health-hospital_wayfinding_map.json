@@ -1,5 +1,8 @@
 {
   "id": "health-hospital_wayfinding_map",
+  "_comment": "added instruction saying map is opened on microsoft edge",
+  "manual_evaluation": true,
+  "operation_time": 115.93,
   "user_group": "visual",
   "subgroup_ids": ["V-S1", "V-S2"],
   "category": "health",
@@ -7,7 +10,7 @@
     "V5"
   ],
   "difficulty": "hard",
-  "instruction": "Use the original Queen Elizabeth Hospital site map PDF on the Desktop and save `answer.txt` with the zone and level for Outpatient Pharmacy, MRI Scanner, Outpatients Department (OPD), and Radiology (X-ray and CT scanning), one service-location pair per line in that order.",
+  "instruction": "Use the original Queen Elizabeth Hospital site map PDF opened on Microsoft Edge and save `answer.txt` with the zone and level for Outpatient Pharmacy, MRI Scanner, Outpatients Department (OPD), and Radiology (X-ray and CT scanning), one service-location pair per line in that order.",
   "source": "https://www.gatesheadhealth.nhs.uk/wp-content/uploads/2026/04/QEH00-Z-Website-Site-Map.pdf",
   "gt_steps": [
     "Open Notepad.",
@@ -30,8 +33,9 @@
       "type": "launch",
       "parameters": {
         "command": [
-          "msedge",
-          "file:///C:/Users/Docker/Desktop/HospitalMap.pdf"
+          "cmd",
+          "/c",
+          "start msedge file:///C:/Users/Docker/Desktop/HospitalMap.pdf"
         ]
       }
     }

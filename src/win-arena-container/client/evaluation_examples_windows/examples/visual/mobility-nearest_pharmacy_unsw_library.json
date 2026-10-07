@@ -1,7 +1,7 @@
 {
-  "id": "mobility-nearest_pharmacy_unsw_library",
-  "_comment": "Avoid personal data like UNSW",
-  "manually_evaluated": false,
+  "id": "mobility-nearest_pharmacy_marina_bay_sands",
+  "manual_evaluation": true,
+  "operation_time": 99.19,
   "user_group": "visual",
   "subgroup_ids": ["V-S1"],
   "category": "mobility",
@@ -9,14 +9,16 @@
     "V1"
   ],
   "difficulty": "medium",
-  "instruction": "Turn on Windows Narrator. Use Google Maps with UNSW Main Library as the fixed start point and search for pharmacies. Choose the pharmacy with the shortest displayed walking distance from the library; if distances tie, choose the shorter walking time. Open that pharmacy's place details and leave them open.",
+  "instruction": "Turn on Windows Narrator. In Google Maps, set Marina Bay Sands, Singapore as the current location. Search for pharmacies and choose the pharmacy with the shortest displayed walking distance from Marina Bay Sands; if distances tie, choose the shorter walking time. Open that pharmacy's place details and leave them open.",
   "source": "synthetic",
   "gt_steps": [
     "Turn on Windows Narrator.",
     "Open Google Maps in Chrome.",
-    "Search near UNSW Main Library for pharmacies.",
-    "Identify Pharmacy at UNSW as the nearest pharmacy.",
-    "Open the Pharmacy at UNSW place details.",
+    "Set Marina Bay Sands, Singapore as the current location.",
+    "Search for pharmacies near the set current location.",
+    "Compare the displayed walking distances from Marina Bay Sands to the nearby pharmacies.",
+    "Identify Guardian Health & Beauty + Pharmacy  Marina Bay Sands (Click & Collect), located at 2 Bayfront Ave, B2-49, The Shoppes at Marina Bay Sands, Singapore 018972, as the nearest pharmacy.",
+    "Open the Guardian Health & Beauty + Pharmacy  Marina Bay Sands (Click & Collect) place details.",
     "Leave the place details open."
   ],
   "config": [
@@ -56,7 +58,6 @@
     }
   ],
   "related_apps": [
-    "narrator",
     "chrome"
   ],
   "evaluator": {
@@ -74,7 +75,8 @@
         "mode": "place_details",
         "required_text": [
           [
-            "Pharmacy at UNSW"
+            "Guardian Health & Beauty + Pharmacy",
+            "Marina Bay Sands"
           ]
         ]
       }

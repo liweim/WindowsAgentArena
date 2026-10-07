@@ -1,6 +1,8 @@
 {
   "id": "consumption-keto_bread",
   "_comment": "",
+  "manual_evaluation": true,
+  "operation_time": 86.57,
   "user_group": "visual",
   "subgroup_ids": ["V-S1"],
   "category": "consumption",
@@ -22,12 +24,16 @@
   ],
   "config": [
     {
+      "type": "reset_shopping_cart",
+      "parameters": {}
+    },
+    {
       "type": "upload_file",
       "parameters": {
         "files": [
           {
             "local_path": "assets/consumption-keto_bread.html",
-            "path": "C:\\Users\\Docker\\Desktop\\consumption-find_keto_bread_product.html"
+            "path": "C:\\Users\\Docker\\Desktop\\ShoppingNote.html"
           }
         ]
       }
@@ -62,14 +68,13 @@
       "type": "chrome_open_tabs",
       "parameters": {
         "urls_to_open": [
-          "file:///C:/Users/Docker/Desktop/consumption-find_keto_bread_product.html",
-          "http://host.docker.internal:7770"
+          "http://host.docker.internal:7770",
+          "file:///C:/Users/Docker/Desktop/ShoppingNote.html"
         ]
       }
     }
   ],
   "related_apps": [
-    "narrator",
     "chrome"
   ],
   "evaluator": {

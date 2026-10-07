@@ -1,6 +1,8 @@
 {
   "id": "service-accessible_parking_renewal_notice",
   "user_group": "visual",
+  "manual_evaluation": true,
+  "operation_time": 109.59,
   "subgroup_ids": ["V-S1", "V-S2"],
   "category": "service",
   "need_ids": [
@@ -41,7 +43,6 @@
     }
   ],
   "related_apps": [
-    "magnifier",
     "chrome",
     "notepad"
   ],
@@ -86,10 +87,7 @@
               "AP 60428"
             ],
             [
-              "30 September 2026",
-              "September 30, 2026",
-              "30 Sep 2026",
-              "2026-09-30"
+              "30 September 2026"
             ],
             {
               "regex": [

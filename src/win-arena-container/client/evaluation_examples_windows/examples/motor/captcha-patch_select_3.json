@@ -1,5 +1,7 @@
 {
   "id": "captcha-patch_select_3",
+  "manually_evaluated": true,
+  "operation_time": 31.96,
   "user_group": "motor",
   "subgroup_ids": ["M-S2", "M-S3"],
   "category": "captcha",

@@ -1,5 +1,7 @@
 {
   "id": "captcha-math_2",
+  "manual_evaluation": true,
+  "operation_time": 49.03,
   "user_group": "visual",
   "subgroup_ids": ["V-S1", "V-S2"],
   "category": "captcha",

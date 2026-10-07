@@ -1,5 +1,7 @@
 {
   "id": "mobility-cta_airport_transfer",
+  "manual_evaluation": true,
+  "operation_time": 97.83,
   "user_group": "visual",
   "subgroup_ids": ["V-S1", "V-S2"],
   "category": "mobility",
@@ -30,8 +32,9 @@
       "type": "launch",
       "parameters": {
         "command": [
-          "msedge",
-          "file:///C:/Users/Docker/Desktop/CTALRailSystemDiagram.pdf"
+          "cmd",
+          "/c",
+          "start msedge file:///C:/Users/Docker/Desktop/CTALRailSystemDiagram.pdf"
         ]
       }
     }

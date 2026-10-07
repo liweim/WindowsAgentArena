@@ -1,7 +1,7 @@
 {
   "id": "communication-meeting_agenda_draft",
-  "_comment": "",
-  "manually_evaluated": false,
+  "manually_evaluated": true,
+  "operation_time": 162.37,
   "user_group": "motor",
   "subgroup_ids": ["M-S1"],
   "category": "communication",
@@ -9,7 +9,7 @@
     "M1"
   ],
   "difficulty": "hard",
-  "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Draft, but do not send, a Thunderbird email to `alice@example.com` with subject `Meeting Agenda`, using `MeetingAgenda.odt` to include the meeting date, time, location, all four agenda items, and the preparation requirement.",
+  "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Draft, but do not send, a Thunderbird email to `alice@example.com` with subject `Meeting Agenda`, using `MeetingAgenda.odt` saved on Desktop to include the meeting date, time, location, all four agenda items, and the preparation requirement.",
   "source": "synthetic",
   "gt_steps": [
     "Enable the Windows On-Screen Keyboard.",
@@ -56,12 +56,9 @@
       "parameters": {}
     },
     {
-      "type": "launch",
+      "type": "open",
       "parameters": {
-        "command": [
-          "libreoffice",
-          "C:\\Users\\Docker\\Desktop\\MeetingAgenda.odt"
-        ]
+        "path": "C:\\Users\\Docker\\Desktop\\MeetingAgenda.odt"
       }
     },
     {
@@ -82,7 +79,6 @@
     }
   ],
   "related_apps": [
-    "on_screen_keyboard",
     "libreoffice_writer",
     "thunderbird"
   ],
@@ -99,9 +95,7 @@
         "shell": true
       },
       {
-        "type": "vm_file",
-        "path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release\\Mail\\Local Folders\\Drafts",
-        "dest": "thunderbird-drafts.mbox"
+        "type": "thunderbird_drafts"
       }
     ],
     "expected": [
@@ -123,10 +117,7 @@
           "subject": "Meeting Agenda",
           "body_points": [
             [
-              "20 October 2026",
-              "October 20, 2026",
-              "20/10/2026",
-              "2026-10-20"
+              "20 October 2026"
             ],
             [
               "10:00 AM",

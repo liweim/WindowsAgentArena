@@ -1,6 +1,7 @@
 {
   "id": "access-enable_clicklock",
   "manually_evaluated": true,
+  "operation_time": 74.29,
   "user_group": "motor",
   "subgroup_ids": ["M-S2"],
   "category": "access",

@@ -3,7 +3,7 @@
 set -e
 
 cd "$(dirname "$0")"
-LOG_FILE="$(pwd)/nohup_locallstc2.out"
+LOG_FILE="$(pwd)/nohup_locallstc2_2.out"
 
 method="${1:-locallstc2}"
 if [ "$#" -gt 0 ]; then
@@ -33,12 +33,13 @@ nohup setsid env \
     --worker-id 0 \
     --num-workers 1 \
     --isolate-tasks true \
-    --container-name a11yarena-locallstc2 \
-    --browser-port 18119 \
-    --rdp-port 13398 \
+    --container-name a11yarena-locallstc2-2 \
+    --browser-port 18129 \
+    --rdp-port 13408 \
     --result-dir /locallstc/projects/WindowsAgentArena/results/locallstc2_qwen3.8-27b \
-    --json-name evaluation_examples_windows/debug2.json \
+    --json-name evaluation_examples_windows/test_one2.json \
     --remove-container true \
+    --rerun \
     "$@" >"$LOG_FILE" 2>&1 < /dev/null &
 
 runner_pid=$!

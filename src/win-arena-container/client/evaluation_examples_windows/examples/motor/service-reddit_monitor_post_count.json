@@ -1,6 +1,7 @@
 {
-  "id": "service-voting_comment_links",
-  "_comment": "",
+  "id": "service-reddit_monitor_post_count",
+  "manually_evaluated": true,
+  "operation_time": 85.08,
   "user_group": "motor",
   "subgroup_ids": ["M-S2"],
   "category": "service",
@@ -8,21 +9,22 @@
     "M4"
   ],
   "difficulty": "medium",
-  "instruction": "Enable Windows Mouse Keys and keep them enabled. From the Reddit post titled `How do I vote?`, open every website link mentioned in the comments in separate Chrome tabs and leave both linked website tabs open.",
-  "source": "http://host.docker.internal:9999",
+  "instruction": "Enable Windows Mouse Keys and keep them enabled. In Reddit, open the Forums tab and sort the forums alphabetically. Under the M category, click `monitor` to see more details. Find the total number of posts in the Monitor forum and save only that number to `answer.txt` on the Desktop.",
+  "source": "synthetic",
   "gt_steps": [
     "Open Windows Accessibility mouse settings.",
     "Enable Mouse Keys.",
     "Keep Mouse Keys enabled throughout the task.",
     "Open the Reddit website in Chrome.",
-    "Use the Reddit search bar to search for `How do I vote?`.",
-    "Open the post titled `How do I vote?`.",
-    "Read the comments under the post.",
-    "Find the first link: `https://vote.sos.ri.gov/Home/UpdateVoterRecord?ActiveFlag=0`.",
-    "Open the first link in a new Chrome tab.",
-    "Find the second link: `https://vote.sos.ri.gov/`.",
-    "Open the second link in another new Chrome tab.",
-    "Leave both linked website tabs open.",
+    "Open the Forums tab.",
+    "Change the forum sorting to alphabetical.",
+    "Navigate to the M category.",
+    "Find the `Monitor` forum.",
+    "Click `View More` for `Monitor`.",
+    "Identify the total number of posts in the Monitor forum.",
+    "Open a text editor.",
+    "Enter only the number of posts.",
+    "Save the file as `answer.txt` on the Desktop.",
     "Leave Mouse Keys enabled."
   ],
   "config": [
@@ -69,7 +71,8 @@
   ],
   "related_apps": [
     "settings",
-    "chrome"
+    "chrome",
+    "notepad"
   ],
   "evaluator": {
     "func": [
@@ -85,7 +88,7 @@
       },
       {
         "type": "vm_command_line",
-        "command": "powershell -NoProfile -Command \"$tabs=Invoke-RestMethod -Uri 'http://localhost:9222/json'; $urls=$tabs | ForEach-Object { $_.url }; if ($urls -contains 'https://vote.sos.ri.gov/Home/UpdateVoterRecord?ActiveFlag=0') { Write-Output 'VOTER_RECORD_LINK_OPEN' } else { Write-Output 'VOTER_RECORD_LINK_MISSING' }; if (($urls -contains 'https://vote.sos.ri.gov/') -or ($urls -contains 'https://vote.sos.ri.gov')) { Write-Output 'VOTING_HOME_LINK_OPEN' } else { Write-Output 'VOTING_HOME_LINK_MISSING' }\"",
+        "command": "powershell -NoProfile -Command \"$path = Join-Path ([Environment]::GetFolderPath('Desktop')) 'answer.txt'; if (Test-Path $path) { Get-Content -Raw $path } else { Write-Output 'FILE_MISSING' }\"",
         "shell": true
       }
     ],
@@ -105,12 +108,10 @@
         "type": "rule",
         "rules": {
           "include": [
-            "VOTER_RECORD_LINK_OPEN",
-            "VOTING_HOME_LINK_OPEN"
+            "5"
           ],
           "exclude": [
-            "VOTER_RECORD_LINK_MISSING",
-            "VOTING_HOME_LINK_MISSING"
+            "FILE_MISSING"
           ]
         }
       }

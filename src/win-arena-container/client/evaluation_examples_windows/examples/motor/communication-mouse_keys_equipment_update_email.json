@@ -1,5 +1,7 @@
 {
   "id": "communication-mouse_keys_equipment_update_email",
+  "manually_evaluated": true,
+  "operation_time": 114.3,
   "user_group": "motor",
   "subgroup_ids": ["M-S2"],
   "category": "communication",
@@ -11,13 +13,20 @@
   "source": "https://www.quantumrehab.com/pdf/owners-manuals/us_q600e_om.pdf",
   "gt_steps": [
     "Enable Windows Mouse Keys and leave them enabled.",
-    "Switch to the Quantum 600E owner’s manual open in Chrome.",
-    "Use the PDF find control to locate `BATTERIES AND CHARGING`.",
-    "Create a new email draft in Thunderbird.",
+    "Switch to the Quantum 600E owner's manual open in Chrome.",
+    "Use the PDF find control to search for `BATTERIES AND CHARGING` and navigate to Section VI, `BATTERIES AND CHARGING`, on manual page 29.",
+    "At the beginning of Section VI on page 29, identify that the Quantum 600E uses two 12-volt, deep-cycle batteries.",
+    "In the same paragraph, identify that the batteries are sealed and maintenance free.",
+    "On page 29 under `Charging the Batteries`, identify the warning that the batteries must be recharged with the supplied off-board battery charger.",
+    "On page 29 under `Charging the Batteries`, identify the prohibited-action warning stating never to use an extension cord to plug in the battery charger.",
+    "Open Thunderbird and create a new email.",
     "Set To to `equipmentdesk@example.org`.",
     "Set Subject to `Quantum 600E charging guidance`.",
-    "Enter the following message body:\n`The Quantum 600E uses two 12-volt deep-cycle batteries that are sealed and maintenance free. Recharge the batteries with the supplied off-board battery charger. Never use an extension cord to plug in the battery charger.`",
-    "Save the message as a draft. Do not send it.",
+    "In the email body, state that the Quantum 600E uses two 12-volt, deep-cycle batteries that are sealed and maintenance free.",
+    "State that the batteries must be recharged with the supplied off-board battery charger.",
+    "State that an extension cord must never be used to plug in the battery charger.",
+    "Save the message as a draft.",
+    "Do not send the email.",
     "Leave Windows Mouse Keys enabled."
   ],
   "config": [
@@ -97,9 +106,7 @@
         "shell": true
       },
       {
-        "type": "vm_file",
-        "path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release\\Mail\\Local Folders\\Drafts",
-        "dest": "thunderbird-drafts.mbox"
+        "type": "thunderbird_drafts"
       }
     ],
     "expected": [
