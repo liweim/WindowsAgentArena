@@ -280,6 +280,23 @@ def _add_locallstc_options(parser: argparse.ArgumentParser) -> None:
     )
 
 
+def _add_locallstc2_options(parser: argparse.ArgumentParser) -> None:
+    _add_locallstc_options(parser)
+    for option in (
+        "wo_global_facts",
+        "wo_jev_memory",
+        "wo_jev_global",
+        "wo_jev_skills",
+        "wo_jev_api",
+        "wo_jev",
+    ):
+        parser.add_argument(
+            "--{}".format(option),
+            "--{}".format(option.replace("_", "-")),
+            action="store_true",
+        )
+
+
 def _add_hisa_options(parser: argparse.ArgumentParser) -> None:
     _add_standalone_environment_options(parser, provider=True)
     _add_context_options(parser)
@@ -386,7 +403,8 @@ METHOD_CONFIGURERS: Dict[str, Optional[ParserConfigurer]] = {
     "gta1": _add_gta1_options,
     "agents3": _add_agents3_options,
     "locallstc": _add_locallstc_options,
-    "locallstc2": _add_locallstc_options,
+    "locallstc2": _add_locallstc2_options,
+    "locallstc_audio": _add_locallstc_options,
     "hisa": _add_hisa_options,
     "coact": _add_coact_options,
     "tars": _add_tars_options,
@@ -398,7 +416,12 @@ def _validate_method_options(args: argparse.Namespace, parser: argparse.Argument
         args.grounding_width = args.grounding_width or args.screen_width
         args.grounding_height = args.grounding_height or args.screen_height
 
-    if args.agent_name in {"locallstc", "locallstc2"}:
+    if args.agent_name in {"locallstc", "locallstc2", "locallstc_audio"}:
+        if args.agent_name == "locallstc2" and args.wo_jev:
+            args.wo_jev_memory = True
+            args.wo_jev_global = True
+            args.wo_jev_skills = True
+            args.wo_jev_api = True
         enabled = [
             name
             for name in (
@@ -448,8 +471,12 @@ def parse_agent_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
         raw_argv.extend(extra_argv)
 
     selected = _extract_agent_name(raw_argv)
-    if selected in {"locallstc", "locallstc2"}:
-        env_name = "LOCALLSTC2_EXTRA_ARGS" if selected == "locallstc2" else "LOCALLSTC_EXTRA_ARGS"
+    if selected in {"locallstc", "locallstc2", "locallstc_audio"}:
+        env_name = {
+            "locallstc": "LOCALLSTC_EXTRA_ARGS",
+            "locallstc2": "LOCALLSTC2_EXTRA_ARGS",
+            "locallstc_audio": "LOCALLSTC_AUDIO_EXTRA_ARGS",
+        }[selected]
         extra_args = os.environ.get(env_name, "").strip()
         if extra_args:
             extra_argv = shlex.split(extra_args)

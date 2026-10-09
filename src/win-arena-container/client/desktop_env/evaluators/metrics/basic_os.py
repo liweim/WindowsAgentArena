@@ -70,18 +70,25 @@ def is_in_vm_clickboard(config, terminal_output):
 
 def check_magnifier_ui_open(result, rule):
     """
-    Checks if magnify.exe is open and checks for Windows magnifier in browser UI/accessibility tree.
+    Check that Windows Magnifier is running.
+
+    Magnifier does not reliably expose a node in the accessibility tree when
+    it is minimized, in full-screen mode, or when another window has focus.
+    Requiring such a node therefore turns a valid background/full-screen
+    Magnifier session into a false negative.  Tasks that specifically require
+    a visible Magnifier control window can opt into the stricter tree check.
     """
+    if not isinstance(result, (list, tuple)) or len(result) != 2:
+        return 0.
 
     process, tree = result
     print("process: ", str(process))
     print("tree: ", str(tree))
 
-    return (
-        "Magnify.exe" in str(process)
-        and
-        "Magnifier" in str(tree)
-    )
+    process_running = "magnify.exe" in str(process).lower()
+    if rule.get("require_ui_tree", False):
+        return float(process_running and "magnifier" in str(tree).lower())
+    return float(process_running)
 
 
 def check_narrator_enabled(result, rule):

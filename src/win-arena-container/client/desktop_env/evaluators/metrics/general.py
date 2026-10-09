@@ -526,7 +526,23 @@ def check_ods_cell_values(result: str, rules: Dict[str, Any]) -> float:
             try:
                 return abs(float(actual_value) - float(expected_value)) <= tolerance
             except (TypeError, ValueError):
-                return False
+                # Office documents often store a visually correct amount as
+                # text (for example "$184.65" or "AUD 1,234.50") rather than
+                # as an ODF numeric cell.  The task concerns the cell value,
+                # not its internal storage type, so accept a single formatted
+                # numeric token while still rejecting unrelated text or
+                # ambiguous cells containing multiple numbers.
+                numeric_tokens = re.findall(
+                    r"[-+]?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?",
+                    str(actual_value),
+                )
+                if len(numeric_tokens) != 1:
+                    return False
+                try:
+                    parsed = float(numeric_tokens[0].replace(",", ""))
+                except ValueError:
+                    return False
+                return abs(parsed - float(expected_value)) <= tolerance
         return str(actual_value).strip() == str(expected_value).strip()
 
     for address, expected_value in expected_cells.items():

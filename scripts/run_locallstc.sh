@@ -5,11 +5,6 @@ set -e
 cd "$(dirname "$0")"
 LOG_FILE="$(pwd)/nohup_locallstc.out"
 
-method="${1:-locallstc}"
-if [ "$#" -gt 0 ]; then
-    shift
-fi
-
 nohup setsid env \
     PYTHONUNBUFFERED=1 \
     WINARENA_IMAGE_TAG=latest \
@@ -20,7 +15,7 @@ nohup setsid env \
     --skip-build true \
     --connect false \
     --start-client true \
-    --agent "$method" \
+    --agent locallstc \
     --model qwen3.8-27b \
     --global_planner_model qwen3.8-27b \
     --visual_grounder_model qwen3.8-27b \
@@ -33,13 +28,11 @@ nohup setsid env \
     --num-workers 1 \
     --isolate-tasks true \
     --container-name a11yarena-locallstc \
-    --browser-port 18113 \
-    --rdp-port 13392 \
     --result-dir /locallstc/projects/WindowsAgentArena/results/locallstc_qwen3.8-27b \
-    --json-name evaluation_examples_windows/debug.json \
+    --json-name evaluation_examples_windows/debug3.json \
     --remove-container true \
     "$@" >"$LOG_FILE" 2>&1 < /dev/null &
 
 runner_pid=$!
-echo "Started $method in container winarena-waa (PID: $runner_pid)"
+echo "Started locallstc in container winarena-waa (PID: $runner_pid)"
 echo "Logs: tail -f $LOG_FILE"

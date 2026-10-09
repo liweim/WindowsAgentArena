@@ -18,19 +18,30 @@ python run_human.py \
     --browser-port 9016 \
     --rdp-port 3400
 
-起服务：
+llm服务：
+nohup python -m vllm.entrypoints.openai.api_server --served-model-name gta1-7b --model /home/weimingli/models/GTA1-7B --gpu-memory-utilization 0.25 --max-model-len 8192 --host 0.0.0.0 --port 1234 > gta1.log 2>&1 &
 nohup python -m vllm.entrypoints.openai.api_server \
     --served-model-name qwen3.8-27b \
     --model /home/weimingli/models/Qwen3.8-27B \
-    --gpu-memory-utilization 0.9 \
+    --gpu-memory-utilization 0.65 \
     --max-model-len 131072 \
-    --max-num-seqs 10 \
+    --max-num-seqs 4 \
     --reasoning-parser qwen3 \
     --host 0.0.0.0 \
     --port 30000 \
     > qwen.log 2>&1 &
 
-语音识别：
+Jev服务：
+DECIDER_DEVICE=cuda \
+PYTHONPATH=/home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client \
+nohup python -m uvicorn \
+  mm_agents.decider_service.server:app \
+  --host 0.0.0.0 \
+  --port 18766 \
+  --workers 1 \
+  > decider.log 2>&1 &
+
+语音识别服务：
 PARAKEET_DEVICE=auto nohup python -m uvicorn \
   mm_agents.parakeet_asr.server:app \
   --app-dir /home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client \

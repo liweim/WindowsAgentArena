@@ -33,8 +33,6 @@ nohup setsid env \
     --num-workers 1 \
     --isolate-tasks true \
     --container-name a11yarena-coact \
-    --browser-port 18115 \
-    --rdp-port 13394 \
     --result-dir /locallstc/projects/WindowsAgentArena/results/coact_qwen3.8-27b \
     --json-name evaluation_examples_windows/test_one.json \
     --remove-container true \

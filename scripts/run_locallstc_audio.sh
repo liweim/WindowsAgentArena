@@ -3,17 +3,11 @@
 set -e
 
 cd "$(dirname "$0")"
-LOG_FILE="$(pwd)/nohup_locallstc2_2.out"
-
-method="${1:-locallstc2}"
-if [ "$#" -gt 0 ]; then
-    shift
-fi
+LOG_FILE="$(pwd)/nohup_locallstc_audio.out"
 
 nohup setsid env \
     PYTHONUNBUFFERED=1 \
     WINARENA_IMAGE_TAG=latest \
-    PARAKEET_ASR_URL=http://host.docker.internal:18765/v1/audio/transcriptions \
     "LOCALLSTC_HOST_UID=$(id -u)" \
     "LOCALLSTC_HOST_GID=$(id -g)" \
     ./run.sh \
@@ -21,7 +15,7 @@ nohup setsid env \
     --skip-build true \
     --connect false \
     --start-client true \
-    --agent "$method" \
+    --agent locallstc_audio \
     --model qwen3.8-27b \
     --global_planner_model qwen3.8-27b \
     --visual_grounder_model qwen3.8-27b \
@@ -33,15 +27,12 @@ nohup setsid env \
     --worker-id 0 \
     --num-workers 1 \
     --isolate-tasks true \
-    --container-name a11yarena-locallstc2-2 \
-    --browser-port 18129 \
-    --rdp-port 13408 \
-    --result-dir /locallstc/projects/WindowsAgentArena/results/locallstc2_qwen3.8-27b \
-    --json-name evaluation_examples_windows/test_one2.json \
+    --container-name a11yarena-locallstc-audio \
+    --result-dir /locallstc/projects/WindowsAgentArena/results/locallstc_audio_qwen3.8-27b \
+    --json-name evaluation_examples_windows/hearing.json \
     --remove-container true \
-    --rerun \
     "$@" >"$LOG_FILE" 2>&1 < /dev/null &
 
 runner_pid=$!
-echo "Started $method in container a11yarena-locallstc2 (PID: $runner_pid)"
+echo "Started locallstc_audio in container a11yarena-locallstc2 (PID: $runner_pid)"
 echo "Logs: tail -f $LOG_FILE"

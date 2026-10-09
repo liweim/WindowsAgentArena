@@ -1226,9 +1226,10 @@ def save_detail_results():
 
 
 if __name__ == "__main__":
-    # summary('/home/weimingli/projects/WindowsAgentArena/results/locallstc_qwen3.8-27b_grounder', '/home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client/evaluation_examples_windows/debug.json')
-    summary('/home/weimingli/projects/WindowsAgentArena/results/locallstc_qwen3.8-27b', '/home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client/evaluation_examples_windows/debug.json')
-    summary('/home/weimingli/projects/WindowsAgentArena/results/locallstc_qwen3.8-27b', '/home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client/evaluation_examples_windows/debug2.json')
-    summary('/home/weimingli/projects/WindowsAgentArena/results/locallstc2_qwen3.8-27b', '/home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client/evaluation_examples_windows/debug2.json')
-    summary('/home/weimingli/projects/WindowsAgentArena/results/agents3_qwen3.8-27b', '/home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client/evaluation_examples_windows/debug.json')
-    # summary('/home/weimingli/projects/WindowsAgentArena/results/tars_qwen3.8-27b', '/home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client/evaluation_examples_windows/debug.json')
+    # summary('/home/weimingli/projects/WindowsAgentArena/results/locallstc_qwen3.8-27b_grounder', '/home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client/evaluation_examples_windows/cognitive.json')
+    # summary('/home/weimingli/projects/WindowsAgentArena/results/locallstc_qwen3.8-27b', '/home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client/evaluation_examples_windows/test_all.json')
+    summary('/home/weimingli/projects/WindowsAgentArena/results/locallstc_qwen3.8-27b', '/home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client/evaluation_examples_windows/motor.json')
+    # summary('/home/weimingli/projects/WindowsAgentArena/results/locallstc_qwen3.8-27b', '/home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client/evaluation_examples_windows/visual.json')
+    # summary('/home/weimingli/projects/WindowsAgentArena/results/locallstc_audio_qwen3.8-27b', '/home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client/evaluation_examples_windows/hearing.json')
+    # summary('/home/weimingli/projects/WindowsAgentArena/results/agents3_qwen3.8-27b', '/home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client/evaluation_examples_windows/cognitive.json')
+    # summary('/home/weimingli/projects/WindowsAgentArena/results/tars_qwen3.8-27b', '/home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client/evaluation_examples_windows/cognitive.json')

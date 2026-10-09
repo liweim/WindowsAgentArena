@@ -24,7 +24,9 @@ AGENT_ALIASES = {
     "tars_agent": "tars",
 }
 STEP_AGENT_NAMES = frozenset({"gta1", "agents3"})
-FRAMEWORK_AGENT_NAMES = frozenset({"locallstc", "locallstc2", "hisa", "coact", "tars"})
+FRAMEWORK_AGENT_NAMES = frozenset(
+    {"locallstc", "locallstc2", "locallstc_audio", "hisa", "coact", "tars"}
+)
 SUPPORTED_AGENT_NAMES = frozenset(
     {"navi", "claude"} | STEP_AGENT_NAMES | FRAMEWORK_AGENT_NAMES
 )
@@ -35,6 +37,7 @@ FRAMEWORK_DEFAULT_MODELS = {
     "hisa": "gpt-5-mini",
     "locallstc": "gpt-5-mini",
     "locallstc2": "gpt-5-mini",
+    "locallstc_audio": "gpt-5-mini",
     "tars": "qwen3.8-27b",
 }
 
@@ -214,12 +217,24 @@ def run_step_agent_example(
 
 
 def _run_locallstc(env, example, args, example_result_dir) -> float:
-    if args.agent_name == "locallstc2":
+    if args.agent_name == "locallstc_audio":
+        from mm_agents.locallstc_audio.main import LocalLSTC
+    elif args.agent_name == "locallstc2":
         from mm_agents.locallstc2.main import LocalLSTC
     else:
         from mm_agents.locallstc.main import LocalLSTC
 
     model = args.global_planner_model or args.model
+    jev_options = {}
+    if args.agent_name == "locallstc2":
+        jev_options = {
+            "wo_global_facts": args.wo_global_facts,
+            "wo_jev_memory": args.wo_jev_memory,
+            "wo_jev_global": args.wo_jev_global,
+            "wo_jev_skills": args.wo_jev_skills,
+            "wo_jev_api": args.wo_jev_api,
+        }
+
     framework = LocalLSTC(
         env=env,
         global_planner_model=model,
@@ -255,6 +270,7 @@ def _run_locallstc(env, example, args, example_result_dir) -> float:
         seed=args.seed,
         top_p=args.top_p,
         top_k=args.top_k,
+        **jev_options,
     )
     return framework.execute_task(
         example, additional_context=build_additional_context(args, example)
@@ -361,7 +377,7 @@ def run_framework_example(
     scores,
 ) -> float:
     """Run a framework that owns its complete task execution loop."""
-    if args.agent_name in {"locallstc", "locallstc2"}:
+    if args.agent_name in {"locallstc", "locallstc2", "locallstc_audio"}:
         score = _run_locallstc(env, example, args, example_result_dir)
     elif args.agent_name == "hisa":
         score = _run_hisa(env, example, args, example_result_dir)

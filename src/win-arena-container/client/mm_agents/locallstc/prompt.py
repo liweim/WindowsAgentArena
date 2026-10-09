@@ -661,7 +661,7 @@ Rules:
 - If there is uncertainty, return `FAIL`.
 - The screenshots are primary evidence for visible state. Use the initial screenshot as baseline context and the latest screenshot as the final state to judge.
 - If the task outcome is only obvious by comparing before vs after, explicitly use that comparison before deciding.
-- If the latest screenshot does not directly show the requested result, return `FAIL`.
+- The latest screenshot should show the final visible state when that state fits on screen. For persistent background state such as a running accessibility feature, process, or registry-backed setting, accept an exact readback in the recent execution history; do not require its control window to cover the primary artifact merely to prove that it remains enabled.
 - Use the provided execution history to confirm what was actually modified, saved, read back, or verified. If logs only show that a command or API call ran, but do not confirm the requested final result, return `FAIL`.
 - If a file was modified through `bash_execution` while the desktop app may still display stale content, prefer explicit readback/verification evidence from the logs plus the latest screenshot of the reopened app state.
 - Fail if the logs reveal formatting mistakes, header corruption, partial coverage, or any mismatch with the task requirements.
@@ -691,7 +691,7 @@ Rules:
 - If there is uncertainty, return `FAIL`.
 - The screenshots are primary evidence for visible state. Use the initial screenshot as baseline context and the latest screenshot as the final state to judge.
 - If the task outcome is only obvious by comparing before vs after, explicitly use that comparison before deciding.
-- If the latest screenshot does not directly show the requested result, return `FAIL`.
+- The latest screenshot should show the final visible state when that state fits on screen. For persistent background state such as a running accessibility feature, process, or registry-backed setting, accept an exact readback in the recent execution history; do not require its control window to cover the primary artifact merely to prove that it remains enabled.
 - Use the provided execution history to confirm what was actually modified, saved, read back, or verified. If logs only show that a command or API call ran, but do not confirm the requested final result, return `FAIL`.
 - If a file was modified through `bash_execution` while the desktop app may still display stale content, prefer explicit readback/verification evidence from the logs plus the latest screenshot of the reopened app state.
 - Fail if the logs reveal formatting mistakes, header corruption, partial coverage, or any mismatch with the task requirements.

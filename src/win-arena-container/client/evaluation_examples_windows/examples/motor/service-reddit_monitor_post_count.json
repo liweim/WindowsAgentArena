@@ -23,7 +23,7 @@
     "Find the `Monitor` forum.",
     "Click `View More` for `Monitor`.",
     "Open a text editor.",
-    "Enter `5` in `answer.txt`.",
+    "Enter `6` in `answer.txt`.",
     "Save the file as `answer.txt` on the Desktop.",
     "Leave Mouse Keys enabled."
   ],
@@ -88,7 +88,7 @@
       },
       {
         "type": "vm_command_line",
-        "command": "powershell -NoProfile -Command \"$path=Join-Path ([Environment]::GetFolderPath('Desktop')) 'answer.txt'; if (!(Test-Path $path)) { Write-Output 'ANSWER_INCORRECT'; exit }; $text=Get-Content -Raw $path; if ($text -match '^\\s*5\\s*$') { Write-Output 'ANSWER_CORRECT' } else { Write-Output 'ANSWER_INCORRECT' }\"",
+        "command": "powershell -NoProfile -Command \"$path=Join-Path ([Environment]::GetFolderPath('Desktop')) 'answer.txt'; if (!(Test-Path $path)) { Write-Output 'ANSWER_INCORRECT'; exit }; $text=Get-Content -Raw $path; if ($text -match '^\\s*6\\s*$') { Write-Output 'ANSWER_CORRECT' } else { Write-Output 'ANSWER_INCORRECT' }\"",
         "shell": true
       }
     ],

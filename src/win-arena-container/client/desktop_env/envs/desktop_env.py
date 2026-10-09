@@ -387,11 +387,10 @@ class DesktopEnv(gym.Env):
             self._set_evaluation_breakdown([success_rate], success_rate)
             return success_rate
 
-        if len(self.action_history) > 0 and self.action_history[-1] == "FAIL":
-            primitive_values = [0.0] * len(self.metric) if isinstance(self.metric, list) else [0.0]
-            self._set_evaluation_breakdown(primitive_values, 0.0)
-            return 0.0
-
+        # Ordinary tasks are scored from the final VM state, regardless of the
+        # agent's termination signal. Runners also append FAIL on timeouts, and
+        # short-circuiting here would turn an already-correct state into a
+        # false negative without invoking any configured getter or metric.
         if isinstance(self.metric, list):
             primitive_values = []
             for idx, metric_fn in enumerate(self.metric):

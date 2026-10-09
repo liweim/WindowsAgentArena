@@ -18,6 +18,8 @@ from mm_agents.llm import (
     uses_direct_coordinate_grounding,
 )
 from mm_agents.locallstc2.api import APIRegistry
+from mm_agents.decider_service.request import DEFAULT_CONTAINER_URL as DEFAULT_DECIDER_URL
+from mm_agents.decider_service.request import DeciderHTTPClient
 from mm_agents.utils import serialize_json, get_change_roi
 from json_repair import repair_json
 from mm_agents.utils import postprocess_action
@@ -70,6 +72,17 @@ VALID_TOOLS = GUI_ACTION_TOOLS | NON_GUI_TOOLS
 KNOWN_API_PREFIXES = tuple(f"{name}." for name in sorted(set(APIRegistry.HANDLER_CLASS.values())))
 BASH_STEP_ABSTRACTION_LOG_CHAR_LIMIT = 20000
 BASH_STEP_ABSTRACTION_LOG_OMISSION = "Output truncated because it exceeded the length limit."
+JEV_INCLUDE_THRESHOLD = 0.5
+GLOBAL_FACT_KEY_MAX_CHARS = 128
+GLOBAL_FACT_VALUE_MAX_CHARS = 1024
+GLOBAL_FACT_PROMPT_EXTENSION = """
+
+Additional persistent-fact rules:
+- If this step discovered or changed information that may remain useful in later subgoals, append a GLOBAL section after the existing concise summary.
+- In GLOBAL, write one simple `key = value` fact per line. If there is nothing worth keeping globally, write `GLOBAL:\nNONE`.
+- GLOBAL is for persistent cross-subgoal information such as paths, sheet/range names, URLs, IDs, exact user constraints, unavailable capabilities, enabled features, and created objects.
+- Do not put temporary observations or ordinary step details in GLOBAL.
+"""
 def _validate_scroll_amount(value) -> int:
     if isinstance(value, bool) or not isinstance(value, int):
         raise ValueError("scroll amount must be an integer")
@@ -115,6 +128,11 @@ class LocalLSTC:
         wo_sa: bool = False,  # If True, expose deterministic raw execution evidence
         wo_sr: bool = False,  # If True, assign states for logging but do not route on them
         wo_think: bool = False,  # If True, disable thinking mode for all LocalLSTC agent calls
+        wo_global_facts: bool = False,
+        wo_jev_memory: bool = False,
+        wo_jev_global: bool = False,
+        wo_jev_skills: bool = False,
+        wo_jev_api: bool = False,
         thinking_token_budget: Optional[int] = None,
         temperature: float = 1,
         seed: Optional[int] = 42,
@@ -167,6 +185,11 @@ class LocalLSTC:
         self.wo_ps = bool(wo_ps)
         self.wo_sa = bool(wo_sa)
         self.wo_sr = bool(wo_sr)
+        self.wo_global_facts = bool(wo_global_facts)
+        self.wo_jev_memory = bool(wo_jev_memory)
+        self.wo_jev_global = bool(wo_jev_global)
+        self.wo_jev_skills = bool(wo_jev_skills)
+        self.wo_jev_api = bool(wo_jev_api)
         self.api_enabled = not self.wo_l2s
         self.enable_thinking = not wo_think
         self.thinking_token_budget = thinking_token_budget
@@ -183,6 +206,8 @@ class LocalLSTC:
         self.logger = logging.getLogger("desktopenv")
         self.skills_dir = os.path.join(os.path.dirname(__file__), "skills")
         self.api_registry = APIRegistry(os.path.dirname(__file__))
+        self._jev = None
+        self._jev_init_attempted = False
 
         # Initialize LLM clients
         self.global_planner_llm = AbstractLLM(
@@ -214,6 +239,8 @@ class LocalLSTC:
         self.operation_count = 0
         self.operations_dir = ""
         self.action_logs = []
+        self.global_facts: Dict[str, str] = {}
+        self.subgoal_anchors: List[Dict[str, Any]] = []
         self.last_error_feedback = None
         self.last_full_summary = None  # Last complete history summary
         self.last_summary_log_index = 0  # Number of action logs already folded into last_full_summary
@@ -322,6 +349,8 @@ class LocalLSTC:
     def _reset_execution_state(self) -> None:
         self.operation_count = 0
         self.action_logs = []
+        self.global_facts = {}
+        self.subgoal_anchors = []
         self.last_full_summary = None
         self.last_summary_log_index = 0
         self.last_refinement_log_count = 0
@@ -626,8 +655,14 @@ print(output)
                 "google slides",
             ]
         )
-        user_group = self._normalize_skill_domain(task_config.get("user_group"))
-        should_add_audio = user_group == "hearing"
+        instruction = str(task_config.get("instruction") or "")
+        should_add_audio = re.search(
+            r"\b(?:recordings?|recorded|videos?|speech|spoken|voice|voicemails?)\b"
+            r"|\baudio[\s-]+captcha\b|\blive[\s-]+captions?\b"
+            r"|录音|视频|语音|音频验证码|实时字幕",
+            instruction,
+            flags=re.IGNORECASE,
+        ) is not None
         if not raw_related_apps:
             inferred_domains = []
             if should_add_google_drive:
@@ -738,10 +773,211 @@ print(output)
             return NO_AL_PLANNER_RESPONSE_FORMAT_PROMPT
         return PLANNER_RESPONSE_FORMAT_PROMPT if self.api_enabled else NO_API_PLANNER_RESPONSE_FORMAT_PROMPT
 
-    def _build_action_channel_planner_sections(self) -> List[str]:
+    def _get_jev(self):
+        if self._jev is not None:
+            return self._jev
+        if self._jev_init_attempted:
+            return None
+        self._jev_init_attempted = True
+        try:
+            url = os.environ.get("DECIDER_URL", DEFAULT_DECIDER_URL)
+            timeout = float(os.environ.get("DECIDER_TIMEOUT", "300"))
+            self._jev = DeciderHTTPClient(url=url, timeout=timeout)
+            self.logger.info("[jev] configured service=%s", url)
+        except Exception as exc:
+            self.logger.warning("[jev_fallback] service client initialization failed: %s", exc)
+            self._jev = None
+        return self._jev
+
+    def _build_jev_state(self, *, include_memory: bool = False) -> str:
+        sections = [f"Task:\n{getattr(self, 'task_instruction', '')}"]
+        sections.append(f"Current subgoal:\n{self.current_subgoal or 'Not established yet'}")
+        foreground = []
+        if self.current_foreground_app:
+            foreground.append(f"Foreground app: {self.current_foreground_app}")
+        if self.current_foreground_window_title:
+            foreground.append(f"Foreground window title: {self.current_foreground_window_title}")
+        if foreground:
+            sections.append("Current foreground/application context:\n" + "\n".join(foreground))
+        if include_memory:
+            sections.append("Memory anchors:\n" + self._render_memory_anchors_for_jev())
+        return "\n\n".join(sections)
+
+    def _render_memory_anchors_for_jev(self) -> str:
+        if not self.subgoal_anchors:
+            return "None"
+        chunks: List[str] = []
+        for index, anchor in enumerate(self.subgoal_anchors):
+            start_step = int(anchor["step"])
+            end_step = (
+                int(self.subgoal_anchors[index + 1]["step"]) - 1
+                if index + 1 < len(self.subgoal_anchors)
+                else None
+            )
+            chunks.append(f"A{index} | step {start_step} | {anchor['subgoal']}")
+            for log in self.action_logs:
+                step = int(log.get("step", 0) or 0)
+                if step < start_step or (end_step is not None and step > end_step):
+                    continue
+                if log.get("compact") or log.get("detail"):
+                    chunks.append(self._render_compact_log(log))
+        return "\n".join(chunks)
+
+    def _jev_select_memory_start_step(self) -> Optional[int]:
+        if not self.subgoal_anchors:
+            return None
+        if len(self.subgoal_anchors) == 1:
+            return int(self.subgoal_anchors[0]["step"])
+        jev = self._get_jev()
+        if jev is None:
+            return None
+        criteria = {
+            f"A{index}": f"Keep episodic memory from A{index} onward."
+            for index in range(len(self.subgoal_anchors))
+        }
+        questions = {
+            "memory_cutoff": {
+                "type": "choice",
+                "instructions": (
+                    "Which is the earliest memory anchor whose memory should still be retained "
+                    "for planning the current subgoal? Choose the earliest anchor that may still "
+                    "contain useful decision information; older anchors will be omitted from the planner context."
+                ),
+                "criteria": criteria,
+            }
+        }
+        try:
+            result = jev.system_one(self._build_jev_state(include_memory=True), questions)
+            answer = result["answers"]["memory_cutoff"]
+            anchor_id = answer["choice"]
+            match = re.fullmatch(r"A(\d+)", str(anchor_id))
+            if not match or int(match.group(1)) >= len(self.subgoal_anchors):
+                raise ValueError(f"unusable anchor {anchor_id!r}")
+            index = int(match.group(1))
+            probability = (answer.get("probabilities") or {}).get(anchor_id)
+            self.logger.info(
+                "[jev_memory] selected=%s start_step=%s p=%s",
+                anchor_id,
+                self.subgoal_anchors[index]["step"],
+                probability if probability is not None else "n/a",
+            )
+            return int(self.subgoal_anchors[index]["step"])
+        except Exception as exc:
+            self.logger.warning(
+                "[jev_fallback] memory inference failed; using all compact episodic history: %s",
+                exc,
+            )
+            return None
+
+    def _jev_select_noul(self, kind: str, candidates: List[Tuple[str, str]]) -> Optional[List[str]]:
+        if not candidates:
+            return []
+        jev = self._get_jev()
+        if jev is None:
+            return None
+        subject = {
+            "global": "persistent fact",
+            "skills": "skill/instruction block",
+            "api": "API method",
+        }[kind]
+        question_prefix = "fact" if kind == "global" else kind[:-1] if kind == "skills" else kind
+        questions = {}
+        for index, (name, description) in enumerate(candidates):
+            if kind == "global":
+                candidate_text = f"Fact: {name} = {description}"
+            else:
+                candidate_text = f"{subject.title()}: {name}. Description: {description}"
+            questions[f"{question_prefix}_{index}"] = {
+                "type": "noul",
+                "instructions": (
+                    f"Should this {subject} be included in the planner context for the current subgoal? "
+                    f"{candidate_text}"
+                ),
+                "criteria": {
+                    "true": f"Include this {subject}.",
+                    "false": f"This {subject} is not useful for the current planner decision.",
+                },
+            }
+        try:
+            result = jev.system_one(self._build_jev_state(), questions)
+            answers = result["answers"]
+            selected = []
+            for index, (name, _) in enumerate(candidates):
+                p_yes = float(answers[f"{question_prefix}_{index}"]["noul"])
+                self.logger.debug("[jev_%s] candidate=%s p_yes=%.4f", kind, name, p_yes)
+                if p_yes >= JEV_INCLUDE_THRESHOLD:
+                    selected.append(name)
+            return selected
+        except Exception as exc:
+            self.logger.warning("[jev_fallback] %s inference failed: %s", kind, exc)
+            return None
+
+    def _select_global_facts_for_planner(self) -> List[Tuple[str, str]]:
+        if self.wo_global_facts or not self.global_facts:
+            return []
+        candidates = list(self.global_facts.items())
+        if self.wo_jev_global:
+            return candidates
+        selected_keys = self._jev_select_noul("global", candidates)
+        if selected_keys is None:
+            self.logger.warning("[jev_fallback] global facts using all stored facts")
+            return candidates
+        selected_key_set = set(selected_keys)
+        selected = [(key, value) for key, value in candidates if key in selected_key_set]
+        self.logger.info(
+            "[jev_global] selected=%s/%s threshold=%.2f",
+            len(selected),
+            len(candidates),
+            JEV_INCLUDE_THRESHOLD,
+        )
+        return selected
+
+    def _select_skills_for_planner(self) -> Optional[List[str]]:
+        candidates = self._get_candidate_skill_names()
+        if self.wo_jev_skills or not candidates:
+            return None
+        descriptions = [
+            (name, name.rsplit(".", 1)[0].replace("_", " "))
+            for name in candidates
+        ]
+        selected = self._jev_select_noul("skills", descriptions)
+        if not selected:
+            reason = "selected zero candidates" if selected == [] else "inference failed"
+            self.logger.warning("[jev_fallback] skills %s; using baseline candidate set", reason)
+            return None
+        self.logger.info("[jev_skills] selected=%s", ",".join(selected))
+        return selected
+
+    def _get_candidate_api_methods(self) -> List[Tuple[str, str]]:
+        candidates: List[Tuple[str, str]] = []
+        seen = set()
+        for domain in self._get_effective_app_domains():
+            for item in self.api_registry.get_domain_tools(domain):
+                function = item.get("function", {}) or {}
+                name = str(function.get("name", "") or "").strip()
+                if not name or name in seen:
+                    continue
+                seen.add(name)
+                candidates.append((name, str(function.get("description", "") or "").strip()))
+        return candidates
+
+    def _select_api_methods_for_planner(self) -> Optional[List[str]]:
+        if self.wo_jev_api or not self.api_enabled:
+            return None
+        candidates = self._get_candidate_api_methods()
+        if not candidates:
+            return None
+        selected = self._jev_select_noul("api", candidates)
+        if not selected:
+            reason = "selected zero candidates" if selected == [] else "inference failed"
+            self.logger.warning("[jev_fallback] api %s; using baseline full-domain API prompt", reason)
+            return None
+        self.logger.info("[jev_api] selected=%s", ",".join(selected))
+        return selected
+
+    def _get_action_channel_skill_names(self) -> List[str]:
         if self.guest_platform == "android":
             return []
-        sections: List[str] = []
         single_action_schema = not self._actions_list_enabled()
         single_action_suffix = "no_l2s" if not self._planner_subgoal_enabled() else "no_al"
 
@@ -765,15 +1001,37 @@ print(output)
             else f"{bash_skill_base}.md"
         )
         shared_skill_names.append(bash_skill)
+        return [name for name in shared_skill_names if self._skill_file_exists(name)]
 
-        for shared_skill_name in shared_skill_names:
-            if self._skill_file_exists(shared_skill_name):
+    def _get_candidate_skill_names(self) -> List[str]:
+        names = self._get_action_channel_skill_names()
+        names.extend(
+            name
+            for name in self._get_domain_skill_names_for_prompt()
+            if self._skill_file_exists(name)
+        )
+        return list(dict.fromkeys(names))
+
+    def _build_action_channel_planner_sections(
+        self,
+        selected_skill_names: Optional[List[str]] = None,
+        selected_api_methods: Optional[List[str]] = None,
+    ) -> List[str]:
+        if self.guest_platform == "android":
+            return []
+        sections: List[str] = []
+        single_action_schema = not self._actions_list_enabled()
+        selected_skill_set = None if selected_skill_names is None else set(selected_skill_names)
+
+        for shared_skill_name in self._get_action_channel_skill_names():
+            if selected_skill_set is None or shared_skill_name in selected_skill_set:
                 sections.append(self._load_skill_text(shared_skill_name))
 
         if self.api_enabled:
             api_prompt = self.api_registry.render_prompt(
                 self._get_effective_app_domains(),
                 single_action_schema=single_action_schema,
+                selected_methods=selected_api_methods,
             )
             if api_prompt:
                 sections.append(api_prompt)
@@ -787,12 +1045,15 @@ print(output)
                 domain_skill_names.append(skill_name)
         return domain_skill_names
 
-    def _build_domain_planner_sections(self) -> List[str]:
+    def _build_domain_planner_sections(self, selected_skill_names: Optional[List[str]] = None) -> List[str]:
         if self.guest_platform == "android":
             return []
         sections: List[str] = []
+        selected_skill_set = None if selected_skill_names is None else set(selected_skill_names)
         for domain_skill_name in self._get_domain_skill_names_for_prompt():
-            if self._skill_file_exists(domain_skill_name):
+            if self._skill_file_exists(domain_skill_name) and (
+                selected_skill_set is None or domain_skill_name in selected_skill_set
+            ):
                 sections.append(self._load_skill_text(domain_skill_name))
         return sections
 
@@ -803,11 +1064,15 @@ print(output)
             return [self._load_skill_text("recovery_feedback.md")]
         return []
 
-    def _build_planner_system_prompt(self) -> str:
+    def _build_planner_system_prompt(
+        self,
+        selected_skill_names: Optional[List[str]] = None,
+        selected_api_methods: Optional[List[str]] = None,
+    ) -> str:
         sections = []
         sections.extend(self._build_base_planner_sections())
-        sections.extend(self._build_action_channel_planner_sections())
-        sections.extend(self._build_domain_planner_sections())
+        sections.extend(self._build_action_channel_planner_sections(selected_skill_names, selected_api_methods))
+        sections.extend(self._build_domain_planner_sections(selected_skill_names))
         sections.extend(self._build_recovery_planner_sections())
         if self.direct_coordinate_grounding:
             sections.append(DIRECT_COORDINATE_GROUNDING_PROMPT)
@@ -843,7 +1108,41 @@ print(output)
         return self._normalize_subgoal(text)
 
     def _parse_abstraction_payload(self, raw_text: str) -> str:
-        summary = re.sub(r"\s+", " ", str(raw_text or "").strip())
+        text = str(raw_text or "").strip()
+        if not self.wo_global_facts:
+            try:
+                lines = text.splitlines()
+                global_index = next(
+                    (
+                        index
+                        for index, line in enumerate(lines)
+                        if re.match(r"^\s*GLOBAL\s*:", line, flags=re.IGNORECASE)
+                    ),
+                    None,
+                )
+                if global_index is not None:
+                    header = re.sub(
+                        r"^\s*GLOBAL\s*:\s*",
+                        "",
+                        lines[global_index],
+                        flags=re.IGNORECASE,
+                    )
+                    fact_lines = ([header] if header else []) + lines[global_index + 1:]
+                    text = "\n".join(lines[:global_index]).strip()
+                    for line in fact_lines:
+                        fact = str(line or "").strip()
+                        if not fact or fact.upper() == "NONE" or "=" not in fact:
+                            continue
+                        key, value = (part.strip() for part in fact.split("=", 1))
+                        if not key or not value:
+                            continue
+                        key = key[:GLOBAL_FACT_KEY_MAX_CHARS]
+                        value = value[:GLOBAL_FACT_VALUE_MAX_CHARS]
+                        self.global_facts[key] = value
+                        self.logger.info("[global_fact] set %s=%s", key, value)
+            except Exception as exc:
+                self.logger.warning("Failed to parse optional GLOBAL facts: %s", exc)
+        summary = re.sub(r"\s+", " ", text)
         return summary or "Step abstraction failed due to error."
 
     def _s2l_enabled(self) -> bool:
@@ -957,10 +1256,21 @@ print(output)
         if text:
             sections.append(f"{title}:\n{text}")
 
-    def _build_condensed_history_items(self, *, include_summary: bool = True) -> List[str]:
+    def _build_condensed_history_items(
+        self,
+        *,
+        include_summary: bool = True,
+        start_step: Optional[int] = None,
+    ) -> List[str]:
         history_items: List[str] = []
 
-        if self.last_full_summary:
+        if start_step is not None:
+            logs_to_use = [
+                log
+                for log in self.action_logs
+                if int(log.get("step", 0) or 0) >= int(start_step)
+            ]
+        elif self.last_full_summary:
             if include_summary:
                 history_items.append(self.last_full_summary)
             logs_to_use = self.action_logs[self.last_summary_log_index:]
@@ -983,6 +1293,7 @@ print(output)
         prompt_text: str = "",
         observation_text: str = "",
         recovery_feedback_text: str = "",
+        global_facts: Optional[List[Tuple[str, str]]] = None,
     ) -> Optional[Dict]:
         sections: List[str] = []
 
@@ -1001,6 +1312,10 @@ print(output)
         subgoal_lines = self._build_subgoal_context_lines()
         if subgoal_lines:
             sections.append("\n\n".join(subgoal_lines))
+
+        if global_facts:
+            facts_text = "\n".join(f"- {key} = {value}" for key, value in global_facts)
+            self._append_context_section(sections, "Relevant global facts", facts_text)
 
         if history_items:
             history_text = "\n".join(str(item).strip() for item in history_items if str(item).strip())
@@ -1062,6 +1377,8 @@ print(output)
         return " | ".join(parts)
 
     def _maybe_refine_context(self, reason: str = "") -> None:
+        if not self.wo_jev_memory:
+            return
         total_logs = len(self.action_logs)
         if total_logs <= 0:
             return
@@ -1234,6 +1551,13 @@ print(output)
         elif proposed_subgoal != previous_subgoal:
             self.current_subgoal = proposed_subgoal
 
+        if (not previous_subgoal or proposed_subgoal != previous_subgoal) and not any(
+            int(anchor.get("step", -1)) == int(target_step)
+            and anchor.get("subgoal") == proposed_subgoal
+            for anchor in self.subgoal_anchors
+        ):
+            self.subgoal_anchors.append({"step": int(target_step), "subgoal": proposed_subgoal})
+
         return status
 
     def _build_termination_guard_feedback(self) -> str:
@@ -1381,9 +1705,8 @@ print(output)
         # solely from the user-visible instruction and observed action results.
         if self._instruction_requires_live_caption() and not self._history_confirms_live_caption():
             self.last_final_verification_failure_reason = (
-                "The task instruction requires Chrome Live Caption, but observed action results "
-                "do not confirm that it was enabled or visibly active. Enable and verify Live "
-                "Caption; an AudioTools transcript alone does not satisfy this requirement."
+                "Chrome Live Caption is required but not confirmed enabled. Enable it once; "
+                "no separate verification is needed."
             )
             self.logger.info("Final verification blocked: %s", self.last_final_verification_failure_reason)
             return False
@@ -1925,6 +2248,17 @@ print(output)
         self.logger.info(f"wo_ps: {self.wo_ps}")
         self.logger.info(f"wo_sa: {self.wo_sa}")
         self.logger.info(f"wo_sr: {self.wo_sr}")
+        self.logger.info(
+            "[ablation] wo_global_facts=%s wo_jev_memory=%s wo_jev_global=%s "
+            "wo_jev_skills=%s wo_jev_api=%s",
+            str(self.wo_global_facts).lower(),
+            str(self.wo_jev_memory).lower(),
+            str(self.wo_jev_global).lower(),
+            str(self.wo_jev_skills).lower(),
+            str(self.wo_jev_api).lower(),
+        )
+        if self.wo_jev_memory:
+            self.logger.info("[ablation] wo_jev_memory=true -> using original Context Refinement")
         
         # Initial message
         task_instruction = task_config["instruction"]
@@ -2279,14 +2613,29 @@ print(output)
                 screenshot_b64 = base64.b64encode(screenshot).decode("utf-8")
                 self._refresh_foreground_app_context()
 
-                planner_system_prompt = self._build_planner_system_prompt()
+                if self.wo_jev_memory:
+                    memory_start_step = None
+                else:
+                    # Step zero is the explicit fail-open value: it bypasses
+                    # recursive summaries and retains every compact log.
+                    memory_start_step = self._jev_select_memory_start_step() or 0
+                selected_global_facts = self._select_global_facts_for_planner()
+                selected_skill_names = self._select_skills_for_planner()
+                selected_api_methods = self._select_api_methods_for_planner()
+                planner_system_prompt = self._build_planner_system_prompt(
+                    selected_skill_names=selected_skill_names,
+                    selected_api_methods=selected_api_methods,
+                )
                 active_recovery_feedback = self._get_active_recovery_feedback()
 
                 # The planner context already renders last_full_summary under
                 # "Summary of previous steps". Only pass the steps recorded
                 # after that refinement into "Execution history" so the same
                 # summary is not injected twice.
-                condensed_history = self._build_condensed_history_items(include_summary=False)
+                condensed_history = self._build_condensed_history_items(
+                    include_summary=False,
+                    start_step=memory_start_step,
+                )
                 messages = [{"role": "system", "content": planner_system_prompt}]
                 prompt_text = "Based on the execution history and current screenshot, decide the next action. Prefer the shortest reliable path and avoid repeating failed actions."
                 if active_recovery_feedback:
@@ -2296,6 +2645,7 @@ print(output)
                     history_items=condensed_history,
                     prompt_text=prompt_text,
                     recovery_feedback_text=active_recovery_feedback,
+                    global_facts=selected_global_facts,
                 )
                 if context_message:
                     messages.append(context_message)
@@ -2931,8 +3281,15 @@ print(output)
         if not self._s2l_enabled():
             if self._planner_subgoal_enabled():
                 proposed_subgoal = self._normalize_subgoal(decision.get("subgoal", ""))
+                previous_subgoal = self.current_subgoal
                 self.current_subgoal = proposed_subgoal
                 step = self.current_step_id or (self.operation_count + 1)
+                if (not previous_subgoal or proposed_subgoal != previous_subgoal) and not any(
+                    int(anchor.get("step", -1)) == int(step)
+                    and anchor.get("subgoal") == proposed_subgoal
+                    for anchor in self.subgoal_anchors
+                ):
+                    self.subgoal_anchors.append({"step": int(step), "subgoal": proposed_subgoal})
                 for log in reversed(self.action_logs):
                     if log.get("step") != step:
                         if log.get("step", 0) < step:
@@ -3919,6 +4276,8 @@ print(output)
                     action_description=action_description,
                     recovery_hint=recovery_hint if recovery_hint else "None",
                 )
+            if not self.wo_global_facts and self.guest_platform != "android":
+                prompt += GLOBAL_FACT_PROMPT_EXTENSION
             if bash_context is not None:
                 bash_logs = bash_context.get("logs", "")
                 key_identifiers = self._extract_bash_step_identifiers(bash_logs)
@@ -4542,6 +4901,11 @@ except subprocess.TimeoutExpired as e:
                 "wo_ps": self.wo_ps,
                 "wo_sa": self.wo_sa,
                 "wo_sr": self.wo_sr,
+                "wo_global_facts": self.wo_global_facts,
+                "wo_jev_memory": self.wo_jev_memory,
+                "wo_jev_global": self.wo_jev_global,
+                "wo_jev_skills": self.wo_jev_skills,
+                "wo_jev_api": self.wo_jev_api,
                 "l2s_enabled": self._planner_subgoal_enabled(),
                 "s2l_enabled": self._s2l_enabled(),
                 "persistent_subgoal_enabled": self._planner_subgoal_enabled() and (not self.wo_ps),

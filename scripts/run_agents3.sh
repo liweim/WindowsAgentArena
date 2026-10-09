@@ -28,8 +28,6 @@ nohup setsid env \
     --num-workers 1 \
     --isolate-tasks true \
     --container-name a11yarena-agents3 \
-    --browser-port 18114 \
-    --rdp-port 13393 \
     --result-dir /locallstc/projects/WindowsAgentArena/results/agents3_qwen3.8-27b \
     --json-name evaluation_examples_windows/debug.json \
     --remove-container true \

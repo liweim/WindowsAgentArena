@@ -18,8 +18,8 @@ ephemeral_vm_storage=false
 mount_client=true
 mount_server=true
 container_name="a11yarena"
-browser_port=9006
-rdp_port=3390
+browser_port=""
+rdp_port=""
 start_client=true
 agent="navi"
 model="gpt-4-vision-preview"
@@ -182,7 +182,17 @@ prepare_vm_storage_mount_path() {
 invoke_docker_container() {
     docker_command="docker run"
     if [ "$interactive" = true ] && [ -t 1 ]; then docker_command+=" -it"; fi
-    docker_command+=" -p ${browser_port}:8006 -p ${rdp_port}:3389 --name $container_name --platform linux/amd64"
+    if [ -n "$browser_port" ]; then
+        docker_command+=" -p ${browser_port}:8006"
+    else
+        docker_command+=" -p 8006"
+    fi
+    if [ -n "$rdp_port" ]; then
+        docker_command+=" -p ${rdp_port}:3389"
+    else
+        docker_command+=" -p 3389"
+    fi
+    docker_command+=" --name $container_name --platform linux/amd64"
     if [ "$remove_container" = true ] && [ "$interactive" = true ]; then docker_command+=" --rm"; fi
     if [ "$interactive" != true ]; then docker_command+=" -d"; fi
     if [ "$use_kvm" = true ]; then docker_command+=" --device=/dev/kvm"; else docker_command+=" -e KVM=N"; fi
@@ -207,6 +217,8 @@ invoke_docker_container() {
     if [ -n "${LOCALLSTC_EXTRA_ARGS:-}" ]; then docker_command+=" -e LOCALLSTC_EXTRA_ARGS"; fi
     if [ -n "${PARAKEET_ASR_URL:-}" ]; then docker_command+=" -e PARAKEET_ASR_URL"; fi
     if [ -n "${PARAKEET_ASR_TIMEOUT:-}" ]; then docker_command+=" -e PARAKEET_ASR_TIMEOUT"; fi
+    if [ -n "${DECIDER_URL:-}" ]; then docker_command+=" -e DECIDER_URL"; fi
+    if [ -n "${DECIDER_TIMEOUT:-}" ]; then docker_command+=" -e DECIDER_TIMEOUT"; fi
     if [ -n "${LOCALLSTC_HOST_UID:-}" ]; then docker_command+=" -e LOCALLSTC_HOST_UID"; fi
     if [ -n "${LOCALLSTC_HOST_GID:-}" ]; then docker_command+=" -e LOCALLSTC_HOST_GID"; fi
     docker_command+=" --cap-add NET_ADMIN --stop-timeout 120 --entrypoint /bin/bash"
@@ -230,6 +242,10 @@ invoke_docker_container() {
 
     container_id=$(eval $docker_command)
     echo "Started container: $container_id"
+    published_browser_port=$(docker inspect --format '{{(index (index .NetworkSettings.Ports "8006/tcp") 0).HostPort}}' "$container_name")
+    published_rdp_port=$(docker inspect --format '{{(index (index .NetworkSettings.Ports "3389/tcp") 0).HostPort}}' "$container_name")
+    echo "Browser port: $published_browser_port"
+    echo "RDP port: $published_rdp_port"
 
     docker logs -f "$container_name" &
     log_pid=$!

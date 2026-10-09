@@ -11,7 +11,7 @@
   ],
   "difficulty": "medium",
   "operation_time": 109.10,
-  "instruction": "Use the original sample Medicare card image on the Desktop and save `answer.txt` with the sample name, Medicare Number, Part A coverage type and start date, and Part B coverage type and start date, one item per line in that order.",
+  "instruction": "Use the original sample Medicare card image on the Desktop and save `answer.txt` on the Desktop with the sample name, Medicare Number, Part A coverage type and start date, and Part B coverage type and start date, one item per line in that order.",
   "source": "https://www.medicare.gov/sites/default/files/Medicare_card_new.jpg",
   "gt_steps": [
     "Open Notepad.",

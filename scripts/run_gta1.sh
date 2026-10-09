@@ -29,8 +29,6 @@ nohup setsid env \
     --num-workers 1 \
     --isolate-tasks true \
     --container-name a11yarena-gta1 \
-    --browser-port 18116 \
-    --rdp-port 13395 \
     --result-dir /locallstc/projects/WindowsAgentArena/results/gta1_qwen3.8-27b \
     --json-name evaluation_examples_windows/test_one.json \
     --remove-container true \

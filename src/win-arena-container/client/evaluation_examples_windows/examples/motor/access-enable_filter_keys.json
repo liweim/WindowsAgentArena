@@ -26,7 +26,7 @@
     "func": "check_include_exclude",
     "result": {
       "type": "vm_command_line",
-      "command": "powershell -NoProfile -Command \"$flags = [int](Get-ItemPropertyValue -Path 'HKCU:\\Control Panel\\Accessibility\\Keyboard Response' -Name 'Flags' -ErrorAction SilentlyContinue); if (($flags -band 1) -eq 1) { Write-Output 'FILTER_KEYS_ENABLED' } else { Write-Output 'FILTER_KEYS_DISABLED' }\"",
+      "command": "powershell -NoProfile -Command \"$src='using System; using System.Runtime.InteropServices; public class FK { [StructLayout(LayoutKind.Sequential)] public struct FILTERKEYS { public uint cbSize; public uint dwFlags; public uint iWaitMSec; public uint iDelayMSec; public uint iRepeatMSec; public uint iBounceMSec; } [DllImport(\\\"user32.dll\\\", SetLastError=true)] public static extern bool SystemParametersInfo(uint uiAction, uint uiParam, ref FILTERKEYS pvParam, uint fWinIni); }'; Add-Type -TypeDefinition $src; $fk=New-Object FK+FILTERKEYS; $fk.cbSize=[Runtime.InteropServices.Marshal]::SizeOf($fk); $ok=[FK]::SystemParametersInfo(0x0032,$fk.cbSize,[ref]$fk,0); if ($ok -and (($fk.dwFlags -band 0x1) -ne 0)) { Write-Output 'FILTER_KEYS_ENABLED' } else { Write-Output 'FILTER_KEYS_DISABLED' }\"",
       "shell": true
     },
     "expected": {

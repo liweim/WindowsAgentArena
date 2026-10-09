@@ -10,7 +10,7 @@
   ],
   "difficulty": "hard",
   "operation_time": 58.21,
-  "instruction": "Enable Windows Filter Keys and keep them enabled. Compare the release dates of `Salomon Men's Predict Soc2 Running` and `Nike Men's Stroke Running Shoe, 6.5 us`. For the more recently released shoe, select Black, size 12, and add exactly one unit to the shopping cart.",
+  "instruction": "Enable Windows Filter Keys and keep them enabled. Compare the release dates of `Salomon Men's Predict Soc2 Running` and `Nike Men's Stroke Running Shoe, 6.5 us`. For the more recently released shoe, select Magnet/Black/Quiet Shade, size 12, and add exactly one unit to the shopping cart.",
   "source": "synthetic",
   "gt_steps": [
     "Enable Windows Filter Keys.",
@@ -24,7 +24,7 @@
     "Click `Add to Compare`.",
     "Open the comparison page.",
     "Open the more recently released shoe, SKU `B08Y2SN6Y4`.",
-    "Select the Black colour.",
+    "Select the Magnet/Black/Quiet Shade colour.",
     "Select size 12.",
     "Leave the quantity as 1.",
     "Add the product to the shopping cart."
@@ -114,7 +114,7 @@
           ],
           "options": {
             "B08Y2SN6Y4": {
-              "Color": "Black",
+              "Color": "Magnet/Black/Quiet Shade",
               "Size": "12"
             }
           }

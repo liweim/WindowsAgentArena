@@ -11,7 +11,7 @@
   ],
   "difficulty": "medium",
   "operation_time": 51.47,
-  "instruction": "Use the original FDA Nutrition Facts label image opened on the Microsoft Edge and save `answer.txt` with the serving size, calories, sodium, and added sugars, one item per line in that order.",
+  "instruction": "Use the original FDA Nutrition Facts label image opened on Microsoft Edge and save `answer.txt` on the Desktop. Write four labeled lines in this order: serving size, calories, sodium, and added sugars.",
   "source": "https://www.fda.gov/files/nutrition-facts-label-download-image2.jpg",
   "gt_steps": [
     "Open Notepad.",

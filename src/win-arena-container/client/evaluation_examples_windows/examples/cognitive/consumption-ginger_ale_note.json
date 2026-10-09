@@ -46,6 +46,16 @@
       }
     },
     {
+      "type": "launch",
+      "parameters": {
+        "command": [
+          "socat",
+          "tcp-listen:9222,fork",
+          "tcp:localhost:1337"
+        ]
+      }
+    },
+    {
       "type": "sleep",
       "parameters": {
         "seconds": 1
