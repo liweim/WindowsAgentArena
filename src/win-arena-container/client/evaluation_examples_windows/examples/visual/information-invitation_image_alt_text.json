@@ -11,7 +11,7 @@
   ],
   "difficulty": "hard",
   "operation_time": 109.20,
-  "instruction": "Add alternative text to the invitation image in the provided `information-image_to_text_invitation.docx` file. Include the restaurant name, grand-opening purpose, date, time, full address, and RSVP phone number, then save the document.",
+  "instruction": "I want this document to remain accessible to readers who cannot see its images. Add alternative text to the invitation image in the provided `information-image_to_text_invitation.docx` file. Include the restaurant name, grand-opening purpose, date, time, full address, and RSVP phone number, then save the document.",
   "source": "synthetic",
   "gt_steps": [
     "Select the invitation image in information-image_to_text_invitation.docx.",

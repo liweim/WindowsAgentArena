@@ -10,7 +10,7 @@
   ],
   "difficulty": "medium",
   "operation_time": 151.38,
-  "instruction": "Enable Windows Filter Keys and keep them enabled. In the provided `MonthlyBills.ods`, use a formula in cell B12 to calculate the total amount due for all bills with status `Unpaid`, then save the spreadsheet.",
+  "instruction": "Brief or repeated keystrokes are difficult for me to control. Turn on Windows Filter Keys and leave it enabled for me. In the provided `MonthlyBills.ods`, use a formula in cell B12 to calculate the total amount due for all bills with status `Unpaid`, then save the spreadsheet.",
   "source": "synthetic",
   "gt_steps": [
     "Enable Windows Filter Keys.",

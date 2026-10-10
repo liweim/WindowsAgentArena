@@ -10,7 +10,7 @@
   ],
   "difficulty": "easy",
   "operation_time": 15.43,
-  "instruction": "Complete the hold-button CAPTCHA verification in Microsoft Edge.",
+  "instruction": "A verification step is blocking me, and its interaction is difficult with my motor limitations. Complete the hold-button CAPTCHA verification in Microsoft Edge.",
   "source": "synthetic",
   "gt_steps": [
     "Press and hold the button until the progress completes, then continue."

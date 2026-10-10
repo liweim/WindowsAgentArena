@@ -10,7 +10,7 @@
   ],
   "difficulty": "easy",
   "operation_time": 37.27,
-  "instruction": "Enable Live Caption in Chrome and add Spanish as a supported caption language.",
+  "instruction": "I rely on captions for spoken browser content. Enable Live Caption in Chrome and add Spanish as a supported caption language.",
   "source": "synthetic",
   "gt_steps": [
     "Open `chrome://settings/accessibility`.",

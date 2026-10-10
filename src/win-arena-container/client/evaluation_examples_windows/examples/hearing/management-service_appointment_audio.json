@@ -10,7 +10,7 @@
   ],
   "difficulty": "medium",
   "operation_time": 74.06,
-  "instruction": "Use Chrome Live Caption to read the service appointment recording on the Desktop. Create a 45-minute Thunderbird Calendar event titled `Home support assessment` at the stated date and time.",
+  "instruction": "I cannot reliably hear the recording. Use Chrome Live Caption to read the service appointment recording on the Desktop. Create a 45-minute Thunderbird Calendar event titled `Home support assessment` at the stated date and time.",
   "source": "synthetic",
   "gt_steps": [
     "Turn on Chrome Live Caption.",

@@ -10,7 +10,7 @@
   ],
   "difficulty": "medium",
   "operation_time": 54.16,
-  "instruction": "Create an all-day Thunderbird Calendar reminder titled `Refill medication` for the refill deadline in the pharmacy message on the Desktop.",
+  "instruction": "I rely on reminders and time cues to keep track of future actions. Create an all-day Thunderbird Calendar reminder titled `Refill medication` for the refill deadline in the pharmacy message on the Desktop.",
   "source": "synthetic",
   "gt_steps": [
     "Open `pharmacy_message.txt` on the Desktop.",

@@ -11,7 +11,7 @@
   ],
   "difficulty": "medium",
   "operation_time": 201.47,
-  "instruction": "Turn on Windows Narrator. Use the Wikipedia page already open in Chrome to identify the person shown in the first image, open that person's Wikipedia page, and leave it open.",
+  "instruction": "I rely on a screen reader to follow the content. Turn on Windows Narrator and use the Wikipedia page already open in Chrome to identify the person in its first image. Open that person's Wikipedia page and leave it open.",
   "source": "synthetic",
   "gt_steps": [
     "Open the Wikipedia page about the I Have a Dream speech.",

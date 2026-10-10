@@ -10,7 +10,7 @@
   ],
   "difficulty": "medium",
   "operation_time": 33.01,
-  "instruction": "Use Chrome Live Caption to read the delivery reminder on the Desktop. Create a Sticky Note containing the delivery date, arrival window, preparation instruction, and delivery reference.",
+  "instruction": "I cannot reliably hear the recording. Use Chrome Live Caption to read the delivery reminder on the Desktop. Create a Sticky Note containing the delivery date, arrival window, preparation instruction, and delivery reference.",
   "source": "synthetic",
   "gt_steps": [
     "Turn on Chrome Live Caption.",

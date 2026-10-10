@@ -11,7 +11,7 @@
   ],
   "difficulty": "medium",
   "operation_time": 329.64,
-  "instruction": "Turn on Windows Narrator and keep it enabled. Using `DeliveryConfirmation.jpg`, create a Thunderbird Calendar all-day event on the expected delivery date titled `Package Delivery - ` followed by the tracking number, with the same tracking number in the event description.",
+  "instruction": "I rely on a screen reader to follow the content and continue working afterward. Turn on Windows Narrator and leave it available for me. Using `DeliveryConfirmation.jpg`, create a Thunderbird Calendar all-day event on the expected delivery date titled `Package Delivery - ` followed by the tracking number, with the same tracking number in the event description.",
   "source": "synthetic",
   "gt_steps": [
     "Enable Windows Narrator.",

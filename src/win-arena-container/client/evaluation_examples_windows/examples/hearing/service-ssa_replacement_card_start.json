@@ -10,7 +10,7 @@
   ],
   "difficulty": "hard",
   "operation_time": 72.33,
-  "instruction": "Use Chrome Live Caption to read the Social Security request on the Desktop. Navigate the official SSA website to the service that fits the recorded situation, save its normal mailing window in `answer.txt` on the Desktop, and leave that service page open.",
+  "instruction": "I cannot reliably hear the recording. Use Chrome Live Caption to read the Social Security request on the Desktop. Navigate the official SSA website to the service that fits the recorded situation, save its normal mailing window in `answer.txt` on the Desktop, and leave that service page open.",
   "source": "https://www.ssa.gov/number-card/replace-card",
   "gt_steps": [
     "Turn on Chrome Live Caption.",

@@ -10,7 +10,7 @@
   ],
   "difficulty": "hard",
   "operation_time": 213.32,
-  "instruction": "Use the availability note and volunteer shift options on the Desktop to choose the compatible shift. Create and save a Thunderbird draft to `volunteer@example.org` with subject `Volunteer shift confirmation` and include the chosen day, date, start time, and end time. Do not send it. Also add the chosen shift to the Thunderbird calendar as a persistent reminder titled `Volunteer shift` using the selected start and end time.",
+  "instruction": "I rely on reminders and time cues to keep track of future actions. Use the availability note and volunteer shift options on the Desktop to choose the compatible shift. Create and save a Thunderbird draft to `volunteer@example.org` with subject `Volunteer shift confirmation` and include the chosen day, date, start time, and end time. Do not send it. Also add the chosen shift to the Thunderbird calendar as a persistent reminder titled `Volunteer shift` using the selected start and end time.",
   "source": "synthetic",
   "gt_steps": [
     "Open `VolunteerAvailability.txt` on the Desktop.",

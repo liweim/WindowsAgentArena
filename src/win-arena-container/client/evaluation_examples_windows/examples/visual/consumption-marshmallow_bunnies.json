@@ -10,7 +10,7 @@
   ],
   "difficulty": "medium",
   "operation_time": 73.23,
-  "instruction": "Turn on Windows Narrator. Identify the requested product from the provided shopping reminder PDF and add exactly one matching unit to the shopping cart. Leave the cart page open.",
+  "instruction": "I rely on a screen reader to follow the content. Turn on Windows Narrator, identify the requested product from the provided shopping reminder PDF, and add exactly one matching unit to the shopping cart. Leave the cart page open.",
   "source": "synthetic",
   "gt_steps": [
     "Open the shopping reminder PDF in Chrome.",

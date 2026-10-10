@@ -11,23 +11,34 @@
     "C2"
   ],
   "difficulty": "medium",
-  "operation_time": 150.10,
-  "instruction": "Use Microsoft Edge Immersive Reader to read the AP News article about preparing for a doctor appointment. Save a persistent preparation note as `answer.txt` on the Desktop that faithfully summarizes five details: the top tip for the start of the visit, the family-history requirement, what to check on medicine bottles, the nonprescription items not to forget, and the recent records to verify were received. Put one item per line in that order.",
+  "operation_time": 150.1,
+  "instruction": "I find dense information easier to manage when it is simplified and saved as a persistent reference. Read the local AP doctor-appointment preparation PDF in Microsoft Edge. Save a persistent preparation note as `answer.txt` on the Desktop that faithfully summarizes five details: the top tip for the start of the visit, the family-history requirement, what to check on medicine bottles, the nonprescription items not to forget, and the recent records to verify were received. Put one item per line in that order.",
   "source": "https://apnews.com/article/3fcde5b5c927734429818bd0ed1c6680",
   "gt_steps": [
-    "With the AP News appointment-preparation article active in Microsoft Edge, press `F9` to enter Immersive Reader.",
+    "Open the local PDF snapshot in Microsoft Edge.",
     "Open Notepad.",
     "Enter the following text:\n`Bring a list of symptoms and questions\nfamily medical history is critical\nname and dose\nvitamins and supplements\nrecent lab tests, hospitalizations or visits to other health providers`",
     "Save the file as `answer.txt` on the Desktop."
   ],
   "config": [
     {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "../assets/health-doctor_appointment_preparation.pdf",
+            "path": "C:\\Users\\Docker\\Desktop\\DoctorAppointmentPreparation.pdf"
+          }
+        ]
+      }
+    },
+    {
       "type": "launch",
       "parameters": {
         "command": [
           "cmd",
           "/c",
-          "start msedge https://apnews.com/article/3fcde5b5c927734429818bd0ed1c6680"
+          "start msedge file:///C:/Users/Docker/Desktop/DoctorAppointmentPreparation.pdf"
         ]
       }
     }
@@ -38,18 +49,13 @@
   ],
   "evaluator": {
     "func": [
-      "check_text_points",
-      "check_edge_immersive_reader_state"
+      "check_text_points"
     ],
     "conj": "and",
     "result": [
       {
         "type": "desktop_file_text",
         "filename": "answer.txt"
-      },
-      {
-        "type": "edge_immersive_reader_state",
-        "activate_edge": true
       }
     ],
     "expected": [
@@ -118,12 +124,6 @@
             }
           ]
         }
-      },
-      {
-        "type": "rule",
-        "rules": {
-          "reader_mode_open": true
-        }
       }
     ],
     "metric_roles": {
@@ -131,11 +131,10 @@
         0
       ],
       "access_requirement": [
-        0,
-        1
+        0
       ]
     }
   },
-  "proxy": true,
+  "proxy": false,
   "possibility_of_env_change": "low"
 }

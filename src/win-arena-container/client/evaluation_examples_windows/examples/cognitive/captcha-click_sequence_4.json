@@ -10,7 +10,7 @@
   ],
   "difficulty": "easy",
   "operation_time": 21.36,
-  "instruction": "Complete the click-sequence CAPTCHA open in Chrome.",
+  "instruction": "Verification sequences are difficult for me to keep track of. Complete the click-sequence CAPTCHA open in Chrome.",
   "source": "synthetic",
   "gt_steps": [
     "Click the requested characters in order to complete the CAPTCHA verification."

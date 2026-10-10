@@ -10,7 +10,7 @@
   ],
   "difficulty": "medium",
   "operation_time": 32.70,
-  "instruction": "Use Chrome Live Caption on the opened CDC video. Save the phrase the narrator uses for what infections can lead to, followed by the three actions the narrator says can help get ahead of sepsis, in `answer.txt` on the Desktop.",
+  "instruction": "I cannot reliably hear the recording. Use Chrome Live Caption on the opened CDC video. Save the phrase the narrator uses for what infections can lead to, followed by the three actions the narrator says can help get ahead of sepsis, in `answer.txt` on the Desktop.",
   "source": "https://www.cdc.gov/sepsis/communication-resources/domino-effect.html",
   "gt_steps": [
     "Turn on Chrome Live Caption.",

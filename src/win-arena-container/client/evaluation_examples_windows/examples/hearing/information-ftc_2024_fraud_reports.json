@@ -10,7 +10,7 @@
   ],
   "difficulty": "hard",
   "operation_time": 175.73,
-  "instruction": "Use Chrome Live Caption on the opened video to identify the FTC Explore Data address, then find the nationwide total number of fraud reports for all quarters of 2024 and save only that number in `answer.txt` on the Desktop.",
+  "instruction": "I cannot reliably hear the recording. Use Chrome Live Caption on the opened video to identify the FTC Explore Data address, then find the nationwide total number of fraud reports for all quarters of 2024 and save only that number in `answer.txt` on the Desktop.",
   "source": "https://www.ftc.gov/media/video-0194-explore-data-ftc",
   "gt_steps": [
     "Turn on Chrome Live Caption.",

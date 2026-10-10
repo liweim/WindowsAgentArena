@@ -12,7 +12,7 @@
   ],
   "difficulty": "medium",
   "operation_time": 113.7,
-  "instruction": "Turn on Windows Narrator and keep it enabled. Read the community workshop invitation on the Desktop, then draft a Thunderbird email to `rsvp@example.org` with subject `Workshop RSVP` confirming attendance and including the event date, start time, venue, and a request for a large-print handout. Save it as draft. Do not send it.",
+  "instruction": "I rely on a screen reader to follow the content and continue working afterward. Turn on Windows Narrator and leave it available for me. Read the community workshop invitation on the Desktop, then draft a Thunderbird email to `rsvp@example.org` with subject `Workshop RSVP` confirming attendance and including the event date, start time, venue, and a request for a large-print handout. Save it as draft. Do not send it.",
   "source": "synthetic",
   "gt_steps": [
     "Turn on Windows Narrator and leave it enabled.",
@@ -20,7 +20,7 @@
     "Open Thunderbird and create a new email draft.",
     "Set To to `rsvp@example.org`.",
     "Set Subject to `Workshop RSVP`.",
-    "Enter `I confirm that I will attend on Saturday, 26 September 2026 at 10:30 AM at Harbour Community Hall, 18 Pier Street. Please provide a large-print handout.` in the message body.",
+    "Enter `I confirm that I will attend on Saturday, 26 September 2026 at 10:30 AM at Harbour Community Hall, 18 Pier Street. provide a large-print handout.` in the message body.",
     "Save the message as a draft. Do not send it.",
     "Leave Windows Narrator enabled."
   ],

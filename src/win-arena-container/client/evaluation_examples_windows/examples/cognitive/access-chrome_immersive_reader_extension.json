@@ -10,7 +10,7 @@
   ],
   "difficulty": "medium",
   "operation_time": 46.73,
-  "instruction": "Install the Immersive Reader extension in Chrome.",
+  "instruction": "I read webpages more easily in a simplified view. Install the Immersive Reader extension in Chrome for me.",
   "source": "https://chromewebstore.google.com/detail/immersive-reader/cccnhdbjafjobcppogeaaabofifbpdho",
   "gt_steps": [
     "Open Google Chrome.",

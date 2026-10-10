@@ -12,11 +12,11 @@
   ],
   "difficulty": "medium",
   "operation_time": 72.81,
-  "instruction": "Copy the article's road and trail running hydration-system advice exactly into Sticky Notes, using Immersive Reader to read the article.",
+  "instruction": "I find dense information easier to manage when it is simplified and saved as a persistent reference. Read the local SELF hydration guide PDF in Microsoft Edge and copy its road and trail running hydration-system advice exactly into Sticky Notes.",
   "source": "https://www.self.com/gallery/best-hydration-packs",
   "gt_steps": [
+    "Open the local PDF snapshot in Microsoft Edge.",
     "Open the SELF hydration article in Microsoft Edge.",
-    "Activate Immersive Reader.",
     "Locate the road and trail running hydration-system guidance in the `Type of Activity` section.",
     "Open Sticky Notes.",
     "Create a new note.",
@@ -24,12 +24,23 @@
   ],
   "config": [
     {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "../assets/running_hydration_guide.pdf",
+            "path": "C:\\Users\\Docker\\Desktop\\RunningHydrationGuide.pdf"
+          }
+        ]
+      }
+    },
+    {
       "type": "launch",
       "parameters": {
         "command": [
           "cmd",
           "/c",
-          "start msedge https://www.self.com/gallery/best-hydration-packs"
+          "start msedge file:///C:/Users/Docker/Desktop/RunningHydrationGuide.pdf"
         ]
       }
     },
@@ -53,17 +64,12 @@
   ],
   "evaluator": {
     "func": [
-      "check_text_points",
-      "check_edge_immersive_reader_state"
+      "check_text_points"
     ],
     "conj": "and",
     "result": [
       {
         "type": "sticky_notes_content"
-      },
-      {
-        "type": "edge_immersive_reader_state",
-        "activate_edge": true
       }
     ],
     "expected": [
@@ -77,12 +83,6 @@
             ]
           ]
         }
-      },
-      {
-        "type": "rule",
-        "rules": {
-          "reader_mode_open": true
-        }
       }
     ],
     "metric_roles": {
@@ -90,11 +90,10 @@
         0
       ],
       "access_requirement": [
-        0,
-        1
+        0
       ]
     }
   },
-  "proxy": true,
-  "possibility_of_env_change": "medium"
+  "proxy": false,
+  "possibility_of_env_change": "low"
 }

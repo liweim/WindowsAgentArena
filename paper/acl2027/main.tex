@@ -1,0 +1,465 @@
+\documentclass[11pt]{article}
+\usepackage[review]{acl}
+\usepackage{times}
+\usepackage{latexsym}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{microtype}
+\usepackage{inconsolata}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{xspace}
+\usepackage{multirow}
+\usepackage{enumitem}
+
+\newcommand{\bench}{\textsc{AccessCUA}\xspace}
+\newcommand{\todo}[1]{\textcolor{red}{\textbf{[TODO: #1]}}}
+\newcommand{\taskout}{\textsc{TaskOutcome}\xspace}
+\newcommand{\accessreq}{\textsc{AccessRequirement}\xspace}
+\newcommand{\fullsuccess}{\textsc{FullSuccess}\xspace}
+\newcommand{\argap}{\textsc{AccessibilityRequirementGap}\xspace}
+\newcommand{\condsat}{\textsc{ConditionalRequirementSatisfaction}\xspace}
+
+\title{\bench: Benchmarking Computer-Use Agents for Accessibility-Oriented User Tasks}
+\author{Anonymous ACL submission}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Computer-use agents (CUAs) are increasingly capable of completing everyday digital tasks, yet existing evaluations largely assume general user goals and standard completion conditions. We introduce \bench, an executable benchmark for evaluating whether agents can complete everyday computer-use tasks on behalf of users with diverse accessibility needs. Rather than imposing assistive-technology use as a universal agent-side constraint, our tasks are grounded in documented access needs that materially change an observable completion condition: information that must be acquired for the user, a user-facing representation or support artifact that must be produced, or an accessibility/continuation state that must be established or preserved. \bench contains 200 Windows tasks spanning visual, hearing, motor, and cognitive functional scenarios, multiple everyday workflow categories, and text, image, audio, and video information. Each task is paired with deterministic setup and end-state evaluation, combining structured application/system-state checks with atomic fact-based evaluation for natural-language outputs. We further decompose task success into \taskout, \accessreq, and \fullsuccess to measure cases where an agent completes the nominal GUI goal while missing an accessibility-specific requirement. Evaluating \todo{number} representative CUAs reveals \todo{main empirical finding and strongest quantitative result}. Based on the observed failure mechanisms, we introduce \todo{method name and one-sentence mechanism}, improving \todo{target slices / overall result} while \todo{cross-benchmark result}. Our results show that strong general computer-use performance does not by itself guarantee reliable assistance under heterogeneous accessibility requirements.
+\end{abstract}
+
+\section{Introduction}
+
+Computer-use agents are rapidly moving from narrow web automation toward general interaction with browsers, desktop applications, files, media, and system settings. Benchmarks such as WebArena, VisualWebArena, OSWorld, AndroidWorld, and Windows Agent Arena have made this progress measurable by placing agents in executable environments and evaluating whether they reach task-specific end states \citep{webarena,visualwebarena,osworld,androidworld,waa}. More recent benchmarks extend this setting to professional data workflows and multimodal inputs, including instructional video and audio \citep{spider2v,videogui,videowebarena,omnigui}. These benchmarks answer an essential question: \emph{can an agent complete a general computer-use goal?}
+
+A different question arises when the same digital goal is pursued under a documented accessibility need. Accessibility-oriented assistance does not require inventing disability-exclusive activities. A user who is blind, Deaf or hard of hearing, has limited motor control, or benefits from cognitive support may still shop online, read documents, schedule appointments, configure applications, or communicate by email. What changes is the barrier and, crucially, what counts as a usable completion state. A hearing-oriented task may require spoken information to be captured in a persistent non-auditory representation; a visual-access task may require information that is otherwise available only in an image; a motor-access task may require a keyboard-assistance state to remain configured; and a cognitive-support task may require a durable note, checklist, or reminder rather than transient task completion alone. Thus, for many tasks,
+\begin{equation}
+S_{\mathrm{access}} = S_{\mathrm{ordinary}} \land R_{\mathrm{access}},
+\end{equation}
+where $R_{\mathrm{access}}$ is an observable access-need-specific requirement.
+
+Importantly, we do \emph{not} define accessibility by forcing the agent to operate as a disabled user would. An agent may use screenshots, mouse input, keyboard input, structured observations, or assistive/accessibility technologies when useful. These are agent-side execution choices. Separately, a requested caption, magnification level, keyboard-assistance setting, readable representation, note, reminder, or other persistent state may be a user-side requirement and therefore part of task success. This distinction separates accessibility-oriented end-state evaluation from work that explicitly changes the agent's interaction condition, such as keyboard-only or magnified operation \citep{a11ycua}. We also do not assume that a user immediately takes over after every task. Instead, we evaluate \emph{accessible continuation}: whether requested accessibility configurations and persistent artifacts remain available so that the user retains the option to inspect, understand, continue, or take control.
+
+We introduce \bench, a Windows-only executable benchmark for accessibility-oriented computer use. The benchmark contains 200 tasks grounded in documented user needs and organized into four functional slices---visual, hearing, motor, and cognitive---that correspond to barriers in acquiring visual information, acquiring auditory information, executing physical input, and processing or maintaining task information. These group labels are analytical abstractions rather than diagnostic identities. Each task is additionally annotated with one or more documented need IDs, broad subgroup labels, workflow category, modality, applications, and evaluator structure. Task construction follows a counterfactual validity criterion: if removing the accessibility-specific clause leaves the required information, user-facing artifact, persistent state, and evaluator essentially unchanged, the task is redesigned or excluded from the core benchmark.
+
+Following the executable-benchmark methodology exemplified by Spider2-V \citep{spider2v}, we treat environment reproducibility and task-specific evaluation as first-class benchmark components rather than implementation afterthoughts. \bench builds on the Windows stacks of OSWorld and Windows Agent Arena, uses stable desktop applications and self-hosted services when live websites would introduce volatility, fixes auditory stimuli through pinned media or task-specific text-to-speech assets when needed, and evaluates final state deterministically. We report three coupled metrics from the same run: \taskout for the underlying life/GUI goal, \accessreq for the access-specific requirement, and \fullsuccess for complete task success. For tasks where these are distinct graded components, we additionally measure the gap between nominal completion and accessibility-oriented completion.
+
+Our study asks five questions: (1) how reliably current CUAs complete accessibility-oriented user goals; (2) how often agents achieve the nominal task outcome but miss the access-specific requirement; (3) which user needs exhibit distinct failure signatures; (4) which agent design assumptions correlate with these failures; and (5) whether a failure-driven method can improve the relevant slices without degrading general computer-use ability. \todo{headline findings}
+
+Our contributions are:
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Benchmark.} We introduce a 200-task executable benchmark grounded in documented accessibility needs and spanning four functional groups, everyday workflows, multimodal information, accessible outputs, and continuation states.
+    \item \textbf{Evaluation methodology.} We define deterministic end-state evaluation that separates nominal task completion from access-specific requirement satisfaction while retaining traditional full-success reporting.
+    \item \textbf{Empirical analysis.} We provide a systematic evaluation of representative CUAs across user groups, documented needs, modalities, workflow types, and accessibility mechanisms. \todo{key quantitative finding}
+    \item \textbf{Failure-driven improvement.} We derive \todo{method name} from observed failure mechanisms and evaluate targeted gains and cross-benchmark generalization. \todo{method contribution}
+\end{itemize}
+
+\begin{figure*}[t]
+\centering
+\fbox{\begin{minipage}{0.96\textwidth}
+\small
+\textbf{Underlying everyday goal} $\rightarrow$ \textbf{documented access need} $\rightarrow$ \textbf{observable requirement shift} $\rightarrow$ \textbf{deterministic end state}.\\[3pt]
+\begin{tabularx}{\linewidth}{>{\bfseries}p{0.13\linewidth} X X X}
+Hearing & Retrieve instructions from spoken media & Speech-to-text access & Save the required spoken facts in a persistent non-auditory artifact; preserve caption state when explicitly requested \\
+Visual & Obtain information from a chart or image & Access to non-text visual information & Produce an equivalent textual representation containing the required facts \\
+Motor & Configure or continue a workflow & Sequential/alternative input support & Establish or preserve the requested keyboard/pointer accessibility state in the final environment \\
+Cognitive & Read and act on dense information & Memory/readability/time support & Create a simplified or persistent representation, checklist, note, calendar cue, or reminder \\
+\end{tabularx}
+\end{minipage}}
+\caption{\bench evaluates accessibility-oriented completion rather than prescribing an accessibility-specific agent trajectory. The access need must change an observable and evaluable completion condition.}
+\label{fig:construct}
+\end{figure*}
+
+\section{Related Work}
+
+\subsection{General computer-use agent benchmarks}
+
+WebArena introduced a realistic, self-hostable web environment with execution-based task evaluation \citep{webarena}, while VisualWebArena extended this paradigm to visually grounded web tasks \citep{visualwebarena}. OSWorld generalized executable evaluation to open-ended tasks in real computer environments and provided task-specific setup and evaluation functions \citep{osworld}. Windows Agent Arena focuses on scalable Windows evaluation \citep{waa}, and AndroidWorld provides dynamic, programmatically instantiated mobile tasks \citep{androidworld}. Spider2-V targets professional data-science and engineering workflows that mix code generation with GUI interaction \citep{spider2v}. VideoGUI, VideoWebArena, and OmniGUI broaden evaluation toward instructional video, long-context video understanding, and synchronized image/audio/video observations \citep{videogui,videowebarena,omnigui}.
+
+\bench differs in benchmark construct rather than simply task domain. Existing general-purpose benchmarks primarily score whether a requested state change or information goal is achieved. In \bench, a documented access need is explicit in the task specification and must materially change required information, a user-facing representation/support artifact, or a persistent accessibility/continuation state. This enables analyses of requirement satisfaction across heterogeneous access needs while retaining end-to-end GUI execution.
+
+\subsection{Accessibility and assistive-interaction studies}
+
+A11y-CUA records rich human and agent trajectories on shared Windows tasks and compares default computer-use agents with accessibility-related interaction conditions, including keyboard-only and magnified operation \citep{a11ycua}. Its results show a substantial interaction gap and demonstrate that CUA trajectories do not naturally reproduce the strategies of blind and low-vision users. Our work is complementary: we do not require a universal AT-constrained execution trajectory; instead, we ask whether an agent can complete an everyday goal while satisfying access-need-specific end-state requirements across visual, hearing, motor, and cognitive slices.
+
+Kodandaram et al. study real desktop use by blind screen-reader users through a three-week diary deployment and replay evaluation, identifying grounding, planning, constraint-tracking, and termination failures \citep{arewethereyet}. This work provides important ecological evidence about blind users' commands and lived experience. \bench contributes a reproducible cross-need executable benchmark with a task-level decomposition between nominal outcome and access-specific requirement. We therefore treat constraint and termination failures as mechanisms to quantify across need types, not as novel phenomena by themselves.
+
+\subsection{User-aware assistance}
+
+GUIDE studies a different point in the assistance pipeline: understanding what a user is doing, inferring intent, and deciding when and how to help from GUI workflow videos \citep{guide}. \bench instead evaluates autonomous completion of explicitly requested accessibility-oriented tasks. The two settings are complementary: intent-aware systems address when assistance should be offered, while our benchmark measures whether a CUA can reliably execute the resulting accessibility-oriented goal.
+
+\begin{table*}[t]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lcccccccc}
+\toprule
+Benchmark & Exec. env. & Desktop/OS & Image & Video & Audio & Access-oriented & End-to-end GUI & Scale \\
+\midrule
+WebArena \citep{webarena} & \checkmark & -- & -- & -- & -- & -- & \checkmark & 812 \\
+VisualWebArena \citep{visualwebarena} & \checkmark & -- & \checkmark & -- & -- & -- & \checkmark & 910 \\
+OSWorld \citep{osworld} & \checkmark & \checkmark & \checkmark & -- & -- & -- & \checkmark & 369 \\
+AndroidWorld \citep{androidworld} & \checkmark & mobile & \checkmark & -- & -- & -- & \checkmark & 116 types \\
+VideoWebArena \citep{videowebarena} & \checkmark & -- & \checkmark & \checkmark & partial & -- & \checkmark & 2,021 \\
+VideoGUI \citep{videogui} & partial & partial & \checkmark & \checkmark & -- & -- & partial & 86 tasks \\
+OmniGUI \citep{omnigui} & step-level & mobile & \checkmark & \checkmark & \checkmark & -- & partial & 708 episodes \\
+A11y-CUA \citep{a11ycua} & \checkmark & Windows & \checkmark & \checkmark & \checkmark & \checkmark & trajectory study & 60 tasks \\
+\textbf{\bench} & \checkmark & Windows & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \textbf{200 tasks} \\
+\bottomrule
+\end{tabular}%
+}
+\caption{High-level comparison with representative GUI-agent benchmarks. ``Access-oriented'' denotes whether accessibility needs or accessibility-conditioned interaction are a primary evaluation construct, not merely whether a benchmark mentions accessibility as a motivation. \todo{metadata check}}
+\label{tab:comparison}
+\end{table*}
+
+\section{\bench Benchmark}
+
+\subsection{Design goals and task definition}
+
+We design \bench around five goals: \textbf{documented accessibility relevance}, \textbf{everyday-life realism}, \textbf{broad functional and workflow coverage}, \textbf{executable and reproducible environments}, and \textbf{deterministic but semantically tolerant evaluation}. An accessibility-oriented computer-use task is an everyday digital task for which a documented access need materially changes at least one observable completion condition: (i) information that must be acquired for the user, (ii) a user-facing representation or support artifact that must be produced, or (iii) an accessibility/continuation state that must be established or preserved. Delegation may motivate assistance, but delegation alone is not sufficient for inclusion in the core benchmark.
+
+This definition yields a simple counterfactual curation test: if the accessibility-specific requirement were removed, would the required information, output/artifact, persistent state, or evaluator remain essentially unchanged? If yes, the task is revised or removed. The test prevents ``ordinary GUI task + arbitrary accessibility toggle'' constructions while allowing ordinary life goals whose usable completion conditions differ under an access need.
+
+\paragraph{Agent-side interaction versus user-side requirement.}
+The benchmark does not score whether the agent uses assistive technology as its execution strategy. Agents are free to use their normal observation and action mechanisms and may use accessibility tools when helpful. If a task explicitly requests captions, magnification, keyboard assistance, a reading mode, or another accessibility configuration, however, that state becomes part of the graded user-facing result regardless of how the agent reached it.
+
+\paragraph{Accessible continuation.}
+We define an \emph{accessible continuation state} as a user-facing system state in which requested accessibility configurations and persistent artifacts remain available after task completion. The benchmark does not predict whether the user will continue interacting immediately; it evaluates whether the agent preserves the option to inspect, understand, continue, or take over under the stated access requirements.
+
+\subsection{Documented user-need taxonomy}
+
+We organize tasks into four top-level functional groups: visual, hearing, motor, and cognitive. These groups are operational slices of common GUI barriers, not an exhaustive taxonomy of disability or identity. Speech, language, learning, neurological, and multiple disabilities can cut across the four slices; a task is included only when its relevant barrier can be operationalized through a documented need represented in the benchmark.
+
+Each task has exactly one primary \texttt{user\_group}, one or more broad \texttt{subgroup\_ids}, and one or more fine-grained \texttt{need\_ids}. The need taxonomy is grounded in public accessibility research, W3C/WCAG/COGA user requirements, and platform documentation. Visual needs cover non-visual text/interface access, magnification, contrast/palette customization, color differentiation, non-text visual information, and accessible verification. Hearing needs cover captions/transcripts, caption presentation, visual/persistent notifications, mono audio, and non-auditory verification. Motor needs cover alternative text entry, sequential modifier keys, keystroke filtering, alternative pointer control, reduced dragging, mouse-button customization, and reduced precision/repetition/timing demand. Cognitive needs are deliberately narrower: readability/simplification, memory externalization through persistent information, and time/prospective-memory support.
+
+The cognitive slice requires special care because generic long-horizon difficulty is not itself a cognitive-access construct. A cognitive task must make a readable/simplified representation, persistent note/checklist/reference, reminder/calendar/timer, or requested cognitive-support configuration central to the graded final state. This keeps the slice focused on observable support requirements rather than re-labeling planning or decision difficulty.
+
+\subsection{Workflow taxonomy}
+
+Task category describes \emph{what life workflow is being performed}, while need annotations describe \emph{which accessibility-related barrier or support is exercised}. The two axes are orthogonal. We use eight everyday workflow categories---\texttt{communication}, \texttt{information}, \texttt{management}, \texttt{mobility}, \texttt{consumption}, \texttt{service}, \texttt{health}, and \texttt{access}---plus a separately reported \texttt{captcha} stress-test category. The workflow taxonomy is informed by the Activities and Participation component of the WHO International Classification of Functioning, Disability and Health (ICF) rather than reproducing its hierarchy verbatim \citep{whoicf}. The \texttt{access} category is reserved for tasks where accessibility/access-support configuration is itself the primary user goal; ordinary software installation is not treated as a separate workflow category.
+
+\subsection{Task collection, construction, and curation}
+
+Construction starts from a documented access need and a plausible everyday digital workflow. Authors identify a concrete source or use case, adapt it to the Windows environment, define an initial state that does not solve the task, specify the user-facing goal and any access-specific requirement, write reproducible ground-truth actions for annotator validation, and implement a deterministic evaluator. Released tasks must map to at least one documented need ID. Weak or unsupported mappings are revised, reassigned, or excluded.
+
+Each task JSON records an identifier, user group, subgroup IDs, workflow category, need IDs, difficulty, user-facing instruction, source, ground-truth steps, environment configuration, related applications, evaluator, and whether public Internet access is required at runtime. Ground-truth steps are for annotator reproduction rather than agent prompting: each step encodes one executable action and embeds known canonical values only where they are operationally used.
+
+\subsection{Execution environment and multimodal realization}
+
+\paragraph{Windows runtime and applications.}
+The paper evaluates Windows computer-use agents only. The runtime builds on the OSWorld/Windows Agent Arena stack and covers desktop applications, browsers, files, media, system settings, and Windows accessibility tools. We use stable applications according to the natural output: Edge and Chrome for web and media tasks, Thunderbird Mail and Calendar for communication and time management, Sticky Notes and Notepad for short persistent artifacts, and LibreOffice Writer/Calc for documents and structured outputs.
+
+\paragraph{Self-hosted services.}
+Some browser workflows use self-hosted or pinned services to reduce layout drift, ranking volatility, personalization, and external-service failures while preserving realistic interaction patterns. These include OneStopShop for shopping, a CMS/admin service for catalog and order-management workflows, a Kiwix-hosted Wikipedia snapshot for stable information lookup, a Reddit-style forum for social-content tasks, and a local CAPTCHA service for verification-barrier stress tests. The first four inherit realistic interaction patterns from WebArena-style services; the CAPTCHA server is explicitly benchmark-controlled stress-test infrastructure.
+
+\paragraph{Auditory tasks.}
+For tasks requiring spoken information, we use short pinned media or fixed text-to-speech audio generated from task-specific scripts. The script is stored with the task as construction/evaluation ground truth but is not exposed to the agent. The agent receives the normal media page or audio asset and, when required by the task, must use the specified captioning support (e.g., Chrome Live Caption or Windows Live Captions). Expected answers are stable continuous phrases or atomic facts from the fixed source, reducing variance caused by changing media while preserving the intended speech-to-caption interaction.
+
+\paragraph{CAPTCHA stress test.}
+We use a local deterministic service rather than external CAPTCHA providers. The slice includes audio-, text-, image-, click-, drag-, and hold-style barriers. CAPTCHA results are reported separately from everyday-life workflow categories and are excluded from the accessibility requirement gap defined below.
+
+\subsection{Benchmark statistics}
+
+The current release contains 200 tasks. \todo{final statistics} The cognitive release currently contains 45 core everyday tasks plus 5 CAPTCHA stress tests, with core tasks distributed across all eight everyday workflow categories. \todo{per-group counts}
+
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{lr}
+\toprule
+Statistic & Count \\
+\midrule
+Total tasks & 200 \\
+Platforms in paper & 1 (Windows) \\
+Top-level functional groups & 4 \\
+Everyday workflow categories & 8 \\
+Stress-test categories & 1 (CAPTCHA) \\
+Documented need IDs & 21 \\
+Distinct-component tasks & \todo{N} \\
+Coincident-component tasks & \todo{N} \\
+Cross-app tasks & \todo{N} \\
+Tasks requiring continuation state & \todo{N} \\
+\bottomrule
+\end{tabular}
+\caption{Core benchmark statistics. Fine-grained distributions will be generated from the final released JSONs.}
+\label{tab:stats}
+\end{table}
+
+\subsection{Deterministic end-state evaluation}
+
+Evaluation follows three principles. First, structured state checks are preferred over searching serialized text. Recipients are parsed as addresses, calendar dates as dates, spreadsheet outputs as cells, and settings through stable system state when available. Second, natural-language outputs are decomposed into atomic required facts rather than scored by whole-answer exact match. Third, the evaluator tolerates meaning-preserving surface variation while preserving factual completeness; exact matching is reserved for fields where exact representation is itself part of the task.
+
+For each core task $t$, we derive three scores from the same final state:
+\begin{align}
+T_t &= \mathbb{1}[\text{underlying life/GUI goal is complete}],\\
+A_t &= \mathbb{1}[\text{access-specific requirement is satisfied}],\\
+F_t &= T_t \land A_t.
+\end{align}
+We report these as \taskout, \accessreq, and \fullsuccess. Two task structures are valid. In \emph{distinct-component} tasks, nominal outcome and access requirement are separate graded conditions (e.g., correct email draft plus persistent reminder). In \emph{coincident-component} tasks, satisfying the access requirement is itself the nominal goal (e.g., enabling a requested readability setting or creating a reminder). Coincident tasks remain in the three overall metrics but are excluded from requirement-gap analysis because their gap is structurally zero.
+
+Let $D$ be the statically annotated subset of distinct-component, non-CAPTCHA tasks. We define
+\begin{align}
+\mathrm{Gap}_D &= P(T=1\mid D)-P(F=1\mid D) \\
+&= P(T=1,A=0\mid D),\\
+\mathrm{CRS}_D &= P(A=1\mid T=1,D).
+\end{align}
+Here $\mathrm{Gap}_D$ is the \argap and $\mathrm{CRS}_D$ is \condsat. This decomposition measures whether accessibility-specific conditions are systematically dropped after nominal success without selecting tasks post hoc based on observed outcomes. For tasks requiring a persistent accessibility setting, we additionally report \todo{continuation metric}.
+
+\subsection{Construct validity}
+
+Source grounding establishes that a barrier or support need is documented, but it does not by itself prove that an adapted GUI task is realistic or appropriate. We therefore conduct human/expert review over \todo{all tasks or a stratified sample}, rating realism, accessibility relevance, clarity/determinacy, support appropriateness, and accessibility-specificity. At least \todo{two} reviewers independently evaluate each reviewed task, with disagreements adjudicated and failed items revised, reassigned, or removed. \todo{construct-validity results}
+
+\subsection{Evaluator validity}
+
+We separately validate natural-language evaluators using canonical correct answers, semantically equivalent variants, missing-fact answers, wrong-value near misses, negated answers, and formatting variants. We compare whole-answer exact matching, naive substring/point matching, and our atomic fact-based deterministic evaluator against human correctness labels. \todo{evaluator-validity results}
+
+\section{Benchmarking Current Computer-Use Agents}
+
+\subsection{Baselines and experimental setup}
+
+We evaluate approximately ten representative CUA configurations spanning strong proprietary native computer-use agents, general multimodal models with agent scaffolds, GUI-specialized open-source agents, screenshot-centric agents, structured-observation or accessibility-tree-aware agents, planning-heavy agents, and lightweight reactive agents. \todo{baseline details}
+
+All agents receive the same task instruction and initial state. We do not require agents to use accessibility technology unless the task explicitly makes that feature part of the user-facing requirement. To reduce variance, task setup is reset between runs and task-specific evaluators inspect the final state after termination or timeout. \todo{run protocol}
+
+\subsection{Metrics}
+
+Our primary benchmark metric is \fullsuccess, corresponding to traditional task success over all core tasks. We additionally report \taskout and \accessreq from the same run; \argap and \condsat on the distinct-component non-CAPTCHA subset; partial fact/state coverage; action count; completion time; token/inference cost; recovery/backtracking signals; and continuation-state success where applicable. We report bootstrap confidence intervals and avoid rank claims unsupported by group size.
+
+\subsection{Overall and group-wise results}
+
+\begin{table*}[t]
+\centering
+\small
+\begin{tabular}{lcccccc}
+\toprule
+Agent & TaskOutcome & AccessReq. & FullSuccess & Visual FS & Hearing FS & Motor/Cognitive FS \\
+\midrule
+\todo{Agent 1} & \todo{x} & \todo{x} & \todo{x} & \todo{x} & \todo{x} & \todo{x / x} \\
+\todo{Agent 2} & \todo{x} & \todo{x} & \todo{x} & \todo{x} & \todo{x} & \todo{x / x} \\
+\todo{Agent 3} & \todo{x} & \todo{x} & \todo{x} & \todo{x} & \todo{x} & \todo{x / x} \\
+\bottomrule
+\end{tabular}
+\caption{Main results on \bench. The final table will report overall and per-group scores with uncertainty. We keep \taskout, \accessreq, and \fullsuccess separate so nominal completion cannot hide access-specific failures.}
+\label{tab:mainresults}
+\end{table*}
+
+\todo{main results}
+
+\subsection{Performance across documented needs and task factors}
+
+We analyze performance by documented need/subgroup, modality, the three accessibility-relevance mechanisms (information access, accessible artifact, continuation state), accessibility-setting requirement, single- versus cross-app execution, workflow category, task horizon, and output type. This analysis is intended to distinguish access-specific failure from generic task difficulty. \todo{factor analysis}
+
+\subsection{Matched ordinary vs. accessibility-oriented subset}
+
+To more directly isolate the requirement shift, we construct \todo{N} controlled or near-matched task pairs that preserve the underlying user goal, application, and initial state while adding an access-need-specific condition. Examples include extracting spoken instructions versus extracting and saving a persistent non-auditory representation, obtaining route information versus producing a durable transfer note, and configuring an application versus configuring it while preserving requested keyboard assistance. We report
+\begin{equation}
+\Delta_{\mathrm{access}} = SR_{\mathrm{ordinary}}-SR_{\mathrm{access}}.
+\end{equation}
+If exact matching cannot be guaranteed, we treat the comparison as controlled evidence rather than a causal estimate. \todo{paired results}
+
+\section{Failure Analysis}
+
+\subsection{Failure taxonomy}
+
+We code failed trajectories using a mechanism-oriented taxonomy: (1) accessibility-state failure, where a requested feature is not configured, preserved, or verified; (2) information acquisition failure over text/audio/video/visual inputs; (3) grounding or focus failure; (4) task-state tracking failure; (5) constraint failure, including cases where the nominal goal succeeds but an access requirement is violated; (6) artifact construction failure; (7) cross-app transfer failure; (8) completion-verification failure such as omitting Save, Apply, Submit, or a final check; and (9) recovery failure after a popup, state change, or unexpected error. Evaluator-near-miss cases that are semantically wrong are tracked separately for benchmark QA rather than agent diagnosis.
+
+\subsection{Annotation protocol}
+
+At least two annotators independently code a stratified sample of failed trajectories. We record primary and secondary failure labels together with observable process signals such as repeated retries, backtracking, focus recovery, and omitted final actions. Disagreements are adjudicated after independent annotation. \todo{failure annotation}
+
+\subsection{Failure signatures}
+
+Our analysis asks whether failures concentrate differently across visual, hearing, motor, and cognitive slices; whether they align with information-access, artifact, or continuation-state mechanisms; which agent families exhibit which signatures; and how often access-specific failure occurs \emph{after} \taskout has already succeeded. \todo{failure results} These results motivate the method in the next section rather than serving only as anecdotal case studies.
+
+\section{\todo{Method Name}}
+
+\todo{failure-derived motivation} Our working hypothesis is that many failures arise not from primitive GUI execution but from weak persistence of access-specific requirements, task state, multimodal evidence, and completion conditions. We therefore design \todo{METHOD} to represent and verify the requirements implicated by the failure analysis. Candidate mechanisms include an accessibility-aware requirement representation, persistent task/constraint state, multimodal evidence aggregation, structured UI/accessibility-state observation, and final/continuation-state verification. \todo{method details}
+
+Every retained component must map to an observed failure mechanism, predict gains on specific benchmark slices, and be checked for degradation on ordinary computer-use tasks.
+
+\section{Method Evaluation}
+
+\paragraph{Main and targeted results.}
+We compare \todo{METHOD} with the strongest baseline(s) on overall \fullsuccess and each functional group, then test whether gains concentrate in predicted slices (e.g., persistent-state mechanisms on cross-app/cognitive-support tasks, accessibility-state verification on continuation tasks, multimodal evidence on audio/visual information tasks, and final verification on omitted Save/Apply/Submit actions). \todo{method results} \todo{slice results}
+
+\paragraph{Ablations and cross-benchmark generalization.}
+We remove each module to test its associated failure hypothesis and evaluate the full method on at least one independent Windows-compatible CUA benchmark such as OSWorld or Windows Agent Arena, checking both evaluator-specific overfitting and degradation of general computer-use capability. \todo{ablations} \todo{cross-benchmark}
+
+\section{Discussion}
+
+\paragraph{Accessibility-oriented success is a user-side construct.}
+\bench separates agent-side execution strategy from user-side requirements: an accessibility feature can be a legitimate persistent environment state even if the agent did not use it while acting. Many underlying goals are intentionally ordinary; what changes is the required information, persistent representation/support artifact, or accessibility/continuation state. Continuation readiness preserves the option to inspect or continue under the requested access need without assuming that the user will immediately take over.
+
+\paragraph{Scope of group-level conclusions.}
+Visual, hearing, motor, and cognitive labels are analytical slices of task-relevant barriers, not user identities or diagnoses; real needs may overlap and vary by context. If \todo{requirement gap result} persists across agents, it would show that optimizing nominal GUI completion alone is insufficient and motivate explicit tracking and verification of user-specific requirements, persistent environment state, and multimodal evidence.
+
+\section{Conclusion}
+
+We presented \bench, an executable benchmark for accessibility-oriented computer-use agents. Its central premise is that a documented access need can change what counts as successful completion even when the underlying life goal remains ordinary. By decomposing nominal outcome, access-specific requirement satisfaction, and full task success, \bench is designed to reveal failure modes hidden by conventional end-state success alone. \todo{headline finding} \todo{method result} Strong general computer-use performance does not by itself guarantee reliable assistance across heterogeneous accessibility needs; evaluating and preserving access-need-specific requirements is a necessary step toward agents that can more robustly support diverse users.
+
+\section{Limitations}
+
+\bench is necessarily a simplification. Four functional groups do not exhaust disability or accessibility needs; speech, language, learning, neurological, and multiple-disability scenarios receive limited coverage. Documented needs and expert review are task-level proxies and do not replace large-scale evaluation with target users or justify claims that the benchmark represents all disabled people. Functional need is not diagnosis, and within-group heterogeneity is substantial. Continuation state measures readiness rather than observed future behavior, and platform documentation establishes the intended purpose of accessibility features rather than the preferences of every user.
+
+The current paper covers Windows desktop environments only, so its findings should not be generalized directly to Android, iOS, macOS, or other interaction paradigms. Self-hosting and pinned media improve determinism at the cost of some open-world realism. Deterministic evaluators may omit legitimate success variants even after validity testing. The cognitive construct is especially sensitive to overreach: ordinary long-horizon difficulty, age, or multi-step planning is not treated as evidence of cognitive disability.
+
+\section{Ethical Considerations}
+
+The benchmark evaluates accessibility-oriented computer assistance; it does not imply that agents should replace user autonomy or make high-stakes decisions without appropriate user control and confirmation. Group labels are functional analytical slices rather than identities or diagnoses, and benchmark scores should not be interpreted as complete predictions of usefulness for individual users. \todo{final ethics details}
+
+\begin{thebibliography}{99}
+
+\bibitem[Zhou et~al.(2023)]{webarena}
+Shuyan Zhou, Frank F. Xu, Hao Zhu, Xuhui Zhou, Robert Lo, Abishek Sridhar, Xianyi Cheng, Tianyue Ou, Yonatan Bisk, Daniel Fried, Uri Alon, and Graham Neubig. 2023.
+\newblock WebArena: A Realistic Web Environment for Building Autonomous Agents.
+\newblock arXiv:2307.13854.
+
+\bibitem[Koh et~al.(2024)]{visualwebarena}
+Jing Yu Koh, Robert Lo, Lawrence Jang, Vikram Duvvur, Ming Lim, Po-Yu Huang, Graham Neubig, Shuyan Zhou, Russ Salakhutdinov, and Daniel Fried. 2024.
+\newblock VisualWebArena: Evaluating Multimodal Agents on Realistic Visual Web Tasks.
+\newblock In \emph{Proceedings of ACL 2024}, pages 881--905.
+
+\bibitem[Xie et~al.(2024)]{osworld}
+Tianbao Xie, Danyang Zhang, Jixuan Chen, Xiaochuan Li, Siheng Zhao, Ruisheng Cao, Toh Jing Hua, Zhoujun Cheng, Dongchan Shin, Fangyu Lei, Yitao Liu, Yiheng Xu, Shuyan Zhou, Silvio Savarese, Caiming Xiong, Victor Zhong, and Tao Yu. 2024.
+\newblock OSWorld: Benchmarking Multimodal Agents for Open-Ended Tasks in Real Computer Environments.
+\newblock arXiv preprint.
+
+\bibitem[Rawles et~al.(2024)]{androidworld}
+Christopher Rawles, Sarah Clinckemaillie, Yifan Chang, Jonathan Waltz, Gabrielle Lau, Marybeth Fair, Alice Li, William Bishop, Wei Li, Folawiyo Campbell-Ajala, Daniel Toyama, Robert Berry, Divya Tyamagundlu, Timothy Lillicrap, and Oriana Riva. 2024.
+\newblock AndroidWorld: A Dynamic Benchmarking Environment for Autonomous Agents.
+\newblock arXiv:2405.14573.
+
+\bibitem[Bonatti et~al.(2025)]{waa}
+Rogerio Bonatti, Dan Zhao, Francesco Bonacci, Dillon Dupont, Sara Abdali, Yinheng Li, Yadong Lu, Justin Wagle, Kazuhito Koishida, Arthur Bucker, Lawrence Keunho Jang, and Zheng Hui. 2025.
+\newblock Windows Agent Arena: Evaluating Multi-Modal OS Agents at Scale.
+\newblock In \emph{Proceedings of ICML 2025}.
+
+\bibitem[Cao et~al.(2024)]{spider2v}
+Ruisheng Cao, Fangyu Lei, Haoyuan Wu, Jixuan Chen, Yeqiao Fu, Hongcheng Gao, Xinzhuang Xiong, Hanchong Zhang, Yuchen Mao, Wenjing Hu, Tianbao Xie, Hongshen Xu, Danyang Zhang, Sida Wang, Ruoxi Sun, Pengcheng Yin, Caiming Xiong, Ansong Ni, Qian Liu, Victor Zhong, Lu Chen, Kai Yu, and Tao Yu. 2024.
+\newblock Spider2-V: How Far Are Multimodal Agents From Automating Data Science and Engineering Workflows?
+\newblock arXiv:2407.10956.
+
+\bibitem[Lin et~al.(2024)]{videogui}
+Kevin Qinghong Lin, Linjie Li, Difei Gao, Qinchen Wu, Mingyi Yan, Zhengyuan Yang, Lijuan Wang, and Mike Zheng Shou. 2024.
+\newblock VideoGUI: A Benchmark for GUI Automation from Instructional Videos.
+\newblock \emph{NeurIPS 2024 Datasets and Benchmarks}.
+
+\bibitem[Jang et~al.(2025)]{videowebarena}
+Lawrence Keunho Jang, Yinheng Li, Charles Ding, Justin Lin, Paul Pu Liang, Dan Zhao, Rogerio Bonatti, and Kazuhito Koishida. 2025.
+\newblock VideoWebArena: Evaluating Long Context Multimodal Agents with Video Understanding Web Tasks.
+\newblock \emph{ICLR 2025}.
+
+\bibitem[Henry et~al.(2026)]{omnigui}
+Felix Henry, Lihan Lin, Jiangyou Zhu, Yangfan, Bingqian Zhang, Min Chen, and Shiyu Huang. 2026.
+\newblock OmniGUI: Benchmarking GUI Agents in Omni-Modal Smartphone Environments.
+\newblock arXiv:2605.18758.
+
+\bibitem[Gubbi Mohanbabu et~al.(2026)]{a11ycua}
+Ananya Gubbi Mohanbabu, Rosiana Natalie, Brandon Kim, Anhong Guo, and Amy Pavel. 2026.
+\newblock A11y-CUA Dataset: Characterizing the Accessibility Gap in Computer Use Agents.
+\newblock In \emph{Proceedings of CHI 2026}.
+
+\bibitem[Kodandaram et~al.(2026)]{arewethereyet}
+Satwik Ram Kodandaram, Monalika Padma Reddy, Xiaojun Bi, Jiawei Zhou, I. V. Ramakrishnan, and Vikas Ashok. 2026.
+\newblock Are We There Yet? Assessing Computer-Use Agents for Blind Users' Accessible Interaction with Desktop Applications.
+\newblock arXiv:2609.00524.
+
+\bibitem[Yang et~al.(2026)]{guide}
+Saelyne Yang, Jaesang Yu, Yi-Hao Peng, Kevin Qinghong Lin, Jae Won Cho, Yale Song, and Juho Kim. 2026.
+\newblock GUIDE: A Benchmark for Understanding and Assisting Users in Open-Ended GUI Tasks.
+\newblock In \emph{Proceedings of CVPR 2026}.
+
+\bibitem[WHO(2001)]{whoicf}
+World Health Organization. 2001.
+\newblock International Classification of Functioning, Disability and Health (ICF).
+\newblock World Health Organization.
+
+\bibitem[W3C(2025a)]{w3cvisual}
+World Wide Web Consortium. 2025a.
+\newblock Visual Disabilities: Abilities and Barriers.
+\newblock W3C Web Accessibility Initiative.
+
+\bibitem[W3C(2025b)]{w3cmedia}
+World Wide Web Consortium. 2025b.
+\newblock Making Audio and Video Media Accessible.
+\newblock W3C Web Accessibility Initiative.
+
+\bibitem[W3C(2025c)]{w3ccognitive}
+World Wide Web Consortium. 2025c.
+\newblock Cognitive Accessibility.
+\newblock W3C Web Accessibility Initiative.
+
+\bibitem[WebAIM(2024)]{webaimsr}
+WebAIM. 2024.
+\newblock Screen Reader User Survey \#10 Results.
+
+\bibitem[WebAIM(2018)]{webaimlv}
+WebAIM. 2018.
+\newblock Survey of Users with Low Vision \#2 Results.
+
+\bibitem[WebAIM(2013)]{webaimmotor}
+WebAIM. 2013.
+\newblock Survey of Users with Motor Disabilities.
+
+\end{thebibliography}
+
+\appendix
+
+\section{Documented User-Need Taxonomy}
+\label{app:taxonomy}
+
+\paragraph{Visual.}
+V1: non-visual access to digital text and interface content; V2: magnification and text enlargement; V3: contrast and display-palette customization; V4: color-vision differentiation support; V5: access to non-text visual information; V6: accessible CAPTCHA and verification. Primary evidence includes WebAIM screen-reader/low-vision surveys, W3C guidance on visual disabilities, WCAG 1.1.1/1.4.1/1.4.4, and platform documentation \citep{webaimsr,webaimlv,w3cvisual}.
+
+\paragraph{Hearing.}
+H1: speech-to-text access through captions or transcripts; H2: caption readability and language customization; H3: visual and persistent alternatives to auditory notifications; H4: single-channel access to stereo audio; H5: verification without relying on hearing. Evidence sources include W3C media accessibility guidance, consumer captioning research, and Microsoft hearing-access documentation \citep{w3cmedia}.
+
+\paragraph{Motor.}
+M1: alternative text entry without a physical keyboard; M2: sequential modifier-key input; M3: keystroke filtering and sensitivity control; M4: alternative pointer control; M5: reduced press-hold and dragging demand; M6: mouse-button/handedness customization; M7: reduced pointer precision, repetition, and timing demand. Evidence sources include the WebAIM motor-disability survey, WCAG dragging guidance, and Microsoft mobility documentation \citep{webaimmotor}.
+
+\paragraph{Cognitive.}
+C1: focus, readability, and simplification; C2: memory externalization and persistent information support; C3: time and prospective-memory support. The narrow taxonomy is grounded in W3C cognitive accessibility and COGA patterns \citep{w3ccognitive} and intentionally excludes generic difficulty, planning burden, or age as standalone evidence.
+
+\section{Implementation and Reproducibility Details}
+
+\paragraph{Task schema.}
+Each task records \texttt{id}, \texttt{user\_group}, \texttt{subgroup\_ids}, \texttt{category}, \texttt{need\_ids}, \texttt{difficulty}, \texttt{instruction}, \texttt{source}, \texttt{gt\_steps}, \texttt{config}, \texttt{related\_apps}, \texttt{evaluator}, and \texttt{proxy}. Configuration prepares the initial state without completing the graded goal; ground-truth steps are reserved for annotation/reproduction.
+
+\paragraph{Self-hosted service registry.}
+The current Windows implementation uses OneStopShop (port 7770), an e-commerce CMS/admin service (7780), Kiwix Wikipedia (8888), a Reddit-style forum (9999), and a local CAPTCHA service (8765). Exact image versions, reset procedures, and evaluator access methods will be frozen in the artifact release. \todo{Insert release commit/hash and container versions.}
+
+\paragraph{Hearing-media provenance.}
+For fixed TTS tasks, release metadata will include the canonical script, generated audio asset, provider/model/voice/version, expected continuous caption phrases or atomic facts, duration, required caption feature, generation date, and file hash. \todo{Freeze provider/model/version and add hashes.}
+
+\section{Evaluator DSL and Validity Cases}
+
+A compact evaluator notation expresses required text, alternatives, conjunctions, and constrained patterns:
+\begin{verbatim}
+"text"              = required expression
+["a", "b"]          = any_of
+{"all_of":[A,B]} = require both
+{"regex":"..."}  = pattern
+\end{verbatim}
+For multi-fact outputs, score coverage over required atomic points, while combining content checks explicitly with structured conditions such as recipient, date, file path, or accessibility state. Evaluator validation will include canonical correct answers, paraphrastic variants, missing-fact cases, wrong-value near misses, negation, and formatting variation.
+
+\section{Planned Additional Tables and Figures}
+
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Table A1:} full benchmark statistics by group, subgroup, need, workflow, modality, mechanism, application, continuation-state requirement, cross-app status, and output type.
+    \item \textbf{Figure A1:} distribution of task horizons and application counts.
+    \item \textbf{Figure A2:} \taskout, \accessreq, and \fullsuccess on the distinct-component subset, disaggregated by group and mechanism.
+    \item \textbf{Figure A3:} failure composition by group and agent family.
+    \item \textbf{Table A2:} construct-validity review protocol and agreement.
+    \item \textbf{Table A3:} evaluator-validity precision/recall/F1 versus exact and loose matching.
+    \item \textbf{Table A4:} method ablations mapped to predicted failure slices.
+    \item \textbf{Table A5:} cross-benchmark generalization.
+\end{itemize}
+
+\end{document}

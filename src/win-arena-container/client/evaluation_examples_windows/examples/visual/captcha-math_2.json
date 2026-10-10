@@ -11,7 +11,7 @@
   ],
   "difficulty": "easy",
   "operation_time": 49.03,
-  "instruction": "Complete the math CAPTCHA verification in Microsoft Edge.",
+  "instruction": "The verification step currently open in Microsoft Edge is not accessible to me. Complete the math CAPTCHA verification in Microsoft Edge.",
   "source": "synthetic",
   "gt_steps": [
     "Solve the arithmetic expression and enter the result."

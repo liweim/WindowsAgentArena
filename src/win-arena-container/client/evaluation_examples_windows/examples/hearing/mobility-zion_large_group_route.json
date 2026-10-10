@@ -10,7 +10,7 @@
   ],
   "difficulty": "medium",
   "operation_time": 143.28,
-  "instruction": "Use Chrome Live Caption on the opened Zion National Park video. My group has 14 people. Determine which Kolob Canyons trail the video permits for a group that size, then show a driving route in Google Maps from Kolob Canyons Visitor Center to that trail.",
+  "instruction": "I cannot reliably hear the recording. Use Chrome Live Caption on the opened Zion National Park video. My group has 14 people. Determine which Kolob Canyons trail the video permits for a group that size, then show a driving route in Google Maps from Kolob Canyons Visitor Center to that trail.",
   "source": "https://www.nps.gov/media/video/view.htm?id=28FF549B-155D-451F-670824562C7B1CE7",
   "gt_steps": [
     "Turn on Chrome Live Caption.",

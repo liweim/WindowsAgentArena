@@ -281,7 +281,7 @@ Rules:
 - Each action must be one of:
   - a `pyautogui...` action listed in the action types
   - `WAIT`
-  - `TERMINATE`, when the visible evidence strongly indicates that the requested final state is complete; the runtime will then execute Final Verification
+  - `TERMINATE`, when the visible evidence strongly indicates that the requested final state is complete
   - `INFEASIBLE`, only when the task is objectively impossible
 - Do not output bare mobile action aliases such as `swipe_up()`, `swipeDown()`, `tap()`, or `long_press()`.
 - Prefer one meaningful interaction per action item.
@@ -300,21 +300,6 @@ Rules:
 - Mention visible errors, permission dialogs, loading states, and navigation changes.
 - Preserve task-relevant text, values, and coordinates.
 - Do not judge overall task completion.
-"""
-
-ANDROID_FINAL_VERIFICATION_PROMPT = """Decide whether the requested final state is fully completed.
-
-Use the task, execution history, initial screenshot, and latest screenshot.
-Return exactly one word:
-PASS
-or
-FAIL
-
-Rules:
-- Return `PASS` only when every explicit requirement is supported by visible evidence and execution history.
-- Return `FAIL` when the latest state is incomplete, ambiguous, transient, or differs from any requested value.
-- For multi-item tasks, require evidence for every requested item.
-- Treat the latest screenshot as primary final-state evidence and the initial screenshot as baseline context.
 """
 
 ANDROID_CONTEXT_REFINEMENT_PROMPT = """Summarize the execution history and provide concise next-step guidance.
@@ -642,71 +627,6 @@ Rules:
 - Use the task instruction to decide which output details are key; do not replace needed paths or IDs with generic wording.
 """
 
-FINAL_VERIFICATION_PROMPT = """Decide whether the task is fully completed after the observed workflow.
-
-You will receive:
-- the original task
-- the current subgoal
-- the provided execution history
-- the initial screenshot from the start of the task
-- the latest screenshot from the end of the task
-
-Return exactly one word:
-PASS
-or
-FAIL
-
-Rules:
-- Return only `PASS` or `FAIL`.
-- Use `PASS` only if the task requirements appear fully satisfied in the provided execution history and screenshots.
-- Before deciding, internally check every explicit outcome and every explicit app, feature, or method requirement in the original task. Return `FAIL` if any one lacks positive execution evidence; do not infer that a requested method was used merely because the same information or outcome was obtained another way.
-- If Chrome Live Caption is required, ASR alone is insufficient: history must show it was enabled. Do not require playback, a caption overlay, a follow-up check, or final-screen visibility unless explicitly requested.
-- Some tasks may be infeasible by design. If required capabilities, variables, or app features were unavailable, return `FAIL`.
-- If there is uncertainty, return `FAIL`.
-- The screenshots are primary evidence for visible state. Use the initial screenshot as baseline context and the latest screenshot as the final state to judge.
-- If the task outcome is only obvious by comparing before vs after, explicitly use that comparison before deciding.
-- The latest screenshot should show the final visible state when that state fits on screen. For long or multi-view artifacts that cannot be shown completely at once, accept explicit readback plus prior screenshots/history covering all required content, provided the latest screenshot still shows the correct app and persisted artifact. Do not demand that every part be simultaneously visible.
-- Use the provided execution history to confirm what was actually modified, saved, read back, or verified. If logs only show that a command or API call ran, but do not confirm the requested final result, return `FAIL`.
-- If a file was modified through `bash_execution` while the desktop app may still display stale content, prefer explicit readback/verification evidence from the logs plus the latest screenshot of the reopened app state.
-- Fail if the logs reveal formatting mistakes, header corruption, partial coverage, or any mismatch with the task requirements.
-- Do not treat an explanation of impossibility, a command launch, or a transient status/toast as completion for a task that asked for an actual GUI, file, or configuration result.
-- Require exact evidence for explicit app, method, source, target, format, variable, and final-state constraints; return `FAIL` if the workflow guessed, changed, or bypassed them.
-- For multi-target tasks (`all`, `both`, `each`, `respectively`), fail unless every requested target is explicitly covered by the logs.
-- For relative-date tasks, fail unless the exact resolved absolute date is explicitly covered.
-"""
-
-NO_L2S_FINAL_VERIFICATION_PROMPT = """Decide whether the task is fully completed after the observed workflow.
-
-You will receive:
-- the original task
-- the provided execution history
-- the initial screenshot from the start of the task
-- the latest screenshot from the end of the task
-
-Return exactly one word:
-PASS
-or
-FAIL
-
-Rules:
-- Return only `PASS` or `FAIL`.
-- Use `PASS` only if the task requirements appear fully satisfied in the provided execution history and screenshots.
-- Before deciding, internally check every explicit outcome and every explicit app, feature, or method requirement in the original task. Return `FAIL` if any one lacks positive execution evidence; do not infer that a requested method was used merely because the same information or outcome was obtained another way.
-- If Chrome Live Caption is required, ASR alone is insufficient: history must show it was enabled. Do not require playback, a caption overlay, a follow-up check, or final-screen visibility unless explicitly requested.
-- Some tasks may be infeasible by design. If required capabilities, variables, or app features were unavailable, return `FAIL`.
-- If there is uncertainty, return `FAIL`.
-- The screenshots are primary evidence for visible state. Use the initial screenshot as baseline context and the latest screenshot as the final state to judge.
-- If the task outcome is only obvious by comparing before vs after, explicitly use that comparison before deciding.
-- The latest screenshot should show the final visible state when that state fits on screen. For long or multi-view artifacts that cannot be shown completely at once, accept explicit readback plus prior screenshots/history covering all required content, provided the latest screenshot still shows the correct app and persisted artifact. Do not demand that every part be simultaneously visible.
-- Use the provided execution history to confirm what was actually modified, saved, read back, or verified. If logs only show that a command or API call ran, but do not confirm the requested final result, return `FAIL`.
-- If a file was modified through `bash_execution` while the desktop app may still display stale content, prefer explicit readback/verification evidence from the logs plus the latest screenshot of the reopened app state.
-- Fail if the logs reveal formatting mistakes, header corruption, partial coverage, or any mismatch with the task requirements.
-- Do not treat an explanation of impossibility, a command launch, or a transient status/toast as completion for a task that asked for an actual GUI, file, or configuration result.
-- Require exact evidence for explicit app, method, source, target, format, variable, and final-state constraints; return `FAIL` if the workflow guessed, changed, or bypassed them.
-- For multi-target tasks (`all`, `both`, `each`, `respectively`), fail unless every requested target is explicitly covered by the logs.
-- For relative-date tasks, fail unless the exact resolved absolute date is explicitly covered.
-"""
-
 CONTEXT_REFINEMENT_PROMPT = """Analyze task execution progress and provide guidance.
 
 You will receive: a task instruction, execution history range and execution history
@@ -731,8 +651,3 @@ Examples:
 SUBGOAL_TRANSITION_VERIFICATION_PROMPT = """Decide whether to accept the proposed subgoal. Return only PASS or FAIL.
 
 PASS if the current subgoal is complete, the proposal is a task-aligned recovery from a blocked/invalid subgoal, or the proposal merely continues, refines, or restates the same stage. FAIL only when the proposal moves to a genuinely different stage while the current subgoal is still incomplete and viable, lacks evidence, or skips required work. Planner intent and unverified tool success are not evidence."""
-
-
-INFEASIBILITY_FINAL_VERIFICATION_PROMPT = """Judge whether evidence proves the task objectively infeasible. Return only PASS or FAIL.
-
-PASS only if history or screenshots prove a required constraint cannot be satisfied in this environment. FAIL if the claim is unsupported, only an attempt failed, another reasonable path remains, or evidence is uncertain. Do not relax task constraints or treat planner rationale as evidence."""

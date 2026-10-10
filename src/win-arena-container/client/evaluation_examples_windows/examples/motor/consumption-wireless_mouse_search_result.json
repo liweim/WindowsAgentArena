@@ -10,7 +10,7 @@
   ],
   "difficulty": "easy",
   "operation_time": 91.94,
-  "instruction": "Enable Windows Sticky Keys and keep them enabled. Add exactly one unit of the first OneStopShop search result for `wireless mouse` to the shopping cart and choose the black one for the colour.",
+  "instruction": "I have difficulty holding several keys at once. Turn on Windows Sticky Keys and leave it enabled for me. Add exactly one unit of the first OneStopShop search result for `wireless mouse` to the shopping cart and choose the black one for the colour.",
   "source": "synthetic",
   "gt_steps": [
     "Enable Windows Sticky Keys.",

@@ -12,11 +12,11 @@
   ],
   "difficulty": "medium",
   "operation_time": 145.37,
-  "instruction": "Create a Sticky Note containing the first three basic emergency supplies exactly as listed on the ready.gov page, using Immersive Reader to read the page.",
+  "instruction": "I find dense information easier to manage when it is simplified and saved as a persistent reference. Read the local Ready.gov emergency-kit PDF in Microsoft Edge and create a Sticky Note containing the first three basic emergency supplies exactly as listed there.",
   "source": "https://www.ready.gov/kit",
   "gt_steps": [
+    "Open the local PDF snapshot in Microsoft Edge.",
     "Open the Ready.gov emergency kit page in Microsoft Edge.",
-    "Activate Immersive Reader.",
     "Locate the `Basic Disaster Supplies Kit` list.",
     "Open Sticky Notes.",
     "Create a new note.",
@@ -24,12 +24,23 @@
   ],
   "config": [
     {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "../assets/information-emergency_kit_checklist.pdf",
+            "path": "C:\\Users\\Docker\\Desktop\\EmergencyKitChecklist.pdf"
+          }
+        ]
+      }
+    },
+    {
       "type": "launch",
       "parameters": {
         "command": [
           "cmd",
           "/c",
-          "start msedge https://www.ready.gov/kit"
+          "start msedge file:///C:/Users/Docker/Desktop/EmergencyKitChecklist.pdf"
         ]
       }
     },
@@ -53,17 +64,12 @@
   ],
   "evaluator": {
     "func": [
-      "check_text_points",
-      "check_edge_immersive_reader_state"
+      "check_text_points"
     ],
     "conj": "and",
     "result": [
       {
         "type": "sticky_notes_content"
-      },
-      {
-        "type": "edge_immersive_reader_state",
-        "activate_edge": true
       }
     ],
     "expected": [
@@ -83,12 +89,6 @@
             ]
           ]
         }
-      },
-      {
-        "type": "rule",
-        "rules": {
-          "reader_mode_open": true
-        }
       }
     ],
     "metric_roles": {
@@ -96,11 +96,10 @@
         0
       ],
       "access_requirement": [
-        0,
-        1
+        0
       ]
     }
   },
-  "proxy": true,
-  "possibility_of_env_change": "medium"
+  "proxy": false,
+  "possibility_of_env_change": "low"
 }

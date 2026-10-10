@@ -10,7 +10,7 @@
   ],
   "difficulty": "medium",
   "operation_time": 64.72,
-  "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Copy the touchpad-cleaning instructions from the provided Dell User's Guide exactly as written into `answer.txt` on the Desktop.",
+  "instruction": "I have difficulty using a physical keyboard. Open the Windows On-Screen Keyboard and leave it available for me. Copy the touchpad-cleaning instructions from the provided Dell User's Guide exactly as written into `answer.txt` on the Desktop.",
   "source": "synthetic",
   "gt_steps": [
     "Enable the Windows On-Screen Keyboard.",

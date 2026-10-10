@@ -10,7 +10,7 @@
   ],
   "difficulty": "easy",
   "operation_time": 74.29,
-  "instruction": "Enable Mouse ClickLock and leave it enabled.",
+  "instruction": "Holding down a mouse button is difficult for me. Turn on Mouse ClickLock and leave it enabled for me.",
   "source": "synthetic",
   "gt_steps": [
     "Open Windows settings.",

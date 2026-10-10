@@ -10,7 +10,7 @@
   ],
   "difficulty": "hard",
   "operation_time": 92.35,
-  "instruction": "Use Chrome Live Caption on the opened audio and create a complete child-visit preparation checklist in a Sticky Note. Include the recommended clothing, ways to comfort or distract the child, after-vaccination comfort measures, the record to bring, and how long to remain after the appointment.",
+  "instruction": "I cannot reliably hear the recording. Use Chrome Live Caption on the opened audio and create a complete child-visit preparation checklist in a Sticky Note. Include the recommended clothing, ways to comfort or distract the child, after-vaccination comfort measures, the record to bring, and how long to remain after the appointment.",
   "source": "https://www.canada.ca/en/health-canada/services/video/making-vaccinations-more-comfortable.html",
   "gt_steps": [
     "Turn on Chrome Live Caption.",

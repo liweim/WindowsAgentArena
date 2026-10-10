@@ -12,19 +12,29 @@
   ],
   "difficulty": "medium",
   "operation_time": 63.66,
-  "instruction": "Use Edge Immersive Reader to complete the sunscreen entry in `health-sunscreen_reference.xlsx` on the Desktop using only the AP News article. Fill in the missing information, save the spreadsheet, and leave Immersive Reader open.",
+  "instruction": "I find dense information easier to manage when it is simplified and saved as a persistent reference. Use the local AP sunscreen article PDF to complete the sunscreen entry in `health-sunscreen_reference.xlsx` on the Desktop. Fill in the missing information, save the spreadsheet, and leave the PDF open in Microsoft Edge.",
   "source": "https://apnews.com/article/9b9c7e04b418b3c9c1fbaa7ddabade25",
   "gt_steps": [
-    "With the AP News sunscreen article active in Microsoft Edge, press `F9` to enter Immersive Reader.",
+    "Open the local PDF snapshot in Microsoft Edge.",
     "Open `health-sunscreen_reference.xlsx` from the Desktop in LibreOffice Calc.",
     "Enter `bemotrizinol` in the Ingredient field.",
     "Enter `6 months and older` in the Minimum age field.",
     "Enter `Parsol Shield` in the Initial U.S. brand field.",
     "Enter `both ultraviolet A and B rays` in the UV protection field.",
-    "Save the spreadsheet.",
-    "Leave Immersive Reader open on the AP News article."
+    "Save the spreadsheet."
   ],
   "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "../assets/sunscreen_ingredient_guidance.pdf",
+            "path": "C:\\Users\\Docker\\Desktop\\SunscreenIngredientGuidance.pdf"
+          }
+        ]
+      }
+    },
     {
       "type": "upload_file",
       "parameters": {
@@ -48,7 +58,7 @@
         "command": [
           "cmd",
           "/c",
-          "start msedge https://apnews.com/article/9b9c7e04b418b3c9c1fbaa7ddabade25"
+          "start msedge file:///C:/Users/Docker/Desktop/SunscreenIngredientGuidance.pdf"
         ]
       }
     }
@@ -59,8 +69,7 @@
   ],
   "evaluator": {
     "func": [
-      "check_text_points",
-      "check_edge_immersive_reader_state"
+      "check_text_points"
     ],
     "conj": "and",
     "result": [
@@ -68,10 +77,6 @@
         "type": "vm_command_line",
         "command": "C:\\Users\\Docker\\AppData\\Local\\Programs\\Python\\Python310\\python.exe -c \"from openpyxl import load_workbook; from pathlib import Path; p=Path.home()/'Desktop'/'health-sunscreen_reference.xlsx'; ws=load_workbook(p, data_only=True).active; print('Ingredient: '+str(ws['B2'].value)); print('Minimum age: '+str(ws['C2'].value)); print('Initial U.S. brand: '+str(ws['D2'].value)); print('UV protection: '+str(ws['E2'].value))\"",
         "shell": true
-      },
-      {
-        "type": "edge_immersive_reader_state",
-        "activate_edge": true
       }
     ],
     "expected": [
@@ -101,12 +106,6 @@
             ]
           ]
         }
-      },
-      {
-        "type": "rule",
-        "rules": {
-          "reader_mode_open": true
-        }
       }
     ],
     "metric_roles": {
@@ -114,11 +113,10 @@
         0
       ],
       "access_requirement": [
-        0,
-        1
+        0
       ]
     }
   },
-  "proxy": true,
+  "proxy": false,
   "possibility_of_env_change": "low"
 }

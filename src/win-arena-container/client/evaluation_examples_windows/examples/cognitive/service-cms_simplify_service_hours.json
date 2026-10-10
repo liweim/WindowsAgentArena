@@ -10,7 +10,7 @@
   ],
   "difficulty": "medium",
   "operation_time": 144.39,
-  "instruction": "The CMS page with URL key `service-hours-draft` is difficult to scan. Simplify it without changing its meaning: set the title and content heading to `Service Hours`, replace the body with three short lines in this order—`Monday-Friday: 9 AM-5 PM`, `Saturday: 10 AM-2 PM`, `Sunday: Closed`—enable the page, and save it. Use username `admin` and password `admin1234`.",
+  "instruction": "I find dense or distracting information difficult to process. The CMS page with URL key `service-hours-draft` is difficult to scan. Simplify it without changing its meaning: set the title and content heading to `Service Hours`, replace the body with three short lines in this order—`Monday-Friday: 9 AM-5 PM`, `Saturday: 10 AM-2 PM`, `Sunday: Closed`—enable the page, and save it. Use username `admin` and password `admin1234`.",
   "source": "synthetic",
   "gt_steps": [
     "Sign in to the CMS admin site.",

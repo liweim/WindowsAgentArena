@@ -12,7 +12,7 @@
   ],
   "difficulty": "hard",
   "operation_time": 277.63,
-  "instruction": "Use the NIH Clinical Center Patient Handbook open in Microsoft Edge. A patient family will arrive by car at 10:30 pm. Create a Sticky Note that records the vehicle entrance they should use at that time, the hours that entrance is used, and its location on Rockville Pike.",
+  "instruction": "I rely on a written plan with times so I do not have to remember the details. Use the NIH Clinical Center Patient Handbook open in Microsoft Edge. A patient family will arrive by car at 10:30 pm. Create a Sticky Note that records the vehicle entrance they should use at that time, the hours that entrance is used, and its location on Rockville Pike.",
   "source": "https://www.cc.nih.gov/sites/default/files/internet-files/participate/_pdf/pthandbook.pdf",
   "gt_steps": [
     "Find the Patient Entry section of the NIH Clinical Center Patient Handbook.",

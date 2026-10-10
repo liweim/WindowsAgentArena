@@ -10,7 +10,7 @@
   ],
   "difficulty": "medium",
   "operation_time": 20.21,
-  "instruction": "Enable Windows Mouse Keys and keep them enabled. Using the next-meeting details in the provided meeting minutes PDF, create a one-hour Thunderbird Calendar appointment at the listed date and time, with the meeting place as the title.",
+  "instruction": "Precise mouse control is difficult for me. Turn on Windows Mouse Keys and leave it enabled for me. Using the next-meeting details in the provided meeting minutes PDF, create a one-hour Thunderbird Calendar appointment at the listed date and time, with the meeting place as the title.",
   "source": "synthetic",
   "gt_steps": [
     "Enable Windows Mouse Keys.",

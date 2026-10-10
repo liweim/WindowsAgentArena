@@ -10,7 +10,7 @@
   ],
   "difficulty": "easy",
   "operation_time": 57.06,
-  "instruction": "Set Windows notifications to stay on screen for 5 minutes. This Windows build does not expose the duration control in Settings, so set the current user's `HKCU\\Control Panel\\Accessibility\\MessageDuration` registry value to decimal `300`.",
+  "instruction": "I need more time to notice and process notifications. Keep Windows notifications on screen for 5 minutes. This Windows build does not expose the duration control in Settings, so set the current user's `HKCU\\Control Panel\\Accessibility\\MessageDuration` registry value to decimal `300`.",
   "source": "synthetic",
   "gt_steps": [
     "Open Registry Editor or a terminal.",

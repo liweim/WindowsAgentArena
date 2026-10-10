@@ -10,7 +10,7 @@
   ],
   "difficulty": "easy",
   "operation_time": 44.12,
-  "instruction": "Complete Elsa's water-bottle item in `school_shopping_list.txt` on the Desktop. When finished, check it off by changing `[ ]` to `[x]` on that item, then save the list.",
+  "instruction": "I rely on persistent written records so I do not have to remember important details. Complete Elsa's water-bottle item in `school_shopping_list.txt` on the Desktop. When finished, check it off by changing `[ ]` to `[x]` on that item, then save the list.",
   "source": "synthetic",
   "gt_steps": [
     "Open `school_shopping_list.txt` and find Elsa's unchecked water-bottle item and its listed requirements.",

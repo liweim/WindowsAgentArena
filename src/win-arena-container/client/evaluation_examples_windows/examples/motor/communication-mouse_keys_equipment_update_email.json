@@ -10,7 +10,7 @@
   ],
   "difficulty": "medium",
   "operation_time": 114.3,
-  "instruction": "Enable Windows Mouse Keys and keep them enabled. Use the official Quantum 600E owner’s manual saved on the Desktop to create and save a Thunderbird draft to `equipmentdesk@example.org` with subject `Quantum 600E charging guidance`. Include the battery type and voltage, the required charger, and the extension-cord warning. Do not send it.",
+  "instruction": "Precise mouse control is difficult for me. Turn on Windows Mouse Keys and leave it enabled for me. Use the official Quantum 600E owner’s manual saved on the Desktop to create and save a Thunderbird draft to `equipmentdesk@example.org` with subject `Quantum 600E charging guidance`. Include the battery type and voltage, the required charger, and the extension-cord warning. Do not send it.",
   "source": "https://www.quantumrehab.com/pdf/owners-manuals/us_q600e_om.pdf",
   "gt_steps": [
     "Enable Windows Mouse Keys and leave them enabled.",

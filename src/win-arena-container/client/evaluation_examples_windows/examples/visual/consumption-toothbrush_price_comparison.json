@@ -10,7 +10,7 @@
   ],
   "difficulty": "hard",
   "operation_time": 60.99,
-  "instruction": "Turn on Windows Narrator. Using the provided oral-care catalogue, identify the cheaper of the two six-count toothbrush products and add exactly one unit of it to the shopping cart. Leave the cart page open.",
+  "instruction": "I rely on a screen reader to follow the content. Turn on Windows Narrator, then use the provided oral-care catalogue to identify the cheaper of the two six-count toothbrush products. Add exactly one unit of it to the shopping cart and leave the cart page open.",
   "source": "synthetic",
   "gt_steps": [
     "Open the oral-care catalogue in Chrome.",

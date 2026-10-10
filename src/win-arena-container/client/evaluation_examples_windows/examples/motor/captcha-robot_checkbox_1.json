@@ -10,7 +10,7 @@
   ],
   "difficulty": "easy",
   "operation_time": 13.27,
-  "instruction": "Complete the I'm-not-a-robot CAPTCHA verification in Microsoft Edge.",
+  "instruction": "A verification step is blocking me, and its interaction is difficult with my motor limitations. Complete the I'm-not-a-robot CAPTCHA verification in Microsoft Edge.",
   "source": "synthetic",
   "gt_steps": [
     "Click the I'm not a robot checkbox, then continue."

@@ -11,7 +11,7 @@
   ],
   "difficulty": "medium",
   "operation_time": 140.62,
-  "instruction": "Add descriptive alternative text to the image in the provided `information-image_to_text_cat.docx` file so it describes the image, then save the document.",
+  "instruction": "I want this document to remain accessible to readers who cannot see its images. Add descriptive alternative text to the image in the provided `information-image_to_text_cat.docx` file so it describes the image, then save the document.",
   "source": "synthetic",
   "gt_steps": [
     "Select the image in information-image_to_text_cat.docx.",

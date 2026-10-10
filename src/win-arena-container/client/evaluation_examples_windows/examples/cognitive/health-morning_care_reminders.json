@@ -10,7 +10,7 @@
   ],
   "difficulty": "medium",
   "operation_time": 95.90,
-  "instruction": "Use the morning care plan on the Desktop to set up two Thunderbird calendar reminders: a 30-minute event titled `Morning care` on September 17, 2026 at 8:30 AM with the three same-morning care actions in the description, and a 30-minute event titled `Refill eye drops` on September 18, 2026 at 9:00 AM.",
+  "instruction": "I rely on reminders and time cues to keep track of future actions. Use the morning care plan on the Desktop to set up two Thunderbird calendar reminders: a 30-minute event titled `Morning care` on September 17, 2026 at 8:30 AM with the three same-morning care actions in the description, and a 30-minute event titled `Refill eye drops` on September 18, 2026 at 9:00 AM.",
   "source": "synthetic",
   "gt_steps": [
     "Read `MorningCarePlan.txt` in Notepad.",

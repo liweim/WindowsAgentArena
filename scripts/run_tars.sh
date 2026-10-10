@@ -18,7 +18,7 @@ nohup setsid env \
     --agent tars \
     --model qwen3.8-27b \
     --global-planner-model qwen3.8-27b \
-    --visual-grounder-model qwen3.8-27b \
+    --visual-grounder-model gta1-7b \
     --max-steps 50 \
     --som-origin oss \
     --a11y-backend uia \

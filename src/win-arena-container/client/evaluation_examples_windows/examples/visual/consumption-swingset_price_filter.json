@@ -10,7 +10,7 @@
   ],
   "difficulty": "easy",
   "operation_time": 49.93,
-  "instruction": "Turn on Windows Narrator. In Chrome, use the provided swing-set catalogue to filter for swing sets priced at no more than £49.99, and leave the filtered results page open.",
+  "instruction": "I rely on a screen reader to follow the content. Turn on Windows Narrator, then use the provided swing-set catalogue in Chrome to filter for swing sets priced at no more than £49.99. Leave the filtered results page open.",
   "source": "synthetic",
   "gt_steps": [
     "Turn on Windows Narrator.",

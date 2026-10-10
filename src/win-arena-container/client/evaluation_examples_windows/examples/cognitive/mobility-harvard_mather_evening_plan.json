@@ -12,7 +12,7 @@
   ],
   "difficulty": "medium",
   "operation_time": 47.52,
-  "instruction": "Use the Harvard Shuttle printable schedule open in Microsoft Edge. On a weekday evening, you are at Mather House at 9:15 pm and want the first shuttle to Lamont Library. Create a Sticky Note with four ordered checkpoints: the Mather House departure time, the Quad time, the Law School time, and the Lamont Library arrival time.",
+  "instruction": "I rely on a written plan with times so I do not have to remember the details. Use the Harvard Shuttle printable schedule open in Microsoft Edge. On a weekday evening, you are at Mather House at 9:15 pm and want the first shuttle to Lamont Library. Create a Sticky Note with four ordered checkpoints: the Mather House departure time, the Quad time, the Law School time, and the Lamont Library arrival time.",
   "source": "https://prod-transportation.drupalsites.harvard.edu/sites/g/files/omnuum12016/files/2025-08/All%20Shuttle%20Routes.pdf",
   "gt_steps": [
     "Find the evening Mather–Crimson–Overnight timetable in the Harvard Shuttle PDF.",

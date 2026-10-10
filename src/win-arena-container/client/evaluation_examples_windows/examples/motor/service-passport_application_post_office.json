@@ -10,7 +10,7 @@
   ],
   "difficulty": "medium",
   "operation_time": 20.45,
-  "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Using the comments on the Reddit post titled `Passport Application Locations?`, determine whether passport registration or application can be completed through a post office and save only `Yes` or `No` in `answer.txt` on the Desktop.",
+  "instruction": "I have difficulty using a physical keyboard. Open the Windows On-Screen Keyboard and leave it available for me. Using the comments on the Reddit post titled `Passport Application Locations?`, determine whether passport registration or application can be completed through a post office and save only `Yes` or `No` in `answer.txt` on the Desktop.",
   "source": "synthetic",
   "gt_steps": [
     "Open Windows Accessibility keyboard settings.",

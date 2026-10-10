@@ -11,7 +11,7 @@
   ],
   "difficulty": "easy",
   "operation_time": 25.34,
-  "instruction": "Complete the geometry-click CAPTCHA verification in Microsoft Edge.",
+  "instruction": "The verification step currently open in Microsoft Edge is not accessible to me. Complete the geometry-click CAPTCHA verification in Microsoft Edge.",
   "source": "synthetic",
   "gt_steps": [
     "Read the prompt and click the requested shape or object in the image."

@@ -10,7 +10,7 @@
   ],
   "difficulty": "medium",
   "operation_time": 47.32,
-  "instruction": "Use Chrome Live Caption to read the grocery order recording on the Desktop. Create a Sticky Note containing the unavailable item, approved substitute, price limit, and pickup code.",
+  "instruction": "I cannot reliably hear the recording. Use Chrome Live Caption to read the grocery order recording on the Desktop. Create a Sticky Note containing the unavailable item, approved substitute, price limit, and pickup code.",
   "source": "synthetic",
   "gt_steps": [
     "Turn on Chrome Live Caption.",

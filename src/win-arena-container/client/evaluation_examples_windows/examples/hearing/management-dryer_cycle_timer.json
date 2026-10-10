@@ -10,7 +10,7 @@
   ],
   "difficulty": "medium",
   "operation_time": 34.77,
-  "instruction": "Use Chrome Live Caption to read the opened laundry update, then create and start a vclock.com timer for the dryer time remaining in the recording. Leave the timer visible.",
+  "instruction": "I cannot reliably hear the recording. Use Chrome Live Caption to read the opened laundry update, then create and start a vclock.com timer for the dryer time remaining in the recording. Leave the timer visible.",
   "source": "synthetic",
   "gt_steps": [
     "Turn on Chrome Live Caption.",

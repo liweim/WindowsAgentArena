@@ -10,7 +10,7 @@
   ],
   "difficulty": "easy",
   "operation_time": 45.12,
-  "instruction": "Set Windows to flash the title bar of the active window during audio notifications.",
+  "instruction": "I need a visual indication when an audio notification occurs. Set Windows to flash the title bar of the active window during audio notifications.",
   "source": "https://support.microsoft.com/en-us/accessibility/windows/make-windows-easier-to-hear",
   "gt_steps": [
     "Open Windows Settings.",

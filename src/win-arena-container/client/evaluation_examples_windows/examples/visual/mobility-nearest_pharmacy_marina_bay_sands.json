@@ -10,7 +10,7 @@
   ],
   "difficulty": "medium",
   "operation_time": 99.19,
-  "instruction": "Turn on Windows Narrator. In the provided walking-distance directory, use Marina Bay Sands, Singapore as the current location and choose the pharmacy with the shortest displayed walking distance; if distances tie, choose the shorter walking time. Open that pharmacy's place details and leave them open.",
+  "instruction": "I rely on a screen reader to follow the content. Turn on Windows Narrator and use the provided walking-distance directory with Marina Bay Sands, Singapore as the current location. Choose the pharmacy with the shortest displayed walking distance, breaking a tie by the shorter walking time, then open that pharmacy's place details and leave them open.",
   "source": "synthetic",
   "gt_steps": [
     "Turn on Windows Narrator.",

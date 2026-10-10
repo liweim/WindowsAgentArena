@@ -10,7 +10,7 @@
   ],
   "difficulty": "easy",
   "operation_time": 68.36,
-  "instruction": "Enable Windows Magnifier and keep it enabled. Add `Olivia Brown` with email `olivia.brown@example.com` to the contact list in the provided `Contacts.odt`, then save the document.",
+  "instruction": "I need screen magnification to work with this document. Turn on Windows Magnifier and leave it available for me. Add `Olivia Brown` with email `olivia.brown@example.com` to the contact list in the provided `Contacts.odt`, then save the document.",
   "source": "synthetic",
   "gt_steps": [
     "Enable Windows Magnifier.",

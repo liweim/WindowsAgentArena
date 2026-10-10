@@ -10,7 +10,7 @@
   ],
   "difficulty": "medium",
   "operation_time": 97.28,
-  "instruction": "Enable Windows Mouse Keys and keep them enabled. Download the Allied Health Treatment Request form from the SIRA website and save the PDF on the Desktop as `answer.pdf`.",
+  "instruction": "Precise mouse control is difficult for me. Turn on Windows Mouse Keys and leave it enabled for me. Download the Allied Health Treatment Request form from the SIRA website and save the PDF on the Desktop as `answer.pdf`.",
   "source": "https://www.sira.nsw.gov.au/resources-library/for-healthcare-providers/allied-health-treatment-request-ahtr-downloads",
   "gt_steps": [
     "Open Windows Settings.",

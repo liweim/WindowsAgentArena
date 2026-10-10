@@ -10,7 +10,7 @@
   ],
   "difficulty": "easy",
   "operation_time": 18.41,
-  "instruction": "Set the Windows text size to 140% and apply the change.",
+  "instruction": "I need larger text to read Windows comfortably. Set the Windows text size to 140% and apply the change.",
   "source": "synthetic",
   "gt_steps": [
     "Open Windows Setting.",

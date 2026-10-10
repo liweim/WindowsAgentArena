@@ -10,7 +10,7 @@
   ],
   "difficulty": "easy",
   "operation_time": 86.57,
-  "instruction": "Turn on Windows Narrator. Use it to read the provided shopping note in Chrome and identify the requested product. Find that product on the opened shopping website, open its product page, and leave the page open.",
+  "instruction": "I rely on a screen reader to follow the content. Turn on Windows Narrator and use it to read the shopping note in Chrome, identify the requested product, find it on the opened shopping website, and open its product page. Leave that page open.",
   "source": "synthetic",
   "gt_steps": [
     "Open the provided shopping note in Chrome.",

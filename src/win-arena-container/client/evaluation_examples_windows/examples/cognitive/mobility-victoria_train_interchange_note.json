@@ -10,7 +10,7 @@
   ],
   "difficulty": "hard",
   "operation_time": 259.97,
-  "instruction": "Use the Victorian train network map saved locally on the Desktop to plan the most direct one-change trip from Frankston to Pakenham that stays southeast of the CBD. Create a persistent Sticky Note with the starting line, the first interchange station where the Frankston and Pakenham corridors meet, the onward line, and the destination.",
+  "instruction": "I rely on persistent written records so I do not have to remember important details. Use the Victorian train network map saved locally on the Desktop to plan the most direct one-change trip from Frankston to Pakenham that stays southeast of the CBD. Create a persistent Sticky Note with the starting line, the first interchange station where the Frankston and Pakenham corridors meet, the onward line, and the destination.",
   "source": "https://edge.sitecorecloud.io/stategovernc45d-cftw-production-c9ca/media/Project/TransportWebsite/Forms/Vic-Train-Network-Map-Aug-2026.pdf",
   "gt_steps": [
     "Open Sticky Notes.",

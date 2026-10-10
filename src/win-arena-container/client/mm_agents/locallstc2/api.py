@@ -231,36 +231,15 @@ class APIRegistry:
                 ]
             if not tools:
                 continue
-            generic_example = "CalcTools.get_workbook_info()"
-            generic_write_example = "CalcTools.set_cell_value(cell='A1', value='Hello')"
-            if selected_method_set is not None:
-                example_function = tools[0].get("function", {}) or {}
-                example_name = example_function.get("name", "")
-                example_parameters = (
-                    example_function.get("parameters", {}).get("properties", {}) or {}
-                )
-                example_required = (
-                    example_function.get("parameters", {}).get("required", []) or []
-                )
-                generic_example = self._format_prompt_example_call(
-                    example_name, example_parameters, example_required
-                )
-                generic_write_example = generic_example
             lines = [f"## api tools for app `{normalized}`"]
             if single_action_schema:
                 lines.append("Use an API call when a software-level API can express the step more directly than GUI or bash.")
                 lines.append("Choose one concrete API call for `action`.")
-                lines.append(
-                    "The `action` value must be exactly one Python-style call expression "
-                    f"such as `{generic_example}` or `{generic_write_example}`."
-                )
+                lines.append("The `action` value must be exactly one Python-style call expression such as `CalcTools.get_workbook_info()` or `CalcTools.set_cell_value(cell='A1', value='Hello')`.")
             else:
                 lines.append("Use `tool: \"api\"` when a software-level API can express the step more directly than GUI or bash.")
                 lines.append("Choose `api` only for one concrete API call per step.")
-                lines.append(
-                    "For `tool: \"api\"`, `input` must be exactly one Python-style call expression "
-                    f"such as `{generic_example}` or `{generic_write_example}`."
-                )
+                lines.append("For `tool: \"api\"`, `input` must be exactly one Python-style call expression such as `CalcTools.get_workbook_info()` or `CalcTools.set_cell_value(cell='A1', value='Hello')`.")
             lines.append("Use only the method names listed below for this app. Never invent methods, aliases, or shorthand names.")
             lines.append("Use Python literals in arguments: `True`, `False`, and `None` are valid; `true`, `false`, and `null` are not.")
             if single_action_schema:

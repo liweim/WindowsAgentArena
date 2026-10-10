@@ -230,7 +230,11 @@ def _add_planner_options(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--bash_timeout", "--bash-timeout", type=int, default=60)
 
 
-def _add_locallstc_options(parser: argparse.ArgumentParser) -> None:
+def _add_locallstc_options(
+    parser: argparse.ArgumentParser,
+    *,
+    include_wo_fv: bool = True,
+) -> None:
     _add_standalone_environment_options(parser, provider=True)
     _add_context_options(parser)
     _add_planner_options(parser)
@@ -247,18 +251,20 @@ def _add_locallstc_options(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         "--force_refine_period", "--force-refine-period", type=int, default=20
     )
-    for option in (
+    ablation_options = [
         "wo_l2s",
         "wo_s2l",
         "wo_cp",
         "wo_al",
         "wo_sls",
-        "wo_fv",
         "wo_ps",
         "wo_sa",
         "wo_sr",
         "wo_think",
-    ):
+    ]
+    if include_wo_fv:
+        ablation_options.insert(5, "wo_fv")
+    for option in ablation_options:
         parser.add_argument(
             "--{}".format(option),
             "--{}".format(option.replace("_", "-")),
@@ -281,12 +287,10 @@ def _add_locallstc_options(parser: argparse.ArgumentParser) -> None:
 
 
 def _add_locallstc2_options(parser: argparse.ArgumentParser) -> None:
-    _add_locallstc_options(parser)
+    _add_locallstc_options(parser, include_wo_fv=False)
     for option in (
         "wo_global_facts",
         "wo_jev_memory",
-        "wo_jev_global",
-        "wo_jev_skills",
         "wo_jev_api",
         "wo_jev",
     ):
@@ -419,8 +423,6 @@ def _validate_method_options(args: argparse.Namespace, parser: argparse.Argument
     if args.agent_name in {"locallstc", "locallstc2", "locallstc_audio"}:
         if args.agent_name == "locallstc2" and args.wo_jev:
             args.wo_jev_memory = True
-            args.wo_jev_global = True
-            args.wo_jev_skills = True
             args.wo_jev_api = True
         enabled = [
             name
@@ -435,7 +437,7 @@ def _validate_method_options(args: argparse.Namespace, parser: argparse.Argument
                 "wo_sa",
                 "wo_sr",
             )
-            if getattr(args, name)
+            if getattr(args, name, False)
         ]
         if len(enabled) > 1 and set(enabled) != {"wo_l2s", "wo_s2l"}:
             parser.error(

@@ -10,11 +10,11 @@
   ],
   "difficulty": "medium",
   "operation_time": 83.92,
-  "instruction": "Draft a Thunderbird email to `relative@example.org` with subject `Gift card pressure tactics` using Microsoft Edge Immersive Reader to read the FTC guidance. Include the three scam-pressure phrases exactly as written on the page and save the draft without sending it.",
+  "instruction": "I find dense or distracting information difficult to process. Read the local FTC gift-card guidance PDF in Microsoft Edge. Draft a Thunderbird email to `relative@example.org` with subject `Gift card pressure tactics`, include the three scam-pressure phrases exactly as written in the PDF, and save the draft without sending it.",
   "source": "https://consumer.ftc.gov/articles/avoiding-and-reporting-gift-card-scams",
   "gt_steps": [
+    "Open the local PDF snapshot in Microsoft Edge.",
     "Switch to the FTC gift card scam guidance in Microsoft Edge.",
-    "With the article active in Microsoft Edge, press `F9` to enter Immersive Reader.",
     "Scroll to `How Gift Card Scams Work`.",
     "Switch to Thunderbird.",
     "Create a new email draft.",
@@ -25,12 +25,23 @@
   ],
   "config": [
     {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "../assets/communication-ftc_gift_card_guidance.pdf",
+            "path": "C:\\Users\\Docker\\Desktop\\FTCGiftCardGuidance.pdf"
+          }
+        ]
+      }
+    },
+    {
       "type": "launch",
       "parameters": {
         "command": [
           "cmd",
           "/c",
-          "start msedge https://consumer.ftc.gov/articles/avoiding-and-reporting-gift-card-scams"
+          "start msedge file:///C:/Users/Docker/Desktop/FTCGiftCardGuidance.pdf"
         ]
       }
     },
@@ -66,17 +77,12 @@
   ],
   "evaluator": {
     "func": [
-      "check_thunderbird_email_composition",
-      "check_edge_immersive_reader_state"
+      "check_thunderbird_email_composition"
     ],
     "conj": "and",
     "result": [
       {
         "type": "thunderbird_drafts"
-      },
-      {
-        "type": "edge_immersive_reader_state",
-        "activate_edge": true
       }
     ],
     "expected": [
@@ -97,12 +103,6 @@
             ]
           ]
         }
-      },
-      {
-        "type": "rule",
-        "rules": {
-          "reader_mode_open": true
-        }
       }
     ],
     "metric_roles": {
@@ -110,7 +110,7 @@
         0
       ],
       "access_requirement": [
-        1
+        0
       ]
     }
   },

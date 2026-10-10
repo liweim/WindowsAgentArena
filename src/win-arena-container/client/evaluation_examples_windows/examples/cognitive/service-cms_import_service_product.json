@@ -10,7 +10,7 @@
   ],
   "difficulty": "hard",
   "operation_time": 159.40,
-  "instruction": "Use `ServiceProductImport.csv` on the Desktop as the persistent import checklist. In the CMS, use the native product import workflow with import behavior `Add/Update` to check and import the table. After a successful import, add a `Status` column to the CSV, mark the `SERVICE-SETUP-30` row as `Imported`, and save it. Use username `admin` and password `admin1234`.",
+  "instruction": "I rely on persistent written records so I do not have to remember important details. Use `ServiceProductImport.csv` on the Desktop as the persistent import checklist. In the CMS, use the native product import workflow with import behavior `Add/Update` to check and import the table. After a successful import, add a `Status` column to the CSV, mark the `SERVICE-SETUP-30` row as `Imported`, and save it. Use username `admin` and password `admin1234`.",
   "source": "synthetic",
   "gt_steps": [
     "Review `ServiceProductImport.csv` in LibreOffice Calc.",

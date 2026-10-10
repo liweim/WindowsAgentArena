@@ -10,7 +10,7 @@
   ],
   "difficulty": "hard",
   "operation_time": 197.46,
-  "instruction": "Complete all unchecked items in `movie_night_note.txt` on the Desktop. After adding each item to the cart, check it off by changing its `[ ]` to `[x]`, then save the list.",
+  "instruction": "I rely on persistent written records so I do not have to remember important details. Complete all unchecked items in `movie_night_note.txt` on the Desktop. After adding each item to the cart, check it off by changing its `[ ]` to `[x]`, then save the list.",
   "source": "synthetic",
   "gt_steps": [
     "Open `movie_night_note.txt` on the Desktop.",

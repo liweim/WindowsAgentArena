@@ -10,7 +10,7 @@
   ],
   "difficulty": "easy",
   "operation_time": 26.41,
-  "instruction": "Enable Filter Keys and keep it enabled.",
+  "instruction": "Brief or repeated keystrokes are difficult for me to control. Turn on Windows Filter Keys and leave it enabled for me.",
   "source": "synthetic",
   "gt_steps": [
     "Open Windows settings.",

@@ -10,7 +10,7 @@
   ],
   "difficulty": "easy",
   "operation_time": 29.16,
-  "instruction": "Set Chrome's default font size to Large.",
+  "instruction": "I find larger text easier to process. Set Chrome's default font size to Large.",
   "source": "synthetic",
   "gt_steps": [
     "Open Google Chrome.",

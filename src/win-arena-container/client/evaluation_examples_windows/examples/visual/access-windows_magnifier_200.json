@@ -10,7 +10,7 @@
   ],
   "difficulty": "easy",
   "operation_time": 22.00,
-  "instruction": "Open Windows Magnifier, set the zoom level to 200%, and leave Magnifier open.",
+  "instruction": "I need screen magnification to continue working comfortably. Open Windows Magnifier, set the zoom level to 200%, and leave it open for me.",
   "source": "synthetic",
   "gt_steps": [
     "Open Windows Magnifier.",

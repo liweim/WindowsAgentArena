@@ -10,7 +10,7 @@
   ],
   "difficulty": "easy",
   "operation_time": 22.14,
-  "instruction": "Turn on Windows Narrator and keep it running.",
+  "instruction": "I rely on a screen reader to use Windows. Turn on Windows Narrator and leave it running for me.",
   "source": "synthetic",
   "gt_steps": [
     "Turn on Windows Narrator.",

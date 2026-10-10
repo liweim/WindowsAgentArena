@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import gc
+import inspect
 import logging
 import os
 import threading
@@ -25,6 +26,28 @@ from fastapi import FastAPI, HTTPException, Request
 DEFAULT_MODEL_PATH = Path("/home/weimingli/models/decider-2b")
 MODEL_PATH = Path(os.environ.get("DECIDER_MODEL", DEFAULT_MODEL_PATH)).expanduser()
 MIN_CUDA_FREE_BYTES = int(os.environ.get("DECIDER_MIN_CUDA_FREE_BYTES", 5 * 1024**3))
+
+
+def _patch_decider_conv_keyword_compat() -> bool:
+    """Adapt decider-ai 1.9.0's CUDA conv patch to Transformers 5.8.
+
+    Decider's replacement names its first argument ``hidden_states`` while
+    Qwen3.5 now calls the function with ``x=...``.  The replacement accepts
+    arbitrary extra keywords, so ``x`` is otherwise swallowed and Python then
+    reports that ``hidden_states`` is missing.
+    """
+    import decider.engine as decider_engine
+
+    original = decider_engine.fused_causal_conv1d_fn
+    parameters = inspect.signature(original).parameters
+    if "x" in parameters or "hidden_states" not in parameters:
+        return False
+
+    def fused_causal_conv1d_compat(x, weight, bias=None, activation=None, **kwargs):
+        return original(x, weight, bias=bias, activation=activation, **kwargs)
+
+    decider_engine.fused_causal_conv1d_fn = fused_causal_conv1d_compat
+    return True
 
 
 class DeciderService:
@@ -55,6 +78,11 @@ class DeciderService:
                 requested_device = "cpu"
         self.lock = threading.Lock()
         self.device = requested_device
+        self.conv_compat_patched = False
+        if requested_device.startswith("cuda"):
+            self.conv_compat_patched = _patch_decider_conv_keyword_compat()
+            if self.conv_compat_patched:
+                logging.info("Applied decider-ai/Transformers causal-conv keyword compatibility patch")
         try:
             self.model = Decider(str(self.model_path), device=requested_device)
         except torch.OutOfMemoryError:
@@ -94,6 +122,7 @@ def health(request: Request) -> Dict[str, Any]:
         "model": str(service.model_path),
         "device": service.device,
         "cuda_available": torch.cuda.is_available(),
+        "conv_compat_patched": service.conv_compat_patched,
     }
 
 

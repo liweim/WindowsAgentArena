@@ -10,7 +10,7 @@
   ],
   "difficulty": "easy",
   "operation_time": 13.77,
-  "instruction": "Open Windows Magnifier and leave it open.",
+  "instruction": "I need screen magnification to continue working comfortably. Open Windows Magnifier and leave it open for me.",
   "source": "synthetic",
   "gt_steps": [
     "Open Windows Magnifier.",

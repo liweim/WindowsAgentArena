@@ -226,14 +226,15 @@ def _run_locallstc(env, example, args, example_result_dir) -> float:
 
     model = args.global_planner_model or args.model
     jev_options = {}
+    final_verification_options = {}
     if args.agent_name == "locallstc2":
         jev_options = {
             "wo_global_facts": args.wo_global_facts,
             "wo_jev_memory": args.wo_jev_memory,
-            "wo_jev_global": args.wo_jev_global,
-            "wo_jev_skills": args.wo_jev_skills,
             "wo_jev_api": args.wo_jev_api,
         }
+    else:
+        final_verification_options = {"wo_fv": args.wo_fv}
 
     framework = LocalLSTC(
         env=env,
@@ -260,7 +261,6 @@ def _run_locallstc(env, example, args, example_result_dir) -> float:
         wo_cp=args.wo_cp,
         wo_al=args.wo_al,
         wo_sls=args.wo_sls,
-        wo_fv=args.wo_fv,
         wo_ps=args.wo_ps,
         wo_sa=args.wo_sa,
         wo_sr=args.wo_sr,
@@ -270,6 +270,7 @@ def _run_locallstc(env, example, args, example_result_dir) -> float:
         seed=args.seed,
         top_p=args.top_p,
         top_k=args.top_k,
+        **final_verification_options,
         **jev_options,
     )
     return framework.execute_task(

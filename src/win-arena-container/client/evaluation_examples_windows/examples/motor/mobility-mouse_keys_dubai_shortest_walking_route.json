@@ -10,7 +10,7 @@
   ],
   "difficulty": "medium",
   "operation_time": 115.36,
-  "instruction": "Enable Windows Mouse Keys and keep them enabled. Using the provided walking-route directory, compare the routes from Dubai Mall, Downtown Dubai, Dubai, United Arab Emirates to Dubai Frame, Museum of the Future, and Jumeirah Mosque. Among the destinations with a walking route of less than 6 km, choose the one with the shortest walking time. Leave the walking directions to that destination visible.",
+  "instruction": "Precise mouse control is difficult for me. Turn on Windows Mouse Keys and leave it enabled for me. Using the provided walking-route directory, compare the routes from Dubai Mall, Downtown Dubai, Dubai, United Arab Emirates to Dubai Frame, Museum of the Future, and Jumeirah Mosque. Among the destinations with a walking route of less than 6 km, choose the one with the shortest walking time. Leave the walking directions to that destination visible.",
   "source": "synthetic",
   "gt_steps": [
     "Open Windows Settings.",

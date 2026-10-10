@@ -10,7 +10,7 @@
   ],
   "difficulty": "medium",
   "operation_time": 430.31,
-  "instruction": "Use captions on the opened video to determine how long the quick sponge should sit before checking whether the yeast is active, then use https://vclock.com to create a timer for that duration. Leave the timer visible in the browser.",
+  "instruction": "I cannot reliably hear the video. Use the available captions on the opened video to determine how long the quick sponge should sit before checking whether the yeast is active, then use https://vclock.com to create a timer for that duration. Leave the timer visible in the browser.",
   "source": "https://foodwishes.blogspot.com/2013/04/pita-bread-whats-in-your-pocket.html",
   "gt_steps": [
     "Turn on an available caption feature for the video.",

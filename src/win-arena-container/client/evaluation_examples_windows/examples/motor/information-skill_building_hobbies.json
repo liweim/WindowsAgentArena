@@ -10,12 +10,12 @@
   ],
   "difficulty": "hard",
   "operation_time": 162.73,
-  "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Save the 11 hobby topics from the provided Covey webpage's `11 Examples of Skill-Building Hobbies for Adults with Disabilities` section to `answer.txt` on the Desktop, one topic per line, exactly as written in order but in lowercase, with no numbers, bullet symbols, or descriptions.",
+  "instruction": "I have difficulty using a physical keyboard. Open the Windows On-Screen Keyboard and leave it available for me. Save the 11 hobby topics from the provided PDF snapshot of the Covey webpage's `11 Examples of Skill-Building Hobbies for Adults with Disabilities` section to `answer.txt` on the Desktop, one topic per line, exactly as written in order but in lowercase, with no numbers, bullet symbols, or descriptions.",
   "source": "https://covey.org/11-skill-building-hobbies-for-adults-with-disabilities/",
   "gt_steps": [
     "Open Windows Accessibility keyboard settings.",
     "Enable the On-Screen Keyboard and keep it open.",
-    "Return to the Covey webpage already open in Chrome.",
+    "Return to the PDF snapshot of the Covey webpage already open in Chrome.",
     "Find the section titled `11 Examples of Skill-Building Hobbies for Adults with Disabilities`.",
     "Open Notepad.",
     "Write `biking\nbook club\nart\nswimming\ngardening\ncooking or baking\nadaptive sports\ndancing\nphotography\nmusic\nvolunteering` in the file, one item per line.",
@@ -25,13 +25,24 @@
   ],
   "config": [
     {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "../assets/information-skill_building_hobbies.pdf",
+            "path": "C:\\Users\\Docker\\Desktop\\CoveySkillBuildingHobbies.pdf"
+          }
+        ]
+      }
+    },
+    {
       "type": "launch",
       "parameters": {
         "command": [
           "google-chrome",
           "--remote-debugging-port=1337",
           "--force-renderer-accessibility",
-          "https://covey.org/11-skill-building-hobbies-for-adults-with-disabilities/"
+          "file:///C:/Users/Docker/Desktop/CoveySkillBuildingHobbies.pdf"
         ]
       }
     },
@@ -96,6 +107,6 @@
       }
     ]
   },
-  "proxy": true,
-  "possibility_of_env_change": "medium"
+  "proxy": false,
+  "possibility_of_env_change": "low"
 }

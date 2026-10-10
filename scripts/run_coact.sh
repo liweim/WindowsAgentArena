@@ -20,7 +20,7 @@ nohup setsid env \
     --orchestrator_model qwen3.8-27b \
     --coding_model qwen3.8-27b \
     --summarizer_model qwen3.8-27b \
-    --cua_model qwen3.8-27b \
+    --cua_model uitars-1.5-7b \
     --orchestrator_max_steps 15 \
     --coding_max_steps 20 \
     --cua_max_steps 25 \

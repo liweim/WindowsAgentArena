@@ -10,7 +10,7 @@
   ],
   "difficulty": "medium",
   "operation_time": 29.84,
-  "instruction": "Turn on Chrome Live Caption to read the council service recording on the Desktop. Save the pickup location, collection hours, item to bring, and reference number to `answer.txt`, one item per line.",
+  "instruction": "I cannot reliably hear the recording. Turn on Chrome Live Caption to read the council service recording on the Desktop. Save the pickup location, collection hours, item to bring, and reference number to `answer.txt`, one item per line.",
   "source": "synthetic",
   "gt_steps": [
     "Turn on Chrome Live Caption.",

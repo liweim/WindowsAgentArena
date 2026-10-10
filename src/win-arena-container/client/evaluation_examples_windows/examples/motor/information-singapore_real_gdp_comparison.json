@@ -10,7 +10,7 @@
   ],
   "difficulty": "hard",
   "operation_time": 184.42,
-  "instruction": "Enable Windows Filter Keys and keep them enabled. Using the provided 2024 and 2025 Economic Survey of Singapore reports, determine the difference between Singapore's Real GDP growth percentages for the two years, expressed in percentage points. Save your answer in `answer.txt` on the Desktop.",
+  "instruction": "Brief or repeated keystrokes are difficult for me to control. Turn on Windows Filter Keys and leave it enabled for me. Using the provided 2024 and 2025 Economic Survey of Singapore reports, determine the difference between Singapore's Real GDP growth percentages for the two years, expressed in percentage points. Save your answer in `answer.txt` on the Desktop.",
   "source": "synthetic",
   "gt_steps": [
     "Enable Windows Filter Keys.",

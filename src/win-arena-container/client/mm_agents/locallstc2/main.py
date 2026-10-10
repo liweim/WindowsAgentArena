@@ -26,11 +26,9 @@ from mm_agents.utils import postprocess_action
 from mm_agents.locallstc2.prompt import (
     ANDROID_GLOBAL_PLANNER_PROMPT,
     ANDROID_CONTEXT_REFINEMENT_PROMPT,
-    ANDROID_FINAL_VERIFICATION_PROMPT,
     ANDROID_PLANNER_RESPONSE_FORMAT_PROMPT,
     ANDROID_STEP_ABSTRACTION_PROMPT,
     CONTEXT_REFINEMENT_PROMPT,
-    FINAL_VERIFICATION_PROMPT,
     FIX_RESPONSE_PROMPT,
     GLOBAL_PLANNER_PROMPT,
     NO_AL_PLANNER_RESPONSE_FORMAT_PROMPT,
@@ -38,7 +36,6 @@ from mm_agents.locallstc2.prompt import (
     NO_API_NO_L2S_PLANNER_RESPONSE_FORMAT_PROMPT,
     NO_API_PLANNER_RESPONSE_FORMAT_PROMPT,
     NO_CP_PLANNER_RESPONSE_FORMAT_PROMPT,
-    NO_L2S_FINAL_VERIFICATION_PROMPT,
     NO_L2S_PLANNER_RESPONSE_FORMAT_PROMPT,
     NO_L2S_STEP_ABSTRACTION_PROMPT,
     PLANNER_RESPONSE_FORMAT_PROMPT,
@@ -72,7 +69,7 @@ VALID_TOOLS = GUI_ACTION_TOOLS | NON_GUI_TOOLS
 KNOWN_API_PREFIXES = tuple(f"{name}." for name in sorted(set(APIRegistry.HANDLER_CLASS.values())))
 BASH_STEP_ABSTRACTION_LOG_CHAR_LIMIT = 20000
 BASH_STEP_ABSTRACTION_LOG_OMISSION = "Output truncated because it exceeded the length limit."
-JEV_INCLUDE_THRESHOLD = 0.5
+DEFAULT_JEV_API_INCLUDE_THRESHOLD = 0.5
 GLOBAL_FACT_KEY_MAX_CHARS = 128
 GLOBAL_FACT_VALUE_MAX_CHARS = 1024
 GLOBAL_FACT_PROMPT_EXTENSION = """
@@ -123,15 +120,12 @@ class LocalLSTC:
         wo_cp: bool = False,  # If True, disable candidate proposals in planner responses
         wo_al: bool = False,  # If True, disable action lists and require one action per step
         wo_sls: bool = False,  # If True, disable stall / loop suppression
-        wo_fv: bool = False,  # If True, disable final verification
         wo_ps: bool = False,  # If True, require the full explicit subgoal every planner turn
         wo_sa: bool = False,  # If True, expose deterministic raw execution evidence
         wo_sr: bool = False,  # If True, assign states for logging but do not route on them
         wo_think: bool = False,  # If True, disable thinking mode for all LocalLSTC agent calls
         wo_global_facts: bool = False,
         wo_jev_memory: bool = False,
-        wo_jev_global: bool = False,
-        wo_jev_skills: bool = False,
         wo_jev_api: bool = False,
         thinking_token_budget: Optional[int] = None,
         temperature: float = 1,
@@ -181,14 +175,11 @@ class LocalLSTC:
         self.wo_cp = bool(wo_cp)
         self.wo_al = bool(wo_al)
         self.wo_sls = bool(wo_sls)
-        self.wo_fv = bool(wo_fv)
         self.wo_ps = bool(wo_ps)
         self.wo_sa = bool(wo_sa)
         self.wo_sr = bool(wo_sr)
         self.wo_global_facts = bool(wo_global_facts)
         self.wo_jev_memory = bool(wo_jev_memory)
-        self.wo_jev_global = bool(wo_jev_global)
-        self.wo_jev_skills = bool(wo_jev_skills)
         self.wo_jev_api = bool(wo_jev_api)
         self.api_enabled = not self.wo_l2s
         self.enable_thinking = not wo_think
@@ -208,6 +199,12 @@ class LocalLSTC:
         self.api_registry = APIRegistry(os.path.dirname(__file__))
         self._jev = None
         self._jev_init_attempted = False
+        self._jev_model_name = ""
+        self._jev_task_usage = self._zero_jev_usage_entry()
+        self._jev_step_usage = self._zero_jev_usage_entry()
+        self._jev_api_cache_initialized = False
+        self._jev_api_cache_subgoal = ""
+        self._jev_api_selected_methods: Optional[List[str]] = None
 
         # Initialize LLM clients
         self.global_planner_llm = AbstractLLM(
@@ -254,10 +251,7 @@ class LocalLSTC:
         self.last_dumped_system_prompt_hash = ""
         self.current_subgoal = ""
         self.consecutive_stall_count = 0
-        self.awaiting_final_verification = False
-        self.final_verification_observed = False
         self.current_step_context_refinement = False
-        self.current_step_final_verification = False
         self.consecutive_stall_count = 0
         self.last_execution_status = "continue"
         self.last_recovery_feedback_event = None
@@ -348,6 +342,12 @@ class LocalLSTC:
 
     def _reset_execution_state(self) -> None:
         self.operation_count = 0
+        self._jev_model_name = ""
+        self._jev_task_usage = self._zero_jev_usage_entry()
+        self._jev_step_usage = self._zero_jev_usage_entry()
+        self._jev_api_cache_initialized = False
+        self._jev_api_cache_subgoal = ""
+        self._jev_api_selected_methods = None
         self.action_logs = []
         self.global_facts = {}
         self.subgoal_anchors = []
@@ -358,10 +358,7 @@ class LocalLSTC:
         self.current_subgoal = ""
         self.current_proposed_subgoal = ""
         self.consecutive_stall_count = 0
-        self.awaiting_final_verification = False
-        self.final_verification_observed = False
         self.current_step_context_refinement = False
-        self.current_step_final_verification = False
         self.consecutive_stall_count = 0
         self.last_execution_status = "continue"
         self.last_recovery_feedback_event = None
@@ -496,48 +493,12 @@ print(output)
                 "global_planner": self._zero_usage_entry(),
                 "visual_grounder": self._zero_usage_entry(),
                 "state_manager": self._zero_usage_entry(),
+                "jev": self._zero_jev_usage_entry(),
                 "total": self._zero_usage_entry(),
             },
             "raw_response": raw_response or "",
         })
 
-
-    def _record_termination_attempt(
-        self,
-        *,
-        step: int,
-        detail: str,
-        verification: str,
-        next_hint: str,
-        execution_status: str = "stall",
-        screenshot_file: str = "",
-        token_usage: Optional[Dict[str, Any]] = None,
-    ) -> None:
-        self.action_logs.append({
-            "step": step,
-            "type": "termination_attempt",
-            "execution_success": False,
-            "screenshot": screenshot_file,
-            "subgoal": self._step_abstraction_subgoal() or "Verify task completion",
-            "execution_status": execution_status,
-            "detail": detail,
-            "compact": self._build_compact_log_entry(
-                step=step,
-                tool_type="termination_attempt",
-                success=False,
-                detail=detail,
-                verification=verification,
-                next_hint=next_hint,
-            ),
-            "step_time": 0.0,
-            "token_usage": token_usage or {
-                "global_planner": self._zero_usage_entry(),
-                "visual_grounder": self._zero_usage_entry(),
-                "state_manager": self._zero_usage_entry(),
-                "total": self._zero_usage_entry(),
-            },
-            **self._current_step_event_fields(),
-        })
 
     def _should_fail_after_consecutive_stalls(self) -> bool:
         return self.consecutive_stall_count >= 3
@@ -789,7 +750,23 @@ print(output)
             self._jev = None
         return self._jev
 
-    def _build_jev_state(self, *, include_memory: bool = False) -> str:
+    def _record_jev_usage(self, result: Dict[str, Any]) -> None:
+        usage = result.get("usage") or {}
+        try:
+            prompt_tokens = max(0, int(usage.get("input_tokens", 0) or 0))
+            completion_tokens = max(0, int(usage.get("output_tokens", 0) or 0))
+        except (TypeError, ValueError):
+            self.logger.warning("[jev_usage] invalid usage payload: %r", usage)
+            return
+        model_name = str(result.get("model", "") or "").strip()
+        if model_name:
+            self._jev_model_name = model_name
+        for target in (self._jev_step_usage, self._jev_task_usage):
+            target["prompt_tokens"] += prompt_tokens
+            target["completion_tokens"] += completion_tokens
+            target["request_count"] += 1
+
+    def _build_jev_memory_state(self) -> str:
         sections = [f"Task:\n{getattr(self, 'task_instruction', '')}"]
         sections.append(f"Current subgoal:\n{self.current_subgoal or 'Not established yet'}")
         foreground = []
@@ -799,8 +776,7 @@ print(output)
             foreground.append(f"Foreground window title: {self.current_foreground_window_title}")
         if foreground:
             sections.append("Current foreground/application context:\n" + "\n".join(foreground))
-        if include_memory:
-            sections.append("Memory anchors:\n" + self._render_memory_anchors_for_jev())
+        sections.append("Memory anchors:\n" + self._render_memory_anchors_for_jev())
         return "\n\n".join(sections)
 
     def _render_memory_anchors_for_jev(self) -> str:
@@ -847,7 +823,8 @@ print(output)
             }
         }
         try:
-            result = jev.system_one(self._build_jev_state(include_memory=True), questions)
+            result = jev.system_one(self._build_jev_memory_state(), questions)
+            self._record_jev_usage(result)
             answer = result["answers"]["memory_cutoff"]
             anchor_id = answer["choice"]
             match = re.fullmatch(r"A(\d+)", str(anchor_id))
@@ -869,111 +846,109 @@ print(output)
             )
             return None
 
-    def _jev_select_noul(self, kind: str, candidates: List[Tuple[str, str]]) -> Optional[List[str]]:
-        if not candidates:
-            return []
-        jev = self._get_jev()
-        if jev is None:
-            return None
-        subject = {
-            "global": "persistent fact",
-            "skills": "skill/instruction block",
-            "api": "API method",
-        }[kind]
-        question_prefix = "fact" if kind == "global" else kind[:-1] if kind == "skills" else kind
-        questions = {}
-        for index, (name, description) in enumerate(candidates):
-            if kind == "global":
-                candidate_text = f"Fact: {name} = {description}"
-            else:
-                candidate_text = f"{subject.title()}: {name}. Description: {description}"
-            questions[f"{question_prefix}_{index}"] = {
-                "type": "noul",
-                "instructions": (
-                    f"Should this {subject} be included in the planner context for the current subgoal? "
-                    f"{candidate_text}"
-                ),
-                "criteria": {
-                    "true": f"Include this {subject}.",
-                    "false": f"This {subject} is not useful for the current planner decision.",
-                },
-            }
-        try:
-            result = jev.system_one(self._build_jev_state(), questions)
-            answers = result["answers"]
-            selected = []
-            for index, (name, _) in enumerate(candidates):
-                p_yes = float(answers[f"{question_prefix}_{index}"]["noul"])
-                self.logger.debug("[jev_%s] candidate=%s p_yes=%.4f", kind, name, p_yes)
-                if p_yes >= JEV_INCLUDE_THRESHOLD:
-                    selected.append(name)
-            return selected
-        except Exception as exc:
-            self.logger.warning("[jev_fallback] %s inference failed: %s", kind, exc)
-            return None
-
-    def _select_global_facts_for_planner(self) -> List[Tuple[str, str]]:
-        if self.wo_global_facts or not self.global_facts:
-            return []
-        candidates = list(self.global_facts.items())
-        if self.wo_jev_global:
-            return candidates
-        selected_keys = self._jev_select_noul("global", candidates)
-        if selected_keys is None:
-            self.logger.warning("[jev_fallback] global facts using all stored facts")
-            return candidates
-        selected_key_set = set(selected_keys)
-        selected = [(key, value) for key, value in candidates if key in selected_key_set]
-        self.logger.info(
-            "[jev_global] selected=%s/%s threshold=%.2f",
-            len(selected),
-            len(candidates),
-            JEV_INCLUDE_THRESHOLD,
+    def _get_jev_api_include_threshold(self) -> float:
+        raw_value = os.environ.get(
+            "JEV_API_INCLUDE_THRESHOLD",
+            str(DEFAULT_JEV_API_INCLUDE_THRESHOLD),
         )
-        return selected
+        try:
+            threshold = float(raw_value)
+        except (TypeError, ValueError):
+            self.logger.warning(
+                "[jev_api] invalid JEV_API_INCLUDE_THRESHOLD=%r; using %.2f",
+                raw_value,
+                DEFAULT_JEV_API_INCLUDE_THRESHOLD,
+            )
+            return DEFAULT_JEV_API_INCLUDE_THRESHOLD
+        if not 0.0 <= threshold <= 1.0:
+            self.logger.warning(
+                "[jev_api] JEV_API_INCLUDE_THRESHOLD=%r is outside [0, 1]; using %.2f",
+                raw_value,
+                DEFAULT_JEV_API_INCLUDE_THRESHOLD,
+            )
+            return DEFAULT_JEV_API_INCLUDE_THRESHOLD
+        return threshold
 
-    def _select_skills_for_planner(self) -> Optional[List[str]]:
-        candidates = self._get_candidate_skill_names()
-        if self.wo_jev_skills or not candidates:
-            return None
-        descriptions = [
-            (name, name.rsplit(".", 1)[0].replace("_", " "))
-            for name in candidates
-        ]
-        selected = self._jev_select_noul("skills", descriptions)
-        if not selected:
-            reason = "selected zero candidates" if selected == [] else "inference failed"
-            self.logger.warning("[jev_fallback] skills %s; using baseline candidate set", reason)
-            return None
-        self.logger.info("[jev_skills] selected=%s", ",".join(selected))
-        return selected
-
-    def _get_candidate_api_methods(self) -> List[Tuple[str, str]]:
+    def _get_api_method_candidates(self) -> List[Tuple[str, str]]:
         candidates: List[Tuple[str, str]] = []
         seen = set()
         for domain in self._get_effective_app_domains():
-            for item in self.api_registry.get_domain_tools(domain):
+            normalized = self.api_registry.normalize_domain(domain)
+            for item in self.api_registry.get_domain_tools(normalized):
                 function = item.get("function", {}) or {}
                 name = str(function.get("name", "") or "").strip()
                 if not name or name in seen:
                     continue
                 seen.add(name)
-                candidates.append((name, str(function.get("description", "") or "").strip()))
+                description = str(function.get("description", "") or "").strip()
+                candidates.append((name, description))
         return candidates
 
-    def _select_api_methods_for_planner(self) -> Optional[List[str]]:
-        if self.wo_jev_api or not self.api_enabled:
+    def _select_api_methods_for_subgoal(self, planner_context: str) -> Optional[List[str]]:
+        """Select API methods once per subgoal; None means fail open to the full schema."""
+        if not self.api_enabled or self.wo_jev_api:
             return None
-        candidates = self._get_candidate_api_methods()
+
+        candidates = self._get_api_method_candidates()
         if not candidates:
+            return []
+
+        cache_subgoal = self.current_subgoal or ""
+        if self._jev_api_cache_initialized and self._jev_api_cache_subgoal == cache_subgoal:
+            return self._jev_api_selected_methods
+
+        self._jev_api_cache_initialized = True
+        self._jev_api_cache_subgoal = cache_subgoal
+        jev = self._get_jev()
+        if jev is None:
+            self._jev_api_selected_methods = None
             return None
-        selected = self._jev_select_noul("api", candidates)
-        if not selected:
-            reason = "selected zero candidates" if selected == [] else "inference failed"
-            self.logger.warning("[jev_fallback] api %s; using baseline full-domain API prompt", reason)
+
+        questions = {}
+        for index, (name, description) in enumerate(candidates):
+            questions[f"api_{index}"] = {
+                "type": "noul",
+                "instructions": (
+                    "Should this API method be included in the planner context for the next action? "
+                    f"Method: {name}. Description: {description}"
+                ),
+                "criteria": {
+                    "true": "Include this API method.",
+                    "false": "This API method is not useful for the next planner action.",
+                },
+            }
+
+        threshold = self._get_jev_api_include_threshold()
+        try:
+            result = jev.system_one(planner_context, questions)
+            self._record_jev_usage(result)
+            answers = result["answers"]
+            selected = []
+            scores = {}
+            for index, (name, _) in enumerate(candidates):
+                p_yes = float(answers[f"api_{index}"]["noul"])
+                scores[name] = p_yes
+                if p_yes >= threshold:
+                    selected.append(name)
+            self.logger.info(
+                "[jev_api_scores] subgoal=%r threshold=%.4f scores=%s",
+                cache_subgoal or "Not established yet",
+                threshold,
+                json.dumps(scores, sort_keys=True),
+            )
+            self.logger.info(
+                "[jev_api] selected=%s",
+                ",".join(selected) if selected else "NONE",
+            )
+            self._jev_api_selected_methods = selected
+            return selected
+        except Exception as exc:
+            self.logger.warning(
+                "[jev_fallback] api inference failed; using full-domain API prompt: %s",
+                exc,
+            )
+            self._jev_api_selected_methods = None
             return None
-        self.logger.info("[jev_api] selected=%s", ",".join(selected))
-        return selected
 
     def _get_action_channel_skill_names(self) -> List[str]:
         if self.guest_platform == "android":
@@ -1003,29 +978,17 @@ print(output)
         shared_skill_names.append(bash_skill)
         return [name for name in shared_skill_names if self._skill_file_exists(name)]
 
-    def _get_candidate_skill_names(self) -> List[str]:
-        names = self._get_action_channel_skill_names()
-        names.extend(
-            name
-            for name in self._get_domain_skill_names_for_prompt()
-            if self._skill_file_exists(name)
-        )
-        return list(dict.fromkeys(names))
-
     def _build_action_channel_planner_sections(
         self,
-        selected_skill_names: Optional[List[str]] = None,
         selected_api_methods: Optional[List[str]] = None,
     ) -> List[str]:
         if self.guest_platform == "android":
             return []
         sections: List[str] = []
         single_action_schema = not self._actions_list_enabled()
-        selected_skill_set = None if selected_skill_names is None else set(selected_skill_names)
 
         for shared_skill_name in self._get_action_channel_skill_names():
-            if selected_skill_set is None or shared_skill_name in selected_skill_set:
-                sections.append(self._load_skill_text(shared_skill_name))
+            sections.append(self._load_skill_text(shared_skill_name))
 
         if self.api_enabled:
             api_prompt = self.api_registry.render_prompt(
@@ -1045,15 +1008,12 @@ print(output)
                 domain_skill_names.append(skill_name)
         return domain_skill_names
 
-    def _build_domain_planner_sections(self, selected_skill_names: Optional[List[str]] = None) -> List[str]:
+    def _build_domain_planner_sections(self) -> List[str]:
         if self.guest_platform == "android":
             return []
         sections: List[str] = []
-        selected_skill_set = None if selected_skill_names is None else set(selected_skill_names)
         for domain_skill_name in self._get_domain_skill_names_for_prompt():
-            if self._skill_file_exists(domain_skill_name) and (
-                selected_skill_set is None or domain_skill_name in selected_skill_set
-            ):
+            if self._skill_file_exists(domain_skill_name):
                 sections.append(self._load_skill_text(domain_skill_name))
         return sections
 
@@ -1066,13 +1026,12 @@ print(output)
 
     def _build_planner_system_prompt(
         self,
-        selected_skill_names: Optional[List[str]] = None,
         selected_api_methods: Optional[List[str]] = None,
     ) -> str:
         sections = []
         sections.extend(self._build_base_planner_sections())
-        sections.extend(self._build_action_channel_planner_sections(selected_skill_names, selected_api_methods))
-        sections.extend(self._build_domain_planner_sections(selected_skill_names))
+        sections.extend(self._build_action_channel_planner_sections(selected_api_methods))
+        sections.extend(self._build_domain_planner_sections())
         sections.extend(self._build_recovery_planner_sections())
         if self.direct_coordinate_grounding:
             sections.append(DIRECT_COORDINATE_GROUNDING_PROMPT)
@@ -1209,8 +1168,6 @@ print(output)
     def _mark_current_step_event(self, field: str) -> None:
         if field == "context_refinement":
             self.current_step_context_refinement = True
-        elif field == "final_verification":
-            self.current_step_final_verification = True
         else:
             return
 
@@ -1222,7 +1179,8 @@ print(output)
     def _current_step_event_fields(self) -> Dict[str, bool]:
         return {
             "context_refinement": bool(getattr(self, "current_step_context_refinement", False)),
-            "final_verification": bool(getattr(self, "current_step_final_verification", False)),
+            # Retain the field for consumers of older execution-log schemas.
+            "final_verification": False,
         }
 
     def _ensure_action_log_event_defaults(self) -> None:
@@ -1242,13 +1200,6 @@ print(output)
                 "If the next action still pursues or verifies this subgoal, output subgoal='continue'. "
                 "Do not rename the same stage with an action method such as scrolling, clicking, opening, or running a script."
             )
-        if self._state_routing_enabled() and self.awaiting_final_verification and not self.final_verification_observed:
-            if self.wo_ps:
-                lines.append(
-                    "Final verification is still required before termination. Emit a full verification subgoal and use one more action to inspect the exact final state."
-                )
-            else:
-                lines.append("Final verification is still required before termination. Use one more action to verify the exact final state under the current subgoal.")
         return lines
 
     def _append_context_section(self, sections: List[str], title: str, content: Optional[str]) -> None:
@@ -1315,7 +1266,7 @@ print(output)
 
         if global_facts:
             facts_text = "\n".join(f"- {key} = {value}" for key, value in global_facts)
-            self._append_context_section(sections, "Relevant global facts", facts_text)
+            self._append_context_section(sections, "Global facts", facts_text)
 
         if history_items:
             history_text = "\n".join(str(item).strip() for item in history_items if str(item).strip())
@@ -1560,37 +1511,6 @@ print(output)
 
         return status
 
-    def _build_termination_guard_feedback(self) -> str:
-        if not self.awaiting_final_verification:
-            self.awaiting_final_verification = True
-            self.final_verification_observed = False
-            target = self.current_subgoal or "the requested final state"
-            return (
-                f"Termination deferred. You must verify the exact final state for subgoal '{target}' before terminating.\n"
-                "Do one more verification-focused action under the same subgoal, using subgoal='continue', then terminate only if the result clearly confirms task completion."
-            )
-        return (
-            "Termination deferred. Final verification has not been observed yet.\n"
-            "Use one more action under the same subgoal to inspect the final UI or output and collect concrete evidence, then terminate only if verified."
-        )
-
-    def _instruction_requires_live_caption(self) -> bool:
-        """Return whether the user-visible instruction explicitly requires Live Caption."""
-        instruction = str(getattr(self, "task_instruction", "") or "")
-        return re.search(r"\blive\s+captions?\b", instruction, flags=re.IGNORECASE) is not None
-
-    def _history_confirms_live_caption(self) -> bool:
-        """Look only at observed action results, not intents or hidden task metadata."""
-        enabled_patterns = (
-            r"\blive\s+captions?\b.{0,100}\b(?:enabled|active|visible|appeared|displayed|switched\s+on|turned\s+on)\b",
-            r"\b(?:enabled|activated|switched\s+on|turned\s+on)\b.{0,100}\blive\s+captions?\b",
-        )
-        for log in self.action_logs:
-            verified = str((log.get("compact") or {}).get("verified", "") or "")
-            if any(re.search(pattern, verified, flags=re.IGNORECASE) for pattern in enabled_patterns):
-                return True
-        return False
-
     def _build_recovery_feedback(self, event_type: str, detail: str = "") -> str:
         detail = re.sub(r"\s+", " ", str(detail or "").strip())
         if event_type == "loop_detected":
@@ -1610,183 +1530,7 @@ print(output)
                 "Fix the concrete failure instead of repeating the same action."
                 + (f"\nError: {detail}" if detail else "")
             )
-        if event_type == "termination_verification_failed":
-            return (
-                "Recovery feedback: final verification did not confirm task completion.\n"
-                "Do one more targeted verification or finish the missing requirement."
-                + (f"\nMissing: {detail}" if detail else "")
-            )
         return detail or "Recovery feedback: reassess the current subgoal and choose a different strategy."
-
-    def _get_last_meaningful_tool(self) -> str:
-        for log in reversed(self.action_logs):
-            tool_type = str(log.get("type", "") or "")
-            if tool_type in {"bash_execution", "gui_action", API_TOOL}:
-                return tool_type
-        return ""
-
-    def _extract_task_open_path(self, task_config: dict) -> str:
-        for item in task_config.get("config", []) or []:
-            if str(item.get("type", "")).strip().lower() != "open":
-                continue
-            parameters = item.get("parameters") or {}
-            path = str(parameters.get("path", "") or "").strip()
-            if path:
-                return path
-        return ""
-
-    def _extract_task_window_name(self, task_config: dict) -> str:
-        evaluator = task_config.get("evaluator") or {}
-        for item in evaluator.get("postconfig", []) or []:
-            if str(item.get("type", "")).strip().lower() != "activate_window":
-                continue
-            parameters = item.get("parameters") or {}
-            window_name = str(parameters.get("window_name", "") or "").strip()
-            if window_name:
-                return window_name
-        return ""
-
-    def _maybe_reopen_office_file_before_final_verification(self, task_config: dict) -> None:
-        app_domains = {
-            self._normalize_skill_domain(domain)
-            for domain in (self._extract_related_domains(task_config) or getattr(self, "task_related_domains", []) or [])
-        }
-        if not (app_domains & {"libreoffice_calc", "libreoffice_writer", "libreoffice_impress"}):
-            return
-        if self._get_last_meaningful_tool() != "bash_execution":
-            return
-
-        file_path = self._extract_task_open_path(task_config)
-        window_name = self._extract_task_window_name(task_config)
-        if not file_path or not window_name:
-            self.logger.info(
-                "Skipping pre-final-verification office reopen: missing file_path=%s or window_name=%s",
-                bool(file_path),
-                bool(window_name),
-            )
-            return
-
-        self.logger.info(
-            "Pre-final-verification office reload: reopening %s after bash_execution-based file edits.",
-            file_path,
-        )
-        try:
-            self._setup_controller_setup(
-                [
-                    {
-                        "type": "open",
-                        "parameters": {
-                            "path": file_path,
-                        },
-                    },
-                    {
-                        "type": "sleep",
-                        "parameters": {
-                            "seconds": 1.0,
-                        },
-                    },
-                ]
-            )
-            # screenshot = self.env.controller.get_screenshot()
-            # if screenshot is not None:
-            #     screenshot_path = os.path.join(self.operations_dir, "pre_verification.png")
-            #     with open(screenshot_path, "wb") as f:
-            #         f.write(screenshot)
-            #     self.logger.info("Saved pre-final-verification office reload screenshot to %s", screenshot_path)
-            # else:
-            #     self.logger.warning("Pre-final-verification office reload completed, but screenshot capture returned None.")
-        except Exception as e:
-            self.logger.warning(f"Pre-final-verification office reload failed: {e}")
-
-    def _run_final_verification(self) -> bool:
-        self.last_final_verification_failure_reason = ""
-        # A helper API can recover the spoken text, but it cannot satisfy an
-        # explicitly requested accessibility workflow. This guard is derived
-        # solely from the user-visible instruction and observed action results.
-        if self._instruction_requires_live_caption() and not self._history_confirms_live_caption():
-            self.last_final_verification_failure_reason = (
-                "Chrome Live Caption is required but not confirmed enabled. Enable it once; "
-                "no separate verification is needed."
-            )
-            self.logger.info("Final verification blocked: %s", self.last_final_verification_failure_reason)
-            return False
-
-        initial_screenshot = None
-        initial_screenshot_path = os.path.join(self.operations_dir, "step_0.png")
-        if os.path.exists(initial_screenshot_path):
-            try:
-                with open(initial_screenshot_path, "rb") as f:
-                    initial_screenshot = f.read()
-            except Exception as e:
-                self.logger.warning("Failed to read initial screenshot for final verification: %s", e)
-
-        latest_screenshot = self._wait_until_screenshot_available(timeout_seconds=1.5)
-        initial_screenshot_b64 = (
-            base64.b64encode(initial_screenshot).decode("utf-8")
-            if initial_screenshot else ""
-        )
-        latest_screenshot_b64 = (
-            base64.b64encode(latest_screenshot).decode("utf-8")
-            if latest_screenshot else ""
-        )
-        history_lines = self._build_condensed_history_items()
-        if self.guest_platform == "android":
-            verification_prompt = ANDROID_FINAL_VERIFICATION_PROMPT
-        else:
-            verification_prompt = NO_L2S_FINAL_VERIFICATION_PROMPT if not self._planner_subgoal_enabled() else FINAL_VERIFICATION_PROMPT
-        verification_context = f"Task:\n{self.task_instruction}\n\n"
-        if self._planner_subgoal_enabled():
-            verification_context += f"Current subgoal:\n{self._step_abstraction_subgoal()}\n\n"
-        verification_context += "Full execution history:\n" + ("\n".join(history_lines) if history_lines else "None")
-        messages = [
-            {"role": "system", "content": verification_prompt},
-            {
-                "role": "user",
-                "content": verification_context,
-            },
-        ]
-        if initial_screenshot_b64:
-            messages.append({
-                "role": "user",
-                "content": [
-                    {"type": "input_text", "text": "Initial screenshot at task start:"},
-                    {"type": "input_image", "image_url": f"data:image/png;base64,{initial_screenshot_b64}"},
-                ],
-            })
-        else:
-            self.logger.warning("Final verification is proceeding without an initial screenshot.")
-        if latest_screenshot_b64:
-            messages.append({
-                "role": "user",
-                "content": [
-                    {"type": "input_text", "text": "Latest screenshot at task end:"},
-                    {"type": "input_image", "image_url": f"data:image/png;base64,{latest_screenshot_b64}"},
-                ],
-            })
-        else:
-            self.logger.warning("Final verification is proceeding without a latest screenshot.")
-
-        self._dump_prompt_entry(
-            stage="final_verification",
-            payload={"messages": messages},
-        )
-        response = self.state_manager_llm(messages, enable_thinking=False, thinking_token_budget=self.thinking_token_budget)
-        self._dump_prompt_entry(
-            stage="final_verification_response",
-            payload=response,
-        )
-        try:
-            result = re.sub(r"\s+", " ", str(response or "").strip()).upper()
-            if "PASS" in result and "FAIL" not in result:
-                return True
-            if "FAIL" in result and "PASS" not in result:
-                return False
-            if result in {"PASS", "FAIL"}:
-                return result == "PASS"
-            raise ValueError(f"Final verification response must be PASS or FAIL, got: {response!r}")
-        except Exception as e:
-            self.logger.warning("Final verification returned invalid text; treating as fail: %s", e)
-            return False
 
     def _screenshots_meaningfully_different(self, before_screenshot: bytes, after_screenshot: bytes) -> bool:
         if not before_screenshot or not after_screenshot:
@@ -2244,18 +1988,18 @@ print(output)
         self.logger.info(f"wo_cp: {self.wo_cp}")
         self.logger.info(f"wo_al: {self.wo_al}")
         self.logger.info(f"wo_sls: {self.wo_sls}")
-        self.logger.info(f"wo_fv: {self.wo_fv}")
         self.logger.info(f"wo_ps: {self.wo_ps}")
         self.logger.info(f"wo_sa: {self.wo_sa}")
         self.logger.info(f"wo_sr: {self.wo_sr}")
         self.logger.info(
-            "[ablation] wo_global_facts=%s wo_jev_memory=%s wo_jev_global=%s "
-            "wo_jev_skills=%s wo_jev_api=%s",
+            "[ablation] wo_global_facts=%s wo_jev_memory=%s wo_jev_api=%s",
             str(self.wo_global_facts).lower(),
             str(self.wo_jev_memory).lower(),
-            str(self.wo_jev_global).lower(),
-            str(self.wo_jev_skills).lower(),
             str(self.wo_jev_api).lower(),
+        )
+        self.logger.info(
+            "[jev_api] include_threshold=%.4f",
+            self._get_jev_api_include_threshold(),
         )
         if self.wo_jev_memory:
             self.logger.info("[ablation] wo_jev_memory=true -> using original Context Refinement")
@@ -2282,6 +2026,7 @@ print(output)
         try:
             while self.operation_count < self.max_steps:
                 self.current_step_id = 0
+                self._jev_step_usage = self._zero_jev_usage_entry()
                 self.logger.info(f"Step {self.operation_count + 1}/{self.max_steps}")
 
                 # Capture token usage before this step
@@ -2377,7 +2122,6 @@ print(output)
                 self.last_recovery_feedback_event = None
                 self.current_step_id = self.operation_count + 1
                 self.current_step_context_refinement = False
-                self.current_step_final_verification = False
                 execution_result_text, terminal_status, terminal_message = self._execute_tool(decision, global_planner_usage)
                 self.operation_count += 1
                 
@@ -2398,53 +2142,8 @@ print(output)
                     break
 
                 if terminal_status == "termination":
-                    if not self._state_routing_enabled() or self.wo_fv:
-                        step = self.current_step_id or (self.operation_count + 1)
-                        termination_execution_status = self._assign_unrouted_termination_status(decision)
-                        screenshot_file = f"step_{step}.png"
-                        try:
-                            screenshot = self.env.controller.get_screenshot()
-                            with open(os.path.join(self.operations_dir, screenshot_file), "wb") as f:
-                                f.write(screenshot)
-                        except Exception as e:
-                            self.logger.warning(f"Failed to capture termination screenshot: {e}")
-                            screenshot_file = ""
-                        termination_log = {
-                            "step": step,
-                            "type": "termination",
-                            "execution_success": True,
-                            "screenshot": screenshot_file,
-                            "subgoal": self._step_abstraction_subgoal() if self._planner_subgoal_enabled() else "",
-                            "detail": terminal_message or "TERMINATE",
-                            "compact": self._build_compact_log_entry(
-                                step=step,
-                                tool_type="termination",
-                                success=True,
-                                detail=terminal_message or "TERMINATE",
-                                verification="Planner requested task termination.",
-                            ),
-                            "step_time": 0.0,
-                            "token_usage": self.step_token_usage,
-                            "state_routing_applied": False,
-                            **self._current_step_event_fields(),
-                        }
-                        if termination_execution_status:
-                            termination_log["execution_status"] = termination_execution_status
-                        self.action_logs.append(termination_log)
-                        if self.wo_fv:
-                            termination_bypass_reason = "--wo_fv"
-                        elif self.wo_s2l:
-                            termination_bypass_reason = "--wo_s2l"
-                        else:
-                            termination_bypass_reason = "--wo_sr"
-                        self.logger.info(
-                            "Task TERMINATED without final verification because %s is enabled",
-                            termination_bypass_reason,
-                        )
-                        is_infeasible = False
-                        break
-                    self._maybe_reopen_office_file_before_final_verification(task_config)
                     step = self.current_step_id or (self.operation_count + 1)
+                    termination_execution_status = self._assign_unrouted_termination_status(decision)
                     screenshot_file = f"step_{step}.png"
                     try:
                         screenshot = self.env.controller.get_screenshot()
@@ -2453,78 +2152,39 @@ print(output)
                     except Exception as e:
                         self.logger.warning(f"Failed to capture termination screenshot: {e}")
                         screenshot_file = ""
-
-                    verification = self._run_final_verification()
-                    self._mark_current_step_event("final_verification")
-                    if not verification:
-                        self.awaiting_final_verification = True
-                        self.final_verification_observed = False
+                    if self._state_routing_enabled():
                         self._apply_step_log_status(
                             step=step,
-                            subgoal=decision.get("subgoal", self.current_subgoal or "Verify task completion"),
-                            status="stall",
+                            subgoal=decision.get("subgoal", self.current_subgoal or "Task complete"),
+                            status="finish",
                         )
-                        self.consecutive_stall_count += 1
-                        self.last_execution_status = "stall"
-                        missing_requirement = str(
-                            getattr(self, "last_final_verification_failure_reason", "") or ""
-                        ).strip()
-                        failure_detail = missing_requirement or (
-                            f"Final verification failed and counted as stall ({self.consecutive_stall_count}/3 consecutive stalls)."
-                        )
-                        next_hint = missing_requirement or "Do one more targeted verification or finish the missing requirement."
-                        verification_text = "Final verification did not confirm task completion."
-                        self._record_termination_attempt(
-                            step=step,
-                            detail=terminal_message or "TERMINATE",
-                            verification=verification_text,
-                            next_hint=next_hint,
-                            execution_status="stall",
-                            screenshot_file=screenshot_file,
-                            token_usage=self.step_token_usage,
-                        )
-                        self._set_active_recovery_feedback(
-                            self._build_recovery_feedback("termination_verification_failed", failure_detail)
-                        )
-                        if self._should_fail_after_consecutive_stalls():
-                            is_infeasible = True
-                            infeasible_reason = self._build_consecutive_stall_reason()
-                            self.logger.warning(infeasible_reason)
-                            try:
-                                self.env.step("FAIL", 0)
-                            except Exception as e:
-                                self.logger.warning(f"Failed to send FAIL action: {e}")
-                            break
-                        self.logger.info("Termination deferred: final verification failed")
-                        continue
-                    self.logger.info("Final verification passed")
-                    self._apply_step_log_status(
-                        step=step,
-                        subgoal=decision.get("subgoal", self.current_subgoal or "Verify task completion"),
-                        status="finish",
-                    )
-                    self.last_execution_status = "finish"
-                    self.consecutive_stall_count = 0
+                        self.last_execution_status = "finish"
+                        self.consecutive_stall_count = 0
 
-                    self.action_logs.append({
+                    termination_log = {
                         "step": step,
                         "type": "termination",
                         "execution_success": True,
                         "screenshot": screenshot_file,
-                        "subgoal": self._step_abstraction_subgoal(),
-                        "execution_status": "finish",
-                        "detail": terminal_message or "Task completed.",
+                        "subgoal": self._step_abstraction_subgoal() if self._planner_subgoal_enabled() else "",
+                        "detail": terminal_message or "TERMINATE",
                         "compact": self._build_compact_log_entry(
                             step=step,
                             tool_type="termination",
                             success=True,
-                            detail=terminal_message or "Task completed.",
-                            verification="Task marked complete after explicit verification."
+                            detail=terminal_message or "TERMINATE",
+                            verification="Planner requested task termination.",
                         ),
                         "step_time": 0.0,
                         "token_usage": self.step_token_usage,
+                        "state_routing_applied": self._state_routing_enabled(),
                         **self._current_step_event_fields(),
-                    })
+                    }
+                    if self._state_routing_enabled():
+                        termination_log["execution_status"] = "finish"
+                    elif termination_execution_status:
+                        termination_log["execution_status"] = termination_execution_status
+                    self.action_logs.append(termination_log)
                     is_infeasible = False
                     self.logger.info("Task COMPLETED")
                     break
@@ -2542,8 +2202,6 @@ print(output)
                     except Exception as e:
                         self.logger.warning(f"Failed to capture infeasible screenshot: {e}")
                         screenshot_file = ""
-                    infeasible_event_fields = self._current_step_event_fields()
-                    infeasible_event_fields["final_verification"] = True
                     self.action_logs.append({
                         "step": step,
                         "type": "infeasible",
@@ -2561,7 +2219,7 @@ print(output)
                         ),
                         "step_time": 0.0,
                         "token_usage": self.step_token_usage,
-                        **infeasible_event_fields,
+                        **self._current_step_event_fields(),
                     })
                     try:
                         self.env.step("FAIL", 0)
@@ -2619,12 +2277,10 @@ print(output)
                     # Step zero is the explicit fail-open value: it bypasses
                     # recursive summaries and retains every compact log.
                     memory_start_step = self._jev_select_memory_start_step() or 0
-                selected_global_facts = self._select_global_facts_for_planner()
-                selected_skill_names = self._select_skills_for_planner()
-                selected_api_methods = self._select_api_methods_for_planner()
-                planner_system_prompt = self._build_planner_system_prompt(
-                    selected_skill_names=selected_skill_names,
-                    selected_api_methods=selected_api_methods,
+                # Persistent facts are cheap, deterministic planner context.
+                # Inject the complete store every step; only episodic memory is JEV-filtered.
+                global_facts = (
+                    [] if self.wo_global_facts else list(self.global_facts.items())
                 )
                 active_recovery_feedback = self._get_active_recovery_feedback()
 
@@ -2636,7 +2292,6 @@ print(output)
                     include_summary=False,
                     start_step=memory_start_step,
                 )
-                messages = [{"role": "system", "content": planner_system_prompt}]
                 prompt_text = "Based on the execution history and current screenshot, decide the next action. Prefer the shortest reliable path and avoid repeating failed actions."
                 if active_recovery_feedback:
                     prompt_text += "\nPlease use the recovery feedback above to correct the next step."
@@ -2645,8 +2300,18 @@ print(output)
                     history_items=condensed_history,
                     prompt_text=prompt_text,
                     recovery_feedback_text=active_recovery_feedback,
-                    global_facts=selected_global_facts,
+                    global_facts=global_facts,
                 )
+                planner_context = (
+                    str(context_message.get("content", ""))
+                    if isinstance(context_message, dict)
+                    else ""
+                )
+                selected_api_methods = self._select_api_methods_for_subgoal(planner_context)
+                planner_system_prompt = self._build_planner_system_prompt(
+                    selected_api_methods=selected_api_methods,
+                )
+                messages = [{"role": "system", "content": planner_system_prompt}]
                 if context_message:
                     messages.append(context_message)
 
@@ -3249,9 +2914,19 @@ print(output)
     def _zero_usage_entry(self) -> Dict[str, float]:
         return {"cost": 0.0, "prompt_tokens": 0, "completion_tokens": 0, "image_count": 0}
 
+    def _zero_jev_usage_entry(self) -> Dict[str, float]:
+        return {
+            "cost": 0.0,
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "image_count": 0,
+            "request_count": 0,
+        }
+
     def _build_step_token_usage(self, planner_usage: Dict, tool_usage: Dict, include_planner: bool) -> Dict:
         global_planner_usage = planner_usage["global_planner"] if include_planner else self._zero_usage_entry()
         state_manager_usage = planner_usage["state_manager"] if include_planner else self._zero_usage_entry()
+        jev_usage = dict(self._jev_step_usage)
         return {
             "global_planner": global_planner_usage,
             "visual_grounder": tool_usage["visual_grounder"],
@@ -3261,10 +2936,11 @@ print(output)
                 "completion_tokens": state_manager_usage["completion_tokens"] + tool_usage["state_manager"]["completion_tokens"],
                 "image_count": state_manager_usage["image_count"] + tool_usage["state_manager"]["image_count"],
             },
+            "jev": jev_usage,
             "total": {
                 "cost": global_planner_usage["cost"] + tool_usage["visual_grounder"]["cost"] + state_manager_usage["cost"] + tool_usage["state_manager"]["cost"],
-                "prompt_tokens": global_planner_usage["prompt_tokens"] + tool_usage["visual_grounder"]["prompt_tokens"] + state_manager_usage["prompt_tokens"] + tool_usage["state_manager"]["prompt_tokens"],
-                "completion_tokens": global_planner_usage["completion_tokens"] + tool_usage["visual_grounder"]["completion_tokens"] + state_manager_usage["completion_tokens"] + tool_usage["state_manager"]["completion_tokens"],
+                "prompt_tokens": global_planner_usage["prompt_tokens"] + tool_usage["visual_grounder"]["prompt_tokens"] + state_manager_usage["prompt_tokens"] + tool_usage["state_manager"]["prompt_tokens"] + jev_usage["prompt_tokens"],
+                "completion_tokens": global_planner_usage["completion_tokens"] + tool_usage["visual_grounder"]["completion_tokens"] + state_manager_usage["completion_tokens"] + tool_usage["state_manager"]["completion_tokens"] + jev_usage["completion_tokens"],
                 "image_count": global_planner_usage["image_count"] + tool_usage["visual_grounder"]["image_count"] + state_manager_usage["image_count"] + tool_usage["state_manager"]["image_count"],
             },
         }
@@ -3325,8 +3001,6 @@ print(output)
             self._maybe_refine_context("periodic")
             return status
 
-        if self.awaiting_final_verification:
-            self.final_verification_observed = True
         if status == "advance":
             self._maybe_refine_context("advance")
         elif status == "stall":
@@ -4835,8 +4509,18 @@ except subprocess.TimeoutExpired as e:
         global_planner_cost, global_planner_prompt, global_planner_completion, global_planner_images = self.global_planner_llm.get_usage()
         visual_grounder_cost, visual_grounder_prompt, visual_grounder_completion, visual_grounder_images = self.visual_grounder_llm.get_usage()
         state_manager_cost, state_manager_prompt, state_manager_completion, state_manager_images = self.state_manager_llm.get_usage()
+        jev_cost = float(self._jev_task_usage["cost"])
+        jev_prompt = int(self._jev_task_usage["prompt_tokens"])
+        jev_completion = int(self._jev_task_usage["completion_tokens"])
+        jev_requests = int(self._jev_task_usage["request_count"])
+        self.logger.info(
+            "[jev_usage] requests=%s prompt_tokens=%s completion_tokens=%s",
+            jev_requests,
+            jev_prompt,
+            jev_completion,
+        )
 
-        total_cost = global_planner_cost + visual_grounder_cost + state_manager_cost
+        total_cost = global_planner_cost + visual_grounder_cost + state_manager_cost + jev_cost
         total_images = global_planner_images + visual_grounder_images + state_manager_images
 
         # Calculate execution time
@@ -4864,8 +4548,8 @@ except subprocess.TimeoutExpired as e:
                 "infeasible_steps": infeasible_steps,
                 "image_count": total_images,
                 "total_cost": total_cost,
-                "prompt_tokens": global_planner_prompt + visual_grounder_prompt + state_manager_prompt,
-                "completion_tokens": global_planner_completion + visual_grounder_completion + state_manager_completion,
+                "prompt_tokens": global_planner_prompt + visual_grounder_prompt + state_manager_prompt + jev_prompt,
+                "completion_tokens": global_planner_completion + visual_grounder_completion + state_manager_completion + jev_completion,
                 "execution_time": execution_time,
                 "model_usage": {
                     "global_planner": {
@@ -4888,6 +4572,14 @@ except subprocess.TimeoutExpired as e:
                         "prompt_tokens": state_manager_prompt,
                         "completion_tokens": state_manager_completion,
                         "image_count": state_manager_images
+                    },
+                    "jev": {
+                        "model_name": self._jev_model_name or "decider",
+                        "cost": jev_cost,
+                        "prompt_tokens": jev_prompt,
+                        "completion_tokens": jev_completion,
+                        "image_count": 0,
+                        "request_count": jev_requests
                     }
                 }
             },
@@ -4897,15 +4589,13 @@ except subprocess.TimeoutExpired as e:
                 "wo_cp": self.wo_cp,
                 "wo_al": self.wo_al,
                 "wo_sls": self.wo_sls,
-                "wo_fv": self.wo_fv,
                 "wo_ps": self.wo_ps,
                 "wo_sa": self.wo_sa,
                 "wo_sr": self.wo_sr,
                 "wo_global_facts": self.wo_global_facts,
                 "wo_jev_memory": self.wo_jev_memory,
-                "wo_jev_global": self.wo_jev_global,
-                "wo_jev_skills": self.wo_jev_skills,
                 "wo_jev_api": self.wo_jev_api,
+                "jev_api_include_threshold": self._get_jev_api_include_threshold(),
                 "l2s_enabled": self._planner_subgoal_enabled(),
                 "s2l_enabled": self._s2l_enabled(),
                 "persistent_subgoal_enabled": self._planner_subgoal_enabled() and (not self.wo_ps),
@@ -4917,7 +4607,7 @@ except subprocess.TimeoutExpired as e:
                 "software_api_enabled": self.api_enabled,
                 "direct_coordinate_grounding": self.direct_coordinate_grounding,
                 "stall_loop_suppression_enabled": self._state_routing_enabled() and (not self.wo_sls),
-                "final_verification_enabled": self._state_routing_enabled() and (not self.wo_fv),
+                "final_verification_enabled": False,
             },
             "task_config": task_config,
             "additional_context": additional_context,

@@ -10,7 +10,7 @@
   ],
   "difficulty": "medium",
   "operation_time": 54.75,
-  "instruction": "Turn on Windows Narrator. On the Gold rush Wikipedia page already open in Chrome, use the gold rush events listed by date on that page, identify the second ever listed gold rush in the world, open that gold rush's linked Wikipedia page, and leave it open.",
+  "instruction": "I rely on a screen reader to follow the content. Turn on Windows Narrator and use the dated events on the Gold rush Wikipedia page already open in Chrome to identify the second gold rush listed chronologically. Open that event's linked Wikipedia page and leave it open.",
   "source": "synthetic",
   "gt_steps": [
     "Turn on Windows Narrator.",

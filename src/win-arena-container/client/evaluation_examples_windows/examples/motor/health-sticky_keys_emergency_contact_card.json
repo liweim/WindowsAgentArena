@@ -10,7 +10,7 @@
   ],
   "difficulty": "medium",
   "operation_time": 204.06,
-  "instruction": "Enable Windows Sticky Keys and keep them enabled. Use the CDC Backpack Emergency Card saved on the Desktop to create one Sticky Note listing the seven fields shown in the child-information section, in the same order as the form. Keep the completed note saved.",
+  "instruction": "I have difficulty holding several keys at once. Turn on Windows Sticky Keys and leave it enabled for me. Use the CDC Backpack Emergency Card saved on the Desktop to create one Sticky Note listing the seven fields shown in the child-information section, in the same order as the form. Keep the completed note saved.",
   "source": "https://stacks.cdc.gov/view/cdc/139829/cdc_139829_DS1.pdf",
   "gt_steps": [
     "Enable Windows Sticky Keys and leave them enabled.",

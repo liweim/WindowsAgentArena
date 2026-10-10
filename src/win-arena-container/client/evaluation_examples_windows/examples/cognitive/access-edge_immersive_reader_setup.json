@@ -10,7 +10,7 @@
   ],
   "difficulty": "medium",
   "operation_time": 32.27,
-  "instruction": "Set up the local Wikipedia Accessibility article in Microsoft Edge for reading in Immersive Reader with one-line focus turned on.",
+  "instruction": "I focus better when text is shown one line at a time. Set up the local Wikipedia Accessibility article in Microsoft Edge Immersive Reader with one-line focus turned on.",
   "source": "synthetic",
   "gt_steps": [
     "Click F9 to activate `Immersive Reader`.",

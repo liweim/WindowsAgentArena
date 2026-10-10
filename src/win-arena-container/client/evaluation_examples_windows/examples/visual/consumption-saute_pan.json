@@ -10,7 +10,7 @@
   ],
   "difficulty": "medium",
   "operation_time": 73.23,
-  "instruction": "Turn on Windows Narrator. Using the provided kitchen catalogue, identify the featured cookware by brand and capacity and add exactly one unit of the matching product to the shopping cart. Leave the cart page open.",
+  "instruction": "I rely on a screen reader to follow the content. Turn on Windows Narrator, then use the provided kitchen catalogue to identify the featured cookware by brand and capacity. Add exactly one unit of the matching product to the shopping cart and leave the cart page open.",
   "source": "synthetic",
   "gt_steps": [
     "Open the kitchen catalogue in Chrome.",

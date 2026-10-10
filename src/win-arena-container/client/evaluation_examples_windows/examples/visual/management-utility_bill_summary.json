@@ -10,7 +10,7 @@
   ],
   "difficulty": "hard",
   "operation_time": 157.88,
-  "instruction": "Enable Windows Narrator and keep it enabled. Populate the provided `BillSummary.odt` with the provider, due date, and total amount due from each of the three provided utility bills in the following order (electricity, water, gas), then save the document.",
+  "instruction": "I rely on a screen reader to follow the content and continue working afterward. Turn on Windows Narrator and leave it available for me. Populate the provided `BillSummary.odt` with the provider, due date, and total amount due from each of the three provided utility bills in the following order (electricity, water, gas), then save the document.",
   "source": "synthetic",
   "gt_steps": [
     "Enable Windows Narrator.",

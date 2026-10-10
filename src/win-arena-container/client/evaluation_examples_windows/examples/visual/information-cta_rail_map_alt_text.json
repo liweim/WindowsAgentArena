@@ -11,7 +11,7 @@
   ],
   "difficulty": "hard",
   "operation_time": 64.03,
-  "instruction": "Turn on Windows Narrator and use it while editing the provided `ChicagoConferenceTravelGuide.docx`. On page 2, use the CTA rail map to add missing alternative text that describes the O'Hare-to-Midway rail connection. The description must mention the origin airport, its CTA line, the downtown transfer station, the onward CTA line, and the destination airport. Wording, punctuation, and order may vary. Keep Narrator running and save the document.",
+  "instruction": "I rely on a screen reader to follow the content. Turn on Windows Narrator and use it while editing the provided `ChicagoConferenceTravelGuide.docx`. On page 2, use the CTA rail map to add missing alternative text that describes the O'Hare-to-Midway rail connection. The description must mention the origin airport, its CTA line, the downtown transfer station, the onward CTA line, and the destination airport. Wording, punctuation, and order may vary. Keep Narrator running and save the document.",
   "source": "synthetic",
   "gt_steps": [
     "Open Windows Narrator running.",

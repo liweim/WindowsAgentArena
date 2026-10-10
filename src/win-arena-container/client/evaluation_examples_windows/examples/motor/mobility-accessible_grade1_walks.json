@@ -10,11 +10,11 @@
   ],
   "difficulty": "hard",
   "operation_time": 239.77,
-  "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Save every walk title on the provided NSW National Parks webpage that is Grade 1 with a maximum listed walking time of 45 minutes or less to `answer.txt` on the Desktop, one title per line in webpage order.",
+  "instruction": "I have difficulty using a physical keyboard. Open the Windows On-Screen Keyboard and leave it available for me. Save every walk title in the provided PDF snapshot of the NSW National Parks webpage that is Grade 1 with a maximum listed walking time of 45 minutes or less to `answer.txt` on the Desktop, one title per line in walking-track listing order.",
   "source": "https://www.nationalparks.nsw.gov.au/access-friendly/access-friendly-walking-tracks",
   "gt_steps": [
     "Enable the Windows On-Screen Keyboard and keep it open.",
-    "Review the NSW National Parks access-friendly walking tracks webpage already open in Chrome.",
+    "Review the PDF snapshot of the NSW National Parks access-friendly walking tracks webpage already open in Chrome.",
     "Check the listed time and grade information for the walking tracks.",
     "Find every walk that is Grade 1 and has a maximum listed walking time of 45 minutes or less.",
     "Open Notepad.",
@@ -25,13 +25,24 @@
   ],
   "config": [
     {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "../assets/mobility-accessible_grade1_walks.pdf",
+            "path": "C:\\Users\\Docker\\Desktop\\NSWAccessibleWalkingTracks.pdf"
+          }
+        ]
+      }
+    },
+    {
       "type": "launch",
       "parameters": {
         "command": [
           "google-chrome",
           "--remote-debugging-port=1337",
           "--force-renderer-accessibility",
-          "https://www.nationalparks.nsw.gov.au/access-friendly/access-friendly-walking-tracks"
+          "file:///C:/Users/Docker/Desktop/NSWAccessibleWalkingTracks.pdf"
         ]
       }
     },
@@ -99,6 +110,6 @@
       }
     ]
   },
-  "proxy": true,
-  "possibility_of_env_change": "medium"
+  "proxy": false,
+  "possibility_of_env_change": "low"
 }

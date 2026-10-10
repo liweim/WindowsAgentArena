@@ -10,7 +10,7 @@
   ],
   "difficulty": "medium",
   "operation_time": 78.22,
-  "instruction": "Enable Windows Sticky Keys as a motor accessibility aid and keep it enabled throughout the task. In the UCLA Economics Undergraduate Handbook PDF already open in Chrome, find the minimum pre-major GPA requirement for the UCLA Economics major. Save the minimum pre-major GPA in a text file named `answer.txt` on the Desktop.",
+  "instruction": "I have difficulty holding several keys at once. Turn on Windows Sticky Keys and leave it enabled for me. In the UCLA Economics Undergraduate Handbook PDF already open in Chrome, find the minimum pre-major GPA requirement for the UCLA Economics major. Save the minimum pre-major GPA in a text file named `answer.txt` on the Desktop.",
   "source": "synthetic",
   "gt_steps": [
     "Open Windows Accessibility keyboard settings.",

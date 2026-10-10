@@ -10,7 +10,7 @@
   ],
   "difficulty": "medium",
   "operation_time": 61.51,
-  "instruction": "Use Chrome Live Caption to identify the free class, its start date, and the required registration card in the community-center audio, then compose a new Thunderbird email to the Riverside Community Center registration desk at `registration@riversidecommunitycenter.example` with subject `Free Workshop Registration` and include those three details in the body. Save it as a draft and do not send it.",
+  "instruction": "I cannot reliably hear the recording. Use Chrome Live Caption to identify the free class, its start date, and the required registration card in the community-center audio, then compose a new Thunderbird email to the Riverside Community Center registration desk at `registration@riversidecommunitycenter.example` with subject `Free Workshop Registration` and include those three details in the body. Save it as a draft and do not send it.",
   "source": "synthetic",
   "gt_steps": [
     "Turn on Chrome Live Caption.",

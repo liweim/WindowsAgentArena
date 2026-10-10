@@ -10,7 +10,7 @@
   ],
   "difficulty": "easy",
   "operation_time": 50.49,
-  "instruction": "Turn on Windows Live captions.",
+  "instruction": "I rely on text for spoken content. Turn on Windows Live captions for me.",
   "source": "synthetic",
   "gt_steps": [
     "Open Windows Settings to Accessibility > Captions.",

@@ -10,7 +10,7 @@
   ],
   "difficulty": "medium",
   "operation_time": 131.34,
-  "instruction": "Use Chrome Live Caption to read the inventory service recording on the Desktop, then make the requested stock change in the CMS. Keep Chrome Live Caption enabled. Use username `admin` and password `admin1234`.",
+  "instruction": "I cannot reliably hear the recording. Use Chrome Live Caption to read the inventory service recording on the Desktop, then make the requested stock change in the CMS. Keep Chrome Live Caption enabled. Use username `admin` and password `admin1234`.",
   "source": "synthetic",
   "gt_steps": [
     "Turn on Chrome Live Caption.",

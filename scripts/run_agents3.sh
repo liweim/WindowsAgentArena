@@ -17,7 +17,7 @@ nohup setsid env \
     --start-client true \
     --agent agents3 \
     --model qwen3.8-27b \
-    --ground_model qwen3.8-27b \
+    --ground_model uitars-1.5-7b \
     --provider_name docker \
     --headless \
     --max_steps 50 \

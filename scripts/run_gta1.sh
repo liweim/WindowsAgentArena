@@ -18,7 +18,7 @@ nohup setsid env \
     --agent gta1 \
     --model qwen3.8-27b \
     --judge_model qwen3.8-27b \
-    --ground_model qwen3.8-27b \
+    --ground_model gta1-7b \
     --n_samples 3 \
     --headless \
     --max_steps 50 \

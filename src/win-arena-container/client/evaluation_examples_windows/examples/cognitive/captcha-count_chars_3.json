@@ -10,7 +10,7 @@
   ],
   "difficulty": "easy",
   "operation_time": 20.70,
-  "instruction": "Complete the character-count CAPTCHA open in Chrome.",
+  "instruction": "Verification sequences are difficult for me to keep track of. Complete the character-count CAPTCHA open in Chrome.",
   "source": "synthetic",
   "gt_steps": [
     "Count how many times the target character appears and enter the count."

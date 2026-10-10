@@ -11,7 +11,7 @@
   ],
   "difficulty": "easy",
   "operation_time": 19.28,
-  "instruction": "Complete the character-count CAPTCHA verification in Microsoft Edge.",
+  "instruction": "The verification step currently open in Microsoft Edge is not accessible to me. Complete the character-count CAPTCHA verification in Microsoft Edge.",
   "source": "synthetic",
   "gt_steps": [
     "Count how many times the target character appears and enter the count."

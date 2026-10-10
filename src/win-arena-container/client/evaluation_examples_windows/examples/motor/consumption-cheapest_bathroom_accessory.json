@@ -10,7 +10,7 @@
   ],
   "difficulty": "medium",
   "operation_time": 113.87,
-  "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Add exactly one unit of the cheapest item in OneStopShop's `Bathroom Accessories` category to the shopping cart.",
+  "instruction": "I have difficulty using a physical keyboard. Open the Windows On-Screen Keyboard and leave it available for me. Add exactly one unit of the cheapest item in OneStopShop's `Bathroom Accessories` category to the shopping cart.",
   "source": "synthetic",
   "gt_steps": [
     "Enable the Windows On-Screen Keyboard.",

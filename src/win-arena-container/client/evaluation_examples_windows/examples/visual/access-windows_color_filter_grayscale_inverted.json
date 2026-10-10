@@ -10,7 +10,7 @@
   ],
   "difficulty": "easy",
   "operation_time": 49.03,
-  "instruction": "Set the Windows color filter to Grayscale inverted.",
+  "instruction": "I read the screen more comfortably with an inverted grayscale palette. Set the Windows color filter to Grayscale inverted.",
   "source": "synthetic",
   "gt_steps": [
     "Open Windows Setting.",

@@ -10,7 +10,7 @@
   ],
   "difficulty": "medium",
   "operation_time": 64.88,
-  "instruction": "My sister Maya is preparing for her passport appointment. Use Chrome Live Caption to read the passport-photo reminder on the Desktop, then create and save a Thunderbird draft to Maya at `maya.chen@example.com` with subject `Passport photo checklist` containing every photo requirement from the recording so she can check her photo before the appointment. Do not send it.",
+  "instruction": "I cannot reliably hear the passport-photo reminder recording, and my sister Maya is preparing for her passport appointment. Use Chrome Live Caption to read the reminder on the Desktop, then create and save a Thunderbird draft to Maya at `maya.chen@example.com` with subject `Passport photo checklist` containing every photo requirement from the recording so she can check her photo before the appointment. Do not send it.",
   "source": "https://travel.state.gov/content/travel/en/passports/how-apply/photos.html",
   "gt_steps": [
     "Turn on Chrome Live Caption.",

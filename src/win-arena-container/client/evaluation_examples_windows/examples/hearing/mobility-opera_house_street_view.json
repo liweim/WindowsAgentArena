@@ -10,7 +10,7 @@
   ],
   "difficulty": "easy",
   "operation_time": 87.97,
-  "instruction": "Use captions on the opened video to identify the scenic place shown there, then open Street View for it in Google Maps.",
+  "instruction": "I cannot reliably hear the video. Use the available captions on the opened video to identify the scenic place shown there, then open Street View for it in Google Maps.",
   "source": "https://worldheritagejourney.com/unesco-sites-new-south-wales",
   "gt_steps": [
     "Turn on an available caption feature for the video.",

@@ -11,12 +11,12 @@
     "C3"
   ],
   "difficulty": "medium",
-  "operation_time": 71.90,
-  "instruction": "Create a 30-minute Thunderbird Calendar reminder on October 2, 2026 at 9:00 AM titled `Review automatic payments`. Use Microsoft Edge Immersive Reader to read the CFPB guidance and include all four action headings under `How to stop automatic debits from your account` in the event description, in webpage order.",
+  "operation_time": 71.9,
+  "instruction": "I need simplified information and a reminder so I can act on it later. Create a 30-minute Thunderbird Calendar reminder on October 2, 2026 at 9:00 AM titled `Review automatic payments`. Read the local CFPB automatic-payments PDF in Microsoft Edge and include all four action headings under `How to stop automatic debits from your account` in the event description, in webpage order.",
   "source": "https://www.consumerfinance.gov/ask-cfpb/how-do-i-stop-automatic-payments-from-my-bank-account-en-2023/",
   "gt_steps": [
+    "Open the local PDF snapshot in Microsoft Edge.",
     "Switch to the CFPB automatic payments guidance in Microsoft Edge.",
-    "With the article active in Microsoft Edge, press `F9` to enter Immersive Reader.",
     "Scroll to `How to stop automatic debits from your account`.",
     "Switch to Thunderbird Calendar.",
     "Create a calendar event on `October 2, 2026` at `9:00 AM`.",
@@ -27,12 +27,23 @@
   ],
   "config": [
     {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "../assets/management-cfpb_autopay_review_reminder.pdf",
+            "path": "C:\\Users\\Docker\\Desktop\\CFPBAutomaticPayments.pdf"
+          }
+        ]
+      }
+    },
+    {
       "type": "launch",
       "parameters": {
         "command": [
           "cmd",
           "/c",
-          "start msedge https://www.consumerfinance.gov/ask-cfpb/how-do-i-stop-automatic-payments-from-my-bank-account-en-2023/"
+          "start msedge file:///C:/Users/Docker/Desktop/CFPBAutomaticPayments.pdf"
         ]
       }
     },
@@ -68,18 +79,13 @@
   ],
   "evaluator": {
     "func": [
-      "check_thunderbird_calendar_event",
-      "check_edge_immersive_reader_state"
+      "check_thunderbird_calendar_event"
     ],
     "conj": "and",
     "result": [
       {
         "type": "thunderbird_calendar_events",
         "profile_path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release"
-      },
-      {
-        "type": "edge_immersive_reader_state",
-        "activate_edge": true
       }
     ],
     "expected": [
@@ -108,12 +114,6 @@
             ]
           ]
         }
-      },
-      {
-        "type": "rule",
-        "rules": {
-          "reader_mode_open": true
-        }
       }
     ],
     "metric_roles": {
@@ -121,8 +121,7 @@
         0
       ],
       "access_requirement": [
-        0,
-        1
+        0
       ]
     }
   },

@@ -10,7 +10,7 @@
   ],
   "difficulty": "medium",
   "operation_time": 99.48,
-  "instruction": "Turn on Windows Narrator. Use it to navigate Google Maps and find walking directions from Sanam Chai MRT Station, Bangkok, Thailand to Wat Arun, Bangkok, Thailand. Leave the walking directions open.",
+  "instruction": "I rely on a screen reader to navigate maps. Turn on Windows Narrator and use it to find walking directions in Google Maps from Sanam Chai MRT Station, Bangkok, Thailand to Wat Arun, Bangkok, Thailand. Leave the directions open.",
   "source": "synthetic",
   "gt_steps": [
     "Open Google Maps in Chrome.",

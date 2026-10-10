@@ -10,7 +10,7 @@
   ],
   "difficulty": "easy",
   "operation_time": 76.37,
-  "instruction": "Create a recurring Thunderbird Calendar event titled `Weekly planning review` starting Monday, September 21, 2026 at 8:00 AM for 30 minutes and repeating weekly. Put `Review calendar`, `Review reminders`, and `Check email` in the event description.",
+  "instruction": "I rely on reminders and time cues to keep track of future actions. Create a recurring Thunderbird Calendar event titled `Weekly planning review` starting Monday, September 21, 2026 at 8:00 AM for 30 minutes and repeating weekly. Put `Review calendar`, `Review reminders`, and `Check email` in the event description.",
   "source": "synthetic",
   "gt_steps": [
     "Create a Thunderbird calendar event on September 21, 2026 at 8:00 AM for 30 minutes titled `Weekly planning review`.",

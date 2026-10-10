@@ -10,7 +10,7 @@
   ],
   "difficulty": "easy",
   "operation_time": 25.18,
-  "instruction": "Enable the Windows On-Screen Keyboard and keep it open.",
+  "instruction": "I have difficulty using a physical keyboard. Open the Windows On-Screen Keyboard and leave it available for me.",
   "source": "synthetic",
   "gt_steps": [
     "Open Windows settings.",

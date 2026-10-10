@@ -10,7 +10,7 @@
   ],
   "difficulty": "hard",
   "operation_time": 58.21,
-  "instruction": "Enable Windows Filter Keys and keep them enabled. Compare the release dates of `Salomon Men's Predict Soc2 Running` and `Nike Men's Stroke Running Shoe, 6.5 us`. For the more recently released shoe, select Magnet/Black/Quiet Shade, size 12, and add exactly one unit to the shopping cart.",
+  "instruction": "Brief or repeated keystrokes are difficult for me to control. Turn on Windows Filter Keys and leave it enabled for me. Compare the release dates of `Salomon Men's Predict Soc2 Running` and `Nike Men's Stroke Running Shoe, 6.5 us`. For the more recently released shoe, select Magnet/Black/Quiet Shade, size 12, and add exactly one unit to the shopping cart.",
   "source": "synthetic",
   "gt_steps": [
     "Enable Windows Filter Keys.",

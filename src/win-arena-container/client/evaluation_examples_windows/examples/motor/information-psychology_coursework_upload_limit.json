@@ -10,7 +10,7 @@
   ],
   "difficulty": "medium",
   "operation_time": 68.24,
-  "instruction": "Enable Windows Filter Keys and keep them enabled. Find the maximum coursework file upload size in the provided Department of Psychology Undergraduate Student Handbook and save it in `answer.txt` on the Desktop.",
+  "instruction": "Brief or repeated keystrokes are difficult for me to control. Turn on Windows Filter Keys and leave it enabled for me. Find the maximum coursework file upload size in the provided Department of Psychology Undergraduate Student Handbook and save it in `answer.txt` on the Desktop.",
   "source": "synthetic",
   "gt_steps": [
     "Open Windows Accessibility keyboard settings.",

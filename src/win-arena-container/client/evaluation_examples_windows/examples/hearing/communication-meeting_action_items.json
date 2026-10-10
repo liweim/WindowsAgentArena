@@ -10,7 +10,7 @@
   ],
   "difficulty": "medium",
   "operation_time": 41.86,
-  "instruction": "Use Chrome Live Caption to identify the three operational warnings in the cloud-cluster meeting audio, then record them in a Sticky Note.",
+  "instruction": "I cannot reliably hear the recording. Use Chrome Live Caption to identify the three operational warnings in the cloud-cluster meeting audio, then record them in a Sticky Note.",
   "source": "synthetic",
   "gt_steps": [
     "Turn on Chrome Live Caption.",

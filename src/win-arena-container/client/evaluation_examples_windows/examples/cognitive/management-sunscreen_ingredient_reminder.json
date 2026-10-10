@@ -12,11 +12,11 @@
   ],
   "difficulty": "medium",
   "operation_time": 83.63,
-  "instruction": "Use Immersive Reader to find the minimum-age guidance for the newly approved sunscreen ingredient in the article. A child was born on January 15, 2026. Create an all-day Thunderbird Calendar event titled `Sunscreen ingredient reminder` on the first date the child is old enough to use the ingredient.",
+  "instruction": "I need simplified information and a reminder so I can act on it later. Use the local AP sunscreen article PDF to find the minimum-age guidance for the newly approved sunscreen ingredient. A child was born on January 15, 2026. Create an all-day Thunderbird Calendar event titled `Sunscreen ingredient reminder` on the first date the child is old enough to use the ingredient.",
   "source": "https://apnews.com/article/9b9c7e04b418b3c9c1fbaa7ddabade25",
   "gt_steps": [
+    "Open the local PDF snapshot in Microsoft Edge.",
     "Open the AP News sunscreen ingredient article in Microsoft Edge.",
-    "Activate Immersive Reader.",
     "Locate the age guidance for the newly approved sunscreen ingredient.",
     "Open Thunderbird Calendar.",
     "Enable the `Home` calendar if it is disabled.",
@@ -25,6 +25,17 @@
     "Save the calendar event."
   ],
   "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "../assets/sunscreen_ingredient_guidance.pdf",
+            "path": "C:\\Users\\Docker\\Desktop\\SunscreenIngredientGuidance.pdf"
+          }
+        ]
+      }
+    },
     {
       "type": "download",
       "parameters": {
@@ -62,7 +73,7 @@
         "command": [
           "cmd",
           "/c",
-          "start msedge https://apnews.com/article/9b9c7e04b418b3c9c1fbaa7ddabade25"
+          "start msedge file:///C:/Users/Docker/Desktop/SunscreenIngredientGuidance.pdf"
         ]
       }
     }
@@ -73,18 +84,13 @@
   ],
   "evaluator": {
     "func": [
-      "check_thunderbird_calendar_event",
-      "check_edge_immersive_reader_state"
+      "check_thunderbird_calendar_event"
     ],
     "conj": "and",
     "result": [
       {
         "type": "thunderbird_calendar_events",
         "profile_path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release"
-      },
-      {
-        "type": "edge_immersive_reader_state",
-        "activate_edge": true
       }
     ],
     "expected": [
@@ -97,12 +103,6 @@
           "title": "Sunscreen ingredient reminder",
           "date": "2026-07-15"
         }
-      },
-      {
-        "type": "rule",
-        "rules": {
-          "reader_mode_open": true
-        }
       }
     ],
     "metric_roles": {
@@ -110,8 +110,7 @@
         0
       ],
       "access_requirement": [
-        0,
-        1
+        0
       ]
     }
   },

@@ -38,3 +38,7 @@ Environment variables:
 - `DECIDER_URL`: endpoint used by LocalLSTC2; the container default is
   `http://host.docker.internal:18766/v1/systemone`.
 - `DECIDER_TIMEOUT`: client request timeout in seconds; defaults to 300.
+
+The service includes a local compatibility adapter for the Decider 1.9.0 CUDA
+convolution patch and Transformers 5.8.0. It does not modify either installed
+package and is reported as `conv_compat_patched` by `/healthz`.

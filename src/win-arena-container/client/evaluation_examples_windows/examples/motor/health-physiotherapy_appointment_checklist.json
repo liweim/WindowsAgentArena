@@ -10,11 +10,11 @@
   ],
   "difficulty": "hard",
   "operation_time": 278.76,
-  "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Create a 1-hour Thunderbird Calendar event for 10:00 AM tomorrow titled `Physiotherapy Appointment`, with every item from the provided webpage's `Common Mistakes to Avoid` section copied exactly into the description.",
+  "instruction": "I have difficulty using a physical keyboard. Open the Windows On-Screen Keyboard and leave it available for me. Create a 1-hour Thunderbird Calendar event for 10:00 AM tomorrow titled `Physiotherapy Appointment`, with every item from the provided PDF snapshot's `Common Mistakes to Avoid` section copied exactly into the description.",
   "source": "https://inclinehealth.com.au/how-to-prepare-for-first-appointment/",
   "gt_steps": [
     "Enable the Windows On-Screen Keyboard and keep it open.",
-    "Open the provided Incline Health webpage in Google Chrome.",
+    "Open the provided PDF snapshot of the Incline Health webpage in Google Chrome.",
     "Find the Common Mistakes to Avoid section.",
     "Read all four listed common mistakes.",
     "Open Thunderbird Calendar.",
@@ -26,6 +26,17 @@
     "Leave the On-Screen Keyboard open."
   ],
   "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "../assets/health-physiotherapy_appointment_checklist.pdf",
+            "path": "C:\\Users\\Docker\\Desktop\\PhysiotherapyFirstAppointment.pdf"
+          }
+        ]
+      }
+    },
     {
       "type": "download",
       "parameters": {
@@ -64,7 +75,7 @@
           "google-chrome",
           "--remote-debugging-port=1337",
           "--force-renderer-accessibility",
-          "https://inclinehealth.com.au/how-to-prepare-for-first-appointment/"
+          "file:///C:/Users/Docker/Desktop/PhysiotherapyFirstAppointment.pdf"
         ]
       }
     },

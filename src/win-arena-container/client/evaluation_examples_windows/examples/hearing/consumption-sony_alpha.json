@@ -10,7 +10,7 @@
   ],
   "difficulty": "medium",
   "operation_time": 49.36,
-  "instruction": "Use Chrome Live Caption to identify the exact item in the audio shopping reminder, then find it on the shopping website and add it to the cart.",
+  "instruction": "I cannot reliably hear the recording. Use Chrome Live Caption to identify the exact item in the audio shopping reminder, then find it on the shopping website and add it to the cart.",
   "source": "synthetic",
   "gt_steps": [
     "Switch to the audio shopping reminder tab.",

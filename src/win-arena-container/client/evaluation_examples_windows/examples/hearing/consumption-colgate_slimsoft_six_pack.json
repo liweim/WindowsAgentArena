@@ -10,7 +10,7 @@
   ],
   "difficulty": "medium",
   "operation_time": 38.10,
-  "instruction": "Use Chrome Live Caption to identify the exact toothbrush and quantity in the opened shopping reminder, then add that item to the shopping cart and leave the cart page open.",
+  "instruction": "I cannot reliably hear the recording. Use Chrome Live Caption to identify the exact toothbrush and quantity in the opened shopping reminder, then add that item to the shopping cart and leave the cart page open.",
   "source": "https://www.colgate.com/en-sg/products/toothbrush/colgate-slimsoft-charcoal",
   "gt_steps": [
     "Turn on Chrome Live Caption.",

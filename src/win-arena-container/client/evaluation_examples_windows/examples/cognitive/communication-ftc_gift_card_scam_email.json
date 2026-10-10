@@ -10,11 +10,11 @@
   ],
   "difficulty": "medium",
   "operation_time": 63.18,
-  "instruction": "View the FTC gift card scam guidance in Microsoft Edge with Immersive Reader and find the website the page tells consumers to use to report a gift card scam directly to the FTC. Draft an email in Thunderbird to `parent@example.com` with the subject `Report a gift card scam`. Enter only the website address in the message body, exactly as shown on the FTC page. Save the draft without sending it.",
+  "instruction": "I find dense or distracting information difficult to process. Read the local FTC gift-card guidance PDF in Microsoft Edge and find the website it gives for reporting a gift card scam directly to the FTC. Draft an email in Thunderbird to `parent@example.com` with the subject `Report a gift card scam`. Enter only the website address in the message body, exactly as shown in the PDF, and save the draft without sending it.",
   "source": "https://consumer.ftc.gov/articles/avoiding-and-reporting-gift-card-scams",
   "gt_steps": [
+    "Open the local PDF snapshot in Microsoft Edge.",
     "Open the FTC gift card scam guidance page in Microsoft Edge.",
-    "Activate Immersive Reader.",
     "Locate the `What To Do If You Gave a Gift Card to a Scammer` section.",
     "Open Thunderbird.",
     "Start a new email draft.",
@@ -24,6 +24,17 @@
     "Save the email as a draft."
   ],
   "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "../assets/communication-ftc_gift_card_guidance.pdf",
+            "path": "C:\\Users\\Docker\\Desktop\\FTCGiftCardGuidance.pdf"
+          }
+        ]
+      }
+    },
     {
       "type": "download",
       "parameters": {
@@ -45,7 +56,7 @@
         "command": [
           "cmd",
           "/c",
-          "start msedge https://consumer.ftc.gov/articles/avoiding-and-reporting-gift-card-scams"
+          "start msedge file:///C:/Users/Docker/Desktop/FTCGiftCardGuidance.pdf"
         ]
       }
     },
@@ -66,17 +77,12 @@
   ],
   "evaluator": {
     "func": [
-      "check_thunderbird_email_composition",
-      "check_edge_immersive_reader_state"
+      "check_thunderbird_email_composition"
     ],
     "conj": "and",
     "result": [
       {
         "type": "thunderbird_drafts"
-      },
-      {
-        "type": "edge_immersive_reader_state",
-        "activate_edge": true
       }
     ],
     "expected": [
@@ -93,12 +99,6 @@
             }
           ]
         }
-      },
-      {
-        "type": "rule",
-        "rules": {
-          "reader_mode_open": true
-        }
       }
     ],
     "metric_roles": {
@@ -106,7 +106,7 @@
         0
       ],
       "access_requirement": [
-        1
+        0
       ]
     }
   },

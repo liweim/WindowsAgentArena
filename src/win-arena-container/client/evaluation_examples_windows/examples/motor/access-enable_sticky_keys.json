@@ -10,7 +10,7 @@
   ],
   "difficulty": "easy",
   "operation_time": 27.01,
-  "instruction": "Enable Sticky Keys and leave it enabled.",
+  "instruction": "I have difficulty holding several keys at once. Turn on Windows Sticky Keys and leave it enabled for me.",
   "source": "synthetic",
   "gt_steps": [
     "Open Windows settings.",

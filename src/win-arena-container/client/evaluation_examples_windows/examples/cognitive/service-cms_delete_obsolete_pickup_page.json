@@ -10,7 +10,7 @@
   ],
   "difficulty": "hard",
   "operation_time": 84.81,
-  "instruction": "In the CMS Pages list, use the keyword `Pickup` to find the obsolete pickup page. Before deleting it, create a durable Sticky Note record containing the page title, URL key, previous pickup desk, and previous pickup code, one field per line with labels `Deleted page`, `URL key`, `Previous desk`, and `Previous code`. Obtain every value from the CMS, then delete the page. Use username `admin` and password `admin1234`.",
+  "instruction": "I rely on persistent written records so I do not have to remember important details. In the CMS Pages list, use the keyword `Pickup` to find the obsolete pickup page. Before deleting it, create a durable Sticky Note record containing the page title, URL key, previous pickup desk, and previous pickup code, one field per line with labels `Deleted page`, `URL key`, `Previous desk`, and `Previous code`. Obtain every value from the CMS, then delete the page. Use username `admin` and password `admin1234`.",
   "source": "synthetic",
   "gt_steps": [
     "Sign in to the CMS admin site.",

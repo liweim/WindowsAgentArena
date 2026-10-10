@@ -10,7 +10,7 @@
   ],
   "difficulty": "medium",
   "operation_time": 47.22,
-  "instruction": "Use Chrome Live Caption to identify the treatment mentioned for celiac disease in the opened video, then save the answer in `answer.txt` on the Desktop.",
+  "instruction": "I cannot reliably hear the recording. Use Chrome Live Caption to identify the treatment mentioned for celiac disease in the opened video, then save the answer in `answer.txt` on the Desktop.",
   "source": "https://medlineplus.gov/medlineplus-videos/gluten-and-celiac-disease",
   "gt_steps": [
     "Turn on Chrome Live Caption.",

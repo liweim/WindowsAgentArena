@@ -10,7 +10,7 @@
   ],
   "difficulty": "hard",
   "operation_time": 87.79,
-  "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Save the FIFA World Cup winner and final-match host country for 2022, 2018, and 2014 to `answer.txt` on the Desktop in three lines ordered by year from 2022 to 2014. Use the format `Winner {Year}: {Winner} and Host Country {Year}: {Host Country}` for each line.",
+  "instruction": "I have difficulty using a physical keyboard. Open the Windows On-Screen Keyboard and leave it available for me. Save the FIFA World Cup winner and final-match host country for 2022, 2018, and 2014 to `answer.txt` on the Desktop in three lines ordered by year from 2022 to 2014. Use the format `Winner {Year}: {Winner} and Host Country {Year}: {Host Country}` for each line.",
   "source": "synthetic",
   "gt_steps": [
     "Enable the Windows On-Screen Keyboard.",

@@ -18,7 +18,7 @@ nohup setsid env \
     --agent hisa \
     --model qwen3.8-27b \
     --global_planner_model qwen3.8-27b \
-    --visual_grounder_model qwen3.8-27b \
+    --visual_grounder_model gta1-7b \
     --state_manager_model qwen3.8-27b \
     --wo_pattern \
     --headless \

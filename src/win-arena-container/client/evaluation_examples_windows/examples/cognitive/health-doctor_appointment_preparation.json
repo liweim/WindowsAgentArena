@@ -14,11 +14,11 @@
   ],
   "difficulty": "hard",
   "operation_time": 74.01,
-  "instruction": "Create a 2-hour Thunderbird Calendar event titled `Doctor appointment` for tomorrow at 9:00 AM. To help prepare for the appointment, use Immersive Reader to read the appointment-preparation article, then add a note to the event description stating, in the article's exact wording, which medicines and related health products should be included when completing paperwork at home.",
+  "instruction": "I find dense information easier to manage when it is simplified, saved, and tied to a reminder. Create a 2-hour Thunderbird Calendar event titled `Doctor appointment` for tomorrow at 9:00 AM. Read the local appointment-preparation PDF in Microsoft Edge, then add a note to the event description stating, in the article's exact wording, which medicines and related health products should be included when completing paperwork at home.",
   "source": "https://apnews.com/article/3fcde5b5c927734429818bd0ed1c6680",
   "gt_steps": [
+    "Open the local PDF snapshot in Microsoft Edge.",
     "Open the appointment-preparation AP News article in Microsoft Edge.",
-    "Activate Immersive Reader.",
     "Open Thunderbird Calendar.",
     "Enable the `Home` calendar if it is disabled.",
     "Create a new calendar event for tomorrow at `9:00 AM`.",
@@ -28,6 +28,17 @@
     "Save the calendar event."
   ],
   "config": [
+    {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "../assets/health-doctor_appointment_preparation.pdf",
+            "path": "C:\\Users\\Docker\\Desktop\\DoctorAppointmentPreparation.pdf"
+          }
+        ]
+      }
+    },
     {
       "type": "download",
       "parameters": {
@@ -65,7 +76,7 @@
         "command": [
           "cmd",
           "/c",
-          "start msedge https://apnews.com/article/3fcde5b5c927734429818bd0ed1c6680"
+          "start msedge file:///C:/Users/Docker/Desktop/DoctorAppointmentPreparation.pdf"
         ]
       }
     }
@@ -76,18 +87,13 @@
   ],
   "evaluator": {
     "func": [
-      "check_thunderbird_calendar_event",
-      "check_edge_immersive_reader_state"
+      "check_thunderbird_calendar_event"
     ],
     "conj": "and",
     "result": [
       {
         "type": "thunderbird_calendar_events",
         "profile_path": "C:\\Users\\Docker\\AppData\\Roaming\\.thunderbird\\t5q2a5hp.default-release"
-      },
-      {
-        "type": "edge_immersive_reader_state",
-        "activate_edge": true
       }
     ],
     "expected": [
@@ -105,12 +111,6 @@
             ]
           ]
         }
-      },
-      {
-        "type": "rule",
-        "rules": {
-          "reader_mode_open": true
-        }
       }
     ],
     "metric_roles": {
@@ -118,8 +118,7 @@
         0
       ],
       "access_requirement": [
-        0,
-        1
+        0
       ]
     }
   },

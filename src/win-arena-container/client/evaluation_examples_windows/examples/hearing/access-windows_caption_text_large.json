@@ -10,7 +10,7 @@
   ],
   "difficulty": "easy",
   "operation_time": 30.48,
-  "instruction": "Set the live caption style in Windows to Large text.",
+  "instruction": "I need captions that are easier to read. Set the Windows live-caption style to Large text.",
   "source": "synthetic",
   "gt_steps": [
     "Open Windows Settings.",

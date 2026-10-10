@@ -10,7 +10,7 @@
   ],
   "difficulty": "medium",
   "operation_time": 78.91,
-  "instruction": "Complete the pending ingredients in `tomato_egg_shopping_list.xlsx` on the Desktop. For each item you buy, change its `Status` from `Pending` to `Done`, then save the spreadsheet.",
+  "instruction": "I rely on persistent written records so I do not have to remember important details. Complete the pending ingredients in `tomato_egg_shopping_list.xlsx` on the Desktop. For each item you buy, change its `Status` from `Pending` to `Done`, then save the spreadsheet.",
   "source": "synthetic",
   "gt_steps": [
     "Open `tomato_egg_shopping_list.xlsx` and identify the ingredients still marked `Pending`.",

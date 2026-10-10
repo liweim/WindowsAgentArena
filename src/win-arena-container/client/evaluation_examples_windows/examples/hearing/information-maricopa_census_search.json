@@ -10,7 +10,7 @@
   ],
   "difficulty": "medium",
   "operation_time": 348.35,
-  "instruction": "Use captions on the opened video to identify the area demonstrated there, then search for that area on the Census data website.",
+  "instruction": "I cannot reliably hear the video. Use the available captions on the opened video to identify the area demonstrated there, then search for that area on the Census data website.",
   "source": "https://www.census.gov/data/academy/data-gems/2026/visualize-data.html",
   "gt_steps": [
     "Turn on an available caption feature for the video.",

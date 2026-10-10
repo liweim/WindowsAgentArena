@@ -10,7 +10,7 @@
   ],
   "difficulty": "hard",
   "operation_time": 157.76,
-  "instruction": "Use Chrome Live Caption to read the website service recording on the Desktop, then apply every requested change to the specified CMS page. Keep Chrome Live Caption enabled. Use username `admin` and password `admin1234`.",
+  "instruction": "I cannot reliably hear the recording. Use Chrome Live Caption to read the website service recording on the Desktop, then apply every requested change to the specified CMS page. Keep Chrome Live Caption enabled. Use username `admin` and password `admin1234`.",
   "source": "synthetic",
   "gt_steps": [
     "Turn on Chrome Live Caption.",

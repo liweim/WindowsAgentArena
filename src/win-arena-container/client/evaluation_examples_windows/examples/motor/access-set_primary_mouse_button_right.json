@@ -10,7 +10,7 @@
   ],
   "difficulty": "easy",
   "operation_time": 30.50,
-  "instruction": "Set the primary mouse button to Right and leave it set that way.",
+  "instruction": "I use the mouse with my left hand. Set the primary mouse button to Right and leave it that way for me.",
   "source": "synthetic",
   "gt_steps": [
     "Open Windows Settings.",

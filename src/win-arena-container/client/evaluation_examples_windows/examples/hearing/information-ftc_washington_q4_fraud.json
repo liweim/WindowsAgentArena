@@ -10,7 +10,7 @@
   ],
   "difficulty": "hard",
   "operation_time": 230.28,
-  "instruction": "Use Chrome Live Caption on the opened video to identify the FTC Explore Data address, then determine Washington, D.C.'s top fraud-report category for the fourth quarter of 2024 and save only that category in `answer.txt` on the Desktop.",
+  "instruction": "I cannot reliably hear the recording. Use Chrome Live Caption on the opened video to identify the FTC Explore Data address, then determine Washington, D.C.'s top fraud-report category for the fourth quarter of 2024 and save only that category in `answer.txt` on the Desktop.",
   "source": "https://www.ftc.gov/media/video-0194-explore-data-ftc",
   "gt_steps": [
     "Turn on Chrome Live Caption.",

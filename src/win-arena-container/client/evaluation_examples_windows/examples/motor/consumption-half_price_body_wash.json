@@ -10,7 +10,7 @@
   ],
   "difficulty": "hard",
   "operation_time": 92.04,
-  "instruction": "Enable Windows Sticky Keys and keep them enabled. From the provided Coles catalogue, save every product whose full name contains `Body Wash` and costs less than $9 to `answer.txt` on the Desktop, one exact product name per line in catalogue order and do not include the price and just the product name.",
+  "instruction": "I have difficulty holding several keys at once. Turn on Windows Sticky Keys and leave it enabled for me. From the provided Coles catalogue, save every product whose full name contains `Body Wash` and costs less than $9 to `answer.txt` on the Desktop, one exact product name per line in catalogue order, without prices.",
   "source": "synthetic",
   "gt_steps": [
     "Enable Windows Sticky Keys.",

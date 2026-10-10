@@ -12,11 +12,11 @@
   ],
   "difficulty": "medium",
   "operation_time": 84.35,
-  "instruction": "Create a Sticky Note listing the four online passport renewal eligibility conditions highlighted in the AP News article, using the article's wording rather than paraphrasing. Use Immersive Reader to read the eligibility rules.",
+  "instruction": "I find dense information easier to manage when it is simplified and saved as a persistent reference. Read the local AP passport-renewal PDF in Microsoft Edge and create a Sticky Note listing the four online renewal eligibility conditions highlighted in the article, using the article's wording rather than paraphrasing.",
   "source": "https://apnews.com/article/70fbd31bdc1a519701c83a177ed3ef95",
   "gt_steps": [
+    "Open the local PDF snapshot in Microsoft Edge.",
     "Open the AP News passport renewal article in Microsoft Edge.",
-    "Activate Immersive Reader.",
     "Locate the four online passport renewal eligibility conditions highlighted in the article.",
     "Open Sticky Notes.",
     "Create a new note.",
@@ -24,12 +24,23 @@
   ],
   "config": [
     {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "../assets/information-passport_renewal_checklist.pdf",
+            "path": "C:\\Users\\Docker\\Desktop\\PassportRenewalChecklist.pdf"
+          }
+        ]
+      }
+    },
+    {
       "type": "launch",
       "parameters": {
         "command": [
           "cmd",
           "/c",
-          "start msedge https://apnews.com/article/70fbd31bdc1a519701c83a177ed3ef95"
+          "start msedge file:///C:/Users/Docker/Desktop/PassportRenewalChecklist.pdf"
         ]
       }
     },
@@ -53,17 +64,12 @@
   ],
   "evaluator": {
     "func": [
-      "check_text_points",
-      "check_edge_immersive_reader_state"
+      "check_text_points"
     ],
     "conj": "and",
     "result": [
       {
         "type": "sticky_notes_content"
-      },
-      {
-        "type": "edge_immersive_reader_state",
-        "activate_edge": true
       }
     ],
     "expected": [
@@ -86,12 +92,6 @@
             ]
           ]
         }
-      },
-      {
-        "type": "rule",
-        "rules": {
-          "reader_mode_open": true
-        }
       }
     ],
     "metric_roles": {
@@ -99,11 +99,10 @@
         0
       ],
       "access_requirement": [
-        0,
-        1
+        0
       ]
     }
   },
-  "proxy": true,
+  "proxy": false,
   "possibility_of_env_change": "low"
 }

@@ -10,7 +10,7 @@
   ],
   "difficulty": "medium",
   "operation_time": 53.58,
-  "instruction": "Use the payment activity on the Desktop to bring the persistent bill tracker `Bills.ods` up to date. Update the one bill that is still marked `Unpaid` in the tracker but has a `Completed` payment in the activity list. Record its payment date, leave the other bill rows unchanged, and save the spreadsheet.",
+  "instruction": "I rely on persistent written records so I do not have to remember important details. Use the payment activity on the Desktop to bring the persistent bill tracker `Bills.ods` up to date. Update the one bill that is still marked `Unpaid` in the tracker but has a `Completed` payment in the activity list. Record its payment date, leave the other bill rows unchanged, and save the spreadsheet.",
   "source": "synthetic",
   "gt_steps": [
     "Switch to the open `PaymentActivity.txt` Notepad window.",

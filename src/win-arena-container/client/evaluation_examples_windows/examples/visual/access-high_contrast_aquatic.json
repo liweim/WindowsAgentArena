@@ -10,7 +10,7 @@
   ],
   "difficulty": "easy",
   "operation_time": 58.78,
-  "instruction": "Set the Windows contrast theme to Aquatic.",
+  "instruction": "I need stronger contrast to distinguish interface elements. Set the Windows contrast theme to Aquatic.",
   "source": "synthetic",
   "gt_steps": [
     "Open Windows Settings.",

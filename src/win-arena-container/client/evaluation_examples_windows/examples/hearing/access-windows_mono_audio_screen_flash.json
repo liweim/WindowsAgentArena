@@ -11,7 +11,7 @@
   ],
   "difficulty": "easy",
   "operation_time": 38.41,
-  "instruction": "Enable Mono audio and set visual audio alerts to Flash the entire screen in Windows.",
+  "instruction": "I can miss information split between stereo channels and audio-only alerts. Enable Mono audio and set visual audio alerts to Flash the entire screen in Windows.",
   "source": "synthetic",
   "gt_steps": [
     "Open Windows Settings.",

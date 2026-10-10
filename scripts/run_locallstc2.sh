@@ -20,7 +20,7 @@ nohup setsid env \
     --agent locallstc2 \
     --model qwen3.8-27b \
     --global_planner_model qwen3.8-27b \
-    --visual_grounder_model qwen3.8-27b \
+    --visual_grounder_model gta1-7b \
     --state_manager_model qwen3.8-27b \
     --max_steps 50 \
     --som-origin oss \
@@ -31,8 +31,9 @@ nohup setsid env \
     --isolate-tasks true \
     --container-name a11yarena-locallstc2 \
     --result-dir /locallstc/projects/WindowsAgentArena/results/locallstc2_qwen3.8-27b \
-    --json-name evaluation_examples_windows/hearing.json \
+    --json-name evaluation_examples_windows/cognitive.json \
     --remove-container true \
+    --rerun \
     "$@" >"$LOG_FILE" 2>&1 < /dev/null &
 
 runner_pid=$!

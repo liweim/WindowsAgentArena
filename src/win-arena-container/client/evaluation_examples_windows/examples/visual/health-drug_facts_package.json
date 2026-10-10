@@ -11,7 +11,7 @@
   ],
   "difficulty": "medium",
   "operation_time": 37.54,
-  "instruction": "Use the original Drug Facts carton image opened on the Microsoft Edge to create a Sticky Note containing both active ingredients with their amounts and the acetaminophen warning shown on the carton.",
+  "instruction": "I cannot reliably read the visual details in this material. Use the original Drug Facts carton image opened on the Microsoft Edge to create a Sticky Note containing both active ingredients with their amounts and the acetaminophen warning shown on the carton.",
   "source": "https://dailymed.nlm.nih.gov/dailymed/image.cfm?name=aceta-ibu-fig2.jpg&setid=b39fb93f-c140-40ab-8247-9559ef6df50a",
   "gt_steps": [
     "Open Sticky Notes and create a new note.",

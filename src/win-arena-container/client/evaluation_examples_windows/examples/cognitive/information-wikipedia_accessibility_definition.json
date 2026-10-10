@@ -10,7 +10,7 @@
   ],
   "difficulty": "medium",
   "operation_time": 40.71,
-  "instruction": "Build the reference note in the open `accessibility_definition_paper.docx` document: find the sentence in the local Wikipedia `Accessibility` article that defines accessibility as a design concept, replace `[add definition here]` with that sentence only, and save the document.",
+  "instruction": "I rely on persistent written records so I do not have to remember important details. Build the reference note in the open `accessibility_definition_paper.docx` document: find the sentence in the local Wikipedia `Accessibility` article that defines accessibility as a design concept, replace `[add definition here]` with that sentence only, and save the document.",
   "source": "synthetic",
   "gt_steps": [
     "Open the local Kiwix Wikipedia site in Google Chrome.",

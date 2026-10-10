@@ -10,7 +10,7 @@
   ],
   "difficulty": "medium",
   "operation_time": 50.38,
-  "instruction": "Use Chrome Live Caption to identify the medication class the opened video recommends for treating allergy symptoms, then save only that class name in `answer.txt` on the Desktop.",
+  "instruction": "I cannot reliably hear the recording. Use Chrome Live Caption to identify the medication class the opened video recommends for treating allergy symptoms, then save only that class name in `answer.txt` on the Desktop.",
   "source": "https://medlineplus.gov/ency/videos/mov/200094_eng.mp4",
   "gt_steps": [
     "Turn on Chrome Live Caption.",

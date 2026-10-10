@@ -12,7 +12,7 @@
   ],
   "difficulty": "hard",
   "operation_time": 159.87,
-  "instruction": "Use the WMATA A49 weekday timetable open in Microsoft Edge. You are at Glen Carlyn Dr + Vista Dr at 7:05 am and need the first eastbound bus toward Metro Center. Create `answer.txt` on the Desktop with four lines in route order. Each line must contain the stop name and its time: Glen Carlyn Dr + Vista Dr, Columbia Pike + George Mason Dr, 18 St + C St NW, and Metro Center.",
+  "instruction": "I rely on a written plan with times so I do not have to remember the details. Use the WMATA A49 weekday timetable open in Microsoft Edge. You are at Glen Carlyn Dr + Vista Dr at 7:05 am and need the first eastbound bus toward Metro Center. Create `answer.txt` on the Desktop with four lines in route order. Each line must contain the stop name and its time: Glen Carlyn Dr + Vista Dr, Columbia Pike + George Mason Dr, 18 St + C St NW, and Metro Center.",
   "source": "https://www.wmata.com/content/dam/wmata-com/Timetables/A49_timetable.pdf",
   "gt_steps": [
     "Read the A49 weekday eastbound timetable.",

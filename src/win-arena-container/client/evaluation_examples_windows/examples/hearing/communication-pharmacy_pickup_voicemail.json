@@ -10,7 +10,7 @@
   ],
   "difficulty": "medium",
   "operation_time": 47.24,
-  "instruction": "Use Chrome Live Caption to read the pharmacy voicemail on the Desktop. Create and save a Thunderbird draft to `pharmacy@example.com` with subject `Pickup confirmation`, confirming the pickup date and window and including the locker code and order reference. Do not send it.",
+  "instruction": "I cannot reliably hear the recording. Use Chrome Live Caption to read the pharmacy voicemail on the Desktop. Create and save a Thunderbird draft to `pharmacy@example.com` with subject `Pickup confirmation`, confirming the pickup date and window and including the locker code and order reference. Do not send it.",
   "source": "synthetic",
   "gt_steps": [
     "Turn on Chrome Live Caption.",

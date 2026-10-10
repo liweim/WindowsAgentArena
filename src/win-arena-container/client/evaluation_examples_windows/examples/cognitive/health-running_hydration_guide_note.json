@@ -12,11 +12,11 @@
   ],
   "difficulty": "medium",
   "operation_time": 76.39,
-  "instruction": "Create a Sticky Note containing the SELF article's hydration-system recommendations for road or trail running, hiking or walking, and official races, using Microsoft Edge Immersive Reader to read the article. Use the article's exact wording without paraphrasing, and keep one recommendation per line in webpage order.",
+  "instruction": "I find dense information easier to manage when it is simplified and saved as a persistent reference. Read the local SELF hydration guide PDF in Microsoft Edge and create a Sticky Note containing its hydration-system recommendations for road or trail running, hiking or walking, and official races. Use the article's exact wording without paraphrasing, and keep one recommendation per line in webpage order.",
   "source": "https://www.self.com/gallery/best-hydration-packs",
   "gt_steps": [
+    "Open the local PDF snapshot in Microsoft Edge.",
     "Switch to the SELF hydration article in Microsoft Edge.",
-    "With the article active in Microsoft Edge, press `F9` to enter Immersive Reader.",
     "Read the `Type of Activity` section.",
     "Switch to Sticky Notes.",
     "Create a new note.",
@@ -25,12 +25,23 @@
   ],
   "config": [
     {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "../assets/running_hydration_guide.pdf",
+            "path": "C:\\Users\\Docker\\Desktop\\RunningHydrationGuide.pdf"
+          }
+        ]
+      }
+    },
+    {
       "type": "launch",
       "parameters": {
         "command": [
           "cmd",
           "/c",
-          "start msedge https://www.self.com/gallery/best-hydration-packs"
+          "start msedge file:///C:/Users/Docker/Desktop/RunningHydrationGuide.pdf"
         ]
       }
     },
@@ -54,17 +65,12 @@
   ],
   "evaluator": {
     "func": [
-      "check_text_points",
-      "check_edge_immersive_reader_state"
+      "check_text_points"
     ],
     "conj": "and",
     "result": [
       {
         "type": "sticky_notes_content"
-      },
-      {
-        "type": "edge_immersive_reader_state",
-        "activate_edge": true
       }
     ],
     "expected": [
@@ -86,12 +92,6 @@
           "ordered": true,
           "line_based": true
         }
-      },
-      {
-        "type": "rule",
-        "rules": {
-          "reader_mode_open": true
-        }
       }
     ],
     "metric_roles": {
@@ -99,11 +99,10 @@
         0
       ],
       "access_requirement": [
-        0,
-        1
+        0
       ]
     }
   },
-  "proxy": true,
+  "proxy": false,
   "possibility_of_env_change": "low"
 }

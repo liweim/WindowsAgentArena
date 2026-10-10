@@ -10,7 +10,7 @@
   ],
   "difficulty": "medium",
   "operation_time": 100.37,
-  "instruction": "Enable the Windows On-Screen Keyboard and keep it open. Complete `TransportRequest.txt` on the Desktop using the supplied request details, then save the file.",
+  "instruction": "I have difficulty using a physical keyboard. Open the Windows On-Screen Keyboard and leave it available for me. Complete `TransportRequest.txt` on the Desktop using the supplied request details, then save the file.",
   "source": "synthetic",
   "gt_steps": [
     "Enable the Windows On-Screen Keyboard and leave it open.",

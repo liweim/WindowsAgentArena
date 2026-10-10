@@ -10,11 +10,11 @@
   ],
   "difficulty": "medium",
   "operation_time": 205.15,
-  "instruction": "Using only the FTC section `What To Do About Spam Text Messages` in Edge Immersive Reader, draft an email to `family@example.org` with subject `Spam text safety`. Use the FTC's exact wording to state what to do about links in an unexpected text asking for personal or financial information and how to contact a company if the message may be real. Do not paraphrase or add outside information. Save the draft and leave Immersive Reader open.",
+  "instruction": "I find dense or distracting information difficult to process. Using only the section `What To Do About Spam Text Messages` in the local FTC guidance PDF, draft an email to `family@example.org` with subject `Spam text safety`. Use the FTC's exact wording to state what to do about links in an unexpected text asking for personal or financial information and how to contact a company if the message may be real. Do not paraphrase or add outside information. Save the draft.",
   "source": "https://consumer.ftc.gov/articles/how-recognize-and-report-spam-text-messages",
   "gt_steps": [
+    "Open the local PDF snapshot in Microsoft Edge.",
     "Open the FTC guidance in Microsoft Edge.",
-    "Press `F9` to enter Immersive Reader.",
     "Read the section `What To Do About Spam Text Messages`.",
     "Open Thunderbird and create a new email draft.",
     "Set the recipient to `family@example.org`.",
@@ -24,12 +24,23 @@
   ],
   "config": [
     {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "../assets/communication-ftc_spam_text_safety_email.pdf",
+            "path": "C:\\Users\\Docker\\Desktop\\FTCSpamTextGuidance.pdf"
+          }
+        ]
+      }
+    },
+    {
       "type": "launch",
       "parameters": {
         "command": [
           "cmd",
           "/c",
-          "start msedge https://consumer.ftc.gov/articles/how-recognize-and-report-spam-text-messages"
+          "start msedge file:///C:/Users/Docker/Desktop/FTCSpamTextGuidance.pdf"
         ]
       }
     },
@@ -65,17 +76,12 @@
   ],
   "evaluator": {
     "func": [
-      "check_thunderbird_email_composition",
-      "check_edge_immersive_reader_state"
+      "check_thunderbird_email_composition"
     ],
     "conj": "and",
     "result": [
       {
         "type": "thunderbird_drafts"
-      },
-      {
-        "type": "edge_immersive_reader_state",
-        "activate_edge": true
       }
     ],
     "expected": [
@@ -92,12 +98,6 @@
             }
           ]
         }
-      },
-      {
-        "type": "rule",
-        "rules": {
-          "reader_mode_open": true
-        }
       }
     ],
     "metric_roles": {
@@ -105,7 +105,7 @@
         0
       ],
       "access_requirement": [
-        1
+        0
       ]
     }
   },

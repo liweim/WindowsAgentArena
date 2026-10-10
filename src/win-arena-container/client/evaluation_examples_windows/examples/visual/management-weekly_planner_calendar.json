@@ -10,7 +10,7 @@
   ],
   "difficulty": "hard",
   "operation_time": 474.62,
-  "instruction": "Set Windows text size to 150% and keep it at 150%. Create a separate Thunderbird Calendar event for every appointment in `WeeklyPlanner.odt`, using each appointment name as the title and preserving its date, start time, duration, and location exactly.",
+  "instruction": "I need larger Windows text to read the planner comfortably. Set Windows text size to 150% and leave it at that size for me. Create a separate Thunderbird Calendar event for every appointment in `WeeklyPlanner.odt`, using each appointment name as the title and preserving its date, start time, duration, and location exactly.",
   "source": "synthetic",
   "gt_steps": [
     "Open Windows Accessibility text size settings.",

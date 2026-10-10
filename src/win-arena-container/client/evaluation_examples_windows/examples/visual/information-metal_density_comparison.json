@@ -10,7 +10,7 @@
   ],
   "difficulty": "medium",
   "operation_time": 58.74,
-  "instruction": "Turn on Windows Narrator. Compare the densities of gold and aluminium using the two Wikipedia pages already open in Chrome. Save `answer.txt` on the Desktop with the denser metal name on the first line and its density value on the second line.",
+  "instruction": "I rely on a screen reader to follow the content. Turn on Windows Narrator, compare the densities of gold and aluminium using the two Wikipedia pages already open in Chrome, and save `answer.txt` on the Desktop with the denser metal on the first line and its density on the second.",
   "source": [
     "http://host.docker.internal:8888/wikipedia_en_all_maxi_2022-05/A/Gold",
     "http://host.docker.internal:8888/wikipedia_en_all_maxi_2022-05/A/Aluminium"

@@ -10,7 +10,7 @@
   ],
   "difficulty": "easy",
   "operation_time": 20.27,
-  "instruction": "Complete the audio CAPTCHA open in Chrome.",
+  "instruction": "Verification sequences are difficult for me to keep track of. Complete the audio CAPTCHA open in Chrome.",
   "source": "synthetic",
   "gt_steps": [
     "Listen to the verification code, enter the code, and submit it."

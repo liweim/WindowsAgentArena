@@ -10,7 +10,7 @@
   ],
   "difficulty": "hard",
   "operation_time": 50.24,
-  "instruction": "Turn on Windows Narrator. Using the provided garden catalogue, identify the featured lavender product and coupon code. Add exactly one unit of the matching product to the shopping cart, enter the catalogue coupon code without applying it, and leave the cart page open.",
+  "instruction": "I rely on a screen reader to follow the content. Turn on Windows Narrator, then use the provided garden catalogue to identify the featured lavender product and coupon code. Add exactly one unit of the matching product to the shopping cart, enter the catalogue coupon code without applying it, and leave the cart page open.",
   "source": "synthetic",
   "gt_steps": [
     "Open the garden catalogue in Chrome.",
