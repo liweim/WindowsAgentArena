@@ -25,19 +25,18 @@ AGENT_ALIASES = {
 }
 STEP_AGENT_NAMES = frozenset({"gta1", "agents3"})
 FRAMEWORK_AGENT_NAMES = frozenset(
-    {"locallstc", "locallstc2", "locallstc_audio", "hisa", "coact", "tars"}
+    {"locallstc", "locallstc2", "hisa", "coact", "tars"}
 )
 SUPPORTED_AGENT_NAMES = frozenset(
     {"navi", "claude"} | STEP_AGENT_NAMES | FRAMEWORK_AGENT_NAMES
 )
 LEGACY_NAVI_DEFAULT_MODEL = "gpt-4-vision-preview"
 FRAMEWORK_DEFAULT_MODELS = {
-    "gta1": "o3",
-    "agents3": "gpt-4o",
-    "hisa": "gpt-5-mini",
-    "locallstc": "gpt-5-mini",
-    "locallstc2": "gpt-5-mini",
-    "locallstc_audio": "gpt-5-mini",
+    "gta1": "qwen3.8-27b",
+    "agents3": "qwen3.8-27b",
+    "hisa": "qwen3.8-27b",
+    "locallstc": "qwen3.8-27b",
+    "locallstc2": "qwen3.8-27b",
     "tars": "qwen3.8-27b",
 }
 
@@ -217,11 +216,9 @@ def run_step_agent_example(
 
 
 def _run_locallstc(env, example, args, example_result_dir) -> float:
-    if args.agent_name == "locallstc_audio":
-        from mm_agents.locallstc_audio.main import LocalLSTC
-    elif args.agent_name == "locallstc2":
+    if args.agent_name == "locallstc2":
         from mm_agents.locallstc2.main import LocalLSTC
-    else:
+    elif args.agent_name == "locallstc":
         from mm_agents.locallstc.main import LocalLSTC
 
     model = args.global_planner_model or args.model
@@ -378,7 +375,7 @@ def run_framework_example(
     scores,
 ) -> float:
     """Run a framework that owns its complete task execution loop."""
-    if args.agent_name in {"locallstc", "locallstc2", "locallstc_audio"}:
+    if args.agent_name in {"locallstc", "locallstc2"}:
         score = _run_locallstc(env, example, args, example_result_dir)
     elif args.agent_name == "hisa":
         score = _run_hisa(env, example, args, example_result_dir)

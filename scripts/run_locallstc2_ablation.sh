@@ -3,11 +3,13 @@
 set -e
 
 cd "$(dirname "$0")"
-LOG_FILE="$(pwd)/nohup_locallstc_audio.out"
+LOG_FILE="$(pwd)/nohup_locallstc2_ablation.out"
 
 nohup setsid env \
     PYTHONUNBUFFERED=1 \
     WINARENA_IMAGE_TAG=latest \
+    PARAKEET_ASR_URL=http://host.docker.internal:18765/v1/audio/transcriptions \
+    "DECIDER_URL=${DECIDER_URL:-http://129.94.173.199:18766/v1/systemone}" \
     "LOCALLSTC_HOST_UID=$(id -u)" \
     "LOCALLSTC_HOST_GID=$(id -g)" \
     ./run.sh \
@@ -15,7 +17,7 @@ nohup setsid env \
     --skip-build true \
     --connect false \
     --start-client true \
-    --agent locallstc_audio \
+    --agent locallstc2 \
     --model qwen3.8-27b \
     --global_planner_model qwen3.8-27b \
     --visual_grounder_model gta1-7b \
@@ -27,12 +29,13 @@ nohup setsid env \
     --worker-id 0 \
     --num-workers 1 \
     --isolate-tasks true \
-    --container-name a11yarena-locallstc-audio \
-    --result-dir /locallstc/projects/WindowsAgentArena/results/locallstc_audio_qwen3.8-27b \
-    --json-name evaluation_examples_windows/hearing.json \
+    --container-name a11yarena-locallstc2-ablation \
+    --result-dir /locallstc/projects/WindowsAgentArena/results/locallstc2_qwen3.8-27b_wo_jev_memory \
+    --json-name evaluation_examples_windows/cognitive.json \
     --remove-container true \
+    --wo-jev-memory \
     "$@" >"$LOG_FILE" 2>&1 < /dev/null &
 
 runner_pid=$!
-echo "Started locallstc_audio in container a11yarena-locallstc2 (PID: $runner_pid)"
+echo "Started locallstc2 in container a11yarena-locallstc2 (PID: $runner_pid)"
 echo "Logs: tail -f $LOG_FILE"

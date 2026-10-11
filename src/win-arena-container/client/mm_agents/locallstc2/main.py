@@ -69,15 +69,32 @@ VALID_TOOLS = GUI_ACTION_TOOLS | NON_GUI_TOOLS
 KNOWN_API_PREFIXES = tuple(f"{name}." for name in sorted(set(APIRegistry.HANDLER_CLASS.values())))
 BASH_STEP_ABSTRACTION_LOG_CHAR_LIMIT = 20000
 BASH_STEP_ABSTRACTION_LOG_OMISSION = "Output truncated because it exceeded the length limit."
-DEFAULT_JEV_API_INCLUDE_THRESHOLD = 0.5
+DEFAULT_JEV_API_INCLUDE_THRESHOLD = 0.1
+ALWAYS_AVAILABLE_API_DOMAINS = ("pdf",)
 GLOBAL_FACT_KEY_MAX_CHARS = 128
 GLOBAL_FACT_VALUE_MAX_CHARS = 1024
+VOLATILE_GLOBAL_FACT_KEY_TOKENS = (
+    "caret",
+    "clipboard",
+    "cursor",
+    "dialog",
+    "focus",
+    "focused",
+    "scroll",
+    "selected",
+    "selection",
+    "visibility",
+    "visible",
+)
 GLOBAL_FACT_PROMPT_EXTENSION = """
 
 Additional persistent-fact rules:
 - If this step discovered or changed information that may remain useful in later subgoals, append a GLOBAL section after the existing concise summary.
 - In GLOBAL, write one simple `key = value` fact per line. If there is nothing worth keeping globally, write `GLOBAL:\nNONE`.
 - GLOBAL is for persistent cross-subgoal information such as paths, sheet/range names, URLs, IDs, exact user constraints, unavailable capabilities, enabled features, and created objects.
+- If the task requires exact wording, exact values, or an ordered list, persist the required content immediately when it is discovered. Use one stable semantic key per logical item and preserve the source text exactly without paraphrasing or normalization.
+- Name facts for what the information means (for example, `target_line_1`), not for a temporary place where it happens to be stored (for example, `clipboard_content`).
+- Never persist volatile UI or runtime state such as clipboard contents, keyboard focus, selections, cursor position, scroll position, temporary dialogs, or momentary visibility. If such state contains task-required content, persist that content under a stable semantic key instead.
 - Do not put temporary observations or ordinary step details in GLOBAL.
 """
 def _validate_scroll_amount(value) -> int:
@@ -202,9 +219,11 @@ class LocalLSTC:
         self._jev_model_name = ""
         self._jev_task_usage = self._zero_jev_usage_entry()
         self._jev_step_usage = self._zero_jev_usage_entry()
-        self._jev_api_cache_initialized = False
-        self._jev_api_cache_subgoal = ""
-        self._jev_api_selected_methods: Optional[List[str]] = None
+        self._planner_task_latency_seconds = 0.0
+        self._planner_step_latency_seconds = 0.0
+        self._jev_memory_cache_initialized = False
+        self._jev_memory_cache_subgoal = ""
+        self._jev_memory_start_step: Optional[int] = None
 
         # Initialize LLM clients
         self.global_planner_llm = AbstractLLM(
@@ -345,9 +364,11 @@ class LocalLSTC:
         self._jev_model_name = ""
         self._jev_task_usage = self._zero_jev_usage_entry()
         self._jev_step_usage = self._zero_jev_usage_entry()
-        self._jev_api_cache_initialized = False
-        self._jev_api_cache_subgoal = ""
-        self._jev_api_selected_methods = None
+        self._planner_task_latency_seconds = 0.0
+        self._planner_step_latency_seconds = 0.0
+        self._jev_memory_cache_initialized = False
+        self._jev_memory_cache_subgoal = ""
+        self._jev_memory_start_step = None
         self.action_logs = []
         self.global_facts = {}
         self.subgoal_anchors = []
@@ -673,6 +694,11 @@ print(output)
             if normalized and normalized not in seen:
                 seen.add(normalized)
                 domains.append(normalized)
+        for value in ALWAYS_AVAILABLE_API_DOMAINS:
+            normalized = self._normalize_skill_domain(value)
+            if normalized and normalized not in seen:
+                seen.add(normalized)
+                domains.append(normalized)
         return domains
 
     def _get_allowed_skill_domains(self) -> set:
@@ -766,6 +792,16 @@ print(output)
             target["completion_tokens"] += completion_tokens
             target["request_count"] += 1
 
+    def _record_jev_latency(self, kind: str, latency_seconds: float) -> None:
+        latency = max(0.0, float(latency_seconds))
+        key = f"{kind}_latency_seconds"
+        if key not in self._jev_step_usage:
+            raise ValueError(f"Unknown JEV latency kind: {kind!r}")
+        for target in (self._jev_step_usage, self._jev_task_usage):
+            target["latency_seconds"] += latency
+            target[key] += latency
+        self.logger.info("[latency] component=jev_%s seconds=%.6f", kind, latency)
+
     def _build_jev_memory_state(self) -> str:
         sections = [f"Task:\n{getattr(self, 'task_instruction', '')}"]
         sections.append(f"Current subgoal:\n{self.current_subgoal or 'Not established yet'}")
@@ -776,6 +812,16 @@ print(output)
             foreground.append(f"Foreground window title: {self.current_foreground_window_title}")
         if foreground:
             sections.append("Current foreground/application context:\n" + "\n".join(foreground))
+        if self.global_facts:
+            facts_text = "\n".join(
+                f"- {key} = {value}" for key, value in self.global_facts.items()
+            )
+            sections.append(
+                "Global facts already retained and injected into the planner:\n" + facts_text
+            )
+        recovery_feedback = self._get_active_recovery_feedback()
+        if recovery_feedback:
+            sections.append("Recovery feedback:\n" + recovery_feedback)
         sections.append("Memory anchors:\n" + self._render_memory_anchors_for_jev())
         return "\n\n".join(sections)
 
@@ -802,10 +848,22 @@ print(output)
     def _jev_select_memory_start_step(self) -> Optional[int]:
         if not self.subgoal_anchors:
             return None
+
+        cache_subgoal = self.current_subgoal or ""
+        if (
+            self._jev_memory_cache_initialized
+            and self._jev_memory_cache_subgoal == cache_subgoal
+        ):
+            return self._jev_memory_start_step
+
+        self._jev_memory_cache_initialized = True
+        self._jev_memory_cache_subgoal = cache_subgoal
         if len(self.subgoal_anchors) == 1:
-            return int(self.subgoal_anchors[0]["step"])
+            self._jev_memory_start_step = int(self.subgoal_anchors[0]["step"])
+            return self._jev_memory_start_step
         jev = self._get_jev()
         if jev is None:
+            self._jev_memory_start_step = None
             return None
         criteria = {
             f"A{index}": f"Keep episodic memory from A{index} onward."
@@ -815,15 +873,21 @@ print(output)
             "memory_cutoff": {
                 "type": "choice",
                 "instructions": (
-                    "Which is the earliest memory anchor whose memory should still be retained "
-                    "for planning the current subgoal? Choose the earliest anchor that may still "
-                    "contain useful decision information; older anchors will be omitted from the planner context."
+                    "Choose the latest safe memory anchor for planning the current subgoal. "
+                    "All episodic memory before the chosen anchor will be omitted from the planner context. "
+                    "Information already preserved in Global facts must not be used as a reason to retain "
+                    "older memory. Retain an older anchor only when it contains necessary decision information "
+                    "that is absent from Global facts and from the chosen anchor onward."
                 ),
                 "criteria": criteria,
             }
         }
         try:
-            result = jev.system_one(self._build_jev_memory_state(), questions)
+            started_at = time.perf_counter()
+            try:
+                result = jev.system_one(self._build_jev_memory_state(), questions)
+            finally:
+                self._record_jev_latency("memory", time.perf_counter() - started_at)
             self._record_jev_usage(result)
             answer = result["answers"]["memory_cutoff"]
             anchor_id = answer["choice"]
@@ -838,12 +902,14 @@ print(output)
                 self.subgoal_anchors[index]["step"],
                 probability if probability is not None else "n/a",
             )
-            return int(self.subgoal_anchors[index]["step"])
+            self._jev_memory_start_step = int(self.subgoal_anchors[index]["step"])
+            return self._jev_memory_start_step
         except Exception as exc:
             self.logger.warning(
                 "[jev_fallback] memory inference failed; using all compact episodic history: %s",
                 exc,
             )
+            self._jev_memory_start_step = None
             return None
 
     def _get_jev_api_include_threshold(self) -> float:
@@ -884,8 +950,8 @@ print(output)
                 candidates.append((name, description))
         return candidates
 
-    def _select_api_methods_for_subgoal(self, planner_context: str) -> Optional[List[str]]:
-        """Select API methods once per subgoal; None means fail open to the full schema."""
+    def _select_api_methods_for_step(self, planner_context: str) -> Optional[List[str]]:
+        """Select API methods for the current planner step; None means fail open."""
         if not self.api_enabled or self.wo_jev_api:
             return None
 
@@ -893,15 +959,8 @@ print(output)
         if not candidates:
             return []
 
-        cache_subgoal = self.current_subgoal or ""
-        if self._jev_api_cache_initialized and self._jev_api_cache_subgoal == cache_subgoal:
-            return self._jev_api_selected_methods
-
-        self._jev_api_cache_initialized = True
-        self._jev_api_cache_subgoal = cache_subgoal
         jev = self._get_jev()
         if jev is None:
-            self._jev_api_selected_methods = None
             return None
 
         questions = {}
@@ -920,7 +979,11 @@ print(output)
 
         threshold = self._get_jev_api_include_threshold()
         try:
-            result = jev.system_one(planner_context, questions)
+            started_at = time.perf_counter()
+            try:
+                result = jev.system_one(planner_context, questions)
+            finally:
+                self._record_jev_latency("api", time.perf_counter() - started_at)
             self._record_jev_usage(result)
             answers = result["answers"]
             selected = []
@@ -932,7 +995,7 @@ print(output)
                     selected.append(name)
             self.logger.info(
                 "[jev_api_scores] subgoal=%r threshold=%.4f scores=%s",
-                cache_subgoal or "Not established yet",
+                self.current_subgoal or "Not established yet",
                 threshold,
                 json.dumps(scores, sort_keys=True),
             )
@@ -940,14 +1003,12 @@ print(output)
                 "[jev_api] selected=%s",
                 ",".join(selected) if selected else "NONE",
             )
-            self._jev_api_selected_methods = selected
             return selected
         except Exception as exc:
             self.logger.warning(
                 "[jev_fallback] api inference failed; using full-domain API prompt: %s",
                 exc,
             )
-            self._jev_api_selected_methods = None
             return None
 
     def _get_action_channel_skill_names(self) -> List[str]:
@@ -1096,6 +1157,14 @@ print(output)
                         if not key or not value:
                             continue
                         key = key[:GLOBAL_FACT_KEY_MAX_CHARS]
+                        normalized_key = re.sub(r"[^a-z0-9]+", "_", key.lower()).strip("_")
+                        key_tokens = set(normalized_key.split("_"))
+                        if key_tokens.intersection(VOLATILE_GLOBAL_FACT_KEY_TOKENS):
+                            self.logger.info(
+                                "[global_fact] ignored volatile key=%s",
+                                key,
+                            )
+                            continue
                         value = value[:GLOBAL_FACT_VALUE_MAX_CHARS]
                         self.global_facts[key] = value
                         self.logger.info("[global_fact] set %s=%s", key, value)
@@ -2027,6 +2096,7 @@ print(output)
             while self.operation_count < self.max_steps:
                 self.current_step_id = 0
                 self._jev_step_usage = self._zero_jev_usage_entry()
+                self._planner_step_latency_seconds = 0.0
                 self.logger.info(f"Step {self.operation_count + 1}/{self.max_steps}")
 
                 # Capture token usage before this step
@@ -2261,6 +2331,8 @@ print(output)
         """Get decision from global planner with retry on parsing errors."""
 
         attempt = 0
+        api_selection_complete = False
+        selected_api_methods: Optional[List[str]] = None
         while attempt < self.max_parse_retries:
             response = ""
             json_str = ""
@@ -2307,7 +2379,11 @@ print(output)
                     if isinstance(context_message, dict)
                     else ""
                 )
-                selected_api_methods = self._select_api_methods_for_subgoal(planner_context)
+                # Select once for every planner step. Parsing retries reuse the
+                # same selection because no environment action has occurred.
+                if not api_selection_complete:
+                    selected_api_methods = self._select_api_methods_for_step(planner_context)
+                    api_selection_complete = True
                 planner_system_prompt = self._build_planner_system_prompt(
                     selected_api_methods=selected_api_methods,
                 )
@@ -2332,11 +2408,21 @@ print(output)
                     payload={"messages": messages},
                     attempt=attempt + 1,
                 )
-                response = self.global_planner_llm(
-                    messages,
-                    enable_thinking=self.enable_thinking,
-                    thinking_token_budget=self.thinking_token_budget,
-                )
+                planner_started_at = time.perf_counter()
+                try:
+                    response = self.global_planner_llm(
+                        messages,
+                        enable_thinking=self.enable_thinking,
+                        thinking_token_budget=self.thinking_token_budget,
+                    )
+                finally:
+                    planner_latency = time.perf_counter() - planner_started_at
+                    self._planner_step_latency_seconds += planner_latency
+                    self._planner_task_latency_seconds += planner_latency
+                    self.logger.info(
+                        "[latency] component=global_planner seconds=%.6f",
+                        planner_latency,
+                    )
                 self._dump_prompt_entry(
                     stage="global_planner_response",
                     payload=response,
@@ -2921,10 +3007,18 @@ print(output)
             "completion_tokens": 0,
             "image_count": 0,
             "request_count": 0,
+            "latency_seconds": 0.0,
+            "memory_latency_seconds": 0.0,
+            "api_latency_seconds": 0.0,
         }
 
     def _build_step_token_usage(self, planner_usage: Dict, tool_usage: Dict, include_planner: bool) -> Dict:
-        global_planner_usage = planner_usage["global_planner"] if include_planner else self._zero_usage_entry()
+        global_planner_usage = dict(
+            planner_usage["global_planner"] if include_planner else self._zero_usage_entry()
+        )
+        global_planner_usage["latency_seconds"] = (
+            self._planner_step_latency_seconds if include_planner else 0.0
+        )
         state_manager_usage = planner_usage["state_manager"] if include_planner else self._zero_usage_entry()
         jev_usage = dict(self._jev_step_usage)
         return {
@@ -2937,6 +3031,16 @@ print(output)
                 "image_count": state_manager_usage["image_count"] + tool_usage["state_manager"]["image_count"],
             },
             "jev": jev_usage,
+            "latency": {
+                "global_planner_seconds": global_planner_usage["latency_seconds"],
+                "jev_memory_seconds": jev_usage["memory_latency_seconds"],
+                "jev_api_seconds": jev_usage["api_latency_seconds"],
+                "jev_total_seconds": jev_usage["latency_seconds"],
+                "measured_inference_seconds": (
+                    global_planner_usage["latency_seconds"]
+                    + jev_usage["latency_seconds"]
+                ),
+            },
             "total": {
                 "cost": global_planner_usage["cost"] + tool_usage["visual_grounder"]["cost"] + state_manager_usage["cost"] + tool_usage["state_manager"]["cost"],
                 "prompt_tokens": global_planner_usage["prompt_tokens"] + tool_usage["visual_grounder"]["prompt_tokens"] + state_manager_usage["prompt_tokens"] + tool_usage["state_manager"]["prompt_tokens"] + jev_usage["prompt_tokens"],
@@ -4071,16 +4175,22 @@ print(output)
         if code.lower().startswith("bash_execution"):
             code = code[len("bash_execution"):].strip()
 
-        code = code.replace("\\r\\n", "\n").replace("\\n", "\n").replace("\\r", "\n")
+        code = self._expand_escaped_newlines_outside_strings(code)
 
         python_c_match = re.match(r"(?is)^(?:python(?:\.exe)?|py)\s+-c\s+(.+)$", code.strip())
         if python_c_match:
             payload = python_c_match.group(1).strip()
-            try:
-                code = ast.literal_eval(payload)
-            except Exception:
-                code = payload.strip("'\"")
-            code = str(code).replace("\\r\\n", "\n").replace("\\n", "\n").replace("\\r", "\n").strip()
+            # Remove only the shell wrapper quotes. ast.literal_eval() is not
+            # appropriate here because it eagerly decodes escapes belonging to
+            # the embedded Python source: for example, ``'line 1\\nline 2'``
+            # would become an invalid multiline single-quoted literal.
+            if (
+                len(payload) >= 2
+                and payload[0] == payload[-1]
+                and payload[0] in {"'", '"'}
+            ):
+                payload = payload[1:-1]
+            code = self._expand_escaped_newlines_outside_strings(payload).strip()
 
         try:
             ast.parse(code)
@@ -4513,11 +4623,23 @@ except subprocess.TimeoutExpired as e:
         jev_prompt = int(self._jev_task_usage["prompt_tokens"])
         jev_completion = int(self._jev_task_usage["completion_tokens"])
         jev_requests = int(self._jev_task_usage["request_count"])
+        jev_latency = float(self._jev_task_usage["latency_seconds"])
+        jev_memory_latency = float(self._jev_task_usage["memory_latency_seconds"])
+        jev_api_latency = float(self._jev_task_usage["api_latency_seconds"])
         self.logger.info(
             "[jev_usage] requests=%s prompt_tokens=%s completion_tokens=%s",
             jev_requests,
             jev_prompt,
             jev_completion,
+        )
+        self.logger.info(
+            "[latency_summary] global_planner=%.6f jev_memory=%.6f "
+            "jev_api=%.6f jev_total=%.6f measured_inference=%.6f",
+            self._planner_task_latency_seconds,
+            jev_memory_latency,
+            jev_api_latency,
+            jev_latency,
+            self._planner_task_latency_seconds + jev_latency,
         )
 
         total_cost = global_planner_cost + visual_grounder_cost + state_manager_cost + jev_cost
@@ -4551,13 +4673,21 @@ except subprocess.TimeoutExpired as e:
                 "prompt_tokens": global_planner_prompt + visual_grounder_prompt + state_manager_prompt + jev_prompt,
                 "completion_tokens": global_planner_completion + visual_grounder_completion + state_manager_completion + jev_completion,
                 "execution_time": execution_time,
+                "latency": {
+                    "global_planner_seconds": self._planner_task_latency_seconds,
+                    "jev_memory_seconds": jev_memory_latency,
+                    "jev_api_seconds": jev_api_latency,
+                    "jev_total_seconds": jev_latency,
+                    "measured_inference_seconds": self._planner_task_latency_seconds + jev_latency,
+                },
                 "model_usage": {
                     "global_planner": {
                         "model_name": self.global_planner_model,
                         "cost": global_planner_cost,
                         "prompt_tokens": global_planner_prompt,
                         "completion_tokens": global_planner_completion,
-                        "image_count": global_planner_images
+                        "image_count": global_planner_images,
+                        "latency_seconds": self._planner_task_latency_seconds,
                     },
                     "visual_grounder": {
                         "model_name": self.visual_grounder_model,
@@ -4579,7 +4709,10 @@ except subprocess.TimeoutExpired as e:
                         "prompt_tokens": jev_prompt,
                         "completion_tokens": jev_completion,
                         "image_count": 0,
-                        "request_count": jev_requests
+                        "request_count": jev_requests,
+                        "latency_seconds": jev_latency,
+                        "memory_latency_seconds": jev_memory_latency,
+                        "api_latency_seconds": jev_api_latency,
                     }
                 }
             },

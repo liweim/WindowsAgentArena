@@ -408,7 +408,6 @@ METHOD_CONFIGURERS: Dict[str, Optional[ParserConfigurer]] = {
     "agents3": _add_agents3_options,
     "locallstc": _add_locallstc_options,
     "locallstc2": _add_locallstc2_options,
-    "locallstc_audio": _add_locallstc_options,
     "hisa": _add_hisa_options,
     "coact": _add_coact_options,
     "tars": _add_tars_options,
@@ -420,7 +419,7 @@ def _validate_method_options(args: argparse.Namespace, parser: argparse.Argument
         args.grounding_width = args.grounding_width or args.screen_width
         args.grounding_height = args.grounding_height or args.screen_height
 
-    if args.agent_name in {"locallstc", "locallstc2", "locallstc_audio"}:
+    if args.agent_name in {"locallstc", "locallstc2"}:
         if args.agent_name == "locallstc2" and args.wo_jev:
             args.wo_jev_memory = True
             args.wo_jev_api = True
@@ -473,11 +472,10 @@ def parse_agent_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
         raw_argv.extend(extra_argv)
 
     selected = _extract_agent_name(raw_argv)
-    if selected in {"locallstc", "locallstc2", "locallstc_audio"}:
+    if selected in {"locallstc", "locallstc2"}:
         env_name = {
             "locallstc": "LOCALLSTC_EXTRA_ARGS",
             "locallstc2": "LOCALLSTC2_EXTRA_ARGS",
-            "locallstc_audio": "LOCALLSTC_AUDIO_EXTRA_ARGS",
         }[selected]
         extra_args = os.environ.get(env_name, "").strip()
         if extra_args:

@@ -20,7 +20,7 @@ Wait for async operations to complete and observe UI changes. Represent it as th
 Execute execution-side automation through the `bash_execution` tool. This is a historical tool name: on Linux, output Bash commands or Python scripts; on Windows, output Python code snippets executed in the Windows guest. Use this when file-side editing, inspection, or automation is more reliable than GUI interaction. Follow the platform-specific skill section for paths, commands, and examples. Represent it as a bare command/code action string.
 
 ## termination
-Request task completion after the required result has been verified. Represent it as the exact action string `TERMINATE` and explain the completion evidence in `thought`.
+Request task completion once all task-required actions have executed successfully without an explicit error. Successful execution of those necessary actions is sufficient completion evidence; do not require an additional verification-only action unless the task explicitly requests verification. Represent completion as the exact action string `TERMINATE` and explain the executed evidence in `thought`.
 
 ## infeasible
 Declare that the task is objectively impossible to complete. Represent it as the exact action string `INFEASIBLE`.
@@ -73,7 +73,7 @@ Field guide:
   - a bare `Class.method(...)` string for API calls
   - a bare command/code string for `bash_execution`
   - the string `WAIT` for `wait`
-  - the string `TERMINATE` only when the task is already verified complete, with the completion evidence explained in `thought`
+  - the string `TERMINATE` once all task-required actions have executed successfully without an explicit error; their execution is sufficient completion evidence, so do not add a separate verification-only action unless the task explicitly requests one
   - the string `INFEASIBLE` only when the task is objectively impossible, with the blocker reason explained in `thought`
 - Use exactly one API call per action item.
 - Bash example:
@@ -111,7 +111,7 @@ The relevant setting is visible in the UI and there is no confirmed api call for
 - Termination example:
 ```json
 {
-  "thought": "The required result is already visible and verified in the current screenshot.",
+  "thought": "All task-required actions executed successfully without an explicit error, so no separate verification-only action is needed.",
   "subgoal": "Verify task completion",
   "actions": [
     "TERMINATE"
@@ -174,7 +174,7 @@ Field guide:
   - a bare `Class.method(...)` string for API calls
   - a bare command/code string for `bash_execution`
   - the string `WAIT` for `wait`
-  - the string `TERMINATE` only when the task is already verified complete, with the completion evidence explained in `thought`
+  - the string `TERMINATE` once all task-required actions have executed successfully without an explicit error; their execution is sufficient completion evidence, so do not add a separate verification-only action unless the task explicitly requests one
   - the string `INFEASIBLE` only when the task is objectively impossible, with the blocker reason explained in `thought`
 - Use exactly one API call per action item.
 - Bash example:
@@ -212,7 +212,7 @@ The relevant setting is visible in the UI and there is no confirmed api call for
 - Termination example:
 ```json
 {
-  "thought": "The required result is already visible and verified in the current screenshot.",
+  "thought": "All task-required actions executed successfully without an explicit error, so no separate verification-only action is needed.",
   "subgoal": "Verify task completion",
   "actions": [
     "TERMINATE"
@@ -281,7 +281,7 @@ Rules:
 - Each action must be one of:
   - a `pyautogui...` action listed in the action types
   - `WAIT`
-  - `TERMINATE`, when the visible evidence strongly indicates that the requested final state is complete
+  - `TERMINATE`, once all task-required actions have executed successfully without an explicit error; do not add a separate verification-only action unless the task explicitly requests one
   - `INFEASIBLE`, only when the task is objectively impossible
 - Do not output bare mobile action aliases such as `swipe_up()`, `swipeDown()`, `tap()`, or `long_press()`.
 - Prefer one meaningful interaction per action item.
@@ -331,7 +331,7 @@ Wait for async operations to complete and observe UI changes. Represent it as th
 Execute execution-side automation through the `bash_execution` tool. This is a historical tool name: on Linux, output Bash commands or Python scripts; on Windows, output Python code snippets executed in the Windows guest. Use this when file-side editing, inspection, or automation is more reliable than GUI interaction. Follow the platform-specific skill section for paths, commands, and examples. Represent it as a bare command/code action string.
 
 ## termination
-Request task completion after the required result has been verified. Represent it as the exact action string `TERMINATE` and explain the completion evidence in `thought`.
+Request task completion once all task-required actions have executed successfully without an explicit error. Successful execution of those necessary actions is sufficient completion evidence; do not require an additional verification-only action unless the task explicitly requests verification. Represent completion as the exact action string `TERMINATE` and explain the executed evidence in `thought`.
 
 ## infeasible
 Declare that the task is objectively impossible to complete. Represent it as the exact action string `INFEASIBLE`.
@@ -386,7 +386,7 @@ Field guide:
   - a bare `pyautogui...` string for GUI actions
   - a bare command/code string for `bash_execution`
   - the string `WAIT` for `wait`
-  - the string `TERMINATE` only when the task is already verified complete, with the completion evidence explained in `thought`
+  - the string `TERMINATE` once all task-required actions have executed successfully without an explicit error; their execution is sufficient completion evidence, so do not add a separate verification-only action unless the task explicitly requests one
   - the string `INFEASIBLE` only when the task is objectively impossible, with the blocker reason explained in `thought`
 - Bash example:
 ```json
@@ -422,7 +422,7 @@ The relevant setting is visible in the UI and can be changed through direct inte
 - Termination example:
 ```json
 {
-  "thought": "The required result is already visible and verified in the current screenshot.",
+  "thought": "All task-required actions executed successfully without an explicit error, so no separate verification-only action is needed.",
   "subgoal": "Verify task completion",
   "actions": [
     "TERMINATE"
@@ -470,7 +470,7 @@ Field guide:
   - a bare `Class.method(...)` string for API calls
   - a bare command/code string for `bash_execution`
   - the string `WAIT` for `wait`
-  - the string `TERMINATE` only when the task is already verified complete, with the completion evidence explained in `thought`
+  - the string `TERMINATE` once all task-required actions have executed successfully without an explicit error; their execution is sufficient completion evidence, so do not add a separate verification-only action unless the task explicitly requests one
   - the string `INFEASIBLE` only when the task is objectively impossible, with the blocker reason explained in `thought`
 - Use exactly one API call per action item.
 """
@@ -513,7 +513,7 @@ Field guide:
   - a bare `Class.method(...)` string for API calls
   - a bare command/code string for `bash_execution`
   - the string `WAIT` for `wait`
-  - the string `TERMINATE` only when the task is already verified complete, with the completion evidence explained in `thought`
+  - the string `TERMINATE` once all task-required actions have executed successfully without an explicit error; their execution is sufficient completion evidence, so do not add a separate verification-only action unless the task explicitly requests one
   - the string `INFEASIBLE` only when the task is objectively impossible, with the blocker reason explained in `thought`
 - Use exactly one API call per action item.
 - End your response with exactly one final JSON object.
@@ -538,7 +538,7 @@ Field guide:
   - a bare `Class.method(...)` string for API calls
   - a bare command/code string for `bash_execution`
   - the string `WAIT` for `wait`
-  - the string `TERMINATE` only when the task is already verified complete, with the completion evidence explained in `thought`
+  - the string `TERMINATE` once all task-required actions have executed successfully without an explicit error; their execution is sufficient completion evidence, so do not add a separate verification-only action unless the task explicitly requests one
   - the string `INFEASIBLE` only when the task is objectively impossible, with the blocker reason explained in `thought`
 - Use exactly one API call per action item.
 - For a shell action, put only the command in `action`. Correct: `"action": "find /home/user -type f | head"`. Incorrect: `"action": "bash_execution(find ...)"` or `"action": "bash_execution: find ..."`.
@@ -562,7 +562,7 @@ Field guide:
   - a bare `pyautogui...` string for GUI actions
   - a bare command/code string for `bash_execution`
   - the string `WAIT` for `wait`
-  - the string `TERMINATE` only when the task is already verified complete, with the completion evidence explained in `thought`
+  - the string `TERMINATE` once all task-required actions have executed successfully without an explicit error; their execution is sufficient completion evidence, so do not add a separate verification-only action unless the task explicitly requests one
   - the string `INFEASIBLE` only when the task is objectively impossible, with the blocker reason explained in `thought`
 - For a shell action, put only the command in `action`. Correct: `"action": "find /home/user -type f | head"`. Incorrect: `"action": "bash_execution(find ...)"`, `"action": "bash_execution: find ..."`, or `"action": "bash_execution find ..."`.
 
@@ -650,4 +650,4 @@ Examples:
 
 SUBGOAL_TRANSITION_VERIFICATION_PROMPT = """Decide whether to accept the proposed subgoal. Return only PASS or FAIL.
 
-PASS if the current subgoal is complete, the proposal is a task-aligned recovery from a blocked/invalid subgoal, or the proposal merely continues, refines, or restates the same stage. FAIL only when the proposal moves to a genuinely different stage while the current subgoal is still incomplete and viable, lacks evidence, or skips required work. Planner intent and unverified tool success are not evidence."""
+PASS if the current subgoal is complete, the proposal is a task-aligned recovery from a blocked/invalid subgoal, or the proposal merely continues, refines, or restates the same stage. Successful execution of all required actions without an explicit error is sufficient completion evidence. FAIL only when the proposal moves to a genuinely different stage while required actions remain unexecuted, an explicit execution error is unresolved, or required work is skipped."""

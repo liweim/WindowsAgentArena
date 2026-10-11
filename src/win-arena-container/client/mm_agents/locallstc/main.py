@@ -3968,16 +3968,22 @@ print(output)
         if code.lower().startswith("bash_execution"):
             code = code[len("bash_execution"):].strip()
 
-        code = code.replace("\\r\\n", "\n").replace("\\n", "\n").replace("\\r", "\n")
+        code = self._expand_escaped_newlines_outside_strings(code)
 
         python_c_match = re.match(r"(?is)^(?:python(?:\.exe)?|py)\s+-c\s+(.+)$", code.strip())
         if python_c_match:
             payload = python_c_match.group(1).strip()
-            try:
-                code = ast.literal_eval(payload)
-            except Exception:
-                code = payload.strip("'\"")
-            code = str(code).replace("\\r\\n", "\n").replace("\\n", "\n").replace("\\r", "\n").strip()
+            # Remove only the shell wrapper quotes. ast.literal_eval() is not
+            # appropriate here because it eagerly decodes escapes belonging to
+            # the embedded Python source: for example, ``'line 1\\nline 2'``
+            # would become an invalid multiline single-quoted literal.
+            if (
+                len(payload) >= 2
+                and payload[0] == payload[-1]
+                and payload[0] in {"'", '"'}
+            ):
+                payload = payload[1:-1]
+            code = self._expand_escaped_newlines_outside_strings(payload).strip()
 
         try:
             ast.parse(code)

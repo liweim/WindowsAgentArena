@@ -9,8 +9,10 @@ from typing import Any, Dict
 import requests
 
 
-DEFAULT_URL = "http://127.0.0.1:18766/v1/systemone"
-DEFAULT_CONTAINER_URL = DEFAULT_URL.replace("127.0.0.1", "host.docker.internal")
+DEFAULT_URL = "http://129.94.173.199:18766/v1/systemone"
+# The service is deployed on a remote host, so containers use the same URL.
+# ``host.docker.internal`` would point back to the Docker host running WinArena.
+DEFAULT_CONTAINER_URL = DEFAULT_URL
 
 
 class DeciderHTTPClient:

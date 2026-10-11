@@ -12,7 +12,7 @@ when_to_use: Load when the planner can call software-level APIs directly
 - Use exactly one API call per `actions` item. Do not bundle multiple API calls together.
 - Only call methods that are listed for the current domain in the system prompt.
 - If the available API methods cannot express the needed step, do not invent new method calls.
-- Before `TERMINATE`, verify the actual resulting state rather than assuming the method call succeeded.
+- Once all necessary API calls have executed successfully without an explicit execution error, treat the task as complete and use `TERMINATE` on the next planner turn. Do not add a separate verification-only call unless the task explicitly requests verification.
 
 ### API example
 

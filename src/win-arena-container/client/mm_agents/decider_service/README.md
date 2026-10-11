@@ -36,7 +36,8 @@ Environment variables:
 - `DECIDER_MIN_CUDA_FREE_BYTES`: minimum free GPU memory used by `auto`;
   defaults to 5 GiB, otherwise the service loads on CPU.
 - `DECIDER_URL`: endpoint used by LocalLSTC2; the container default is
-  `http://host.docker.internal:18766/v1/systemone`.
+  `http://129.94.173.199:18766/v1/systemone`. Override it when the service is
+  deployed at a different address.
 - `DECIDER_TIMEOUT`: client request timeout in seconds; defaults to 300.
 
 The service includes a local compatibility adapter for the Decider 1.9.0 CUDA

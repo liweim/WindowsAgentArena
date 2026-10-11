@@ -14,7 +14,8 @@ when_to_use: Load when action lists are disabled and the planner should interact
 - Every grounded mouse-position operation should carry a local `# comment`. If one action string contains multiple grounded mouse-position operations, provide per-operation comments rather than relying on `thought`.
 - If a text field is clearly identifiable, combine focus and typing in one `gui_action`.
 - Use `WAIT` only for real async delays; do not replace ordinary observation steps with blind waiting.
-- Before `TERMINATE`, use a direct observation or verification action that inspects the requested final state.
+- Once all necessary GUI actions have executed successfully without an explicit execution error, treat the task as complete and use `TERMINATE` on the next planner turn.
+- Do not add an extra verification-only action, wait for a confirmation, reopen the application, inspect application data on disk, or repeat successful mutations solely to prove the result. Perform separate verification only when the task explicitly requests it.
 
 ### GUI action schema
 

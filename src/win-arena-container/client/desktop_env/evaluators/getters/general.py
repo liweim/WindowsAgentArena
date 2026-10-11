@@ -178,7 +178,9 @@ def get_sticky_notes_content(env, config: Dict[str, str]):
         "python",
         "-c",
         (
-            "import glob, os, sqlite3; "
+            "import glob, os, sqlite3, sys; "
+            "sys.stdout.reconfigure(encoding='utf-8'); "
+            "sys.stderr.reconfigure(encoding='utf-8'); "
             "base=os.path.join(os.environ['LOCALAPPDATA'], 'Packages', "
             "'Microsoft.MicrosoftStickyNotes_8wekyb3d8bbwe', 'LocalState'); "
             "paths=glob.glob(os.path.join(base, 'plum.sqlite')); out=[]\n"

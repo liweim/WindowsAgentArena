@@ -1,0 +1,21 @@
+[
+  {
+    "type": "function",
+    "function": {
+      "name": "PdfTools.extract_text",
+      "description": "Extract the complete text layer from a PDF file stored in the VM and return it as plain text in page order.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "vm_path": {
+            "type": "string",
+            "description": "Absolute path of the PDF inside the VM. In API calls, use forward slashes for Windows paths, for example C:/Users/Docker/Desktop/document.pdf, to avoid Python backslash escape errors."
+          }
+        },
+        "required": [
+          "vm_path"
+        ]
+      }
+    }
+  }
+]

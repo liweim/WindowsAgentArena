@@ -9,7 +9,7 @@ nohup setsid env \
     PYTHONUNBUFFERED=1 \
     WINARENA_IMAGE_TAG=latest \
     PARAKEET_ASR_URL=http://host.docker.internal:18765/v1/audio/transcriptions \
-    DECIDER_URL=http://host.docker.internal:18766/v1/systemone \
+    "DECIDER_URL=${DECIDER_URL:-http://129.94.173.199:18766/v1/systemone}" \
     "LOCALLSTC_HOST_UID=$(id -u)" \
     "LOCALLSTC_HOST_GID=$(id -g)" \
     ./run.sh \
@@ -33,7 +33,6 @@ nohup setsid env \
     --result-dir /locallstc/projects/WindowsAgentArena/results/locallstc2_qwen3.8-27b \
     --json-name evaluation_examples_windows/cognitive.json \
     --remove-container true \
-    --rerun \
     "$@" >"$LOG_FILE" 2>&1 < /dev/null &
 
 runner_pid=$!

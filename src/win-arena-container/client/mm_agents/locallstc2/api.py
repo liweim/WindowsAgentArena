@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Any, Collection, Dict, List, Optional, Tuple
 
 import requests
+from pypdf import PdfReader
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
 from mm_agents.parakeet_asr.request import DEFAULT_URL as DEFAULT_PARAKEET_URL
@@ -54,6 +55,10 @@ class APIRegistry:
         "speech": "audio",
         "speech_to_text": "audio",
         "audio_transcription": "audio",
+        "pdf": "pdf",
+        "pdf_reader": "pdf",
+        "pdf_parser": "pdf",
+        "document_text_extraction": "pdf",
     }
 
     HANDLER_CLASS = {
@@ -65,6 +70,7 @@ class APIRegistry:
         "libreoffice_impress": "ImpressTools",
         "vlc": "VLCTools",
         "audio": "AudioTools",
+        "pdf": "PdfTools",
     }
 
     CHROME_SETUP_URLS = {
@@ -199,7 +205,7 @@ class APIRegistry:
                 f"API method `{full_name}` is not declared in schema for domain `{normalized}`. "
                 f"Available methods: {', '.join(available)}"
             )
-        if normalized in {"google_drive", "audio"}:
+        if normalized in {"google_drive", "audio", "pdf"}:
             return
         handler_methods = self._get_handler_methods(normalized)
         if full_name not in handler_methods:
@@ -352,6 +358,8 @@ class APIRegistry:
             return self._invoke_google_drive(method_name, arguments, env)
         if normalized == "audio":
             return self._invoke_audio(method_name, arguments, env)
+        if normalized == "pdf":
+            return self._invoke_pdf(method_name, arguments, env)
         return self._invoke_via_vm(normalized, class_name, method_name, arguments, env)
 
     def _split_call_name(self, normalized_domain: str, name: str) -> tuple[str, str]:
@@ -818,6 +826,88 @@ class APIRegistry:
                         os.remove(temp_path)
                     except OSError:
                         pass
+
+    @staticmethod
+    def _extract_local_pdf_text(pdf_path: str) -> Tuple[str, int]:
+        try:
+            reader = PdfReader(pdf_path)
+        except Exception as exc:
+            raise RuntimeError(f"Failed to open PDF: {exc}") from exc
+
+        if reader.is_encrypted:
+            try:
+                decrypted = reader.decrypt("")
+            except Exception as exc:
+                raise RuntimeError("Cannot extract text from password-protected PDF") from exc
+            if not decrypted:
+                raise RuntimeError("Cannot extract text from password-protected PDF")
+
+        page_texts: List[str] = []
+        try:
+            for page in reader.pages:
+                page_texts.append(str(page.extract_text() or "").strip())
+        except Exception as exc:
+            raise RuntimeError(f"Failed while extracting PDF text: {exc}") from exc
+
+        text = "\n\n".join(page_text for page_text in page_texts if page_text).strip()
+        if not text:
+            raise RuntimeError(
+                "The PDF contains no extractable text layer; OCR is not available in PdfTools.extract_text"
+            )
+        return text, len(reader.pages)
+
+    def _invoke_pdf(self, method_name: str, arguments: Dict[str, Any], env) -> Dict[str, Any]:
+        if method_name != "extract_text":
+            raise ValueError(f"Unsupported PDF api tool: {method_name}")
+
+        vm_path = str(arguments.get("vm_path", "") or "").strip()
+        if not vm_path:
+            raise ValueError("PdfTools.extract_text requires a non-empty vm_path")
+        if Path(vm_path).suffix.lower() != ".pdf":
+            raise ValueError("PdfTools.extract_text requires a .pdf file")
+
+        setup_controller = getattr(env, "setup_controller", None)
+        http_server = str(getattr(setup_controller, "http_server", "") or "").rstrip("/")
+        if not http_server:
+            raise RuntimeError("Environment is missing setup_controller.http_server for VM file download")
+
+        response = requests.post(
+            http_server + "/file",
+            data={"file_path": vm_path},
+            timeout=(10, 600),
+        )
+        if response.status_code != 200:
+            try:
+                response_detail = response.json()
+            except ValueError:
+                response_detail = response.text[:500]
+            raise RuntimeError(
+                "Failed to fetch VM PDF file: "
+                f"vm_path={vm_path!r}, status={response.status_code}, response={response_detail!r}"
+            )
+
+        with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as tmp_file:
+            tmp_file.write(response.content)
+            tmp_local_path = tmp_file.name
+
+        try:
+            text, page_count = self._extract_local_pdf_text(tmp_local_path)
+        finally:
+            try:
+                os.remove(tmp_local_path)
+            except OSError:
+                pass
+
+        return {
+            "execution_mode": "vm",
+            "payload": {
+                "status": "success",
+                "output": text,
+                "parsed": {"ok": True, "text": text, "page_count": page_count},
+            },
+            "observation": text,
+            "raw_result": text,
+        }
 
     def _invoke_via_vm(
         self,
