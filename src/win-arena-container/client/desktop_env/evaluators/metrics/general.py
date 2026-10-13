@@ -83,6 +83,7 @@ def literal_match(result: Any, expected: Any, **options) -> float:
 
 
 def compare_xlsx_items(result: str, rules: Dict[str, Any]) -> float:
+    """Return 1 only when every required spreadsheet item is present."""
     if result is None or not os.path.exists(result):
         return 0.
 
@@ -126,10 +127,11 @@ def compare_xlsx_items(result: str, rules: Dict[str, Any]) -> float:
     if not actual_items:
         return 0.
 
-    return sum(
+    matched = sum(
         any(contains_match(expected_item, actual_item) for actual_item in actual_items)
         for expected_item in expected_items
-    ) / len(expected_items)
+    )
+    return 1. if matched == len(expected_items) else 0.
 
 
 def compare_emergency_kit_items_xlsx(result: str, rules: Dict[str, Any]) -> float:
@@ -137,7 +139,12 @@ def compare_emergency_kit_items_xlsx(result: str, rules: Dict[str, Any]) -> floa
 
 
 def check_text_points(result: str, rules: Dict[str, Any]) -> float:
-    """Score free-form text by atomic semantic facts.
+    """Check that free-form text satisfies every required semantic fact.
+
+    Multiple configured points are conjunctive requirements: the evaluator
+    returns 1 only when all points match, and 0 otherwise. Alternatives within
+    one point (for example ``any_of`` or a list of surface forms) remain
+    alternatives rather than separate required points.
 
     Point syntax is backward compatible:
       * ["A", "B"] or "A": any listed surface form may match.
@@ -350,7 +357,7 @@ def check_text_points(result: str, rules: Dict[str, Any]) -> float:
                 used.add(found)
                 if ordered:
                     next_line = found + 1
-        return matched / len(points)
+        return 1. if matched == len(points) else 0.
 
     actual = normalize_point_text(result)
     matched = 0
@@ -361,7 +368,7 @@ def check_text_points(result: str, rules: Dict[str, Any]) -> float:
             matched += 1
             if ordered:
                 previous_end = span[1]
-    return matched / len(points)
+    return 1. if matched == len(points) else 0.
 
 
 def is_in_list(result, rules) -> float:

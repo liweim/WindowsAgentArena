@@ -77,9 +77,16 @@ def compare_docx_files(file1, file2, **options):
     ignore_case = options.get('ignore_case', False)
     ignore_order = options.get('ignore_order', False)
     content_only = options.get('content_only', False)
+    ignore_repeated_punctuation = options.get('ignore_repeated_punctuation', False)
 
     if not file1 or not file2:
         return 0
+
+    def normalized_text(value):
+        text = normalize_text(value, ignore_case=ignore_case)
+        if ignore_repeated_punctuation:
+            text = re.sub(r'([.!?])\1+', r'\1', text)
+        return text
 
     def get_paragraph_texts_odt(document):
         paragraphs = document.getElementsByType(P)
@@ -129,15 +136,15 @@ def compare_docx_files(file1, file2, **options):
 
     if content_only:
         # Compare the content of the documents
-        text1 = normalize_text('\n'.join(doc1_paragraphs), ignore_case=ignore_case)
-        text2 = normalize_text('\n'.join(doc2_paragraphs), ignore_case=ignore_case)
+        text1 = normalized_text('\n'.join(doc1_paragraphs))
+        text2 = normalized_text('\n'.join(doc2_paragraphs))
         similarity = fuzz.ratio(text1, text2) / 100.0
         return similarity
 
     # Process and compare documents
     if ignore_blanks:
-        text1 = normalize_text('\n'.join(doc1_paragraphs), ignore_case=ignore_case)
-        text2 = normalize_text('\n'.join(doc2_paragraphs), ignore_case=ignore_case)
+        text1 = normalized_text('\n'.join(doc1_paragraphs))
+        text2 = normalized_text('\n'.join(doc2_paragraphs))
         if text1 != text2:
             return 0
     else:
@@ -151,8 +158,8 @@ def compare_docx_files(file1, file2, **options):
         print("in compare")
         # Compare each paragraph
         for p1, p2 in zip(doc1_paragraphs, doc2_paragraphs):
-            p1 = normalize_text(p1, ignore_case=ignore_case)
-            p2 = normalize_text(p2, ignore_case=ignore_case)
+            p1 = normalized_text(p1)
+            p2 = normalized_text(p2)
             if p1 != p2:
                 print(p1)
                 print(p2)

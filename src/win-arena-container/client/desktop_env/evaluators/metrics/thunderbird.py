@@ -298,9 +298,9 @@ def check_thunderbird_email_absent(result: Union[str, List[str]], rules: Dict[st
 
 def check_thunderbird_email_composition(result: Union[str, List[str]], rules: Dict[str, Any]) -> float:
     """
-    Score a Thunderbird composed/saved email from one or more mbox files.
+    Check a Thunderbird composed/saved email from one or more mbox files.
     Required headers (`to`, `subject`) must match before body points score.
-    Each body point is a list of acceptable variants and contributes equally.
+    All body points are required; each point may list acceptable variants.
     """
 
     if result is None:

@@ -23,9 +23,9 @@ nohup python -m vllm.entrypoints.openai.api_server --served-model-name gta1-7b -
 nohup python -m vllm.entrypoints.openai.api_server \
     --served-model-name qwen3.8-27b \
     --model /home/weimingli/models/Qwen3.8-27B \
-    --gpu-memory-utilization 0.65 \
+    --gpu-memory-utilization 0.7 \
     --max-model-len 131072 \
-    --max-num-seqs 4 \
+    --max-num-seqs 8 \
     --reasoning-parser qwen3 \
     --host 0.0.0.0 \
     --port 30000 \
@@ -33,6 +33,9 @@ nohup python -m vllm.entrypoints.openai.api_server \
 
 Jev服务：
 DECIDER_DEVICE=cuda \
+DECIDER_CUDA_MEMORY_FRACTION=0.25 \
+DECIDER_USE_GRAPHS=false \
+DECIDER_SHARED_FORK_GB=1 \
 PYTHONPATH=/home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client \
 nohup python -m uvicorn \
   mm_agents.decider_service.server:app \

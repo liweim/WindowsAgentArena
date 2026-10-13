@@ -452,12 +452,11 @@ def is_added_to_steam_cart(active_tab_info, rule):
 
 def is_page_contains_items(active_tab_info, rule):
     """
-    Score expected cart items against a page's HTML content.
+    Check expected cart items against a page's HTML content.
 
-    The rule's items list is treated as the expected product list. For a single
-    expected item, the cart must contain exactly one product and it must match.
-    For multiple expected items, score matched expected items divided by the
-    larger of expected item count and cart item count.
+    The rule's items list is treated as the complete required product list.
+    Every expected item must match and the cart must contain no extra products;
+    partial carts do not receive partial credit.
 
     The rule may alternatively include item_groups, where each inner list is a
     set of acceptable substitutes for one expected cart item.
@@ -484,14 +483,7 @@ def is_page_contains_items(active_tab_info, rule):
 
     expected_count = len(items) + len(item_groups)
 
-    if expected_count == 1:
-        return 1. if matched == 1 and cart_item_count == 1 else 0.
-
-    denominator = max(expected_count, cart_item_count)
-    if denominator == 0:
-        return 0.
-
-    return matched / denominator
+    return 1. if matched == expected_count and cart_item_count == expected_count else 0.
 
 
 def check_page_visible_text(active_tab_info, rule):
@@ -596,11 +588,7 @@ def _score_shopping_cart_db(rule):
         return 0.
 
     expected_count = len(items) + len(item_groups)
-    if expected_count == 1:
-        return 1. if matched == 1 and cart_item_count == 1 else 0.
-
-    denominator = max(expected_count, cart_item_count)
-    return matched / denominator if denominator else 0.
+    return 1. if matched == expected_count and cart_item_count == expected_count else 0.
 
 def _shopping_cart_options_match(rule, cart_item_ids):
     expected_options = rule.get("options", {})

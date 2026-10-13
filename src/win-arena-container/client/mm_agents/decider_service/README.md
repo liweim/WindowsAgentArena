@@ -9,6 +9,9 @@ Start one persistent user service from any directory:
 systemd-run --user --unit=decider-2b --collect \
   --property=Restart=on-failure --property=RestartSec=5 \
   --setenv=DECIDER_DEVICE=auto \
+  --setenv=DECIDER_CUDA_MEMORY_FRACTION=0.25 \
+  --setenv=DECIDER_USE_GRAPHS=false \
+  --setenv=DECIDER_SHARED_FORK_GB=1 \
   /home/weimingli/miniconda3/envs/vllm/bin/python -m uvicorn \
   mm_agents.decider_service.server:app \
   --app-dir /home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client \
@@ -35,6 +38,16 @@ Environment variables:
 - `DECIDER_DEVICE`: `auto`, `cpu`, `cuda`, or `cuda:<index>`.
 - `DECIDER_MIN_CUDA_FREE_BYTES`: minimum free GPU memory used by `auto`;
   defaults to 5 GiB, otherwise the service loads on CPU.
+- `DECIDER_CUDA_MEMORY_FRACTION`: optional hard limit for the process's PyTorch
+  CUDA allocator, expressed as a fraction in `(0, 1]`. For example, `0.25`
+  limits the process to roughly 20 GiB on an 80 GiB GPU. Requests exceeding
+  the limit fail with CUDA OOM; they are not automatically moved to CPU.
+- `DECIDER_USE_GRAPHS`: whether Decider uses retained CUDA graphs. Defaults to
+  `true`; setting it to `false` substantially reduces persistent GPU memory at
+  the cost of inference speed.
+- `DECIDER_SHARED_FORK_GB`: temporary GPU-memory budget used by Decider when
+  forking a shared state prefix. Decider defaults to 8 GiB; `1` is a
+  conservative setting for a memory-constrained deployment.
 - `DECIDER_URL`: endpoint used by LocalLSTC2; the container default is
   `http://129.94.173.199:18766/v1/systemone`. Override it when the service is
   deployed at a different address.

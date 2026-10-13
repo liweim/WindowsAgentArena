@@ -101,6 +101,10 @@
       "path": "C:\\Users\\Docker\\AppData\\Local\\Temp\\accessibility_definition_paper_gold.docx",
       "dest": "information-wikipedia_accessibility_definition_gold.docx"
     },
+    "options": {
+      "ignore_case": true,
+      "ignore_repeated_punctuation": true
+    },
     "metric_roles": {
       "task_outcome": [
         0

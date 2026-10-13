@@ -91,11 +91,16 @@
           "to": "family@example.org",
           "subject": "Spam text safety",
           "body_points": [
-            {
-              "regex": [
-                "^don't click on any links contact the company using a phone number or website you know is real not the information in the text message$"
-              ]
-            }
+            [
+              "don't click on any links",
+              "dont click on any links"
+            ],
+            [
+              "contact the company using a phone number or website you know is real"
+            ],
+            [
+              "not the information in the text message"
+            ]
           ]
         }
       }

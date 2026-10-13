@@ -28,6 +28,35 @@ MODEL_PATH = Path(os.environ.get("DECIDER_MODEL", DEFAULT_MODEL_PATH)).expanduse
 MIN_CUDA_FREE_BYTES = int(os.environ.get("DECIDER_MIN_CUDA_FREE_BYTES", 5 * 1024**3))
 
 
+def _optional_fraction(name: str) -> float | None:
+    raw = os.environ.get(name, "").strip()
+    if not raw:
+        return None
+    try:
+        value = float(raw)
+    except ValueError as exc:
+        raise RuntimeError(f"{name} must be a number greater than 0 and at most 1") from exc
+    if not 0 < value <= 1:
+        raise RuntimeError(f"{name} must be greater than 0 and at most 1")
+    return value
+
+
+def _env_bool(name: str, default: bool) -> bool:
+    raw = os.environ.get(name)
+    if raw is None:
+        return default
+    value = raw.strip().lower()
+    if value in {"1", "true", "yes", "on"}:
+        return True
+    if value in {"0", "false", "no", "off"}:
+        return False
+    raise RuntimeError(f"{name} must be one of: 1, 0, true, false, yes, no, on, off")
+
+
+CUDA_MEMORY_FRACTION = _optional_fraction("DECIDER_CUDA_MEMORY_FRACTION")
+USE_GRAPHS = _env_bool("DECIDER_USE_GRAPHS", True)
+
+
 def _patch_decider_conv_keyword_compat() -> bool:
     """Adapt decider-ai 1.9.0's CUDA conv patch to Transformers 5.8.
 
@@ -78,13 +107,33 @@ class DeciderService:
                 requested_device = "cpu"
         self.lock = threading.Lock()
         self.device = requested_device
+        self.cuda_memory_fraction = CUDA_MEMORY_FRACTION
+        self.use_graphs = USE_GRAPHS and requested_device.startswith("cuda")
         self.conv_compat_patched = False
         if requested_device.startswith("cuda"):
+            if CUDA_MEMORY_FRACTION is not None:
+                torch.cuda.set_per_process_memory_fraction(
+                    CUDA_MEMORY_FRACTION,
+                    device=torch.device(requested_device),
+                )
+                logging.info(
+                    "Limited the CUDA caching allocator to %.1f%% of device memory",
+                    CUDA_MEMORY_FRACTION * 100,
+                )
             self.conv_compat_patched = _patch_decider_conv_keyword_compat()
             if self.conv_compat_patched:
                 logging.info("Applied decider-ai/Transformers causal-conv keyword compatibility patch")
         try:
-            self.model = Decider(str(self.model_path), device=requested_device)
+            self.model = Decider(
+                str(self.model_path),
+                device=requested_device,
+                # Keep Decider's CUDA engine so system_one can use its bounded
+                # shared-prefix path even when graph capture is disabled.
+                use_graphs=requested_device.startswith("cuda"),
+            )
+            if requested_device.startswith("cuda") and not self.use_graphs:
+                self.model.eng.use_graphs = False
+                logging.info("Disabled retained CUDA graph capture")
         except torch.OutOfMemoryError:
             if DEVICE_SETTING != "auto" or requested_device == "cpu":
                 raise
@@ -92,6 +141,7 @@ class DeciderService:
             gc.collect()
             torch.cuda.empty_cache()
             self.device = "cpu"
+            self.use_graphs = False
             self.model = Decider(str(self.model_path), device="cpu")
 
     def system_one(self, state: Any, questions: Dict[str, Any]) -> Dict[str, Any]:
@@ -122,6 +172,8 @@ def health(request: Request) -> Dict[str, Any]:
         "model": str(service.model_path),
         "device": service.device,
         "cuda_available": torch.cuda.is_available(),
+        "cuda_memory_fraction": service.cuda_memory_fraction,
+        "use_graphs": service.use_graphs,
         "conv_compat_patched": service.conv_compat_patched,
     }
 

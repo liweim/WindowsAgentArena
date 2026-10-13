@@ -85,9 +85,16 @@
             [
               "If you’re hiking or walking, a daypack or waist pack should do just fine."
             ],
-            [
-              "For official races, always research what kind of hydration systems are allowed first. If you plan on running with a permitted hydration pack, she recommends training with it prior to race day so you can get comfortable with how it feels beforehand."
-            ]
+            {
+              "all_of": [
+                [
+                  "For official races, always research what kind of hydration systems are allowed first."
+                ],
+                [
+                  "If you plan on running with a permitted hydration pack, she recommends training with it prior to race day so you can get comfortable with how it feels beforehand."
+                ]
+              ]
+            }
           ],
           "ordered": true,
           "line_based": true

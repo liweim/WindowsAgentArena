@@ -88,7 +88,6 @@
         "type": "rule",
         "rules": {
           "ignore_case": true,
-          "ordered": true,
           "line_based": true,
           "points": [
             [
