@@ -81,7 +81,10 @@
         "type": "rule",
         "rules": {
           "type": "url",
-          "url": "http://host.docker.internal:8888/wikipedia_en_all_maxi_2022-05/A/Carolina_Gold_Rush"
+          "urls": [
+            "http://host.docker.internal:8888/wikipedia_en_all_maxi_2022-05/A/Carolina_Gold_Rush",
+            "https://en.wikipedia.org/wiki/Carolina_gold_rush"
+          ]
         }
       }
     ]

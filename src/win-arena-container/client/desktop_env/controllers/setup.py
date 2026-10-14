@@ -27,6 +27,8 @@ logger = logging.getLogger("desktopenv.setup")
 
 FILE_PATH = os.path.dirname(os.path.abspath(__file__))
 HTTP_REQUEST_TIMEOUT = 20
+CHROME_NAVIGATION_ATTEMPTS = 3
+CHROME_NAVIGATION_RETRY_DELAY = 2
 LIBREOFFICE_PROFILE_PATH = r"C:\Temp\winarena-libreoffice-profile"
 LIBREOFFICE_PROFILE_ARG = (
     "-env:UserInstallation=file:///C:/Temp/winarena-libreoffice-profile"
@@ -977,7 +979,12 @@ class SetupController:
             browser = self._connect_browser_over_cdp(p, remote_debugging_url, "Chrome")
 
             if not browser:
-                return
+                raise RuntimeError(
+                    f"Could not connect to Chrome at {remote_debugging_url}"
+                )
+
+            if not browser.contexts:
+                raise RuntimeError("Chrome has no browser context available")
 
             target_page = None
             target_context = browser.contexts[0]
@@ -993,19 +1000,21 @@ class SetupController:
             if not target_page and url:
                 startup_pages = [
                     page for page in target_context.pages
-                    if page.url.startswith(("about:", "chrome://"))
+                    if page.url.startswith(("about:", "chrome://", "chrome-error://"))
                 ]
                 target_page = startup_pages[0] if startup_pages else target_context.new_page()
-                try:
-                    target_page.goto(url, timeout=60000)
-                    logger.info("Opened tab for Chrome script: %s", url)
-                except Exception as e:
-                    logger.warning("Opening %s exceeds time limit: %s", url, e)
+                self._navigate_chrome_page_with_retries(
+                    target_page,
+                    url,
+                    timeout=max(timeout, 60000),
+                )
+                logger.info("Opened tab for Chrome script: %s", url)
                 self._close_chrome_startup_tabs(remote_debugging_url, [url])
 
             if not target_page:
-                logger.warning("No Chrome tab matched URL prefix: %s", target_prefix)
-                return
+                raise RuntimeError(
+                    f"No Chrome tab matched URL prefix: {target_prefix}"
+                )
 
             if wait_seconds:
                 time.sleep(wait_seconds)
@@ -1015,7 +1024,62 @@ class SetupController:
                 target_page.evaluate(script)
                 logger.info("Executed Chrome script on tab: %s", target_page.url)
             except Exception as e:
-                logger.warning("Failed to execute Chrome script on %s: %s", target_page.url, e)
+                raise RuntimeError(
+                    f"Failed to execute Chrome setup script on {target_page.url}: {e}"
+                ) from e
+
+    @staticmethod
+    def _navigate_chrome_page_with_retries(
+            page,
+            url: str,
+            timeout: int,
+            attempts: int = CHROME_NAVIGATION_ATTEMPTS,
+            retry_delay: float = CHROME_NAVIGATION_RETRY_DELAY,
+    ):
+        """Navigate to a required task URL, retrying transient DNS failures.
+
+        A task must not start on ``chrome-error://``. Previously navigation
+        exceptions were logged and ignored, which converted infrastructure
+        failures into agent failures.
+        """
+        last_error = None
+        for attempt in range(1, attempts + 1):
+            try:
+                page.goto(url, timeout=timeout, wait_until="domcontentloaded")
+                if str(page.url).startswith("chrome-error://"):
+                    raise RuntimeError(
+                        f"Chrome displayed an error page while opening {url}"
+                    )
+                return
+            except Exception as exc:
+                last_error = exc
+                # A timeout can be reported after the target document has
+                # already loaded enough for the task setup script to run.
+                current_url = str(getattr(page, "url", ""))
+                if current_url.startswith(url) and not current_url.startswith(
+                    "chrome-error://"
+                ):
+                    logger.warning(
+                        "Navigation to %s reported an error after reaching the "
+                        "target page; continuing: %s",
+                        url,
+                        exc,
+                    )
+                    return
+
+                logger.warning(
+                    "Failed to open required task URL %s (attempt %d/%d): %s",
+                    url,
+                    attempt,
+                    attempts,
+                    exc,
+                )
+                if attempt < attempts:
+                    time.sleep(retry_delay)
+
+        raise RuntimeError(
+            f"Failed to open required task URL {url} after {attempts} attempts"
+        ) from last_error
 
     @staticmethod
     def _build_video_for_caption_prep_script(

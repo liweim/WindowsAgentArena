@@ -94,6 +94,12 @@ configureDNS() {
   # Add DNS entry for container
   DNSMASQ_OPTS+=" --address=/host.lan/${VM_NET_IP%.*}.1"
 
+  # Docker's embedded resolver can intermittently time out for individual
+  # public domains. Keep it as the default source from resolv.conf, but also
+  # query public fallback resolvers so the Windows guest does not receive a
+  # false NXDOMAIN/timeout from the local dnsmasq forwarder.
+  DNSMASQ_OPTS+=" --server=8.8.8.8 --server=1.1.1.1 --all-servers"
+
   DNSMASQ_OPTS=$(echo "$DNSMASQ_OPTS" | sed 's/\t/ /g' | tr -s ' ' | sed 's/^ *//')
 
   if ! $DNSMASQ ${DNSMASQ_OPTS:+ $DNSMASQ_OPTS}; then

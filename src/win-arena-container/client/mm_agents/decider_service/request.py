@@ -54,7 +54,7 @@ def main() -> None:
             "use_chart_fact": {
                 "type": "noul",
                 "instructions": (
-                    "Should this fact be included? "
+                    "Should this fact be included?"
                     "Fact: object:chart_1 = chart using Revenue!B2:C10"
                 ),
                 "criteria": {

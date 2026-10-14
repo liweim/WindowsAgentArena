@@ -132,6 +132,7 @@ locallstc_root_path=$(getrealpath "$SCRIPT_DIR/../../..")
 entry_script_path=$(getrealpath "$SCRIPT_DIR/../src/win-arena-container/entry.sh")
 entry_setup_script_path=$(getrealpath "$SCRIPT_DIR/../src/win-arena-container/entry_setup.sh")
 start_client_script_path=$(getrealpath "$SCRIPT_DIR/../src/win-arena-container/start_client.sh")
+network_script_path=$(getrealpath "$SCRIPT_DIR/../src/win-arena-container/fix_az_network.sh")
 task_json_mount_path=""
 
 echo "Using VM Setup Image path: $vm_setup_image_path"
@@ -209,7 +210,7 @@ invoke_docker_container() {
     if [ -n "$task_json_mount_path" ]; then docker_command+=" -v ${task_json_mount_path}:/winarena-task.json:ro"; fi
     if [ "$mount_server" = true ]; then docker_command+=" -v ${server_mount_path}/.:/shared"; fi
     if [ "$mount_client" = true ]; then docker_command+=" -v ${client_mount_path}/.:/client"; fi
-    docker_command+=" -v ${entry_script_path}:/entry.sh:ro -v ${entry_setup_script_path}:/entry_setup.sh:ro -v ${start_client_script_path}:/start_client.sh:ro"
+    docker_command+=" -v ${entry_script_path}:/entry.sh:ro -v ${entry_setup_script_path}:/entry_setup.sh:ro -v ${start_client_script_path}:/start_client.sh:ro -v ${network_script_path}:/run/network.sh:ro"
     docker_command+=" -v ${locallstc_root_path}/.:/locallstc -e PYTHONPATH=/locallstc:/client"
     docker_command+=" --add-host=host.docker.internal:host-gateway"
     docker_command+=" -e LOCAL_API_URL=http://host.docker.internal:30000/v1 -e GTA1_API_URL=http://host.docker.internal:1234/v1 -e UITARS_API_URL=http://host.docker.internal:1235/v1"

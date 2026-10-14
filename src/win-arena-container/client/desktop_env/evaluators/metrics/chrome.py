@@ -25,14 +25,18 @@ def is_expected_active_tab(active_tab_info: Dict[str, str], rule: Dict[str, Any]
 
     match_type = rule['type']
     if match_type == "url":
-        expected_url = rule['url']
+        expected_urls = rule.get('urls')
+        if expected_urls is None:
+            expected_urls = [rule['url']]
+        elif isinstance(expected_urls, str):
+            expected_urls = [expected_urls]
         if isinstance(active_tab_info, Dict):
             actual_url = active_tab_info.get('url', None)
         else:
             actual_url = active_tab_info
-        print("expected_url: {}".format(expected_url))
+        print("expected_urls: {}".format(expected_urls))
         print("actual_url: {}".format(actual_url))
-        return 1 if compare_urls(expected_url, actual_url) else 0
+        return 1 if any(compare_urls(expected_url, actual_url) for expected_url in expected_urls) else 0
     else:
         logger.error(f"Unknown type: {match_type}")
         return 0

@@ -61,7 +61,7 @@
   "evaluator": {
     "func": [
       "check_include_exclude",
-      "check_include_exclude"
+      "check_pdf_text_points"
     ],
     "conj": "and",
     "result": [
@@ -71,9 +71,9 @@
         "shell": true
       },
       {
-        "type": "vm_command_line",
-        "command": "C:\\Users\\Docker\\AppData\\Local\\Programs\\Python\\Python310\\python.exe -c \"from pathlib import Path; from pypdf import PdfReader; p=Path.home()/'Desktop'/'answer.pdf'; text=' '.join((page.extract_text() or '') for page in PdfReader(str(p)).pages) if p.is_file() else ''; normalized=' '.join(text.lower().split()); print('FORM_CORRECT' if 'allied health treatment request' in normalized and ('state insurance regulatory authority' in normalized or 'sira' in normalized) else 'FORM_INCORRECT')\"",
-        "shell": true
+        "type": "vm_file",
+        "path": "C:\\Users\\Docker\\Desktop\\answer.pdf",
+        "dest": "answer.pdf"
       }
     ],
     "expected": [
@@ -91,11 +91,15 @@
       {
         "type": "rule",
         "rules": {
-          "include": [
-            "FORM_CORRECT"
-          ],
-          "exclude": [
-            "FORM_INCORRECT"
+          "ignore_case": true,
+          "points": [
+            [
+              "Allied Health Treatment Request"
+            ],
+            [
+              "State Insurance Regulatory Authority",
+              "SIRA"
+            ]
           ]
         }
       }

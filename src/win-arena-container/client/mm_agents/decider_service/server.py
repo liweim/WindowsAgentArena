@@ -112,12 +112,19 @@ class DeciderService:
         self.conv_compat_patched = False
         if requested_device.startswith("cuda"):
             if CUDA_MEMORY_FRACTION is not None:
+                cuda_device = torch.device(requested_device)
+                cuda_device_index = (
+                    cuda_device.index
+                    if cuda_device.index is not None
+                    else torch.cuda.current_device()
+                )
                 torch.cuda.set_per_process_memory_fraction(
                     CUDA_MEMORY_FRACTION,
-                    device=torch.device(requested_device),
+                    device=cuda_device_index,
                 )
                 logging.info(
-                    "Limited the CUDA caching allocator to %.1f%% of device memory",
+                    "Limited the CUDA caching allocator on cuda:%d to %.1f%% of device memory",
+                    cuda_device_index,
                     CUDA_MEMORY_FRACTION * 100,
                 )
             self.conv_compat_patched = _patch_decider_conv_keyword_compat()

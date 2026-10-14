@@ -84,7 +84,10 @@
         "type": "rule",
         "rules": {
           "type": "url",
-          "url": "http://host.docker.internal:8888/wikipedia_en_all_maxi_2022-05/A/Martin_Luther_King_Jr."
+          "urls": [
+            "http://host.docker.internal:8888/wikipedia_en_all_maxi_2022-05/A/Martin_Luther_King_Jr.",
+            "https://en.wikipedia.org/wiki/Martin_Luther_King_Jr."
+          ]
         }
       }
     ]

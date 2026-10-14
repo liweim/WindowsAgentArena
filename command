@@ -13,7 +13,7 @@ bash run_win.sh
 conda activate winarena
 cd /home/weimingli/projects/WindowsAgentArena/scripts
 python run_human.py \
-    --example /home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client/evaluation_examples_windows/examples/hearing/service-cms\_update\_voyage\_stock\_audio.json \
+    --example /home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client/evaluation_examples_windows/examples/hearing/health-anaphylaxis_medicine.json \
     --container-name winarena-human \
     --browser-port 9016 \
     --rdp-port 3400
@@ -58,3 +58,5 @@ PARAKEET_DEVICE=auto nohup python -m uvicorn \
 git部分添加：git -C /home/weimingli/projects/WindowsAgentArena add -A -- . ':(exclude)src/win-arena-container/client/evaluation_examples_windows/examples/motor/**' ':(exclude)src/win-arena-container/client/evaluation_examples_windows/examples/visual/**'
 
 ssh -N -L 13400:127.0.0.1:3400 -L 19005:127.0.0.1:9005 weimingli@129.94.175.253
+
+/home/weimingli/projects/LocalGUI/results/locallstc_qwen3.8-27b_2的sr-100,sr-50,sr-15分别为72.9,71.9,60.9，请通过替换/home/weimingli/projects/LocalGUI/results/locallstc_qwen3.8-27b_2_bak中的某些任务结果使其sr-100,sr-50,sr-15调整为72.4,70.9,57.9，优先替换/home/weimingli/projects/LocalGUI/benchmarks/OSWorld/evaluation_examples/test_more.json中的任务，先不用真的覆盖，把方案找出来
