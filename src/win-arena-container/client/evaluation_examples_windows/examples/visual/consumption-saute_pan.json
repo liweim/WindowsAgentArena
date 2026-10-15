@@ -10,17 +10,15 @@
   ],
   "difficulty": "medium",
   "operation_time": 73.23,
-  "instruction": "I rely on a screen reader to follow the content. Turn on Windows Narrator, then use the provided kitchen catalogue to identify the featured cookware by brand and capacity. Add exactly one unit of the matching product to the shopping cart and leave the cart page open.",
+  "instruction": "I rely on a screen reader to shop online. Turn on Windows Narrator, then use OneStopShop to find the Thunder Group 7-quart sauté pan with a lid included. Add exactly two units to the shopping cart and leave the cart page open.",
   "source": "synthetic",
   "gt_steps": [
-    "Open the kitchen catalogue in Chrome.",
     "Turn on Windows Narrator.",
-    "Use the screen reader to navigate the catalogue.",
-    "Find the featured cookware information.",
-    "Switch to the opened shopping website.",
+    "Open the OneStopShop website already available in Chrome.",
     "Search for the Thunder Group 7-quart sauté pan.",
-    "Open the matching product page.",
-    "Add exactly one unit of the product to the shopping cart.",
+    "Use Narrator to review the search results and product details.",
+    "Open the matching product page and verify that the lid is included.",
+    "Set the quantity to 2 and add the product to the shopping cart.",
     "Open the shopping cart.",
     "Leave the shopping cart page open."
   ],
@@ -28,17 +26,6 @@
     {
       "type": "reset_shopping_cart",
       "parameters": {}
-    },
-    {
-      "type": "upload_file",
-      "parameters": {
-        "files": [
-          {
-            "local_path": "../assets/consumption-saute_pan.html",
-            "path": "C:\\Users\\Docker\\Desktop\\Consumption-kitchen_catalog.html"
-          }
-        ]
-      }
     },
     {
       "type": "launch",
@@ -70,8 +57,7 @@
       "type": "chrome_open_tabs",
       "parameters": {
         "urls_to_open": [
-          "http://host.docker.internal:7770",
-          "file:///C:/Users/Docker/Desktop/Consumption-kitchen_catalog.html"
+          "http://host.docker.internal:7770"
         ]
       }
     }
@@ -111,7 +97,7 @@
           "items": [
             {
               "name": "Thunder Group Saute Pan, 7-Quart",
-              "quantity": 1
+              "quantity": 2
             }
           ]
         }
@@ -123,7 +109,16 @@
           "url": "http://host.docker.internal:7770/checkout/cart/"
         }
       }
-    ]
+    ],
+    "metric_roles": {
+      "task_outcome": [
+        1,
+        2
+      ],
+      "access_requirement": [
+        0
+      ]
+    }
   },
   "proxy": false,
   "possibility_of_env_change": "low"

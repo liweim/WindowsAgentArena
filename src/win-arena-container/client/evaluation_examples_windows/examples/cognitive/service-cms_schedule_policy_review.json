@@ -2,11 +2,11 @@
   "id": "service-cms_schedule_policy_review",
   "user_group": "cognitive",
   "subgroup_ids": [
-    "C-S3"
+    "C-S4"
   ],
   "category": "service",
   "need_ids": [
-    "C3"
+    "C4"
   ],
   "difficulty": "hard",
   "operation_time": 176.41,

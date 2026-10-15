@@ -29,7 +29,7 @@ nohup setsid env \
     --isolate-tasks true \
     --container-name a11yarena-locallstc \
     --result-dir /locallstc/projects/WindowsAgentArena/results/locallstc_qwen3.8-27b \
-    --json-name evaluation_examples_windows/motor.json \
+    --json-name evaluation_examples_windows/test_all.json \
     --remove-container true \
     "$@" >"$LOG_FILE" 2>&1 < /dev/null &
 

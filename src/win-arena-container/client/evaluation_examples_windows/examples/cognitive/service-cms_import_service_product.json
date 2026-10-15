@@ -2,11 +2,11 @@
   "id": "service-cms_import_service_product",
   "user_group": "cognitive",
   "subgroup_ids": [
-    "C-S2"
+    "C-S3"
   ],
   "category": "service",
   "need_ids": [
-    "C2"
+    "C3"
   ],
   "difficulty": "hard",
   "operation_time": 159.40,

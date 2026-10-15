@@ -196,7 +196,7 @@
 | visual | consumption-lavender_coupon | 很可能/合理场景 | A | 低 | 低 | 目标、辅助需求与持久结果基本一致，属于合理桌面使用场景 |
 | visual | consumption-marshmallow_bunnies | 很可能/合理场景 | A | 低 | 低 | 目标、辅助需求与持久结果基本一致，属于合理桌面使用场景 |
 | visual | consumption-saute_pan | 很可能/合理场景 | A | 低 | 低 | 目标、辅助需求与持久结果基本一致，属于合理桌面使用场景 |
-| visual | consumption-swingset_price_filter | 很可能/合理场景 | A | 低 | 低 | 目标、辅助需求与持久结果基本一致，属于合理桌面使用场景 |
+| visual | consumption-bathroom_accessory_price_sort | 很可能/合理场景 | A | 低 | 低 | 目标、辅助需求与持久结果基本一致，属于合理桌面使用场景 |
 | visual | consumption-toothbrush_price_comparison | 很可能/合理场景 | A | 低 | 低 | 目标、辅助需求与持久结果基本一致，属于合理桌面使用场景 |
 | visual | health-drug_facts_package | 很可能/合理场景 | B | 低 | 中 | 视觉资料转为持久文本是合理代理任务，但当前指令偏字段抽取式 |
 | visual | health-hospital_wayfinding_map | 很可能/合理场景 | B | 低 | 高 | 视觉资料转为持久文本是合理代理任务，但当前指令偏字段抽取式 |

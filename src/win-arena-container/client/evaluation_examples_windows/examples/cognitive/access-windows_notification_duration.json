@@ -2,11 +2,11 @@
   "id": "access-windows_notification_duration",
   "user_group": "cognitive",
   "subgroup_ids": [
-    "C-S3"
+    "C-S4"
   ],
   "category": "access",
   "need_ids": [
-    "C3"
+    "C4"
   ],
   "difficulty": "easy",
   "operation_time": 57.06,

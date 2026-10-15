@@ -2,11 +2,11 @@
   "id": "communication-ftc_spam_text_safety_email",
   "user_group": "cognitive",
   "subgroup_ids": [
-    "C-S1"
+    "C-S2"
   ],
   "category": "communication",
   "need_ids": [
-    "C1"
+    "C2"
   ],
   "difficulty": "medium",
   "operation_time": 205.15,

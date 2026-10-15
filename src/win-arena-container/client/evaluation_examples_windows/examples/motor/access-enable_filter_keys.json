@@ -2,11 +2,12 @@
   "id": "access-enable_filter_keys",
   "user_group": "motor",
   "subgroup_ids": [
+    "M-S1",
     "M-S3"
   ],
   "category": "access",
   "need_ids": [
-    "M3"
+    "M2"
   ],
   "difficulty": "easy",
   "operation_time": 26.41,

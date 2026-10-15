@@ -2,11 +2,11 @@
   "id": "captcha-count_chars_1",
   "user_group": "cognitive",
   "subgroup_ids": [
-    "C-S1"
+    "C-S3"
   ],
   "category": "captcha",
   "need_ids": [
-    "C1"
+    "C3"
   ],
   "difficulty": "easy",
   "operation_time": 29.96,

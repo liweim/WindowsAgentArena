@@ -2,7 +2,8 @@
   "id": "information-ucla_economics_premajor_gpa",
   "user_group": "motor",
   "subgroup_ids": [
-    "M-S1"
+    "M-S1",
+    "M-S3"
   ],
   "category": "information",
   "need_ids": [

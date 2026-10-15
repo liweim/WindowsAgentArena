@@ -2,11 +2,11 @@
   "id": "communication-volunteer_shift_reply",
   "user_group": "cognitive",
   "subgroup_ids": [
-    "C-S3"
+    "C-S4"
   ],
   "category": "communication",
   "need_ids": [
-    "C3"
+    "C4"
   ],
   "difficulty": "hard",
   "operation_time": 213.32,

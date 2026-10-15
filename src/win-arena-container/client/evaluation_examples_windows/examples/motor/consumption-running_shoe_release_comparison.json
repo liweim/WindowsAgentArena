@@ -2,11 +2,12 @@
   "id": "consumption-running_shoe_release_comparison",
   "user_group": "motor",
   "subgroup_ids": [
+    "M-S1",
     "M-S3"
   ],
   "category": "consumption",
   "need_ids": [
-    "M3"
+    "M2"
   ],
   "difficulty": "hard",
   "operation_time": 58.21,

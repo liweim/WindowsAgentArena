@@ -2,11 +2,12 @@
   "id": "access-enable_clicklock",
   "user_group": "motor",
   "subgroup_ids": [
-    "M-S2"
+    "M-S2",
+    "M-S3"
   ],
   "category": "access",
   "need_ids": [
-    "M5"
+    "M4"
   ],
   "difficulty": "easy",
   "operation_time": 74.29,

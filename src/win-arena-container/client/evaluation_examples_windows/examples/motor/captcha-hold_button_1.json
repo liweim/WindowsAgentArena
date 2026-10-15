@@ -2,11 +2,12 @@
   "id": "captcha-hold_button_1",
   "user_group": "motor",
   "subgroup_ids": [
-    "M-S2"
+    "M-S2",
+    "M-S3"
   ],
   "category": "captcha",
   "need_ids": [
-    "M5"
+    "M4"
   ],
   "difficulty": "easy",
   "operation_time": 15.43,

@@ -2,11 +2,12 @@
   "id": "management-monthly_expenses_total",
   "user_group": "motor",
   "subgroup_ids": [
+    "M-S1",
     "M-S3"
   ],
   "category": "management",
   "need_ids": [
-    "M3"
+    "M2"
   ],
   "difficulty": "medium",
   "operation_time": 151.38,

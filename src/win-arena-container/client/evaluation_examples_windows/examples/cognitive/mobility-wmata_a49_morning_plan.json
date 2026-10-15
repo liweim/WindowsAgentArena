@@ -2,13 +2,13 @@
   "id": "mobility-wmata_a49_morning_plan",
   "user_group": "cognitive",
   "subgroup_ids": [
-    "C-S2",
-    "C-S3"
+    "C-S3",
+    "C-S4"
   ],
   "category": "mobility",
   "need_ids": [
-    "C2",
-    "C3"
+    "C3",
+    "C4"
   ],
   "difficulty": "hard",
   "operation_time": 159.87,

@@ -2,11 +2,11 @@
   "id": "information-chrome_reference_bookmarks",
   "user_group": "cognitive",
   "subgroup_ids": [
-    "C-S2"
+    "C-S3"
   ],
   "category": "information",
   "need_ids": [
-    "C2"
+    "C3"
   ],
   "difficulty": "easy",
   "operation_time": 21.25,

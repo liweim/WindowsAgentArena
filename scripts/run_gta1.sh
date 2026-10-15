@@ -30,9 +30,8 @@ nohup setsid env \
     --isolate-tasks true \
     --container-name a11yarena-gta1 \
     --result-dir /locallstc/projects/WindowsAgentArena/results/gta1_qwen3.8-27b \
-    --json-name evaluation_examples_windows/test_one.json \
+    --json-name evaluation_examples_windows/cognitive.json \
     --remove-container true \
-    --rerun \
     "$@" >"$LOG_FILE" 2>&1 < /dev/null &
 
 runner_pid=$!

@@ -29,7 +29,7 @@ nohup setsid env \
     --isolate-tasks true \
     --container-name a11yarena-agents3 \
     --result-dir /locallstc/projects/WindowsAgentArena/results/agents3_qwen3.8-27b \
-    --json-name evaluation_examples_windows/debug.json \
+    --json-name evaluation_examples_windows/cognitive.json \
     --remove-container true \
     "$@" >"$LOG_FILE" 2>&1 < /dev/null &
 

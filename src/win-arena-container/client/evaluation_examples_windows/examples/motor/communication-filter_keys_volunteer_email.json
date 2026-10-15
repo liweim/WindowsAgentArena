@@ -2,11 +2,12 @@
   "id": "communication-filter_keys_volunteer_email",
   "user_group": "motor",
   "subgroup_ids": [
+    "M-S1",
     "M-S3"
   ],
   "category": "communication",
   "need_ids": [
-    "M3"
+    "M2"
   ],
   "difficulty": "medium",
   "operation_time": 146.63,

@@ -2,11 +2,12 @@
   "id": "information-psychology_coursework_upload_limit",
   "user_group": "motor",
   "subgroup_ids": [
+    "M-S1",
     "M-S3"
   ],
   "category": "information",
   "need_ids": [
-    "M3"
+    "M2"
   ],
   "difficulty": "medium",
   "operation_time": 68.24,

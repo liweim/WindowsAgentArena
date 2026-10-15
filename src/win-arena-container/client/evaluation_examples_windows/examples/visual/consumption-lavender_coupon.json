@@ -10,17 +10,15 @@
   ],
   "difficulty": "hard",
   "operation_time": 50.24,
-  "instruction": "I rely on a screen reader to follow the content. Turn on Windows Narrator, then use the provided garden catalogue to identify the featured lavender product and coupon code. Add exactly one unit of the matching product to the shopping cart, enter the catalogue coupon code without applying it, and leave the cart page open.",
+  "instruction": "I rely on a screen reader to shop online. Turn on Windows Narrator, then use OneStopShop to find the French Provence live lavender plant with blue flowers that comes as one plant in a 2.5-quart pot. Add exactly two units to the shopping cart, enter coupon code `LAVENDER20` without applying it, and leave the cart page open.",
   "source": "synthetic",
   "gt_steps": [
-    "Open the garden catalogue in Chrome.",
     "Turn on Windows Narrator.",
-    "Use the screen reader to navigate the visually complex catalogue.",
-    "Find the featured lavender product.",
-    "Switch to the opened shopping website.",
+    "Open the OneStopShop website already available in Chrome.",
     "Search for the matching French Provence Lavender product.",
-    "Open the matching French Provence Lavender with blue flowers, supplied as one live plant in a 2.5-quart pot, product page.",
-    "Add exactly one unit of the product to the shopping cart.",
+    "Use Narrator to review the search results and product details.",
+    "Open the French Provence Lavender with blue flowers, supplied as one live plant in a 2.5-quart pot.",
+    "Set the quantity to 2 and add the product to the shopping cart.",
     "Open the shopping cart.",
     "Expand the coupon or discount section if necessary.",
     "Enter LAVENDER20 in the coupon code field.",
@@ -31,17 +29,6 @@
     {
       "type": "reset_shopping_cart",
       "parameters": {}
-    },
-    {
-      "type": "upload_file",
-      "parameters": {
-        "files": [
-          {
-            "local_path": "../assets/consumption-lavender_coupon.html",
-            "path": "C:\\Users\\Docker\\Desktop\\Consumption-lavender_coupon_catalog.html"
-          }
-        ]
-      }
     },
     {
       "type": "launch",
@@ -73,7 +60,6 @@
       "type": "chrome_open_tabs",
       "parameters": {
         "urls_to_open": [
-          "file:///C:/Users/Docker/Desktop/Consumption-lavender_coupon_catalog.html",
           "http://host.docker.internal:7770"
         ]
       }
@@ -119,7 +105,7 @@
           "items": [
             {
               "name": "L+ Lavender French Provence Very Fragrant ( Blue Flowers, 2.5QT Size Pot, 1 Live Plant)",
-              "quantity": 1
+              "quantity": 2
             }
           ]
         }
@@ -137,7 +123,17 @@
           "url": "http://host.docker.internal:7770/checkout/cart/"
         }
       }
-    ]
+    ],
+    "metric_roles": {
+      "task_outcome": [
+        1,
+        2,
+        3
+      ],
+      "access_requirement": [
+        0
+      ]
+    }
   },
   "proxy": false,
   "possibility_of_env_change": "low"

@@ -10,32 +10,22 @@
   ],
   "difficulty": "easy",
   "operation_time": 86.57,
-  "instruction": "I rely on a screen reader to follow the content. Turn on Windows Narrator and use it to read the shopping note in Chrome, identify the requested product, find it on the opened shopping website, and open its product page. Leave that page open.",
+  "instruction": "I rely on a screen reader to shop online. Turn on Windows Narrator, then use OneStopShop to find the ThinSlim Foods plain keto bread sold as a pack of two that has zero net carbs and is soy free. Add exactly two units to the shopping cart and leave the cart page open.",
   "source": "synthetic",
   "gt_steps": [
-    "Open the provided shopping note in Chrome.",
     "Turn on Windows Narrator.",
-    "Use the screen reader to read the shopping note.",
-    "Open the shopping website.",
-    "Search for the requested product.",
+    "Open the OneStopShop website already available in Chrome.",
+    "Search for ThinSlim Foods keto bread.",
+    "Use Narrator to review the search results and product details.",
+    "Identify the plain two-pack with zero net carbs that is soy free.",
     "Open the correct ThinSlim Foods Keto Bread product page.",
-    "Leave the product page open in the active tab."
+    "Set the quantity to 2 and add the product to the shopping cart.",
+    "Open the shopping cart and leave it visible."
   ],
   "config": [
     {
       "type": "reset_shopping_cart",
       "parameters": {}
-    },
-    {
-      "type": "upload_file",
-      "parameters": {
-        "files": [
-          {
-            "local_path": "../assets/consumption-keto_bread.html",
-            "path": "C:\\Users\\Docker\\Desktop\\ShoppingNote.html"
-          }
-        ]
-      }
     },
     {
       "type": "launch",
@@ -67,8 +57,7 @@
       "type": "chrome_open_tabs",
       "parameters": {
         "urls_to_open": [
-          "http://host.docker.internal:7770",
-          "file:///C:/Users/Docker/Desktop/ShoppingNote.html"
+          "http://host.docker.internal:7770"
         ]
       }
     }
@@ -79,12 +68,18 @@
   "evaluator": {
     "func": [
       "check_narrator_enabled",
+      "is_page_contains_items",
       "is_expected_active_tab"
     ],
     "conj": "and",
     "result": [
       {
         "type": "narrator_status"
+      },
+      {
+        "type": "page_info",
+        "url": "http://host.docker.internal:7770/checkout/cart/",
+        "load_state": "networkidle"
       },
       {
         "type": "active_tab_info",
@@ -99,11 +94,31 @@
       {
         "type": "rule",
         "rules": {
+          "items": [
+            {
+              "name": "Keto Bread - Low Carb Bread - Zero Net Carbs - Soy Free - Taste Guaranteed - Plain - Pack of 2 Keto Breads - ThinSlim Foods",
+              "quantity": 2
+            }
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
           "type": "url",
-          "url": "http://host.docker.internal:7770/keto-bread-low-carb-bread-zero-net-carbs-soy-free-taste-guaranteed-plain-pack-of-2-keto-breads-thinslim-foods.html"
+          "url": "http://host.docker.internal:7770/checkout/cart/"
         }
       }
-    ]
+    ],
+    "metric_roles": {
+      "task_outcome": [
+        1,
+        2
+      ],
+      "access_requirement": [
+        0
+      ]
+    }
   },
   "proxy": false,
   "possibility_of_env_change": "low"

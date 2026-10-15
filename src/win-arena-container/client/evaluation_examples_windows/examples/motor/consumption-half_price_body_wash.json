@@ -2,7 +2,8 @@
   "id": "consumption-half_price_body_wash",
   "user_group": "motor",
   "subgroup_ids": [
-    "M-S1"
+    "M-S1",
+    "M-S3"
   ],
   "category": "consumption",
   "need_ids": [

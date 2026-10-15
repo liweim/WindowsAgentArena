@@ -2,11 +2,12 @@
   "id": "health-wheelchair_charging_timer",
   "user_group": "motor",
   "subgroup_ids": [
+    "M-S1",
     "M-S3"
   ],
   "category": "health",
   "need_ids": [
-    "M3"
+    "M2"
   ],
   "difficulty": "medium",
   "operation_time": 259.46,

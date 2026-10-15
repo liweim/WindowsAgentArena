@@ -2,11 +2,11 @@
   "id": "consumption-kids_sunscreen_reviews",
   "user_group": "cognitive",
   "subgroup_ids": [
-    "C-S2"
+    "C-S3"
   ],
   "category": "consumption",
   "need_ids": [
-    "C2"
+    "C3"
   ],
   "difficulty": "medium",
   "operation_time": 67.33,

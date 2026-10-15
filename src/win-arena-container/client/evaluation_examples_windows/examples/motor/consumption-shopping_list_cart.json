@@ -2,11 +2,12 @@
   "id": "consumption-shopping_list_cart",
   "user_group": "motor",
   "subgroup_ids": [
+    "M-S1",
     "M-S3"
   ],
   "category": "consumption",
   "need_ids": [
-    "M3"
+    "M2"
   ],
   "difficulty": "hard",
   "operation_time": 92.77,

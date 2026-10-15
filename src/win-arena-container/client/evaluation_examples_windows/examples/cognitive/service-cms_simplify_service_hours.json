@@ -2,11 +2,11 @@
   "id": "service-cms_simplify_service_hours",
   "user_group": "cognitive",
   "subgroup_ids": [
-    "C-S1"
+    "C-S2"
   ],
   "category": "service",
   "need_ids": [
-    "C1"
+    "C2"
   ],
   "difficulty": "medium",
   "operation_time": 144.39,

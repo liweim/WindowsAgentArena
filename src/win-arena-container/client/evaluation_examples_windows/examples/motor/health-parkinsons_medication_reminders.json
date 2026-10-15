@@ -2,7 +2,8 @@
   "id": "health-parkinsons_medication_reminders",
   "user_group": "motor",
   "subgroup_ids": [
-    "M-S1"
+    "M-S1",
+    "M-S3"
   ],
   "category": "health",
   "need_ids": [

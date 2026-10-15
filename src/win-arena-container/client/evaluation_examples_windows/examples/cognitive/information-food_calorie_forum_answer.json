@@ -2,11 +2,11 @@
   "id": "information-food_calorie_forum_answer",
   "user_group": "cognitive",
   "subgroup_ids": [
-    "C-S1"
+    "C-S2"
   ],
   "category": "information",
   "need_ids": [
-    "C1"
+    "C2"
   ],
   "difficulty": "medium",
   "operation_time": 96.22,

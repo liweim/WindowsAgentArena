@@ -2,7 +2,8 @@
   "id": "service-bank_investigation_period",
   "user_group": "motor",
   "subgroup_ids": [
-    "M-S1"
+    "M-S1",
+    "M-S3"
   ],
   "category": "service",
   "need_ids": [

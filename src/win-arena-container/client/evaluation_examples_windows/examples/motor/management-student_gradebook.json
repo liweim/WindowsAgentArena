@@ -2,7 +2,8 @@
   "id": "management-student_gradebook",
   "user_group": "motor",
   "subgroup_ids": [
-    "M-S1"
+    "M-S1",
+    "M-S3"
   ],
   "category": "management",
   "need_ids": [

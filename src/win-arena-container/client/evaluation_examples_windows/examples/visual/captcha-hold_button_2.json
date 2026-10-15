@@ -2,12 +2,11 @@
   "id": "captcha-hold_button_2",
   "user_group": "visual",
   "subgroup_ids": [
-    "V-S1",
-    "V-S2"
+    "V-S1"
   ],
   "category": "captcha",
   "need_ids": [
-    "V6"
+    "V1"
   ],
   "difficulty": "easy",
   "operation_time": 48.92,

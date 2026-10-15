@@ -2,11 +2,11 @@
   "id": "access-chrome_immersive_reader_extension",
   "user_group": "cognitive",
   "subgroup_ids": [
-    "C-S1"
+    "C-S2"
   ],
   "category": "access",
   "need_ids": [
-    "C1"
+    "C2"
   ],
   "difficulty": "medium",
   "operation_time": 46.73,

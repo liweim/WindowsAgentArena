@@ -2,15 +2,15 @@
   "id": "health-doctor_appointment_preparation",
   "user_group": "cognitive",
   "subgroup_ids": [
-    "C-S1",
     "C-S2",
-    "C-S3"
+    "C-S3",
+    "C-S4"
   ],
   "category": "health",
   "need_ids": [
-    "C1",
     "C2",
-    "C3"
+    "C3",
+    "C4"
   ],
   "difficulty": "hard",
   "operation_time": 74.01,
