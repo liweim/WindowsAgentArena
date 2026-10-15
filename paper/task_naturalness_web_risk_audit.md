@@ -1,6 +1,6 @@
 # Windows accessibility task naturalness and web-drift audit
 
-审计日期：2026-10-09。范围：`evaluation_examples_windows/examples` 下 200 个任务。
+审计日期：2026-10-16。范围：`evaluation_examples_windows/examples` 下 198 个任务。
 
 ## 口径
 
@@ -11,10 +11,17 @@
 
 ## 汇总
 
-- 数量：visual 50，hearing 50，motor 50，cognitive 50。
-- 自然性：A 141，B 32，C 27。没有发现从能力定义上绝对“不可能”的任务，但 C 类不宜作为日常生态任务来表述。
-- 运行时网页风险：高 19，中 11，低 170。12 个高风险内容型任务已改用本地 PDF。
+- 数量：visual 49，hearing 50，motor 50，cognitive 49。
+- 自然性：A 142，B 31，C 25。没有发现从能力定义上绝对“不可能”的任务，但 C 类不宜作为日常生态任务来表述。
+- 运行时网页风险：高 19，中 11，低 168。11 个高风险内容型任务已改用本地 PDF。
 - 总体判断：hearing 与 cognitive 的提醒/清单/字幕任务整体最自然；motor 指令现已用真实输入困难解释辅助功能的用途，明显减轻了“设置 + 无关任务”的拼接感；CAPTCHA 仍应明确标为 stress-test slice。
+
+## 已删除任务（2 个）
+
+1. `information-running_hydration_note`：它与保留的 `health-running_hydration_guide_note` 使用同一份本地 SELF PDF、相同的 Edge + Sticky Notes 工作流、相同的 need/subgroup，且预期答案只是后者三项答案中的第一项；删除这个严格子集几乎不会损失能力覆盖。
+2. `captcha-audio_5`：按最终取舍从 visual CAPTCHA 压力测试 slice 中删除。
+
+删除后集合共 198 个任务，其中 cognitive 与 visual 各 49 个，hearing 与 motor 各 50 个。CAPTCHA 仍应作为单独的障碍压力测试 slice 标注，不与生态任务按同一标准解释。
 
 ## 逐任务判断
 
@@ -23,7 +30,7 @@
 | cognitive | access-chrome_font_size_large | 很可能/合理场景 | A | 低 | 低 | 目标、辅助需求与持久结果基本一致，属于合理桌面使用场景 |
 | cognitive | access-chrome_immersive_reader_extension | 很可能/合理场景 | B | 高 | 中-高 | 安装阅读辅助扩展合理，但指定低使用量第三方扩展较人为且有供应链风险 |
 | cognitive | access-edge_immersive_reader_setup | 很可能/合理场景 | A | 低 | 低 | 目标、辅助需求与持久结果基本一致，属于合理桌面使用场景 |
-| cognitive | access-windows_notification_duration | 很可能/合理场景 | C | 低 | 低 | 需求合理，但要求普通用户直接改注册表且解释系统缺控件，表达不自然 |
+| cognitive | access-windows_notification_duration | 很可能/合理场景 | A | 低 | 低 | 延长通知显示时间直接对应信息处理需求，并可通过 Windows Accessibility 设置完成 |
 | cognitive | access-windows_text_size_125 | 很可能/合理场景 | A | 低 | 低 | 目标、辅助需求与持久结果基本一致，属于合理桌面使用场景 |
 | cognitive | captcha-audio_1 | 条件性（会遇到验证，但具体题型偏测试） | C | 低 | 低 | 适合作为障碍压力测试，不像用户独立提出的完整生活目标 |
 | cognitive | captcha-click_sequence_3 | 条件性（会遇到验证，但具体题型偏测试） | C | 低 | 低 | 适合作为障碍压力测试，不像用户独立提出的完整生活目标 |
@@ -51,7 +58,6 @@
 | cognitive | information-emergency_kit_checklist | 很可能/合理场景 | B | 低 | 中-高 | 目标可能真实，但逐字复制/固定字段或职业流程使指令偏机械 |
 | cognitive | information-food_calorie_forum_answer | 很可能/合理场景 | A | 低 | 低 | 目标、辅助需求与持久结果基本一致，属于合理桌面使用场景 |
 | cognitive | information-passport_renewal_checklist | 很可能/合理场景 | B | 低 | 中-高 | 目标可能真实，但逐字复制/固定字段或职业流程使指令偏机械 |
-| cognitive | information-running_hydration_note | 很可能/合理场景 | B | 低 | 中-高 | 目标可能真实，但逐字复制/固定字段或职业流程使指令偏机械 |
 | cognitive | information-wikipedia_accessibility_definition | 很可能/合理场景 | A | 低 | 低 | 目标、辅助需求与持久结果基本一致，属于合理桌面使用场景 |
 | cognitive | management-cfpb_autopay_review_reminder | 很可能/合理场景 | B | 低 | 中-高 | 目标可能真实，但逐字复制/固定字段或职业流程使指令偏机械 |
 | cognitive | management-medication_timer | 很可能/合理场景 | A | 高 | 低 | 目标、辅助需求与持久结果基本一致，属于合理桌面使用场景 |
@@ -178,7 +184,6 @@
 | visual | access-windows_magnifier_200 | 很可能/合理场景 | A | 低 | 低 | 目标、辅助需求与持久结果基本一致，属于合理桌面使用场景 |
 | visual | access-windows_magnifier_open | 很可能/合理场景 | A | 低 | 低 | 目标、辅助需求与持久结果基本一致，属于合理桌面使用场景 |
 | visual | access-windows_narrator_open | 很可能/合理场景 | A | 低 | 低 | 目标、辅助需求与持久结果基本一致，属于合理桌面使用场景 |
-| visual | captcha-audio_4 | 条件性（会遇到验证，但具体题型偏测试） | C | 低 | 低 | 适合作为障碍压力测试，不像用户独立提出的完整生活目标 |
 | visual | captcha-click_sequence_2 | 条件性（会遇到验证，但具体题型偏测试） | C | 低 | 低 | 适合作为障碍压力测试，不像用户独立提出的完整生活目标 |
 | visual | captcha-count_chars_2 | 条件性（会遇到验证，但具体题型偏测试） | C | 低 | 低 | 适合作为障碍压力测试，不像用户独立提出的完整生活目标 |
 | visual | captcha-distorted_text_1 | 条件性（会遇到验证，但具体题型偏测试） | C | 低 | 低 | 适合作为障碍压力测试，不像用户独立提出的完整生活目标 |
@@ -196,7 +201,7 @@
 | visual | consumption-lavender_coupon | 很可能/合理场景 | A | 低 | 低 | 目标、辅助需求与持久结果基本一致，属于合理桌面使用场景 |
 | visual | consumption-marshmallow_bunnies | 很可能/合理场景 | A | 低 | 低 | 目标、辅助需求与持久结果基本一致，属于合理桌面使用场景 |
 | visual | consumption-saute_pan | 很可能/合理场景 | A | 低 | 低 | 目标、辅助需求与持久结果基本一致，属于合理桌面使用场景 |
-| visual | consumption-bathroom_accessory_price_sort | 很可能/合理场景 | A | 低 | 低 | 目标、辅助需求与持久结果基本一致，属于合理桌面使用场景 |
+| visual | consumption-guest_bathroom_towel_holders | 很可能/合理场景 | A | 低 | 低 | 为客用浴室采购最低价毛巾架具有明确生活目的，Narrator、价格排序、颜色和数量要求均直接服务于购物结果 |
 | visual | consumption-toothbrush_price_comparison | 很可能/合理场景 | A | 低 | 低 | 目标、辅助需求与持久结果基本一致，属于合理桌面使用场景 |
 | visual | health-drug_facts_package | 很可能/合理场景 | B | 低 | 中 | 视觉资料转为持久文本是合理代理任务，但当前指令偏字段抽取式 |
 | visual | health-hospital_wayfinding_map | 很可能/合理场景 | B | 低 | 高 | 视觉资料转为持久文本是合理代理任务，但当前指令偏字段抽取式 |
@@ -255,7 +260,7 @@
 - `information-skill_building_hobbies`：Covey 页面已保存为保留屏幕版式和图片、并附可搜索文本层的本地 PDF，任务改为 `file:///` 打开，`proxy` 改为 `false`。
 - `mobility-accessible_grade1_walks`：NSW National Parks 完整步道列表已保存为保留屏幕版式和图片、并附可搜索文本层的本地 PDF；其中仍保留不符合筛选条件的条目。任务改为 `file:///` 打开，`proxy` 改为 `false`。
 - `health-physiotherapy_appointment_checklist`：Incline Health 页面已保存为保留屏幕版式和图片、并附可搜索文本层的本地 PDF；原网页不再是运行依赖。该任务仍因 Thunderbird profile 下载保留 `proxy: true`。
-- 新增本地化 12 个高风险内容型任务：`communication-ftc_gift_card_pressure_email`, `communication-ftc_gift_card_scam_email`, `communication-ftc_spam_text_safety_email`, `health-doctor_appointment_preparation`, `health-doctor_visit_preparation_summary`, `health-running_hydration_guide_note`, `health-sunscreen_ingredient_age_note`, `information-emergency_kit_checklist`, `information-passport_renewal_checklist`, `information-running_hydration_note`, `management-cfpb_autopay_review_reminder`, `management-sunscreen_ingredient_reminder`。
+- 新增本地化 11 个高风险内容型任务：`communication-ftc_gift_card_pressure_email`, `communication-ftc_gift_card_scam_email`, `communication-ftc_spam_text_safety_email`, `health-doctor_appointment_preparation`, `health-doctor_visit_preparation_summary`, `health-running_hydration_guide_note`, `health-sunscreen_ingredient_age_note`, `information-emergency_kit_checklist`, `information-passport_renewal_checklist`, `management-cfpb_autopay_review_reminder`, `management-sunscreen_ingredient_reminder`。
 - Chrome 扩展安装、表单下载、FTC Tableau、Accessible Beaches 目录、IRS/SSA 流程、vclock、Google Maps/Street View 等交互型任务未转为 PDF；静态快照无法保留安装、下载、计时、筛选、路线和导航目标状态。
 
 ## 指令自然化

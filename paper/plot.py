@@ -52,7 +52,7 @@ CATEGORY_COLORS = (
     "#DDCABE",
 )
 DIFFICULTY_COLORS = ("#D5DFD0", "#EBD7BD", "#E5C4C1")
-PREFIX_COLORS = dict(zip(("V", "H", "M", "C"), GROUP_COLORS, strict=True))
+PREFIX_COLORS = dict(zip(("V", "H", "M", "C"), GROUP_COLORS))
 
 
 def configure_style() -> None:
@@ -258,12 +258,12 @@ def plot_group_category(metadata: pd.DataFrame, output_dir: Path) -> Path:
         text.set_ha("center")
         text.set_va("center")
 
-    short_category_labels = (
-        "Comm.",
-        "Info.",
-        "Mgmt.",
+    category_labels = (
+        "Communication",
+        "Information",
+        "Management",
         "Mobility",
-        "Consum.",
+        "Consumption",
         "Service",
         "Health",
         "Access",
@@ -272,10 +272,10 @@ def plot_group_category(metadata: pd.DataFrame, output_dir: Path) -> Path:
     inner_labels = [
         f"{label}\n{int(count)}"
         for label, count in zip(
-            short_category_labels, category_counts.to_numpy(), strict=True
+            category_labels, category_counts.to_numpy()
         )
     ]
-    ax.pie(
+    inner_wedges, inner_texts = ax.pie(
         category_counts.to_numpy(),
         radius=0.70,
         labels=inner_labels,
@@ -286,12 +286,23 @@ def plot_group_category(metadata: pd.DataFrame, output_dir: Path) -> Path:
         center=(center_x, 0),
         wedgeprops={"width": 0.38, "edgecolor": "white", "linewidth": 1.0},
         textprops={
-            "fontsize": 5.8,
+            "fontsize": 4.8,
             "fontweight": "bold",
             "ha": "center",
             "va": "center",
         },
     )
+    # Separate the two long labels that meet at the 12 o'clock boundary.
+    for index, label_radius in ((0, 0.54), (8, 0.42)):
+        angle = np.deg2rad(
+            (inner_wedges[index].theta1 + inner_wedges[index].theta2) / 2
+        )
+        inner_texts[index].set_position(
+            (
+                center_x + label_radius * np.cos(angle),
+                label_radius * np.sin(angle),
+            )
+        )
 
     # Emphasize category boundaries across the outer ring.
     for cumulative in np.cumsum(category_counts.to_numpy())[:-1]:
@@ -315,7 +326,7 @@ def plot_group_category(metadata: pd.DataFrame, output_dir: Path) -> Path:
     )
     legend_handles = [
         Patch(facecolor=color, edgecolor="white", label=group.title())
-        for group, color in zip(USER_GROUPS, GROUP_COLORS, strict=True)
+        for group, color in zip(USER_GROUPS, GROUP_COLORS)
     ]
     ax.legend(
         handles=legend_handles,
@@ -408,9 +419,7 @@ def plot_difficulty(metadata: pd.DataFrame, output_dir: Path) -> Path:
 
 def plot_operation_time_ecdf(metadata: pd.DataFrame, output_dir: Path) -> Path:
     fig, ax = plt.subplots(figsize=(3.8, 2.75))
-    for difficulty, color, line_style in zip(
-        DIFFICULTIES, DIFFICULTY_COLORS, ("-", "--", ":"), strict=True
-    ):
+    for difficulty, color in zip(DIFFICULTIES, DIFFICULTY_COLORS):
         values = np.sort(
             metadata.loc[metadata["difficulty"] == difficulty, "operation_time"].to_numpy()
             / 60.0
@@ -422,7 +431,7 @@ def plot_operation_time_ecdf(metadata: pd.DataFrame, output_dir: Path) -> Path:
             where="post",
             label=f"{difficulty.title()} (n={len(values)})",
             color=color,
-            linestyle=line_style,
+            linestyle="-",
             linewidth=2.1,
         )
     ax.set_xlabel("Human operating time (min)")
@@ -454,13 +463,13 @@ def plot_difficulty_time(metadata: pd.DataFrame, output_dir: Path) -> Path:
         whiskerprops={"color": "#777777"},
         capprops={"color": "#777777"},
     )
-    for patch, color in zip(box["boxes"], DIFFICULTY_COLORS, strict=True):
+    for patch, color in zip(box["boxes"], DIFFICULTY_COLORS):
         patch.set_facecolor(color)
         patch.set_edgecolor("white")
 
     rng = np.random.default_rng(2027)
     for index, (values, color) in enumerate(
-        zip(time_data, DIFFICULTY_COLORS, strict=True), start=1
+        zip(time_data, DIFFICULTY_COLORS), start=1
     ):
         jitter = rng.uniform(-0.16, 0.16, size=len(values))
         ax.scatter(

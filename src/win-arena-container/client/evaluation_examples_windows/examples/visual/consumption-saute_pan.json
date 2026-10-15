@@ -10,7 +10,7 @@
   ],
   "difficulty": "medium",
   "operation_time": 73.23,
-  "instruction": "I rely on a screen reader to shop online. Turn on Windows Narrator, then use OneStopShop to find the Thunder Group 7-quart sauté pan with a lid included. Add exactly two units to the shopping cart and leave the cart page open.",
+  "instruction": "I rely on a screen reader to shop online. Turn on Windows Narrator, then use OneStopShop to find the Thunder Group 7-quart sauté pan with a lid included. Add exactly one unit to the shopping cart and leave the cart page open.",
   "source": "synthetic",
   "gt_steps": [
     "Turn on Windows Narrator.",
@@ -18,7 +18,7 @@
     "Search for the Thunder Group 7-quart sauté pan.",
     "Use Narrator to review the search results and product details.",
     "Open the matching product page and verify that the lid is included.",
-    "Set the quantity to 2 and add the product to the shopping cart.",
+    "Add exactly one unit of the product to the shopping cart.",
     "Open the shopping cart.",
     "Leave the shopping cart page open."
   ],
@@ -97,7 +97,7 @@
           "items": [
             {
               "name": "Thunder Group Saute Pan, 7-Quart",
-              "quantity": 2
+              "quantity": 1
             }
           ]
         }

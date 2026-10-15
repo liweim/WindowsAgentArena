@@ -38,7 +38,7 @@
 \maketitle
 
 \begin{abstract}
-Accessibility needs often do not change the underlying digital goal; they change what information, support, or interface state is required for usable completion. Computer-use agents (CUAs) could reduce access barriers by completing GUI workflows on users' behalf, yet current benchmarks mainly measure nominal task completion and provide little evidence about whether agents can satisfy accessibility-related requirements. We introduce \bench, an executable Windows benchmark with 200 tasks informed by 17 documented functional support requirements derived from real-user evidence, accessibility research, standards and design guidance, and platform documentation across visual, hearing, motor, and cognitive scenarios. Each task is paired with automatic setup and task-specific end-state evaluation, and the required accessibility condition is built into what counts as task success rather than added as an optional tool-use constraint. This design distinguishes generic execution failure from the accessibility-conditioned case in which the nominal GUI goal is reached but the required access-supporting outcome is not. We evaluate Agent S3, CoAct-1, GTA1, HiSA, and LocalLSTC on OSWorld, WindowsAgentArena, and \bench under matched 15- and 50-step budgets, where \todo{insert headline cross-benchmark result}; further analysis with manually annotated difficulty, operating time, and decomposed task/accessibility outcomes shows \todo{insert strongest analysis finding}.
+Accessibility needs often do not change the underlying digital goal; they change what information, support, or interface state is required for usable completion. Computer-use agents (CUAs) could reduce access barriers by completing GUI workflows on users' behalf, yet current benchmarks mainly measure nominal task completion and provide little evidence about whether agents can satisfy accessibility-related requirements. We introduce \bench, an executable Windows benchmark with 198 tasks informed by 17 documented functional support requirements derived from real-user evidence, accessibility research, standards and design guidance, and platform documentation across visual, hearing, motor, and cognitive scenarios. Each task is paired with automatic setup and task-specific end-state evaluation, and the required accessibility condition is built into what counts as task success rather than added as an optional tool-use constraint. This design distinguishes generic execution failure from the accessibility-conditioned case in which the nominal GUI goal is reached but the required access-supporting outcome is not. We evaluate Agent S3, CoAct-1, GTA1, HiSA, and LocalLSTC on OSWorld, WindowsAgentArena, and \bench under matched 15- and 50-step budgets, where \todo{insert headline cross-benchmark result}; further analysis with manually annotated difficulty, operating time, and decomposed task/accessibility outcomes shows \todo{insert strongest analysis finding}.
 \end{abstract}
 
 \section{Introduction}
@@ -47,7 +47,7 @@ More than 1.3 billion people---approximately one in six people worldwide---exper
 
 Recent work suggests that the accessibility problem is not well captured by inventing a separate class of ``disabled-user tasks.'' A11y-CUA places sighted and blind/low-vision users on the same 60 everyday Windows tasks, showing that high-level goals can be shared even when accessible perception, control, and monitoring differ substantially \citep{a11ycua}. Complementarily, Kodandaram et al. study blind screen-reader users using a desktop CUA in naturalistic workflows; the resulting commands likewise center on familiar desktop activities such as document editing, spreadsheet operations, application configuration, and file management \citep{arewethereyet}. Importantly, the agent-side breakdowns they observe---grounding, planning, constraint tracking, state maintenance, and termination---are largely familiar CUA failure mechanisms rather than failures unique to blindness. What changes in an accessibility setting is the consequence of those failures: when interface state is harder to inspect or verify through a user's access modality, the same execution error can create a larger burden for monitoring, verification, recovery, and handoff. Consistent with this distinction, blind participants asked not only for end-to-end automation, but also for interface explanation, situated troubleshooting, recovery support, and user-controlled execution around consequential or difficult-to-verify actions \citep{arewethereyet}. These findings motivate a separation between the \emph{underlying activity}, the agent's \emph{generic execution reliability}, and the \emph{conditions for usable assistance}. Accessibility-oriented evaluation should therefore preserve ordinary user goals while testing whether execution leaves the information, support, and user-facing state needed for those goals to be usable.
 
-To address this gap, we introduce \bench, an executable Windows benchmark with 200 tasks spanning visual, hearing, motor, and cognitive functional groups. We first synthesize recurring accessibility needs from accessibility research, user surveys and stories, standards and design guidance, and platform documentation; we then use the resulting need taxonomy as the systematic unit for constructing controlled, executable tasks. Rather than constructing disability-exclusive activities or requiring agents to imitate a prescribed assistive-technology trajectory, we instantiate documented needs within ordinary workflows and make the resulting access requirement part of the graded end state. This operationalizes one prerequisite for assistive collaboration: when a user delegates execution, the agent should leave a usable, access-supporting result rather than merely reach a nominal task endpoint.
+To address this gap, we introduce \bench, an executable Windows benchmark with 198 tasks spanning visual, hearing, motor, and cognitive functional groups. We first synthesize recurring accessibility needs from accessibility research, user surveys and stories, standards and design guidance, and platform documentation; we then use the resulting need taxonomy as the systematic unit for constructing controlled, executable tasks. Rather than constructing disability-exclusive activities or requiring agents to imitate a prescribed assistive-technology trajectory, we instantiate documented needs within ordinary workflows and make the resulting access requirement part of the graded end state. This operationalizes one prerequisite for assistive collaboration: when a user delegates execution, the agent should leave a usable, access-supporting result rather than merely reach a nominal task endpoint.
 
 Accessibility-oriented evaluation also requires distinguishing nominal task completion from completion of the accessibility-specific requirement. An agent may, for example, place the correct items in a shopping cart while failing to update a checklist used for memory support, or complete a workflow while leaving a required accessibility setting disabled. We therefore decompose task success, where applicable, into the ordinary \taskout and the accessibility-specific \accessreq, enabling direct measurement of cases in which an agent completes the nominal workflow but still fails to satisfy the user's need.
 
@@ -63,87 +63,78 @@ A11y-CUA is the closest prior work on accessibility-conditioned computer use \ci
 
 Kodandaram et al. provide complementary ecological evidence through a three-week diary study of eight blind screen-reader users interacting with a desktop CUA across 12 applications \citep{arewethereyet}. Their 1,258 participant-issued commands span ordinary desktop activities such as document editing, spreadsheet operations, application configuration, presentation editing, and file management. Their replay evaluation identifies grounding, hidden-path discovery, planning, constraint-tracking, state-maintenance, and termination failures. These failure mechanisms are not, by themselves, specific to blind users; closely related weaknesses are central problems in general-purpose CUA research. The accessibility-specific contribution of the study is instead to show how such breakdowns intersect with nonvisual use and with users' ability to understand, verify, recover from, or take over an agent's actions. Participants therefore wanted CUAs not only to execute tasks autonomously, but also to explain unfamiliar interfaces, identify what changed, provide situated troubleshooting and recovery support, help users learn workflows, and preserve user control around consequential or difficult-to-verify actions \citep{arewethereyet}. This positions accessible CUA design as an interaction and handoff problem around general agent reliability, rather than requiring an entirely separate taxonomy of agent errors. Our benchmark addresses a complementary, deliberately narrower question: across documented visual, hearing, motor, and cognitive needs, does delegated execution terminate in a state that satisfies both the nominal task and the access-need-specific condition?
 
-\paragraph{User assistance and intent-aware systems.}
-GUIDE studies user intent, task progress, and assistance opportunities in open-ended GUI workflows \citep{guide}. Such work is complementary to ours: it asks when and how a system should assist a user, whereas \bench evaluates whether an autonomous CUA can complete an accessibility-oriented user goal once assistance is delegated. More broadly, these lines of work motivate user-aware agents, while our contribution is an executable benchmark construct and evaluation methodology for measuring access-need-specific end-state success.
-
 \section{Benchmark Design of \bench}
 
-Table~\ref{tab:benchmark_comparison} positions \bench against representative GUI-agent datasets and benchmarks along dimensions relevant to accessibility-oriented computer use.
+Following the benchmark-comparison table in OSWorld (Table~4) \citep{osworld}, we compare representative GUI-agent benchmarks along environment, task, and evaluation dimensions, and extend the comparison with accessibility-specific dimensions. We order prior work from general-purpose interactive GUI benchmarks, to multimodal and video-centric benchmarks, to accessibility-focused studies, followed by \bench. We use \(\checkmark/\times\) only for properties that admit a clear binary interpretation. Specifically, \textbf{Interactive Env.} indicates whether agents can act in an executable environment and receive state transitions during evaluation, whereas \textbf{Evaluation} describes how performance is actually measured. \textbf{Task-relevant Modalities} summarizes the information modalities required by the benchmark tasks rather than the agent's GUI observation representation. Finally, \textbf{A11y-Graded} indicates whether satisfying an explicit accessibility requirement is itself part of the graded task outcome.
 
 \begin{table*}[t]
 \centering
 \scriptsize
-\setlength{\tabcolsep}{3.2pt}
-\renewcommand{\arraystretch}{1.12}
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{llrcccccccc}
+\setlength{\tabcolsep}{3.5pt}
+\renewcommand{\arraystretch}{1.18}
+\begin{tabularx}{\textwidth}{@{}
+  >{\raggedright\arraybackslash}p{0.135\textwidth}
+  >{\raggedright\arraybackslash}p{0.105\textwidth}
+  >{\centering\arraybackslash}p{0.080\textwidth}
+  >{\raggedright\arraybackslash}p{0.090\textwidth}
+  >{\raggedright\arraybackslash}p{0.130\textwidth}
+  >{\raggedright\arraybackslash}p{0.155\textwidth}
+  >{\raggedright\arraybackslash}X
+  >{\centering\arraybackslash}p{0.075\textwidth}@{}}
 \toprule
-Category & Work & Scale &
-Interactive Env. &
-Text Input &
-Video Input &
-Audio Input &
-A11y &
-Everyday Tasks &
-Multi-scenario &
-Reusable E2E Benchmark \\
+Work & Scale &
+\shortstack{Interactive\\Env.} &
+Platform &
+\shortstack[l]{Task-relevant\\Modalities} &
+Evaluation &
+\shortstack[l]{Accessibility\\Scope} &
+\shortstack{A11y-\\Graded} \\
 \midrule
-Web GUI Agents
-& WebArena \citep{webarena}
+WebArena \citep{webarena}
 & 812 tasks
-& \checkmark & \checkmark & $\times$ & $\times$ & $\times$ & \checkmark & \checkmark & \checkmark \\
+& $\checkmark$ & Web & Text & Programmatic end-state & -- & $\times$ \\
 
-& VisualWebArena \citep{visualwebarena}
+VisualWebArena \citep{visualwebarena}
 & 910 tasks
-& \checkmark & \checkmark & $\times$ & $\times$ & $\times$ & \checkmark & \checkmark & \checkmark \\
+& $\checkmark$ & Web & Text + image & Programmatic end-state & -- & $\times$ \\
 
-\midrule
-OS / Mobile Computer Use
-& OSWorld \citep{osworld}
+OSWorld \citep{osworld}
 & 369 tasks
-& \checkmark & \checkmark & $\times$ & $\times$ & $\times$ & \checkmark & \checkmark & \checkmark \\
+& $\checkmark$ & Desktop OS & Text + image & Execution-based end-state & -- & $\times$ \\
 
-& AndroidWorld \citep{androidworld}
+AndroidWorld \citep{androidworld}
 & 116 task types
-& \checkmark & \checkmark & $\times$ & $\times$ & $\times$ & \checkmark & \checkmark & \checkmark \\
+& $\checkmark$ & Android & Text + image & Programmatic state & -- & $\times$ \\
 
-\midrule
-Multimodal / Video-Aware GUI Agents
-& VideoWebArena \citep{videowebarena}
+\addlinespace[2pt]
+VideoWebArena \citep{videowebarena}
 & 2,021 tasks
-& \checkmark & \checkmark & \checkmark & \checkmark & $\times$ & \checkmark & \checkmark & \checkmark \\
+& $\checkmark$ & Web & Text + video + audio & Execution-based end-state & -- & $\times$ \\
 
-& VideoGUI \citep{videogui}
-& 86 tasks / 463 subtasks
-& $\times$ & \checkmark & \checkmark & $\times$ & $\times$ & $\times$ & \checkmark & $\times$ \\
+VideoGUI \citep{videogui}
+& 178 tasks / 463 subtasks
+& $\times$ & Desktop / Web & Image + video & Hierarchical planning / action & -- & $\times$ \\
 
-& OmniGUI \citep{omnigui}
+OmniGUI \citep{omnigui}
 & 709 episodes / 2,579 steps
-& $\times$ & \checkmark & \checkmark & \checkmark & $\times$ & \checkmark & \checkmark & $\times$ \\
+& $\times$ & Smartphone & Image + video + audio & Step-level action prediction & -- & $\times$ \\
 
-\midrule
-Accessibility / User Assistance
-& A11y-CUA \citep{a11ycua}
+\addlinespace[2pt]
+A11y-CUA \citep{a11ycua}
 & 60 tasks
-& $\times$ & \checkmark & $\times$ & $\times$ & \checkmark & \checkmark & \checkmark & $\times$ \\
+& $\times$ & Windows & Text + image + video + audio & Task success + trace analysis & Blind / low vision & $\times$ \\
 
-& \textit{Are We There Yet?} \citep{arewethereyet}
+\textit{Are We There Yet?} \citep{arewethereyet}
 & 1,258 commands / 8 users
-& $\times$ & \checkmark & $\times$ & $\times$ & \checkmark & \checkmark & \checkmark & $\times$ \\
-
-& GUIDE \citep{guide}
-& 67.5 h / 120 users
-& $\times$ & $\times$ & \checkmark & $\times$ & $\times$ & $\times$ & \checkmark & $\times$ \\
+& $\times$ & Desktop & Text & Replay + trace analysis & Blind & $\times$ \\
 
 \midrule
-\textbf{Accessibility-Oriented CUA}
-& \textbf{\bench}
-& \textbf{200 tasks}
-& \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\textbf{\bench}
+& \textbf{198 tasks}
+& $\checkmark$ & \textbf{Windows} & \textbf{Text + image + video + audio} & \textbf{TaskOutcome + AccessRequirement} & \textbf{Visual / hearing / motor / cognitive} & $\checkmark$ \\
 \bottomrule
-\end{tabular}%
-}
-\caption{Comparison with representative GUI-agent datasets and benchmarks. \textbf{Interactive Env.} denotes an executable interactive environment; input columns denote modalities that constitute task-relevant input rather than recorded trajectory signals; \textbf{Reusable E2E Benchmark} denotes a reusable task suite with executable environments and an evaluation pipeline.}
+\end{tabularx}
+\caption{Comparison with representative GUI-agent datasets and benchmarks. Rows are ordered from general-purpose interactive GUI benchmarks, to multimodal/video-centric benchmarks, to accessibility-focused studies, followed by \bench. \textbf{Interactive Env.} denotes an executable environment in which an agent can act and receive state transitions. \textbf{Task-relevant Modalities} describes information modalities required by the tasks, rather than the agent's GUI observation format. \textbf{Evaluation} summarizes the primary evaluation protocol. \textbf{A11y-Graded} indicates whether satisfying an explicit accessibility requirement contributes directly to graded task success. References are provided in the \textbf{Work} column.}
 \label{tab:benchmark_comparison}
 \end{table*}
 
@@ -239,7 +230,7 @@ The first quantity measures how often an agent completes the underlying workflow
 
 \subsection{Task Statistics}
 
-\bench contains 200 tasks across four functional groups and eight everyday workflow categories: communication, information, management, mobility, consumption, services, health, and accessibility configuration. CAPTCHA tasks form a separate cross-cutting verification-barrier stress-test slice and retain their underlying visual or hearing need IDs. The cognitive subset is intentionally narrow: a task must require observable attention/distraction support, readability/comprehension simplification, a persistent memory aid, or a prospective-memory/time cue rather than merely being long or planning-heavy.
+\bench contains 198 tasks across four functional groups and eight everyday workflow categories: communication, information, management, mobility, consumption, services, health, and accessibility configuration. CAPTCHA tasks form a separate cross-cutting verification-barrier stress-test slice and retain their underlying visual or hearing need IDs. The cognitive subset is intentionally narrow: a task must require observable attention/distraction support, readability/comprehension simplification, a persistent memory aid, or a prospective-memory/time cue rather than merely being long or planning-heavy.
 
 Table~\ref{tab:stats} summarizes the benchmark, including the difficulty-label counts. Figure~\ref{fig:coverage} shows task categories and their user-group composition as a nested fan chart, while Figures~\ref{fig:need-counts} and~\ref{fig:operation-time} report need-ID assignments and operating-time distributions. In addition to the user-group and need annotations, we manually label task difficulty and record operating time from a successful human execution. These quantities are later used to separate accessibility-specific difficulty from generic long-horizon interaction cost; their joint distribution is reported in Appendix~\ref{app:statistics}. Additional distributions by functional subgroup and application involvement are also reported there.
 
@@ -250,15 +241,15 @@ Table~\ref{tab:stats} summarizes the benchmark, including the difficulty-label c
 \toprule
 Statistic & Value \\
 \midrule
-Tasks & 200 \\
+Tasks & 198 \\
 Functional groups & 4 \\
 Documented need IDs & 17 \\
 Everyday workflow categories & 8 (+1 stress test) \\
-Difficulty labels (Easy / Medium / Hard) & 61 / 99 / 40 \\
-Median human operating time & 63.83 s \\
+Difficulty labels (Easy / Medium / Hard) & 59 / 99 / 40 \\
+Median human operating time & 64.02 s \\
 Related applications & 9 \\
-Cross-application tasks & 113 \\
-Tasks assigned multiple need IDs & 17 \\
+Cross-application tasks & 112 \\
+Tasks assigned multiple need IDs & 16 \\
 \bottomrule
 \end{tabularx}
 \caption{Main statistics of \bench.}
@@ -275,7 +266,7 @@ Tasks assigned multiple need IDs & 17 \\
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.86\columnwidth]{../plot/tasks_by_need.png}
-\caption{Number of task assignments for each documented need ID. Because a task can carry multiple need IDs, counts sum to 218 rather than 200.}
+\caption{Number of task assignments for each documented need ID. Because a task can carry multiple need IDs, counts sum to 215 rather than 198.}
 \label{fig:need-counts}
 \end{figure}
 
@@ -391,7 +382,7 @@ The final method will be derived from the failure patterns above. \todo{Describe
 \FloatBarrier
 \section{Conclusion}
 
-We introduced \bench, a 200-task executable Windows benchmark for evaluating CUAs on everyday tasks shaped by diverse accessibility needs. The benchmark is built around a distinction supported by recent human-centered CUA studies: accessibility need not imply different high-level computer goals, and the underlying agent failures need not be unique to disabled users, while the conditions and consequences of usable assistance can differ substantially \citep{a11ycua,arewethereyet}. Accordingly, \bench does not seek a separate taxonomy of ``accessibility-specific agent errors.'' Instead, documented needs derived from real-user and accessibility evidence determine what information, support artifact, or continuation state must hold at the end of an otherwise ordinary workflow. Task-specific evaluators then separate nominal \taskout from \accessreq, making visible the cases where generic CUA execution reaches the ordinary goal but still leaves an access-incomplete terminal state. Across five agents, \todo{insert cross-benchmark headline result}. Further analysis shows \todo{insert difficulty/time finding and TaskOutcome--FullSuccess gap}, indicating that ordinary GUI competence does not by itself guarantee reliable assistance under accessibility requirements. \todo{Add final method/generalization result if available.}
+We introduced \bench, a 198-task executable Windows benchmark for evaluating CUAs on everyday tasks shaped by diverse accessibility needs. The benchmark is built around a distinction supported by recent human-centered CUA studies: accessibility need not imply different high-level computer goals, and the underlying agent failures need not be unique to disabled users, while the conditions and consequences of usable assistance can differ substantially \citep{a11ycua,arewethereyet}. Accordingly, \bench does not seek a separate taxonomy of ``accessibility-specific agent errors.'' Instead, documented needs derived from real-user and accessibility evidence determine what information, support artifact, or continuation state must hold at the end of an otherwise ordinary workflow. Task-specific evaluators then separate nominal \taskout from \accessreq, making visible the cases where generic CUA execution reaches the ordinary goal but still leaves an access-incomplete terminal state. Across five agents, \todo{insert cross-benchmark headline result}. Further analysis shows \todo{insert difficulty/time finding and TaskOutcome--FullSuccess gap}, indicating that ordinary GUI competence does not by itself guarantee reliable assistance under accessibility requirements. \todo{Add final method/generalization result if available.}
 
 \section{Limitations}
 
@@ -457,11 +448,6 @@ Ananya Gubbi Mohanbabu, Rosiana Natalie, Brandon Kim, Anhong Guo, and Amy Pavel.
 Satwik Ram Kodandaram, Monalika Padma Reddy, Xiaojun Bi, Jiawei Zhou, I. V. Ramakrishnan, and Vikas Ashok. 2026.
 \newblock Are We There Yet? Assessing Computer-Use Agents for Blind Users' Accessible Interaction with Desktop Applications.
 \newblock To appear in \emph{Proceedings of EMNLP 2026}.
-
-\bibitem[Yang et~al.(2026)]{guide}
-Saelyne Yang, Jaesang Yu, Yi-Hao Peng, Kevin Qinghong Lin, Jae Won Cho, Yale Song, and Juho Kim. 2026.
-\newblock GUIDE: A Benchmark for Understanding and Assisting Users in Open-Ended GUI Tasks.
-\newblock In \emph{Proceedings of CVPR 2026}.
 
 \bibitem[WHO(2023)]{whodisability}
 World Health Organization. 2023.
@@ -760,7 +746,7 @@ The released task metadata currently supports exact summaries by functional grou
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.96\columnwidth]{../plot/tasks_by_group.png}
-\caption{Task counts by top-level functional group. The benchmark contains 50 tasks in each group.}
+\caption{Task counts by top-level functional group: 49 visual, 50 hearing, 50 motor, and 49 cognitive tasks.}
 \label{fig:appendix-groups}
 \end{figure}
 
@@ -788,7 +774,7 @@ The released task metadata currently supports exact summaries by functional grou
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.96\columnwidth]{../plot/tasks_by_app_count.png}
-\caption{Number of related applications per task. Tasks involving two or three applications form the 113-task cross-application subset.}
+\caption{Number of related applications per task. Tasks involving two or three applications form the 112-task cross-application subset.}
 \label{fig:appendix-cross-app}
 \end{figure}
 
