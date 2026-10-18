@@ -1,5 +1,5 @@
 {
-  "version": "2026-09-15-v4",
+  "version": "2026-10-16-v5",
   "sources": {
     "webaim_sr10": {
       "title": "WebAIM Screen Reader User Survey #10 Results",
@@ -12,6 +12,26 @@
     "w3c_visual": {
       "title": "W3C WAI: Visual Disabilities — Abilities and Barriers",
       "url": "https://www.w3.org/WAI/people-use-web/abilities-barriers/visual/"
+    },
+    "w3c_stories": {
+      "title": "W3C WAI: Stories of Web Users",
+      "url": "https://www.w3.org/WAI/people-use-web/user-stories/"
+    },
+    "w3c_auditory": {
+      "title": "W3C WAI: Auditory Disabilities — Abilities and Barriers",
+      "url": "https://www.w3.org/WAI/people-use-web/abilities-barriers/auditory/"
+    },
+    "w3c_physical": {
+      "title": "W3C WAI: Physical Disabilities — Abilities and Barriers",
+      "url": "https://www.w3.org/WAI/people-use-web/abilities-barriers/physical/"
+    },
+    "w3c_input": {
+      "title": "W3C WAI: Input — Typing, Writing, and Clicking",
+      "url": "https://www.w3.org/WAI/people-use-web/tools-techniques/input/"
+    },
+    "w3c_presentation": {
+      "title": "W3C WAI: Presentation — Distinguishing and Understanding",
+      "url": "https://www.w3.org/WAI/people-use-web/tools-techniques/presentation/"
     },
     "w3c_nontext": {
       "title": "W3C WCAG Understanding 1.1.1 Non-text Content",
@@ -77,39 +97,44 @@
   "taxonomy": {
     "V1": {
       "group": "visual",
-      "name": "Non-visual access to digital text and interface content",
+      "name": "Non-visual access to text and interface content",
       "definition": "Use screen readers or equivalent non-visual representations to read, navigate, and act on digital text, controls, documents, and web content.",
       "sources": [
         "webaim_sr10",
-        "w3c_visual"
+        "w3c_visual",
+        "w3c_stories"
       ]
     },
     "V2": {
       "group": "visual",
       "name": "Magnification and text enlargement",
-      "definition": "Enlarge text, controls, or the screen through zoom, text sizing, or magnification so content is perceivable and usable.",
+      "definition": "Enlarge text, controls, or the screen through zoom, text sizing, or magnification so that content is perceivable and usable.",
       "sources": [
         "webaim_lv2",
-        "w3c_resize"
+        "w3c_resize",
+        "w3c_presentation",
+        "w3c_stories"
       ]
     },
     "V3": {
       "group": "visual",
-      "name": "Contrast and display-palette customization",
+      "name": "Contrast and display adaptation",
       "definition": "Adjust contrast, foreground/background presentation, inversion, or display palette to improve visual readability.",
       "sources": [
         "webaim_lv2",
         "w3c_visual",
-        "ms_color"
+        "ms_color",
+        "w3c_presentation"
       ]
     },
     "V4": {
       "group": "visual",
-      "name": "Color-vision differentiation support",
+      "name": "Color differentiation support",
       "definition": "Use color filters or non-color cues when color differences are difficult or impossible to distinguish.",
       "sources": [
         "w3c_color",
-        "ms_color"
+        "ms_color",
+        "w3c_stories"
       ]
     },
     "V5": {
@@ -118,138 +143,123 @@
       "definition": "Obtain equivalent information from images, maps, charts, infographics, scanned documents, labels, and other visual-only or poorly described content.",
       "sources": [
         "webaim_sr10",
-        "w3c_nontext"
-      ]
-    },
-    "V6": {
-      "group": "visual",
-      "name": "Accessible CAPTCHA and verification",
-      "definition": "Complete verification without depending on inaccessible visual perception, using an alternative modality or accessible verification path.",
-      "sources": [
-        "webaim_sr10",
-        "w3c_nontext"
+        "w3c_nontext",
+        "w3c_stories"
       ]
     },
     "H1": {
       "group": "hearing",
-      "name": "Speech-to-text access through captions or transcripts",
-      "definition": "Access spoken and relevant non-speech audio information through captions, live captions, or transcripts.",
+      "name": "Text/non-auditory access to speech and audio",
+      "definition": "Access spoken and relevant non-speech audio information through captions, transcripts, or another non-auditory representation.",
       "sources": [
         "w3c_media",
         "afb_ai_captions",
-        "acma_captioning"
+        "acma_captioning",
+        "w3c_auditory",
+        "w3c_stories",
+        "w3c_nontext"
       ]
     },
     "H2": {
       "group": "hearing",
-      "name": "Caption readability and language customization",
+      "name": "Caption presentation and language adaptation",
       "definition": "Configure caption language and visual presentation so caption text is readable and appropriate for the media being consumed.",
       "sources": [
         "ms_hearing",
-        "acma_captioning"
+        "acma_captioning",
+        "w3c_auditory"
       ]
     },
     "H3": {
       "group": "hearing",
-      "name": "Visual and persistent alternatives to auditory notifications",
+      "name": "Visual/persistent alternatives to auditory alerts",
       "definition": "Receive alerts visually rather than by sound alone and keep visual notifications available long enough to notice and read.",
       "sources": [
-        "ms_hearing"
+        "ms_hearing",
+        "w3c_auditory"
       ]
     },
     "H4": {
       "group": "hearing",
-      "name": "Single-channel access to stereo audio",
-      "definition": "Combine stereo channels so information is not missed when a user hears through one channel or one headphone.",
+      "name": "Audio-channel adaptation",
+      "definition": "Adapt audio channels so that information remains available through the user's usable listening channel.",
       "sources": [
         "ms_hearing"
       ]
     },
-    "H5": {
-      "group": "hearing",
-      "name": "Verification without relying on hearing",
-      "definition": "Complete CAPTCHA or verification when the presented challenge depends on auditory perception, using a non-auditory alternative or accessible verification path.",
-      "sources": [
-        "w3c_nontext"
-      ]
-    },
     "M1": {
       "group": "motor",
-      "name": "Alternative text entry without a physical keyboard",
-      "definition": "Enter text through an on-screen keyboard or other alternative input when physical keyboard use is difficult.",
+      "name": "Alternative text entry",
+      "definition": "Enter text through an on-screen keyboard, speech, or another alternative input when conventional physical-keyboard entry is difficult.",
       "sources": [
         "webaim_motor",
-        "ms_mobility"
+        "ms_mobility",
+        "w3c_physical",
+        "w3c_input"
       ]
     },
     "M2": {
       "group": "motor",
-      "name": "Sequential modifier-key input",
-      "definition": "Use multi-key commands one key at a time instead of holding multiple keys simultaneously.",
+      "name": "Keyboard interaction adaptation",
+      "definition": "Adapt keyboard timing, sensitivity, repetition, or multi-key input so keyboard interaction does not require simultaneous presses or precise key timing.",
       "sources": [
-        "ms_mobility"
+        "ms_mobility",
+        "w3c_physical",
+        "w3c_input"
       ]
     },
     "M3": {
       "group": "motor",
-      "name": "Keystroke filtering and sensitivity control",
-      "definition": "Reduce accidental repeated or brief key presses by adjusting keyboard sensitivity/filtering.",
+      "name": "Alternative/adapted pointer control",
+      "definition": "Use keyboard, speech, an alternative pointing method, delegated activation, or adapted pointer settings when conventional mouse use is difficult.",
       "sources": [
-        "ms_mobility"
+        "ms_mobility",
+        "webaim_motor",
+        "w3c_physical",
+        "w3c_input"
       ]
     },
     "M4": {
       "group": "motor",
-      "name": "Alternative pointer control",
-      "definition": "Use keyboard, speech/other alternative input, or delegated pointer activation when conventional mouse use is difficult.",
-      "sources": [
-        "ms_mobility",
-        "webaim_motor"
-      ]
-    },
-    "M5": {
-      "group": "motor",
-      "name": "Reduced press-hold and dragging demand",
-      "definition": "Avoid or reduce sustained press-hold-drag-release movements that require dexterity or sustained pointer control.",
-      "sources": [
-        "w3c_dragging"
-      ]
-    },
-    "M6": {
-      "group": "motor",
-      "name": "Mouse-button and handedness customization",
-      "definition": "Configure the primary mouse button or equivalent pointer settings to match reach, strength, dexterity, or unilateral motor needs.",
-      "sources": [
-        "ms_mobility"
-      ]
-    },
-    "M7": {
-      "group": "motor",
-      "name": "Reduced pointer precision, repetition, and timing demand",
-      "definition": "Avoid or delegate interactions requiring repeated precise target acquisition, tightly timed pointer actions, or fine motor control.",
+      "name": "Reduced fine-motor, precision, dragging, repetition, and timing demand",
+      "definition": "Avoid or delegate interactions requiring sustained press-hold-drag movements, repeated precise target acquisition, small-target selection, fine motor control, or tightly timed action.",
       "sources": [
         "webaim_motor",
-        "w3c_dragging"
+        "w3c_dragging",
+        "w3c_physical",
+        "w3c_input"
       ]
     },
     "C1": {
       "group": "cognitive",
-      "name": "Focus, readability, and simplification",
-      "definition": "Reduce distraction, visual/cognitive clutter, or reading load so attention, language processing, and comprehension are easier to sustain.",
+      "name": "Attention and distraction reduction",
+      "definition": "Reduce distraction, competing stimuli, and visual or cognitive clutter so that attention can be directed and sustained.",
       "sources": [
         "w3c_coga_overview",
-        "coga_simplify"
+        "coga_simplify",
+        "w3c_stories"
       ]
     },
     "C2": {
       "group": "cognitive",
-      "name": "Memory externalization and persistent information support",
-      "definition": "Reduce reliance on working memory or short-term retention by creating or using notes, checklists, persistent cues, and other durable external representations.",
+      "name": "Readability and comprehension simplification",
+      "definition": "Reduce reading and language-processing demand through clearer presentation, simpler language, or better-structured content.",
       "sources": [
-        "coga_memory_calc"
+        "w3c_coga_overview",
+        "coga_simplify",
+        "w3c_stories"
       ]
     },
     "C3": {
+      "group": "cognitive",
+      "name": "Memory externalization and persistent information support",
+      "definition": "Reduce reliance on working memory or short-term retention by creating or using notes, checklists, persistent cues, and other durable external representations.",
+      "sources": [
+        "coga_memory_calc",
+        "w3c_stories"
+      ]
+    },
+    "C4": {
       "group": "cognitive",
       "name": "Time and prospective-memory support",
       "definition": "Use reminders, calendars, timers, notification persistence, and other time-based cues to manage appointments, deadlines, intervals, and future actions.",

@@ -4,11 +4,12 @@ import glob
 import re
 import shutil
 import traceback
-from typing import Dict, List
+from typing import Dict, List, Optional
 import json
 import time
 import os
 from mm_agents.coact.operator_agent import OrchestratorAgent, OrchestratorUserProxyAgent
+from mm_agents.coact.message_utils import is_termination_message
 from mm_agents.coact.model_config import build_llm_config, extract_autogen_usage, is_local_model, make_usage_entry, summarize_usage_entries
 from mm_agents.llm import AbstractLLM
 from multiprocessing import cpu_count
@@ -213,6 +214,7 @@ def _run_local_orchestrator(
     orchestrator_model: str,
     orchestrator_max_steps: int,
     client_password: str,
+    thinking_token_budget: Optional[int] = None,
 ) -> tuple[List[dict], dict]:
     llm = AbstractLLM(model_name=orchestrator_model)
     chat_history: List[dict] = []
@@ -252,7 +254,11 @@ def _run_local_orchestrator(
                 ],
             }
         ]
-        raw_response = llm(messages, max_retries=3) or '{"thought":"No response","action":"infeasible","task":"","environment":"","message":"No response"}'
+        raw_response = llm(
+            messages,
+            max_retries=3,
+            thinking_token_budget=thinking_token_budget,
+        ) or '{"thought":"No response","action":"infeasible","task":"","environment":"","message":"No response"}'
         decision = _extract_json_object(raw_response)
         action = str(decision.get("action", "")).strip().lower()
         task = str(decision.get("task", "")).strip()
@@ -307,6 +313,7 @@ def config() -> argparse.Namespace:
     parser.add_argument("--coding_model", type=str, default="o4-mini-2025-04-16")
     parser.add_argument("--summarizer_model", type=str, default="o4-mini-2025-04-16")
     parser.add_argument("--cua_model", type=str, default="computer-use-preview")
+    parser.add_argument("--thinking_token_budget", type=int, default=None)
     parser.add_argument("--orchestrator_max_steps", type=int, default=15) #15
     parser.add_argument("--coding_max_steps", type=int, default=20) #20
     parser.add_argument("--cua_max_steps", type=int, default=25) #25
@@ -356,6 +363,7 @@ def process_task(task_info,
                 coding_model='o4-mini',
                 summarizer_model='o4-mini',
                 cua_model='computer-use-preview',
+                thinking_token_budget=None,
                 result_dir='results/coact',
                 orchestrator_max_steps=15,
                 cua_max_steps=25,
@@ -382,7 +390,13 @@ def process_task(task_info,
     start_time = time.time()
     
     history_save_dir = os.path.join(result_dir, f"{domain}/{ex_id}")
-    task_config = json.load(open(cfg))
+    with open(cfg, "r", encoding="utf-8") as task_config_file:
+        task_config = json.load(task_config_file)
+    # SetupController resolves relative setup assets (for example,
+    # ../assets/foo.pdf) from the directory containing the task config.  The
+    # common runner adds this runtime-only field to its in-memory config, but
+    # CoAct reloads the JSON here, so preserve the source path explicitly.
+    task_config["__task_config_path"] = os.path.abspath(cfg)
 
     # Build context using the common function
     example_dir = os.path.dirname(cfg)
@@ -403,7 +417,9 @@ def process_task(task_info,
         orchestrator_proxy = OrchestratorUserProxyAgent(
             env,
             name="orchestrator_proxy",
-            is_termination_msg=lambda x: x.get("content", "") and (x.get("content", "")[0]["text"].lower() == "terminate" or x.get("content", "")[0]["text"].lower() == "infeasible"),
+            is_termination_msg=lambda message: is_termination_message(
+                message, ("terminate", "infeasible")
+            ),
             human_input_mode="NEVER",
             path_to_vm=path_to_vm,
             snapshot_name=snapshot_name,
@@ -415,6 +431,7 @@ def process_task(task_info,
             coding_model=coding_model,
             summarizer_model=summarizer_model,
             cua_model=cua_model,
+            thinking_token_budget=thinking_token_budget,
             truncate_history_inputs=cua_max_steps + 1,
             cua_max_steps=cua_max_steps,
             coding_max_steps=coding_max_steps,
@@ -445,6 +462,7 @@ def process_task(task_info,
                 orchestrator_model=orchestrator_model,
                 orchestrator_max_steps=orchestrator_max_steps,
                 client_password=client_password,
+                thinking_token_budget=thinking_token_budget,
             )
         else:
             llm_config = build_llm_config(orchestrator_model, config_path)
@@ -623,6 +641,7 @@ def run(args, logger=None, tasks=None):
                                 coding_model=args.coding_model,
                                 summarizer_model=args.summarizer_model,
                                 cua_model=args.cua_model,
+                                thinking_token_budget=args.thinking_token_budget,
                                 orchestrator_model=args.orchestrator_model,
                                 config_path=args.oai_config_path, 
                                 orchestrator_max_steps=args.orchestrator_max_steps,

@@ -6,14 +6,16 @@
   ],
   "category": "consumption",
   "need_ids": [
-    "H1"
+    "H1",
+    "H4"
   ],
   "difficulty": "medium",
   "operation_time": 47.32,
-  "instruction": "I cannot reliably hear the recording. Use Chrome Live Caption to read the grocery order recording on the Desktop. Create a Sticky Note containing the unavailable item, approved substitute, price limit, and pickup code.",
+  "instruction": "I hear primarily through one ear and rely on captions for clarity. Turn on Mono audio, then use Chrome Live Caption to read the grocery order recording on the Desktop. Create a Sticky Note containing the unavailable item, approved substitute, price limit, and pickup code.",
   "source": "synthetic",
   "transcript": "Grocery order update. The oat yoghurt is unavailable. Substitute plain soy yoghurt only. Do not accept a substitute over $6.50. Pickup code GP-284.",
   "gt_steps": [
+    "Open Windows Settings to Accessibility > Audio and turn on Mono audio.",
     "Turn on Chrome Live Caption.",
     "Play `OrderSubstitutionAudio.mp3` in Chrome with Live Caption enabled.",
     "Create a new note in Sticky Notes.",
@@ -89,11 +91,13 @@
   ],
   "related_apps": [
     "chrome",
+    "settings",
     "sticky_notes"
   ],
   "evaluator": {
     "func": [
       "check_text_points",
+      "exact_match",
       "exact_match"
     ],
     "conj": "and",
@@ -103,6 +107,9 @@
       },
       {
         "type": "live_caption_enabled"
+      },
+      {
+        "type": "mono_audio_enabled"
       }
     ],
     "expected": [
@@ -135,6 +142,12 @@
         "rules": {
           "expected": "true"
         }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "expected": "true"
+        }
       }
     ],
     "metric_roles": {
@@ -142,7 +155,8 @@
         0
       ],
       "access_requirement": [
-        1
+        1,
+        2
       ]
     }
   },

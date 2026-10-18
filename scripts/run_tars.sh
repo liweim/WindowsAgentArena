@@ -17,6 +17,7 @@ nohup setsid env \
     --start-client true \
     --agent tars \
     --model qwen3.8-27b \
+    --thinking_token_budget 16384 \
     --global-planner-model qwen3.8-27b \
     --visual-grounder-model gta1-7b \
     --max-steps 50 \

@@ -6,14 +6,16 @@
   ],
   "category": "communication",
   "need_ids": [
-    "H1"
+    "H1",
+    "H4"
   ],
   "difficulty": "medium",
   "operation_time": 47.24,
-  "instruction": "I cannot reliably hear the recording. Use Chrome Live Caption to read the pharmacy voicemail on the Desktop. Create and save a Thunderbird draft to `pharmacy@example.com` with subject `Pickup confirmation`, confirming the pickup date and window and including the locker code and order reference. Do not send it.",
+  "instruction": "I hear primarily through one ear and rely on captions for clarity. Turn on Mono audio, then use Chrome Live Caption to read the pharmacy voicemail on the Desktop. Create and save a Thunderbird draft to `pharmacy@example.com` with subject `Pickup confirmation`, confirming the pickup date and window and including the locker code and order reference. Do not send it.",
   "source": "synthetic",
   "transcript": "Hello Morgan. Your prescription is ready for pickup on Thursday, September 17, 2026 between 4:10 PM and 5:00 PM. Use locker code 4826. Your order reference is RX-418. Reply to pharmacy@example.com if you need help.",
   "gt_steps": [
+    "Open Windows Settings to Accessibility > Audio and turn on Mono audio.",
     "Turn on Chrome Live Caption.",
     "Play `PharmacyPickupVoicemail.mp3` in Chrome with Live Caption enabled.",
     "Create a new email draft in Thunderbird.",
@@ -103,11 +105,13 @@
   ],
   "related_apps": [
     "chrome",
+    "settings",
     "thunderbird"
   ],
   "evaluator": {
     "func": [
       "check_thunderbird_email_composition",
+      "exact_match",
       "exact_match"
     ],
     "conj": "and",
@@ -117,6 +121,9 @@
       },
       {
         "type": "live_caption_enabled"
+      },
+      {
+        "type": "mono_audio_enabled"
       }
     ],
     "expected": [
@@ -153,6 +160,12 @@
         "rules": {
           "expected": "true"
         }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "expected": "true"
+        }
       }
     ],
     "metric_roles": {
@@ -160,7 +173,8 @@
         0
       ],
       "access_requirement": [
-        1
+        1,
+        2
       ]
     }
   },

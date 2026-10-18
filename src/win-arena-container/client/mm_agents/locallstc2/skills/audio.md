@@ -12,6 +12,7 @@ when_to_use: Load when speech in a VM audio/video file or an embedded web video 
 - For video input, the API automatically uses FFmpeg to extract a 16 kHz mono WAV before sending it to Parakeet TDT. Do not manually extract the audio first.
 - Pass the absolute VM path, not a `file://` URL. In API calls, write Windows paths with forward slashes, for example `C:/Users/Docker/Desktop/Message.mp3`. Do not put a path such as `C:\Users\...` in a normal Python string because sequences such as `\U` can make the call fail to parse.
 - If the exact filename is not stated, inspect the browser's local-file URL or use a read-only file listing to find the audio file before calling the API; do not guess the filename.
-- Both APIs return only the plain transcript text, without timestamps or metadata. Use that returned text as task evidence before taking the next action.
+- Both APIs produce plain transcript text without timestamps. Results up to 1000 characters are returned directly.
+- Longer results overwrite one fixed local text file: `C:/Users/Docker/Desktop/audio.txt` on Windows, `/home/user/audio.txt` on Linux, or `/sdcard/Download/audio.txt` on Android. Use `bash_execution` to search that exact path for targeted keywords or patterns and limit the output; never print the whole file into context.
 - When copying transcript details into another app, preserve exact names, codes, prices, quantities, and deadlines. Use conventional readable formatting for spoken times (for example `8:00 AM`, not `8am`) and verify the completed text before terminating.
 - AudioTools does not enable Live Caption. If the task requires it, transcribe first, enable it in Chrome, and continue; do not replay media or verify Live Caption separately unless explicitly requested.

@@ -19,6 +19,7 @@ python run_human.py \
     --rdp-port 3400
 
 llm服务：
+nohup python -m vllm.entrypoints.openai.api_server --served-model-name uitars-1.5-7b --model /home/weimingli/models/UI-TARS-1.5-7B --gpu-memory-utilization 0.25 --max-model-len 8192 --host 0.0.0.0 --port 1235 > uitars.log 2>&1 &
 nohup python -m vllm.entrypoints.openai.api_server --served-model-name gta1-7b --model /home/weimingli/models/GTA1-7B --gpu-memory-utilization 0.25 --max-model-len 8192 --host 0.0.0.0 --port 1234 > gta1.log 2>&1 &
 nohup python -m vllm.entrypoints.openai.api_server \
     --served-model-name qwen3.8-27b \
@@ -48,8 +49,8 @@ nohup python -m uvicorn \
 PARAKEET_DEVICE=auto nohup python -m uvicorn \
   mm_agents.parakeet_asr.server:app \
   --app-dir /home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client \
-  --host 0.0.0.0 --port 18765 --workers 1 \
-  > /home/weimingli/projects/WindowsAgentArena/parakeet-asr.log 2>&1 &
+  --host 0.0.0.0 --port 18765 --workers 1 &
+杀服务：systemctl --user stop parakeet-asr.service
 
 跑框架：cd scripts & ./run_locallstc.sh
 杀进程：./stop_run.sh a11yarena-locallstc

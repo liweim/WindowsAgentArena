@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from mm_agents.llm import LOCAL_API_URL, MODEL_CONFIGS, UITARS_API_URL
 from .autogen.llm_config import LLMConfig
 from mm_agents.utils import get_price
@@ -15,13 +17,21 @@ def get_local_base_url(model_name: str) -> str:
     return LOCAL_API_URL
 
 
-def build_llm_config(model_name: str, config_path: str | None = None) -> LLMConfig:
+def build_llm_config(
+    model_name: str,
+    config_path: str | None = None,
+    thinking_token_budget: Optional[int] = None,
+) -> LLMConfig:
     if is_local_model(model_name):
+        extra_body = None
+        if thinking_token_budget is not None:
+            extra_body = {"thinking_token_budget": thinking_token_budget}
         return LLMConfig(
             api_type="openai",
             model=model_name,
             base_url=get_local_base_url(model_name),
             api_key="empty",
+            extra_body=extra_body,
         )
 
     if not config_path:

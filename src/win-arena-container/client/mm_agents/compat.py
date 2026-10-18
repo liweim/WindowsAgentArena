@@ -111,6 +111,7 @@ def build_step_agent(args, env):
             planner_model=args.model,
             judge_model=args.judge_model or args.model,
             ground_model=args.ground_model,
+            thinking_token_budget=args.thinking_token_budget,
             max_tokens=args.max_tokens,
             top_p=args.top_p,
             temperature=args.temperature,
@@ -139,6 +140,7 @@ def build_step_agent(args, env):
             "base_url": args.model_url,
             "api_key": args.model_api_key,
             "temperature": args.model_temperature,
+            "thinking_token_budget": args.thinking_token_budget,
         }
         grounding_params = {
             "engine_type": ground_provider,
@@ -325,6 +327,7 @@ def _run_coact(env, example, args, example_result_dir) -> float:
         coding_model=args.coding_model,
         summarizer_model=args.summarizer_model,
         cua_model=args.cua_model,
+        thinking_token_budget=args.thinking_token_budget,
         result_dir=args.result_dir,
         orchestrator_max_steps=args.orchestrator_max_steps,
         cua_max_steps=args.cua_max_steps,

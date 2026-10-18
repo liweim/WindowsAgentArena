@@ -6,15 +6,17 @@
   ],
   "category": "access",
   "need_ids": [
-    "H1"
+    "H1",
+    "H2"
   ],
   "difficulty": "easy",
   "operation_time": 50.49,
-  "instruction": "I rely on text for spoken content. Turn on Windows Live captions for me.",
+  "instruction": "I rely on text for spoken content and need larger captions to read them comfortably. Turn on Windows Live captions and set the caption style to Large text.",
   "source": "synthetic",
   "gt_steps": [
     "Open Windows Settings to Accessibility > Captions.",
     "Turn on Live captions.",
+    "Set Caption style to Large text.",
     "Wait for the initial configuration."
   ],
   "config": [],
@@ -22,30 +24,49 @@
     "settings"
   ],
   "evaluator": {
-    "func": "check_include_exclude",
-    "result": {
-      "type": "vm_command_line",
-      "command": [
-        "powershell",
-        "-NoProfile",
-        "-Command",
-        "$found = Get-Process | Where-Object { $_.ProcessName -match 'LiveCaptions|LiveCaption' -or $_.MainWindowTitle -match 'Live captions|Live Caption' }; if ($found) { 'windows_live_caption_enabled' }"
-      ]
-    },
-    "expected": {
-      "type": "rule",
-      "rules": {
-        "include": [
-          "windows_live_caption_enabled"
+    "func": [
+      "check_include_exclude",
+      "exact_match"
+    ],
+    "conj": "and",
+    "result": [
+      {
+        "type": "vm_command_line",
+        "command": [
+          "powershell",
+          "-NoProfile",
+          "-Command",
+          "$found = Get-Process | Where-Object { $_.ProcessName -match 'LiveCaptions|LiveCaption' -or $_.MainWindowTitle -match 'Live captions|Live Caption' }; if ($found) { 'windows_live_caption_enabled' }"
         ]
+      },
+      {
+        "type": "selected_caption_style_name"
       }
-    },
+    ],
+    "expected": [
+      {
+        "type": "rule",
+        "rules": {
+          "include": [
+            "windows_live_caption_enabled"
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "expected": "Large text"
+        }
+      }
+    ],
     "metric_roles": {
       "task_outcome": [
-        0
+        0,
+        1
       ],
       "access_requirement": [
-        0
+        0,
+        1
       ]
     }
   },

@@ -1,3 +1,4 @@
+import json
 import logging
 from typing import Dict, List, Tuple, Optional
 
@@ -8,11 +9,36 @@ from mm_agents.gui_agents.s3.core.mllm import LMMAgent
 logger = logging.getLogger("desktopenv.agent")
 
 
+def _powershell_python_wrapper(code: str) -> str:
+    """Build guest-side Python that executes shell code with PowerShell.
+
+    S3's controller is a ``PythonController`` connected to the Windows guest; it
+    deliberately exposes ``run_python_script`` but not ``run_bash_script``.
+    Running PowerShell through a Python wrapper keeps shell execution on the
+    guest while avoiding the controller method that is unavailable there.
+    """
+    return (
+        "import subprocess, sys\n"
+        f"command = {json.dumps(code)}\n"
+        "result = subprocess.run(\n"
+        "    ['powershell.exe', '-NoProfile', '-NonInteractive', "
+        "'-ExecutionPolicy', 'Bypass', '-Command', command],\n"
+        "    stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,\n"
+        ")\n"
+        "sys.stdout.write(result.stdout or '')\n"
+        "sys.stderr.write(result.stderr or '')\n"
+        "sys.exit(result.returncode)\n"
+    )
+
+
 def extract_code_block(action: str) -> Tuple[Optional[str], Optional[str]]:
     """Extract code and determine type from action string."""
     if "```python" in action:
         code_type = "python"
         code = action.split("```python")[1].split("```")[0].strip()
+    elif "```powershell" in action:
+        code_type = "powershell"
+        code = action.split("```powershell")[1].split("```")[0].strip()
     elif "```bash" in action:
         code_type = "bash"
         code = action.split("```bash")[1].split("```")[0].strip()
@@ -35,8 +61,13 @@ def execute_code(code_type: str, code: str, env_controller) -> Dict:
     logger.info(f"CODING_AGENT_CODE_EXECUTION - Type: {code_type}\nCode:\n{code}")
 
     try:
-        if code_type == "bash":
-            result = env_controller.run_bash_script(code, timeout=30)
+        if code_type in {"bash", "powershell"}:
+            # The benchmark guest is Windows and its PythonController has no
+            # run_bash_script method. Treat legacy ```bash blocks as Windows
+            # shell requests and execute them via PowerShell in guest Python.
+            result = env_controller.run_python_script(
+                _powershell_python_wrapper(code)
+            )
         elif code_type == "python":
             result = env_controller.run_python_script(code)
         else:

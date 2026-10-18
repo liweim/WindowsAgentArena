@@ -1,23 +1,5 @@
 {
   "cognitive": [
-    "health-running_hydration_guide_note",
-    "communication-ftc_spam_text_safety_email",
-    "information-wikipedia_accessibility_definition",
-    "health-morning_care_reminders",
-    "mobility-harvard_mather_evening_plan",
-    "mobility-victoria_train_interchange_note",
-    "service-cms_delete_obsolete_pickup_page"
-  ],
-  "hearing": [
-    "information-handwashing_steps",
-    "health-sepsis_act_fast",
-    "service-council_document_pickup_audio"
-  ],
-  "motor": [
-    "health-physiotherapy_appointment_checklist",
-    "health-sticky_keys_emergency_contact_card"
-  ],
-  "visual": [
-    "health-hospital_wayfinding_map"
+    "health-doctor_visit_preparation_summary"
   ]
 }

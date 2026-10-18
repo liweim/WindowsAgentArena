@@ -3,7 +3,7 @@
     "type": "function",
     "function": {
       "name": "PdfTools.extract_text",
-      "description": "Extract the complete text layer from a PDF file stored in the VM and return it as plain text in page order.",
+      "description": "Extract the complete text layer from a PDF file stored in the VM with explicit page markers. Text up to 1000 characters is returned directly; longer text is saved to the fixed searchable pdf.txt path documented in the PDF skill. This operation does not render page images.",
       "parameters": {
         "type": "object",
         "properties": {
@@ -14,6 +14,37 @@
         },
         "required": [
           "vm_path"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "PdfTools.render_page",
+      "description": "Render one selected PDF page as a PNG in the VM and return that image directly to the model for mandatory visual verification. Every task that derives an answer or output from a PDF must render and inspect each relevant source page before committing the result or terminating.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "vm_path": {
+            "type": "string",
+            "description": "Absolute path of the PDF inside the VM, using forward slashes for Windows paths."
+          },
+          "page_number": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "One-based physical PDF page number to render."
+          },
+          "image_dpi": {
+            "type": "integer",
+            "minimum": 72,
+            "maximum": 300,
+            "description": "Resolution of the rendered PNG returned to the model. Defaults to 144 DPI."
+          }
+        },
+        "required": [
+          "vm_path",
+          "page_number"
         ]
       }
     }

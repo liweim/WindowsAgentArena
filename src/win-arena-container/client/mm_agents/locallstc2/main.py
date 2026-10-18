@@ -285,6 +285,8 @@ class LocalLSTC:
         self.current_foreground_window_id = ""
         self.current_foreground_window_title = ""
         self.current_foreground_app = ""
+        self.pending_api_image: Optional[bytes] = None
+        self.pending_api_image_mime_type = "image/png"
 
     def _setup_controller_setup(self, config: List[Dict[str, Any]]) -> Any:
         """Call setup_controller.setup across OSWorld and WAA signatures."""
@@ -389,6 +391,8 @@ class LocalLSTC:
         self.current_foreground_window_id = ""
         self.current_foreground_window_title = ""
         self.current_foreground_app = ""
+        self.pending_api_image = None
+        self.pending_api_image_mime_type = "image/png"
 
     def _extract_foreground_window_context(self) -> Tuple[str, str, str]:
         if self.guest_platform in {"windows", "android"}:
@@ -992,6 +996,12 @@ print(output)
                 p_yes = float(answers[f"api_{index}"]["noul"])
                 scores[name] = p_yes
                 if p_yes >= threshold:
+                    selected.append(name)
+
+            # PDF tasks always require text extraction followed by visual page
+            # verification, so neither PDF method may be hidden by JEV.
+            for name, _ in candidates:
+                if name.startswith("PdfTools.") and name not in selected:
                     selected.append(name)
             self.logger.info(
                 "[jev_api_scores] subgoal=%r threshold=%.4f scores=%s",
@@ -2341,6 +2351,11 @@ print(output)
                 if screenshot is None:
                     raise RuntimeError("Failed to capture screenshot for planning after retries.")
                 screenshot_b64 = base64.b64encode(screenshot).decode("utf-8")
+                pending_api_image_b64 = (
+                    base64.b64encode(self.pending_api_image).decode("utf-8")
+                    if self.pending_api_image
+                    else ""
+                )
                 self._refresh_foreground_app_context()
 
                 if self.wo_jev_memory:
@@ -2391,12 +2406,31 @@ print(output)
                 if context_message:
                     messages.append(context_message)
 
+                visual_content = []
+                if pending_api_image_b64:
+                    visual_content.extend([
+                        {
+                            "type": "input_image",
+                            "image_url": (
+                                f"data:{self.pending_api_image_mime_type};base64,"
+                                f"{pending_api_image_b64}"
+                            ),
+                        },
+                        {
+                            "type": "input_text",
+                            "text": (
+                                "The image above is the PDF page returned by "
+                                "PdfTools.render_page. Inspect it as the primary verification evidence."
+                            ),
+                        },
+                    ])
+                visual_content.extend([
+                    {"type": "input_text", "text": "Current screenshot:"},
+                    {"type": "input_image", "image_url": f"data:image/png;base64,{screenshot_b64}"},
+                ])
                 messages.append({
                     "role": "user",
-                    "content": [
-                        {"type": "input_text", "text": "Current screenshot:"},
-                        {"type": "input_image", "image_url": f"data:image/png;base64,{screenshot_b64}"}
-                    ]
+                    "content": visual_content,
                 })
 
                 if attempt > 0:
@@ -2475,6 +2509,7 @@ print(output)
                     actions = [action]
 
                 normalized_actions: List[str] = []
+                pdf_render_action_index: Optional[int] = None
                 for index, action in enumerate(actions):
                     if not isinstance(action, str) or not action.strip():
                         raise ValueError(
@@ -2509,7 +2544,9 @@ print(output)
                     elif tool == API_TOOL:
                         if not self.api_enabled:
                             raise ValueError("api channel is disabled in the current configuration")
-                        self._parse_api_input(action_text)
+                        parsed_api_action = self._parse_api_input(action_text)
+                        if parsed_api_action["name"] == "PdfTools.render_page":
+                            pdf_render_action_index = len(normalized_actions)
                     elif tool == "bash_execution":
                         try:
                             self._normalize_bash_command(action_text)
@@ -2531,6 +2568,15 @@ print(output)
                 if not normalized_actions:
                     raise ValueError("Planner decision did not contain any executable actions")
 
+                if (
+                    pdf_render_action_index is not None
+                    and pdf_render_action_index != len(normalized_actions) - 1
+                ):
+                    raise ValueError(
+                        "PdfTools.render_page must be the final action in this decision so the "
+                        "returned page image is visible to the model before any follow-up action."
+                    )
+
                 self._validate_terminal_action_list(normalized_actions)
 
                 decision["actions"] = normalized_actions
@@ -2550,6 +2596,8 @@ print(output)
 
                 # Clear stale recovery feedback after a successful re-plan.
                 self._clear_active_recovery_feedback()
+                self.pending_api_image = None
+                self.pending_api_image_mime_type = "image/png"
                 
                 return decision
                 
@@ -3631,6 +3679,12 @@ print(output)
             execution_mode = str(execution.get("execution_mode", "") or "")
             raw_result = execution.get("raw_result")
             helper_observation = str(execution.get("observation", "") or "").strip()
+            model_image = execution.get("model_image")
+            model_image_mime_type = str(
+                execution.get("model_image_mime_type", "image/png") or "image/png"
+            )
+            if model_image is not None and not isinstance(model_image, bytes):
+                raise TypeError("api model_image must be bytes")
 
             observed_screenshot = None
             vm_logs = ""
@@ -3654,11 +3708,23 @@ print(output)
             else:
                 raise ValueError(f"Unsupported api execution mode: {execution_mode}")
 
-            after_screenshot, env_changed, wait_elapsed = self._wait_for_environment_change(
-                before_screenshot,
-                timeout_seconds=self.post_action_wait_timeout,
-                initial_after_screenshot=observed_screenshot,
-            )
+            if model_image:
+                self.pending_api_image = model_image
+                self.pending_api_image_mime_type = model_image_mime_type
+                after_screenshot = before_screenshot
+                env_changed = False
+                wait_elapsed = 0.0
+                wait_description = "skipped; image returned directly to model"
+            else:
+                after_screenshot, env_changed, wait_elapsed = self._wait_for_environment_change(
+                    before_screenshot,
+                    timeout_seconds=self.post_action_wait_timeout,
+                    initial_after_screenshot=observed_screenshot,
+                )
+                wait_description = (
+                    f"{'changed' if env_changed else 'timeout/no visible change'} "
+                    f"after {wait_elapsed:.1f}s"
+                )
             with open(os.path.join(self.operations_dir, screenshot_file), "wb") as f:
                 f.write(after_screenshot)
 
@@ -3717,6 +3783,7 @@ print(output)
                         "helper_observation": helper_observation,
                         "vm_status": vm_status,
                         "vm_logs": vm_logs,
+                        "model_image_hash": self._hash_bytes(model_image) if model_image else "",
                     },
                     sort_keys=True,
                     ensure_ascii=False,
@@ -3742,8 +3809,8 @@ print(output)
                     success=success,
                     detail=detail_text,
                     verification=(
-                        (step_abstraction_summary.replace("Result: ", "") + f" Wait: {'changed' if env_changed else 'timeout/no visible change'} after {wait_elapsed:.1f}s.")
-                        if step_abstraction_summary else f"mode={execution_mode}; wait={'changed' if env_changed else 'timeout'} after {wait_elapsed:.1f}s"
+                        (step_abstraction_summary.replace("Result: ", "") + f" Wait: {wait_description}.")
+                        if step_abstraction_summary else f"mode={execution_mode}; wait={wait_description}"
                     ),
                     next_hint="Use another peer tool only if this app API path does not cover the next missing step."
                 ),
@@ -3775,7 +3842,7 @@ print(output)
                 f"api Call: {call_desc}",
                 f"Mode: {execution_mode}",
                 f"Status: {status_text}",
-                f"Wait: {'changed' if env_changed else 'timeout/no visible change'} after {wait_elapsed:.1f}s",
+                f"Wait: {wait_description}",
             ]
             if helper_observation:
                 output_lines.append(f"Observation: {helper_observation}")

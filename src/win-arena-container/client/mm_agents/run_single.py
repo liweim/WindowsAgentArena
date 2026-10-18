@@ -1,3 +1,4 @@
+import ast
 import datetime
 import json
 import logging
@@ -8,6 +9,51 @@ from wrapt_timeout_decorator import *
 from mm_agents.utils import serialize_json
 
 logger = logging.getLogger("desktopenv.experiment")
+
+
+def _is_sleep_only_action(action: str) -> bool:
+    """Return whether an action contains only imports and sleep calls.
+
+    Code-agent actions use a sleep-only command as a synchronization placeholder.
+    Those placeholders must not participate in repeated-action loop detection.
+    GUI actions that merely include a short sleep alongside a click or scroll are
+    intentionally not classified as sleep-only.
+    """
+    try:
+        body = ast.parse(str(action or "").strip()).body
+    except SyntaxError:
+        return False
+
+    saw_sleep = False
+    for statement in body:
+        if isinstance(statement, (ast.Import, ast.ImportFrom)):
+            continue
+        if not isinstance(statement, ast.Expr) or not isinstance(
+            statement.value, ast.Call
+        ):
+            return False
+        function = statement.value.func
+        is_sleep = (
+            isinstance(function, ast.Name) and function.id == "sleep"
+        ) or (
+            isinstance(function, ast.Attribute) and function.attr == "sleep"
+        )
+        if not is_sleep:
+            return False
+        saw_sleep = True
+    return saw_sleep
+
+
+def _update_repeated_action_state(action, last_action, repeated_action_count):
+    """Update loop-detection state and report whether the action hit the limit."""
+    if _is_sleep_only_action(action):
+        return None, 0, False
+    if action == last_action:
+        repeated_action_count += 1
+    else:
+        last_action = action
+        repeated_action_count = 1
+    return last_action, repeated_action_count, repeated_action_count >= 3
 
 
 def run_single_example(
@@ -221,13 +267,15 @@ def run_single_example(
                         action_type = "gui_action"
                         cua_steps += 1
 
-                if original_action == last_action:
-                    repeated_action_count += 1
-                else:
-                    last_action = original_action
-                    repeated_action_count = 1
+                (
+                    last_action,
+                    repeated_action_count,
+                    repeated_action_limit_reached,
+                ) = _update_repeated_action_state(
+                    original_action, last_action, repeated_action_count
+                )
 
-                if repeated_action_count >= 3:
+                if repeated_action_limit_reached:
                     logger.error(
                         "Detected repeated action %d times consecutively; forcing FAIL. Action: %s",
                         repeated_action_count,

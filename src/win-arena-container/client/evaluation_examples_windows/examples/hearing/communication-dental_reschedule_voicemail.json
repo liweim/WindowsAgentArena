@@ -6,14 +6,16 @@
   ],
   "category": "communication",
   "need_ids": [
-    "H1"
+    "H1",
+    "H4"
   ],
   "difficulty": "medium",
   "operation_time": 58.41,
-  "instruction": "I cannot reliably hear the recording. Use Chrome Live Caption to read the dental voicemail on the Desktop. Choose the earlier of the two offered appointments and create and save a Thunderbird draft to `appointments@example.com` with subject `Dental reschedule`, including the chosen date, time, and confirmation code. Do not send it.",
+  "instruction": "I hear primarily through one ear and rely on captions for clarity. Turn on Mono audio, then use Chrome Live Caption to read the dental voicemail on the Desktop. Choose the earlier of the two offered appointments and create and save a Thunderbird draft to `appointments@example.com` with subject `Dental reschedule`, including the chosen date, time, and confirmation code. Do not send it.",
   "source": "synthetic",
   "transcript": "Hi Jamie. This is Lakeside Dental. Your Tuesday appointment needs to move. We can offer Thursday, September 17th at 2:20 PM, or Friday, September 18th at 9:40 AM. Reply by email to appointments@example.com. Include confirmation code LD731.",
   "gt_steps": [
+    "Open Windows Settings to Accessibility > Audio and turn on Mono audio.",
     "Turn on Chrome Live Caption.",
     "Play `DentalRescheduleVoicemail.mp3` in Chrome with Live Caption enabled.",
     "Open Thunderbird and create a new email draft.",
@@ -103,11 +105,13 @@
   ],
   "related_apps": [
     "chrome",
+    "settings",
     "thunderbird"
   ],
   "evaluator": {
     "func": [
       "check_thunderbird_email_composition",
+      "exact_match",
       "exact_match"
     ],
     "conj": "and",
@@ -117,6 +121,9 @@
       },
       {
         "type": "live_caption_enabled"
+      },
+      {
+        "type": "mono_audio_enabled"
       }
     ],
     "expected": [
@@ -148,6 +155,12 @@
         "rules": {
           "expected": "true"
         }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "expected": "true"
+        }
       }
     ],
     "metric_roles": {
@@ -155,7 +168,8 @@
         0
       ],
       "access_requirement": [
-        1
+        1,
+        2
       ]
     }
   },

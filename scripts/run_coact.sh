@@ -17,6 +17,7 @@ nohup setsid env \
     --start-client true \
     --agent coact \
     --model qwen3.8-27b \
+    --thinking_token_budget 16384 \
     --orchestrator_model qwen3.8-27b \
     --coding_model qwen3.8-27b \
     --summarizer_model qwen3.8-27b \
@@ -34,9 +35,8 @@ nohup setsid env \
     --isolate-tasks true \
     --container-name a11yarena-coact \
     --result-dir /locallstc/projects/WindowsAgentArena/results/coact_qwen3.8-27b \
-    --json-name evaluation_examples_windows/test_one.json \
+    --json-name evaluation_examples_windows/test_all.json \
     --remove-container true \
-    --rerun \
     "$@" >"$LOG_FILE" 2>&1 < /dev/null &
 
 runner_pid=$!

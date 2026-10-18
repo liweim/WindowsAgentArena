@@ -249,7 +249,7 @@ Difficulty labels (Easy / Medium / Hard) & 59 / 99 / 40 \\
 Median human operating time & 64.02 s \\
 Related applications & 9 \\
 Cross-application tasks & 112 \\
-Tasks assigned multiple need IDs & 16 \\
+Tasks assigned multiple need IDs & 28 \\
 \bottomrule
 \end{tabularx}
 \caption{Main statistics of \bench.}
@@ -266,7 +266,7 @@ Tasks assigned multiple need IDs & 16 \\
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.86\columnwidth]{../plot/tasks_by_need.png}
-\caption{Number of task assignments for each documented need ID. Because a task can carry multiple need IDs, counts sum to 215 rather than 198.}
+\caption{Number of task assignments for each documented need ID. Because a task can carry multiple need IDs, counts sum to 227 rather than 198.}
 \label{fig:need-counts}
 \end{figure}
 
@@ -907,6 +907,57 @@ The model is more reliable at opening common accessibility features than at sele
 \paragraph{Sustained and precision pointer interaction.}
 Simple clicks and checkboxes are substantially easier than hold, slide, patch-selection, and other continuous or precision-dependent challenges. This is a generic control limitation, but the M4 tasks expose it specifically where the user delegated the interaction because sustained or precise pointer control is inaccessible. The benchmark therefore changes the practical interpretation of the same low-level failure: an unsuccessful proxy action leaves the original access barrier in place.
 
+\subsection{Complex-PDF case: layout-aware visual verification}
+\label{app:polisher_pdf_case}
+
+Task \nolinkurl{consumption-cheapest_polisher} provides a representative case in which a document's text layer is useful for retrieval but unreliable for final semantic verification. The source is a 57-page, untagged Harbor Freight catalogue with dense multi-column product blocks, interleaved names, item numbers, sale prices, comparison prices, and promotional text. Its embedded text is therefore not read in the same two-dimensional order in which the page is visually organized. The complete released instruction is:
+
+\begin{quote}
+\small
+\textbf{Instruction.} I have difficulty using a physical keyboard. Open the Windows On-Screen Keyboard and leave it available for me. Find the cheapest polisher in the provided Harbor Freight catalogue and save its full product name exactly as shown on the first line and its price on the second line of \texttt{answer.txt} on the Desktop.
+\end{quote}
+
+A text-only strategy repeatedly formed plausible but incorrect name--price associations. On physical PDF page~6, extraction placed \texttt{\$19.99} before the line \texttt{6" PALM POLISHER} and \texttt{\$109.99} after its item number, making nearest-line matching assign the wrong price. Page~13 contained the lexically cheaper \texttt{6 PIECE POLISHER ACCESSORY KIT} at \texttt{\$14.99}, although it is an accessory rather than a polisher. On page~17, a nearby \texttt{\$9.99} belonged to a cut-off tool, while the actual \texttt{3" POLISHER KIT} cost \texttt{\$34.99}. These errors are not resolved by extracting more neighboring lines because the missing relation is spatial: product names and prices occupy aligned visual blocks rather than a reliable linear text sequence.
+
+The successful trajectory used the two PDF APIs as complementary channels. First, \texttt{PdfTools.extract\_text} stored the complete text with explicit physical-page markers. A keyword search reduced 57 pages to candidate pages 6, 13, and 17. Second, \texttt{PdfTools.render\_page} rendered each candidate page and returned the PNG directly as the first visual input to the planner, avoiding viewer chrome, viewport cropping, and desktop-resolution downsampling. The agent first identified the \texttt{\$19.99} palm polisher on page~6. It then inspected page~17 to reject the text-derived \texttt{\$9.99} hypothesis, inspected page~13 to classify the \texttt{\$14.99} result as an accessory kit, and finally re-rendered page~6 at 200~DPI to verify the exact output string. It wrote \texttt{6" PALM POLISHER} and \texttt{\$19.99} to \texttt{answer.txt}, left the On-Screen Keyboard open, and received full executable credit. Table~\ref{tab:polisher-disambiguation} summarizes the disambiguation, and Figure~\ref{fig:polisher-pdf-evidence} shows the rendered evidence supplied to the model.
+
+\begin{table*}[t]
+\centering
+\small
+\begin{tabularx}{\textwidth}{@{}p{0.12\textwidth}p{0.38\textwidth}X@{}}
+\toprule
+Physical page & Misleading linear-text hypothesis & Resolution from the rendered page \\
+\midrule
+6 & The nearest extracted price after \texttt{6" PALM POLISHER} appears to be \texttt{\$109.99}. & The product block visually aligns \texttt{6" PALM POLISHER} with \texttt{\$19.99}; \texttt{\$109.99} belongs to a different polisher above it. \\
+13 & \texttt{6 PIECE POLISHER} is the cheapest lexical match at \texttt{\$14.99}. & The full two-line name is \texttt{6 PIECE POLISHER ACCESSORY KIT}, so it is not the requested tool. \\
+17 & A nearby \texttt{\$9.99} is associated with \texttt{3" POLISHER KIT}. & The polisher kit is \texttt{\$34.99}; \texttt{\$9.99} labels the separate high-speed cut-off tool below it. \\
+\bottomrule
+\end{tabularx}
+\caption{Why linear PDF text was insufficient for the cheapest-polisher task. Explicit page markers made retrieval reliable, while page rendering restored the spatial name--price relationships needed for verification.}
+\label{tab:polisher-disambiguation}
+\end{table*}
+
+\begin{figure*}[t]
+\centering
+\begin{minipage}[t]{0.32\textwidth}
+\centering
+\includegraphics[width=\linewidth,height=4.1cm,keepaspectratio]{figures/polisher_page6_crop.png}\\[-2pt]
+\small (a) Page 6: the correct \texttt{\$19.99} product block.
+\end{minipage}\hfill
+\begin{minipage}[t]{0.32\textwidth}
+\centering
+\includegraphics[width=\linewidth,height=4.1cm,keepaspectratio]{figures/polisher_page13_crop.png}\\[-2pt]
+\small (b) Page 13: \texttt{\$14.99} is an accessory kit.
+\end{minipage}\hfill
+\begin{minipage}[t]{0.32\textwidth}
+\centering
+\includegraphics[width=\linewidth,height=4.1cm,keepaspectratio]{figures/polisher_page17_crop.png}\\[-2pt]
+\small (c) Page 17: \texttt{\$34.99} kit and nearby \texttt{\$9.99} tool.
+\end{minipage}
+\caption{Cropped screenshots from the three candidate pages returned by \texttt{PdfTools.render\_page}. The catalogue's visual grouping makes the correct name--price relations clear, whereas its linear text layer interleaves adjacent product blocks.}
+\label{fig:polisher-pdf-evidence}
+\end{figure*}
+
 \subsection{Implications for model and scaffold design}
 
 The case study suggests four separable interventions. First, verification should maintain an explicit checklist for both $G$ and $R$ and inspect semantic field coverage rather than testing only whether a file, setting, or widget changed. Second, transient modalities require accumulation: caption events or repeated frame observations should be buffered into a persistent evidence record before downstream action. Third, GUI grounding should expose confidence and support verification through interface state rather than assuming that a generated click reached its intended target. Fourth, recovery should be hypothesis-driven and bounded; repeated attempts that do not generate new evidence should trigger a change of channel or a return to the last verified state. These interventions target both ordinary GUI reliability and the accessibility-conditioned points at which missing evidence or incomplete state becomes unusable assistance.
@@ -931,10 +982,10 @@ Task \nolinkurl{consumption-lavender_coupon} exercises V1 in an online-shopping 
 \subsection{Hearing}
 
 \paragraph{Communication: responding to a dental voicemail.}
-Task \nolinkurl{communication-dental_reschedule_voicemail} instantiates H1 text/non-auditory access to speech in an email workflow. \textbf{Instruction.} I cannot reliably hear the recording. Use Chrome Live Caption to read the dental voicemail on the Desktop. Choose the earlier of the two offered appointments and create and save a Thunderbird draft to \texttt{appointments@example.com} with subject \texttt{Dental reschedule}, including the chosen date, time, and confirmation code. Do not send it. \textbf{Construction and evaluation.} Setup opens a fixed MP3 in Chrome and prepares Thunderbird. One evaluator requires Live Caption to remain enabled; the other checks the recipient, subject, and the four required body facts for the September 17 appointment.
+Task \nolinkurl{communication-dental_reschedule_voicemail} instantiates H1 text/non-auditory access to speech and H4 audio-channel adaptation in an email workflow. \textbf{Instruction.} I hear primarily through one ear and rely on captions for clarity. Turn on Mono audio, then use Chrome Live Caption to read the dental voicemail on the Desktop. Choose the earlier of the two offered appointments and create and save a Thunderbird draft to \texttt{appointments@example.com} with subject \texttt{Dental reschedule}, including the chosen date, time, and confirmation code. Do not send it. \textbf{Construction and evaluation.} Setup opens a fixed MP3 in Chrome and prepares Thunderbird. Accessibility evaluators require both Mono audio and Live Caption to remain enabled; the outcome evaluator checks the recipient, subject, and the four required body facts for the September 17 appointment.
 
 \paragraph{Service: recording council pickup instructions.}
-Task \nolinkurl{service-council_document_pickup_audio} applies H1 to a public-service workflow. \textbf{Instruction.} I cannot reliably hear the recording. Turn on Chrome Live Caption to read the council service recording on the Desktop. Save the pickup location, collection hours, item to bring, and reference number to \texttt{answer.txt}, one item per line in that order. \textbf{Construction and evaluation.} A pinned local recording removes public-media drift. The evaluator conjoins the caption setting with ordered, line-based content checks for Civic Service Centre counter 4, the collection hours, photo identification, and reference \texttt{PS-482}.
+Task \nolinkurl{service-council_document_pickup_audio} applies H1 text/non-auditory access and H2 caption presentation to a public-service workflow. \textbf{Instruction.} I cannot reliably hear the recording and need larger captions. Use Windows Live captions with the caption style set to Large text to read the council service recording on the Desktop. Save the pickup location, collection hours, item to bring, and reference number to \texttt{answer.txt}, one item per line in that order. \textbf{Construction and evaluation.} A pinned local recording removes public-media drift. Accessibility evaluators require Windows Live captions to remain enabled with the Large text style; the outcome evaluator applies ordered, line-based content checks for Civic Service Centre counter 4, the collection hours, photo identification, and reference \texttt{PS-482}.
 
 \subsection{Motor}
 

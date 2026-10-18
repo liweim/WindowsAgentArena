@@ -46,10 +46,13 @@ class LMMEngineOpenAI:
     '''
     functions borrow from https://github.com/simular-ai/Agent-S/blob/main/gui_agents/s2/core/engine.py#L247
     '''
-    def __init__(self, model=None, rate_limit=-1, **kwargs):
+    def __init__(
+        self, model=None, rate_limit=-1, thinking_token_budget=None, **kwargs
+    ):
         assert model is not None, "model must be provided"
         self.model = model
         self.request_interval = 0 if rate_limit == -1 else 60.0 / rate_limit
+        self.thinking_token_budget = thinking_token_budget
         self.llm = AbstractLLM(model_name=model, max_tokens=4096, logger=logging.getLogger("gta1.lmm"))
 
     def _normalize_messages(self, messages):
@@ -78,7 +81,11 @@ class LMMEngineOpenAI:
         """Generate the next message based on previous messages"""
         if hasattr(self.llm.client, "max_tokens"):
             self.llm.client.max_tokens = max_new_tokens if max_new_tokens else 4096
-        return self.llm(self._normalize_messages(messages), max_retries=3)
+        return self.llm(
+            self._normalize_messages(messages),
+            max_retries=3,
+            thinking_token_budget=self.thinking_token_budget,
+        )
 
 class LMMAgent:
     '''
@@ -281,7 +288,10 @@ subprocess.run(['wmctrl', '-ir', window_id, '-b', 'add,maximized_vert,maximized_
 
 
 SET_CELL_VALUES_CMD = """import uno
+import os
+import socket
 import subprocess
+import time
 
 def identify_document_type(component):
     if component.supportsService("com.sun.star.sheet.SpreadsheetDocument"):
@@ -314,22 +324,34 @@ def set_cell_values(new_cell_values: dict[str, str], app_name: str = "Untitled 1
         if col is not None and row is not None:
             new_cell_values_idx[(col, row)] = v
 
-    # Clean up previous TCP connections.
-    subprocess.run(
-        'echo \"password\" | sudo -S ss --kill --tcp state TIME-WAIT sport = :2002',
-        shell=True,
-        check=True,
-        text=True,
-        capture_output=True
-    )
+    def wait_for_listener(timeout):
+        deadline = time.time() + timeout
+        while time.time() < deadline:
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+                sock.settimeout(0.5)
+                try:
+                    sock.connect(("127.0.0.1", 2002))
+                    return True
+                except OSError:
+                    time.sleep(0.25)
+        return False
 
-    # Dynamically allow soffice to listen on port 2002.
-    subprocess.run(
-        [
-            "soffice",
-            "--accept=socket,host=localhost,port=2002;urp;StarOffice.Service"
-        ]
-    )
+    if not wait_for_listener(1.0):
+        soffice = (
+            r"C:\Program Files\LibreOffice\program\soffice.exe"
+            if os.name == "nt"
+            else "soffice"
+        )
+        subprocess.Popen(
+            [
+                soffice,
+                "--accept=socket,host=localhost,port=2002;urp;StarOffice.Service",
+            ],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+        if not wait_for_listener(12.0):
+            raise RuntimeError("LibreOffice UNO listener is not available")
 
     local_context = uno.getComponentContext()
     resolver = local_context.ServiceManager.createInstanceWithContext(
@@ -387,6 +409,32 @@ def set_cell_values(new_cell_values: dict[str, str], app_name: str = "Untitled 1
 set_cell_values(new_cell_values={cell_values}, app_name="{app_name}", sheet_name="{sheet_name}")        
 """
 
+
+def _windows_libreoffice_python_wrapper(code: str) -> str:
+    """Run PyUNO source with LibreOffice's bundled Windows interpreter."""
+    return (
+        "import os, subprocess, sys, tempfile\n"
+        f"source = {code!r}\n"
+        "python_executable = r'C:\\Program Files\\LibreOffice\\program\\python.exe'\n"
+        "if not os.path.isfile(python_executable):\n"
+        "    raise FileNotFoundError(python_executable)\n"
+        "handle, script_path = tempfile.mkstemp(suffix='.py', prefix='gta1_pyuno_')\n"
+        "os.close(handle)\n"
+        "try:\n"
+        "    with open(script_path, 'w', encoding='utf-8') as stream:\n"
+        "        stream.write(source)\n"
+        "    result = subprocess.run(\n"
+        "        [python_executable, script_path], capture_output=True, text=True\n"
+        "    )\n"
+        "    sys.stdout.write(result.stdout or '')\n"
+        "    sys.stderr.write(result.stderr or '')\n"
+        "    if result.returncode:\n"
+        "        raise SystemExit(result.returncode)\n"
+        "finally:\n"
+        "    if os.path.exists(script_path):\n"
+        "        os.remove(script_path)\n"
+    )
+
     
 class OSWorldACI:
     '''
@@ -412,6 +460,7 @@ class OSWorldACI:
         width: int = 1920,
         height: int = 1080,
         text_model: str = "o3",
+        thinking_token_budget: Optional[int] = None,
     ):
         self.platform = (
             platform  # Dictates how the switch_applications agent action works.
@@ -420,6 +469,7 @@ class OSWorldACI:
         engine_params_for_generation = engine_params = {
             "engine_type": 'openai',
             "model": text_model,
+            "thinking_token_budget": thinking_token_budget,
         }
         
         # Configure scaling
@@ -736,9 +786,12 @@ class OSWorldACI:
             app_name: str, The name of the spreadsheet application. For example, "Some_sheet.xlsx".
             sheet_name: str, The name of the sheet in the spreadsheet. For example, "Sheet1".
         """
-        return SET_CELL_VALUES_CMD.format(
+        code = SET_CELL_VALUES_CMD.format(
             cell_values=cell_values, app_name=app_name, sheet_name=sheet_name
         )
+        if self.platform == "windows":
+            return _windows_libreoffice_python_wrapper(code)
+        return code
 
     def scroll(self, instruction: str, clicks: int, shift: bool = False):
         """Scroll the element in the specified direction
@@ -1037,9 +1090,12 @@ class DummyAgent:
             app_name: str, The name of the spreadsheet application. For example, "Some_sheet.xlsx".
             sheet_name: str, The name of the sheet in the spreadsheet. For example, "Sheet1".
         """
-        return SET_CELL_VALUES_CMD.format(
+        code = SET_CELL_VALUES_CMD.format(
             cell_values=cell_values, app_name=app_name, sheet_name=sheet_name
         )
+        if self.platform == "windows":
+            return _windows_libreoffice_python_wrapper(code)
+        return code
 
     def scroll(self, instruction: str, clicks: int, shift: bool = False):
         """Scroll the element in the specified direction
@@ -1178,6 +1234,7 @@ class GTA1Agent:
         planner_model="o3",
         judge_model="o3",
         ground_model="gta1-7b",
+        thinking_token_budget=None,
         max_tokens=4096,
         top_p=0.9,
         temperature= 0.0,
@@ -1207,6 +1264,7 @@ class GTA1Agent:
         self.planner_model=planner_model
         self.judge_model=judge_model
         self.ground_model = ground_model
+        self.thinking_token_budget = thinking_token_budget
         self.planner_llm = AbstractLLM(
             model_name=planner_model,
             temperature=max(temperature, 0.1),
@@ -1236,6 +1294,7 @@ class GTA1Agent:
             width=screen_width,
             height=screen_height,
             text_model=planner_model,
+            thinking_token_budget=thinking_token_budget,
         )
 
     def _normalize_messages_for_llm(self, messages: List[Dict]) -> List[Dict]:
@@ -1559,6 +1618,7 @@ class GTA1Agent:
                 prediction = self.judge_llm(
                     self._normalize_messages_for_llm(messages),
                     max_retries=1,
+                    thinking_token_budget=self.thinking_token_budget,
                 )
                 prediction = extract_answer_from_response(prediction)
                 return response[prediction['index']]
@@ -1721,7 +1781,11 @@ class GTA1Agent:
 
         responses = []
         for _ in range(n):
-            response = self.planner_llm(messages, max_retries=1)
+            response = self.planner_llm(
+                messages,
+                max_retries=1,
+                thinking_token_budget=self.thinking_token_budget,
+            )
             if response:
                 responses.append(response)
         return responses

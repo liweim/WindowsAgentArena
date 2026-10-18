@@ -17,6 +17,7 @@ from .autogen.agentchat.contrib.multimodal_conversable_agent import MultimodalCo
 
 from .cua_agent import run_cua
 from .coding_agent import TerminalProxyAgent, CODER_SYSTEM_MESSAGE
+from .message_utils import is_termination_message
 from .model_config import add_usage_entry, build_llm_config, extract_autogen_usage, is_local_model, make_usage_entry
 from mm_agents.utils import get_price
 
@@ -191,6 +192,7 @@ class OrchestratorUserProxyAgent(MultimodalConversableAgent):
         coding_model: str = "o4-mini-2025-04-16",
         summarizer_model: str = "o4-mini-2025-04-16",
         cua_model: str = "computer-use-preview",
+        thinking_token_budget: Optional[int] = None,
         client_password: str = "",
         user_instruction: str = "",
         headless: bool = False,
@@ -243,8 +245,11 @@ class OrchestratorUserProxyAgent(MultimodalConversableAgent):
         self.coding_model = coding_model
         self.summarizer_model = summarizer_model
         self.cua_model = cua_model
+        self.thinking_token_budget = thinking_token_budget
         self.config_path = config_path
-        self.llm_config = build_llm_config(coding_model, config_path)
+        self.llm_config = build_llm_config(
+            coding_model, config_path, thinking_token_budget
+        )
 
         # Add statistics tracking
         self.action_logs = []  # Unified action log list
@@ -490,12 +495,20 @@ class OrchestratorUserProxyAgent(MultimodalConversableAgent):
             screenshot = self.env.controller.get_screenshot()
             coding_agent = MultimodalConversableAgent(
                 name="coding_agent",
-                llm_config=build_llm_config(self.coding_model, self.config_path),
+                llm_config=build_llm_config(
+                    self.coding_model,
+                    self.config_path,
+                    self.thinking_token_budget,
+                ),
                 system_message=CODER_SYSTEM_MESSAGE.format(CLIENT_PASSWORD=self.client_password),
             )
             summarizer = ConversableAgent(
                 name="summarizer",
-                llm_config=build_llm_config(self.summarizer_model, self.config_path),
+                llm_config=build_llm_config(
+                    self.summarizer_model,
+                    self.config_path,
+                    self.thinking_token_budget,
+                ),
                 system_message=self.CONVERSATION_REVIEW_PROMPT,
             )
 
@@ -510,7 +523,7 @@ class OrchestratorUserProxyAgent(MultimodalConversableAgent):
                 max_consecutive_auto_reply = None,
                 default_auto_reply = default_auto_reply,
                 description = None,
-                is_termination_msg=lambda x: x.get("content", "") and x.get("content", "")[0]["text"].lower() == "terminate",
+                is_termination_msg=is_termination_message,
                 env=self.env,
             )
 

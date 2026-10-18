@@ -17,9 +17,14 @@ nohup setsid env \
     --start-client true \
     --agent agents3 \
     --model qwen3.8-27b \
+    --thinking_token_budget 16384 \
     --ground_model uitars-1.5-7b \
     --provider_name docker \
     --headless \
+    --screen_width 1280 \
+    --screen_height 800 \
+    --grounding_width 1280 \
+    --grounding_height 800 \
     --max_steps 50 \
     --som-origin oss \
     --a11y-backend uia \
@@ -29,7 +34,7 @@ nohup setsid env \
     --isolate-tasks true \
     --container-name a11yarena-agents3 \
     --result-dir /locallstc/projects/WindowsAgentArena/results/agents3_qwen3.8-27b \
-    --json-name evaluation_examples_windows/cognitive.json \
+    --json-name evaluation_examples_windows/test_all.json \
     --remove-container true \
     "$@" >"$LOG_FILE" 2>&1 < /dev/null &
 

@@ -165,6 +165,9 @@ def _add_gta1_options(parser: argparse.ArgumentParser) -> None:
     _add_standalone_environment_options(parser)
     _add_context_options(parser)
     parser.add_argument("--client_password", "--client-password", default="password")
+    parser.add_argument(
+        "--thinking_token_budget", "--thinking-token-budget", type=int, default=None
+    )
     parser.add_argument("--judge_model", "--judge-model", default="o3")
     parser.add_argument("--ground_model", "--ground-model", default="gta1-7b")
     parser.add_argument("--n_samples", "--n-samples", type=int, default=8)
@@ -183,6 +186,9 @@ def _add_agents3_options(parser: argparse.ArgumentParser) -> None:
     _add_standalone_environment_options(parser, provider=True)
     _add_context_options(parser)
     parser.add_argument("--ground_model", "--ground-model", required=True)
+    parser.add_argument(
+        "--thinking_token_budget", "--thinking-token-budget", type=int, default=None
+    )
     parser.add_argument("--model_provider", "--model-provider", default="")
     parser.add_argument("--model_url", "--model-url", default="")
     parser.add_argument("--model_api_key", "--model-api-key", default="")
@@ -337,6 +343,9 @@ def _add_coact_options(parser: argparse.ArgumentParser) -> None:
     _add_standalone_environment_options(parser)
     _add_context_options(parser)
     parser.add_argument("--client_password", "--client-password", default="password")
+    parser.add_argument(
+        "--thinking_token_budget", "--thinking-token-budget", type=int, default=None
+    )
     parser.add_argument(
         "--oai_config_path",
         "--oai-config-path",

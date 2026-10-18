@@ -3,17 +3,19 @@ from typing import Any, Callable, Optional
 from .autogen.llm_config import LLMConfig
 from .autogen.code_utils import PYTHON_VARIANTS
 from .autogen.agentchat.contrib.multimodal_conversable_agent import MultimodalConversableAgent
+from .coding_execution import execution_result, powershell_python_wrapper
 
 
 CODER_SYSTEM_MESSAGE = """# Your role
-- You are a programmer, you need to solve a task step-by-step given by the user. 
-- You can write code in ```bash...``` code blocks for bash scripts, and ```python...``` code blocks for python code. 
-- Your linux username is "user".
-- If you want to use sudo, follow the format: "echo {CLIENT_PASSWORD} | sudo -S [YOUR COMMANDS]" (no quotes for the word "{CLIENT_PASSWORD}").
+- You are a programmer operating inside the Windows 11 guest shown in the screenshot.
+- The current Windows user is `Docker`; its profile is `C:\\Users\\Docker` and its Desktop is `C:\\Users\\Docker\\Desktop`.
+- Write code in a single ```python...``` code block whenever possible. Python runs directly in the Windows guest.
+- If a shell is genuinely necessary, use one ```powershell...``` code block with Windows PowerShell syntax.
+- Do not use Linux paths, bash utilities, sudo, apt, `/home/user`, `/root`, or `/tmp`.
 
 # Requirements
 - You MUST verify the result before save the changes.
-- When you write code, you must identify the language (whether it is python or bash) of the code.
+- When you write code, identify it as either Python or PowerShell.
 - Wrap all your code in ONE code block. DO NOT let user save the code as a file and execute it for you.
 - Do not include __main__ in your python code.
 - When you modify a spreadsheet, **make sure every value is in the expected cell**.
@@ -21,6 +23,7 @@ CODER_SYSTEM_MESSAGE = """# Your role
 - You need to print the progressive and final result.
 - If you met execution error, you need to analyze the error message and try to fix the error.
 """
+
 
 class TerminalProxyAgent(MultimodalConversableAgent):
     def __init__(
@@ -50,26 +53,19 @@ class TerminalProxyAgent(MultimodalConversableAgent):
         self.env = env
 
     def run_code(self, code: str, lang: str = "python", **kwargs):
-        exitcode = 1
-        logs = ""
         image = None
-        if lang in ["bash", "shell", "sh"]:
-            output_dict = self.env.controller.run_bash_script(code)
-            if output_dict["status"] == "success":
-                exitcode = 0
-                logs = output_dict["output"]
-            else:
-                exitcode = 0
-                logs = output_dict["output"]
-        elif lang in PYTHON_VARIANTS:
+        normalized_lang = (lang or "").lower()
+        if normalized_lang in ["powershell", "ps1", "pwsh", "bash", "shell", "sh"]:
+            output_dict = self.env.controller.run_python_script(
+                powershell_python_wrapper(code)
+            )
+            exitcode, logs = execution_result(output_dict)
+        elif normalized_lang in PYTHON_VARIANTS:
             output_dict = self.env.controller.run_python_script(code)
-            if output_dict["status"] == "error":
-                exitcode = 0
-                logs = output_dict["output"]
-            else:
-                exitcode = 0
-                logs = output_dict["message"]
+            exitcode, logs = execution_result(output_dict)
         else:
             exitcode = -1
-            logs = f"unknown language {lang}"
+            logs = (
+                f"Unsupported language {lang!r}. Use Python or Windows PowerShell."
+            )
         return exitcode, logs, image

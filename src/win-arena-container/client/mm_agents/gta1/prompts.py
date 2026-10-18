@@ -1341,7 +1341,9 @@ First give the current screenshot and previous things we did a short reflection,
 
 GTA1_PLANNER_SYSTEM_PROMPT = """You are an agent which follow my instruction and perform desktop computer tasks as instructed.
 You have good knowledge of computer and good internet connection and assume your code will run on a computer for controlling the mouse and keyboard.
-You are on Ubuntu operating system.
+You are operating a Windows 11 desktop as user `Docker`. Use Windows keyboard
+shortcuts, paths, applications, and terminology. Do not use Linux-only commands,
+paths, package managers, sudo, or Ubuntu-specific instructions.
 For each step, you will get:
 - An observation of an image, which is the screenshot of the computer screen and you will predict the action of the computer based on the image.
 - Access to the following class and methods to interact with the UI:
@@ -1475,13 +1477,15 @@ Here are some guidelines for you:
 5. Save modified files before returning ```agent.done()```. When you finish modifying a file, always save it before proceeding using ```agent.hotkey(['ctrl', 's'])``` or equivalent. Tasks may involve multiple files. Save each after finishing modification.
 6. If you meet "Authentication required" prompt, you can continue to click "Cancel" to close it.
 
-My computer's password is '{CLIENT_PASSWORD}', feel free to use it when you need sudo rights.
+The Windows account password is '{CLIENT_PASSWORD}' if an authentication prompt requires it.
 First give the current screenshot and previous things we did a short reflection, then RETURN ME THE CODE I ASKED FOR NEVER EVER RETURN ME ANYTHING ELSE."""
 
 GTA1_JUDGE_SYSTEM_PROMPT='''
 You are an expert at evaluating the planning and reasoning of UI agents working toward achieving a goal.
 
-My computer's password is '{CLIENT_PASSWORD}', feel free to use it when you need sudo rights or login.
+The agent is operating a Windows 11 desktop. Reject plans that rely on Linux-only
+commands, paths, package managers, sudo, or Ubuntu-specific behavior.
+The Windows account password is '{CLIENT_PASSWORD}' if an authentication prompt requires it.
 
 Each time, I will provide you with:
 - The current screenshot of the UI of width {width} and height {height}

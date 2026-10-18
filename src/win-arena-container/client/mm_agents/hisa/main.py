@@ -24,8 +24,100 @@ import time
 import glob
 
 
+def _powershell_python_wrapper(code: str, timeout: int) -> str:
+    """Build guest-side Python that executes PowerShell on Windows."""
+    return (
+        "import subprocess, sys\n"
+        f"command = {json.dumps(code)}\n"
+        "try:\n"
+        "    result = subprocess.run(\n"
+        "        ['powershell.exe', '-NoProfile', '-NonInteractive', "
+        "'-ExecutionPolicy', 'Bypass', '-Command', command],\n"
+        "        stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True,\n"
+        f"        timeout={max(1, min(int(timeout), 120))},\n"
+        "    )\n"
+        "    sys.stdout.write(result.stdout or '')\n"
+        "    sys.exit(result.returncode)\n"
+        "except subprocess.TimeoutExpired as exc:\n"
+        "    output = exc.stdout or ''\n"
+        "    if isinstance(output, bytes):\n"
+        "        output = output.decode(errors='replace')\n"
+        "    sys.stdout.write(output + '\\n[PowerShell execution timed out]')\n"
+        "    sys.exit(124)\n"
+    )
+
+
+def _windows_execution_script(code: str, timeout: int) -> Tuple[str, str]:
+    """Convert the legacy bash_execution payload into Windows guest Python.
+
+    New planner responses identify their language with ``python:`` or
+    ``powershell:``. Fenced and unprefixed payloads remain supported for old
+    traces and for occasional model-formatting drift.
+    """
+    payload = str(code or "").strip()
+    if not payload:
+        raise ValueError("bash_execution received an empty script")
+
+    fenced = re.fullmatch(
+        r"```\s*(python|py|powershell|ps1|pwsh|bash|sh)?\s*\n?(.*?)\n?```",
+        payload,
+        flags=re.IGNORECASE | re.DOTALL,
+    )
+    language = ""
+    if fenced:
+        language = (fenced.group(1) or "").lower()
+        payload = fenced.group(2).strip()
+    else:
+        prefixed = re.match(
+            r"^(python|py|powershell|ps1|pwsh|bash|sh)\s*:\s*(.*)$",
+            payload,
+            flags=re.IGNORECASE | re.DOTALL,
+        )
+        if prefixed:
+            language = prefixed.group(1).lower()
+            payload = prefixed.group(2).strip()
+
+    if language in {"powershell", "ps1", "pwsh", "bash", "sh"}:
+        return _powershell_python_wrapper(payload, timeout), "PowerShell"
+    if language in {"python", "py"}:
+        return payload, "Python"
+
+    python_c = re.match(
+        r"^(?:python(?:\.exe)?|python3|py)\s+-c\s+(.+)$",
+        payload,
+        flags=re.IGNORECASE | re.DOTALL,
+    )
+    if python_c:
+        source = python_c.group(1).strip()
+        try:
+            decoded = ast.literal_eval(source)
+            if isinstance(decoded, str):
+                source = decoded
+        except (SyntaxError, ValueError):
+            if len(source) >= 2 and source[0] == source[-1] and source[0] in "'\"":
+                source = source[1:-1]
+        return source, "Python"
+
+    # Prefer Python when the payload is valid Python. Recognize common
+    # PowerShell syntax first because commands such as Get-ChildItem also form
+    # a syntactically valid Python subtraction expression.
+    if re.match(
+        r"^(?:\$|(?:Get|Set|New|Remove|Copy|Move|Test|Resolve|Select|Where|"
+        r"ForEach|Write|Start|Stop|Invoke|Import|Export)-|"
+        r"dir(?:\s|$)|ls(?:\s|$)|pwd(?:\s|$)|cd(?:\s|$))",
+        payload,
+        flags=re.IGNORECASE,
+    ):
+        return _powershell_python_wrapper(payload, timeout), "PowerShell"
+    try:
+        ast.parse(payload)
+    except SyntaxError:
+        return _powershell_python_wrapper(payload, timeout), "PowerShell"
+    return payload, "Python"
+
+
 # ==================== PROMPTS ====================
-GLOBAL_PLANNER_PROMPT = """You are an expert in GUIs and bash code executing tasks step-by-step. Always keep the task instruction in mind.
+GLOBAL_PLANNER_PROMPT = """You are an expert in Windows GUIs and script execution, completing tasks step-by-step. Always keep the task instruction in mind.
 
 # General Instructions
 1. **CRITICAL: Do ONLY what the task asks - nothing more, nothing less**
@@ -86,12 +178,14 @@ Input: Number of seconds to wait (5-30 recommended)
 **When to use**: After triggering async operations (Submit/Apply/Run buttons, page loads, etc.), use wait to confirm completion before termination.
 
 ## bash_execution
-Execute bash commands and Python scripts.
-Input: Code string (bash or Python)
+Execute Python or PowerShell inside the Windows guest. The tool name is retained for compatibility; Bash is not available.
+Input: A code string beginning with exactly `python:` or `powershell:`.
 
 ### Available Commands
-- **Python**: `python3 -c "code"` or `pip install package && python3 -c "import package"`
-- **Ignore "sudo: /etc/sudoers.d is world writable" errors**
+- **Python (preferred)**: `python: <complete standalone Python source>`
+- **PowerShell**: `powershell: <complete PowerShell command or script>`
+- Use Windows paths such as `C:\\Users\\Docker\\...`; do not use Linux paths or commands such as `ls`, `sudo`, `apt`, or `/tmp`.
+- Do not install packages unless the task requires it. If installation is necessary, invoke pip from Python rather than chaining shell commands.
 
 ## infeasible
 Declare that the task is objectively impossible to complete.
@@ -120,7 +214,7 @@ Input: Explanation of why the task is infeasible
   - Use appropriate libraries (python-docx, openpyxl, pandas)
   - COMPLETE OVERWRITES, not appends (replace all content/sheets/paragraphs)
   - Check screenshot for the currently open file
-  - **CRITICAL FOR EXCEL AND LIBREOFFICE CALC**: Prefer bash_execution with Python libraries (openpyxl, pandas, xlrd, xlwt) for Excel and LibreOffice Calc operations, but use gui_action if necessary
+  - **CRITICAL FOR EXCEL AND LIBREOFFICE CALC**: Prefer bash_execution with a `python:` script using available Windows-compatible libraries (openpyxl, pandas, xlrd, xlwt), but use gui_action if necessary
 
 ## Preserve Structure
   - Never modify headers, titles, sheet names, or structural elements unless requested
@@ -167,7 +261,8 @@ Examples:
 - gui_action with grounding: `{"tool": "gui_action", "input": "pyautogui.click(0, 0)", "description": "Click the Submit button"}`
 - gui_action without grounding: `{"tool": "gui_action", "input": "pyautogui.write('hello')"}`
 - wait: `{"tool": "wait", "input": "15"}`
-- bash_execution: `{"tool": "bash_execution", "input": "ls -la"}`
+- bash_execution (Python): `{"tool": "bash_execution", "input": "python: import os; print(os.listdir('.'))"}`
+- bash_execution (PowerShell): `{"tool": "bash_execution", "input": "powershell: Get-ChildItem"}`
 - termination: `{"tool": "termination", "input": "Task completed. [summary]"}`
 - infeasible: `{"tool": "infeasible", "input": "Chrome doesn't support changing search results per page - this is a search engine setting, not a browser feature"}`
 
@@ -240,7 +335,7 @@ Return a concise summary string in this format:
 "Steps {start_step}~{end_step}: [ordered list of what was done, keeping coordinates]. Suggestion: [actionable advice, or 'Continue' if progressing well]"
 
 Examples:
-- "Steps 1~5: Opened file, tried to edit (failed 3 times with permission error), attempted sudo (failed). Suggestion: Try a different approach - copy file to temp location first."
+- "Steps 1~5: Opened file, tried to edit (failed 3 times with permission error), attempted a second write (failed). Suggestion: Try a different writable Windows path."
 - "Steps 1~5: Clicked Submit button at click(850,620), typed text, clicked Save at click(920,580). Suggestion: Continue - forms being filled correctly."
 - "Steps 1~10: Previously installed package and ran script (steps 1~5). Then verified output, tested functionality (steps 6~10). Suggestion: Continue - good progress."
 - "Steps 1~15: Clicked the same button 5 times with no response, tried alternative buttons (failed). Suggestion: This approach isn't working - try an alternative method or termination as infeasible."
@@ -1514,7 +1609,7 @@ Based on the execution_history and current screenshot, decide the next action. A
         py_cmd, reasoning = self.visual_grounder_llm.call_cua(
             description, 
             img, 
-            environment="linux", 
+            environment="windows",
             screen_width=screenshot_width,
             screen_height=screenshot_height,
             scale=scale
@@ -1731,7 +1826,7 @@ Based on the execution_history and current screenshot, decide the next action. A
             return "Step abstraction failed due to error."
 
     def _bash_execution(self, code: str) -> str:
-        """Execute bash commands or Python scripts (not pyautogui)."""
+        """Execute Python or PowerShell in the Windows guest (not pyautogui)."""
         self.logger.info(f"[bash_execution] {code}")
 
         # Record step start time
@@ -1743,11 +1838,27 @@ Based on the execution_history and current screenshot, decide the next action. A
             # Get before screenshot
             before_screenshot = self.env.controller.get_screenshot()
 
-            # Call env.controller.run_bash_script instead of env.step
-            output_dict = self.env.controller.run_bash_script(code, timeout=self.bash_timeout)
-            exitcode = 0 if output_dict["status"] == "success" else 1
-            logs = output_dict["output"]
-            self.logger.info("[bash_output]\n%s", logs if logs else "")
+            execution_script, execution_kind = _windows_execution_script(
+                code, self.bash_timeout
+            )
+            output_dict = self.env.controller.run_python_script(execution_script) or {}
+            status = str(output_dict.get("status", "error")).lower()
+            raw_exitcode = output_dict.get(
+                "return_code",
+                output_dict.get("returncode", 0 if status == "success" else 1),
+            )
+            try:
+                exitcode = int(raw_exitcode)
+            except (TypeError, ValueError):
+                exitcode = 0 if status == "success" else 1
+            if status != "success" and exitcode == 0:
+                exitcode = 1
+            logs = "\n".join(
+                str(output_dict[key]).strip()
+                for key in ("output", "error", "message")
+                if output_dict.get(key) and str(output_dict[key]).strip()
+            )
+            self.logger.info("[%s_output]\n%s", execution_kind.lower(), logs)
 
             after_screenshot = self._wait_for_stable_screenshot(timeout_seconds=self.sleep_after_execution)
             if after_screenshot is None:
@@ -1762,7 +1873,7 @@ Based on the execution_history and current screenshot, decide the next action. A
             if self.wo_step:
                 step_abstraction = ""
             else:
-                bash_description = f"Bash command: {code}\nOutput: {logs}..."  # Truncate long output
+                bash_description = f"{execution_kind} script: {code}\nOutput: {logs}..."  # Truncate long output
                 step_abstraction = "Result: " + self._step_abstraction(
                     before_screenshot, after_screenshot, bash_description,
                     wo_roi=self.wo_roi, roi_margin=self.roi_margin
@@ -1770,7 +1881,7 @@ Based on the execution_history and current screenshot, decide the next action. A
 
             # Generate step_abstract summary
             thought_prefix = f"Thought: {self.current_thought} | " if self.current_thought else ""
-            step_abstract = f"Step {step}: Bash execution | {thought_prefix}Code: {code} | Output: {logs} | {step_abstraction}"
+            step_abstract = f"Step {step}: {execution_kind} execution | {thought_prefix}Code: {code} | Output: {logs} | {step_abstraction}"
 
             # Calculate step execution time
             step_time = time.time() - step_start_time
@@ -1787,10 +1898,10 @@ Based on the execution_history and current screenshot, decide the next action. A
 
             # Return execution result text for wo_step mode
             status_str = "Success" if exitcode == 0 else "Failed"
-            return f"Bash Command: {code}\nStatus: {status_str}\nOutput:\n{logs}"
+            return f"{execution_kind} Script: {code}\nStatus: {status_str}\nOutput:\n{logs}"
             
         except Exception as e:
-            self.logger.error(f"Bash execution error: {e}")
+            self.logger.error(f"Windows script execution error: {e}")
 
             screenshot = self.env.controller.get_screenshot()
             screenshot_file = f"step_{step}_bash_error.png"
@@ -1800,7 +1911,7 @@ Based on the execution_history and current screenshot, decide the next action. A
 
             # Generate step_abstract summary for error
             thought_prefix = f"Thought: {self.current_thought} | " if self.current_thought else ""
-            step_abstract = f"Step {step}: Bash execution | {thought_prefix}Code: {code} | Result: Error - {str(e)}"
+            step_abstract = f"Step {step}: Windows script execution | {thought_prefix}Code: {code} | Result: Error - {str(e)}"
 
             self.action_logs.append({
                 "step": step,
@@ -1812,7 +1923,7 @@ Based on the execution_history and current screenshot, decide the next action. A
             })
 
             # Return execution result text for wo_step mode
-            return f"Bash Command: {code}\nStatus: Failed\nError: {str(e)}"
+            return f"Windows Script: {code}\nStatus: Failed\nError: {str(e)}"
 
     def _wait(self, seconds_str: str) -> str:
         """Wait for specified seconds and observe UI changes."""

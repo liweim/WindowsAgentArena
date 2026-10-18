@@ -2058,12 +2058,29 @@ def calculate_image_tokens():
 
 
 if __name__ == "__main__":
-    client = AbstractLLM('qwen3.8-27b')
+    # client = AbstractLLM('qwen3.8-27b')
+    # messages = [
+    #     {
+    #         "role": "user",
+    #         "content": [
+    #             {"type": "input_text", "text": "hi"},
+    #         ]
+    #     }
+    # ]
+    # response = client(messages)
+    # print(response)
+
+    client = AbstractLLM('uitars-1.5-7b')
+    image = Image.open("/home/weimingli/projects/WindowsAgentArena/img/banner.png")
     messages = [
         {
             "role": "user",
             "content": [
-                {"type": "input_text", "text": "hi"},
+                {"type": "input_image", "image_url": encode_image(image)},
+                {
+                    "type": "input_text",
+                    "text": "Query:the large blue Windows logo inside the dashed circle on the left\nOutput only the coordinate of one point in your response.\n",
+                },
             ]
         }
     ]

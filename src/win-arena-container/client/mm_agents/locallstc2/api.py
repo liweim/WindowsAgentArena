@@ -8,6 +8,7 @@ import tempfile
 from pathlib import Path
 from typing import Any, Collection, Dict, List, Optional, Tuple
 
+import fitz
 import requests
 from pypdf import PdfReader
 from pydrive.auth import GoogleAuth
@@ -20,6 +21,8 @@ DEFAULT_CONTAINER_PARAKEET_URL = DEFAULT_PARAKEET_URL.replace(
     "127.0.0.1", "host.docker.internal"
 )
 VIDEO_SUFFIXES = {".mkv", ".mov", ".mp4"}
+DEFAULT_INLINE_TEXT_CHAR_LIMIT = 1000
+DEFAULT_PDF_IMAGE_DPI = 144
 
 
 class APIRegistry:
@@ -96,6 +99,151 @@ class APIRegistry:
         self.handler_dir = os.path.join(self.base_dir, "api_handlers")
         self._schema_cache: Dict[str, List[Dict[str, Any]]] = {}
         self._handler_method_cache: Dict[str, set[str]] = {}
+
+    @staticmethod
+    def _fixed_text_vm_path(env, filename: str) -> str:
+        """Return the fixed artifact path for the active guest platform."""
+        platform_name = str(getattr(env, "vm_platform", "") or "").lower()
+        if "win" in platform_name:
+            return f"C:/Users/Docker/Desktop/{filename}"
+        if "android" in platform_name:
+            return f"/sdcard/Download/{filename}"
+        return f"/home/user/{filename}"
+
+    @staticmethod
+    def _fixed_pdf_image_vm_dir(env) -> str:
+        """Return the fixed directory used for rendered PDF page images."""
+        platform_name = str(getattr(env, "vm_platform", "") or "").lower()
+        if "win" in platform_name:
+            return "C:/Users/Docker/Desktop/pdf_pages"
+        if "android" in platform_name:
+            return "/sdcard/Download/pdf_pages"
+        return "/home/user/pdf_pages"
+
+    @staticmethod
+    def _reset_vm_directory(vm_dir: str, env) -> None:
+        """Replace a fixed artifact directory in the guest VM."""
+        setup_controller = getattr(env, "setup_controller", None)
+        http_server = str(getattr(setup_controller, "http_server", "") or "").rstrip("/")
+        if not http_server:
+            raise RuntimeError(
+                "Environment is missing setup_controller.http_server for VM directory setup"
+            )
+
+        platform_name = str(getattr(env, "vm_platform", "") or "").lower()
+        if "win" in platform_name:
+            escaped_dir = vm_dir.replace("'", "''")
+            command = [
+                "powershell",
+                "-NoProfile",
+                "-Command",
+                (
+                    f"$p='{escaped_dir}'; "
+                    "if (Test-Path -LiteralPath $p) { "
+                    "Remove-Item -LiteralPath $p -Recurse -Force }; "
+                    "New-Item -ItemType Directory -Force -Path $p | Out-Null"
+                ),
+            ]
+        else:
+            command = ["sh", "-c", 'rm -rf -- "$1" && mkdir -p -- "$1"', "sh", vm_dir]
+
+        response = requests.post(
+            http_server + "/setup/execute",
+            json={"command": command, "shell": False},
+            timeout=(10, 120),
+        )
+        response.raise_for_status()
+        result = response.json()
+        if result.get("returncode", 1) != 0:
+            detail = result.get("error") or result.get("output") or "unknown error"
+            raise RuntimeError(f"Failed to prepare PDF image directory {vm_dir!r}: {detail}")
+
+    @staticmethod
+    def _upload_binary_to_vm(local_path: str, vm_path: str, env, mime_type: str) -> None:
+        setup_controller = getattr(env, "setup_controller", None)
+        http_server = str(getattr(setup_controller, "http_server", "") or "").rstrip("/")
+        if not http_server:
+            raise RuntimeError(
+                "Environment is missing setup_controller.http_server for artifact upload"
+            )
+        filename = re.split(r"[/\\]", vm_path)[-1] or os.path.basename(local_path)
+        try:
+            with open(local_path, "rb") as artifact:
+                response = requests.post(
+                    http_server + "/setup/upload",
+                    data={"file_path": vm_path},
+                    files={"file_data": (filename, artifact, mime_type)},
+                    timeout=(10, 600),
+                )
+            response.raise_for_status()
+        except (OSError, requests.RequestException) as exc:
+            raise RuntimeError(f"Failed to save PDF page image at {vm_path!r}: {exc}") from exc
+
+    @staticmethod
+    def _upload_text_to_vm(text: str, vm_path: str, env) -> None:
+        setup_controller = getattr(env, "setup_controller", None)
+        http_server = str(getattr(setup_controller, "http_server", "") or "").rstrip("/")
+        if not http_server:
+            raise RuntimeError(
+                "Environment is missing setup_controller.http_server for text artifact upload"
+            )
+        filename = re.split(r"[/\\]", vm_path)[-1] or "extracted-text.txt"
+        encoded_text = text.encode("utf-8")
+        try:
+            response = requests.post(
+                http_server + "/setup/upload",
+                data={"file_path": vm_path},
+                files={"file_data": (filename, encoded_text, "text/plain; charset=utf-8")},
+                timeout=(10, 600),
+            )
+            response.raise_for_status()
+        except requests.RequestException as exc:
+            raise RuntimeError(
+                f"Failed to save extracted text in VM at {vm_path!r}: {exc}"
+            ) from exc
+
+    def _build_text_result(
+        self,
+        text: str,
+        env,
+        artifact_vm_path: str,
+        kind: str,
+        metadata: Optional[Dict[str, Any]] = None,
+        inline: Optional[bool] = None,
+    ) -> Dict[str, Any]:
+        metadata = dict(metadata or {})
+        char_count = len(text)
+        if inline is None:
+            inline = char_count <= DEFAULT_INLINE_TEXT_CHAR_LIMIT
+        if inline:
+            parsed = {"ok": True, "text": text, "char_count": char_count, **metadata}
+            return {
+                "execution_mode": "vm",
+                "payload": {"status": "success", "output": text, "parsed": parsed},
+                "observation": text,
+                "raw_result": text,
+            }
+
+        self._upload_text_to_vm(text, artifact_vm_path, env)
+        summary = (
+            f"The complete {kind} ({char_count} characters) was saved in the VM at "
+            f"{artifact_vm_path}. "
+            "Use bash_execution to search this file with a targeted keyword or pattern and "
+            "limit the output; do not print the entire file."
+        )
+        parsed = {
+            "ok": True,
+            "text_path": artifact_vm_path,
+            "char_count": char_count,
+            "stored": True,
+            **metadata,
+        }
+        return {
+            "execution_mode": "vm",
+            "payload": {"status": "success", "output": summary, "parsed": parsed},
+            "observation": summary,
+            "raw_result": summary,
+        }
 
     def normalize_domain(self, domain: str) -> str:
         key = re.sub(r"[^a-z0-9_]+", "_", str(domain or "").strip().lower())
@@ -664,8 +812,12 @@ class APIRegistry:
         if not os.path.getsize(output_path):
             raise RuntimeError(f"FFmpeg produced an empty audio stream for {source_label}")
 
-    @staticmethod
-    def _transcribe_local_audio(audio_path: str) -> Dict[str, Any]:
+    def _transcribe_local_audio(
+        self,
+        audio_path: str,
+        env,
+        artifact_vm_path: str,
+    ) -> Dict[str, Any]:
         asr_url = os.environ.get("PARAKEET_ASR_URL", DEFAULT_CONTAINER_PARAKEET_URL)
         asr_timeout = float(os.environ.get("PARAKEET_ASR_TIMEOUT", "300"))
         result = transcribe_audio(
@@ -677,16 +829,12 @@ class APIRegistry:
         transcript = str(result.get("text", "") or "").strip()
         if not transcript:
             raise RuntimeError(f"Parakeet returned no transcript text: {result!r}")
-        return {
-            "execution_mode": "vm",
-            "payload": {
-                "status": "success",
-                "output": transcript,
-                "parsed": {"ok": True, "text": transcript},
-            },
-            "observation": transcript,
-            "raw_result": transcript,
-        }
+        return self._build_text_result(
+            transcript,
+            env,
+            artifact_vm_path,
+            kind="audio transcript",
+        )
 
     @staticmethod
     def _get_open_browser_page_url(env) -> str:
@@ -776,7 +924,11 @@ class APIRegistry:
                 media_path = self._download_web_video_audio(source_url, temp_dir)
                 wav_path = os.path.join(temp_dir, "audio-16khz-mono.wav")
                 self._extract_audio_to_wav(media_path, wav_path, repr(source_url))
-                return self._transcribe_local_audio(wav_path)
+                return self._transcribe_local_audio(
+                    wav_path,
+                    env,
+                    self._fixed_text_vm_path(env, "audio.txt"),
+                )
 
         vm_path = str(arguments.get("vm_path", "") or "").strip()
         if not vm_path:
@@ -818,7 +970,11 @@ class APIRegistry:
                     repr(vm_path),
                 )
                 asr_input_path = extracted_audio_path
-            return self._transcribe_local_audio(asr_input_path)
+            return self._transcribe_local_audio(
+                asr_input_path,
+                env,
+                self._fixed_text_vm_path(env, "audio.txt"),
+            )
         finally:
             for temp_path in (extracted_audio_path, tmp_local_path):
                 if temp_path:
@@ -844,20 +1000,74 @@ class APIRegistry:
 
         page_texts: List[str] = []
         try:
-            for page in reader.pages:
-                page_texts.append(str(page.extract_text() or "").strip())
+            for page_number, page in enumerate(reader.pages, start=1):
+                page_text = str(page.extract_text() or "").strip()
+                page_texts.append(f"===== PDF PAGE {page_number} =====\n{page_text}")
         except Exception as exc:
             raise RuntimeError(f"Failed while extracting PDF text: {exc}") from exc
 
-        text = "\n\n".join(page_text for page_text in page_texts if page_text).strip()
-        if not text:
+        if not any(page_text.partition("\n")[2].strip() for page_text in page_texts):
             raise RuntimeError(
                 "The PDF contains no extractable text layer; OCR is not available in PdfTools.extract_text"
             )
+        text = "\n\n".join(page_texts).strip()
         return text, len(reader.pages)
 
+    def _render_pdf_page_to_vm(
+        self,
+        pdf_path: str,
+        page_number: int,
+        env,
+        dpi: int = DEFAULT_PDF_IMAGE_DPI,
+    ) -> Tuple[str, int, bytes]:
+        """Render one PDF page, save it in the VM, and return its PNG bytes."""
+        vm_dir = self._fixed_pdf_image_vm_dir(env)
+        self._reset_vm_directory(vm_dir, env)
+
+        try:
+            document = fitz.open(pdf_path)
+        except Exception as exc:
+            raise RuntimeError(f"Failed to open PDF for page rendering: {exc}") from exc
+
+        try:
+            if document.needs_pass and not document.authenticate(""):
+                raise RuntimeError("Cannot render password-protected PDF")
+            page_count = document.page_count
+            if page_number < 1 or page_number > page_count:
+                raise ValueError(
+                    f"PDF page_number must be between 1 and {page_count}; got {page_number}"
+                )
+            page = document.load_page(page_number - 1)
+            scale = dpi / 72.0
+            matrix = fitz.Matrix(scale, scale)
+            with tempfile.TemporaryDirectory(prefix="locallstc2-pdf-pages-") as image_dir:
+                filename = f"page_{page_number:04d}.png"
+                local_path = os.path.join(image_dir, filename)
+                pixmap = page.get_pixmap(
+                    matrix=matrix,
+                    alpha=False,
+                )
+                pixmap.save(local_path)
+                with open(local_path, "rb") as image_file:
+                    image_bytes = image_file.read()
+                vm_path = f"{vm_dir}/{filename}"
+                self._upload_binary_to_vm(
+                    local_path,
+                    vm_path,
+                    env,
+                    "image/png",
+                )
+        except RuntimeError:
+            raise
+        except Exception as exc:
+            raise RuntimeError(f"Failed while rendering PDF pages: {exc}") from exc
+        finally:
+            document.close()
+
+        return vm_path, page_count, image_bytes
+
     def _invoke_pdf(self, method_name: str, arguments: Dict[str, Any], env) -> Dict[str, Any]:
-        if method_name != "extract_text":
+        if method_name not in {"extract_text", "render_page"}:
             raise ValueError(f"Unsupported PDF api tool: {method_name}")
 
         vm_path = str(arguments.get("vm_path", "") or "").strip()
@@ -865,6 +1075,16 @@ class APIRegistry:
             raise ValueError("PdfTools.extract_text requires a non-empty vm_path")
         if Path(vm_path).suffix.lower() != ".pdf":
             raise ValueError("PdfTools.extract_text requires a .pdf file")
+
+        page_number = None
+        image_dpi = DEFAULT_PDF_IMAGE_DPI
+        if method_name == "render_page":
+            page_number = int(arguments.get("page_number", 0))
+            if page_number < 1:
+                raise ValueError("PdfTools.render_page requires page_number >= 1")
+            image_dpi = int(arguments.get("image_dpi", DEFAULT_PDF_IMAGE_DPI))
+            if image_dpi < 72 or image_dpi > 300:
+                raise ValueError("PdfTools.render_page image_dpi must be between 72 and 300")
 
         setup_controller = getattr(env, "setup_controller", None)
         http_server = str(getattr(setup_controller, "http_server", "") or "").rstrip("/")
@@ -891,23 +1111,49 @@ class APIRegistry:
             tmp_local_path = tmp_file.name
 
         try:
-            text, page_count = self._extract_local_pdf_text(tmp_local_path)
+            if method_name == "render_page":
+                image_path, page_count, image_bytes = self._render_pdf_page_to_vm(
+                    tmp_local_path,
+                    page_number,
+                    env,
+                    dpi=image_dpi,
+                )
+            else:
+                text, page_count = self._extract_local_pdf_text(tmp_local_path)
         finally:
             try:
                 os.remove(tmp_local_path)
             except OSError:
                 pass
 
-        return {
-            "execution_mode": "vm",
-            "payload": {
-                "status": "success",
-                "output": text,
-                "parsed": {"ok": True, "text": text, "page_count": page_count},
-            },
-            "observation": text,
-            "raw_result": text,
-        }
+        if method_name == "render_page":
+            message = (
+                f"Rendered PDF page {page_number} of {page_count} at {image_dpi} DPI to "
+                f"{image_path} and returned the image directly for visual verification."
+            )
+            parsed = {
+                "ok": True,
+                "image_path": image_path,
+                "page_number": page_number,
+                "page_count": page_count,
+                "image_dpi": image_dpi,
+            }
+            return {
+                "execution_mode": "vm",
+                "model_image": image_bytes,
+                "model_image_mime_type": "image/png",
+                "payload": {"status": "success", "output": message, "parsed": parsed},
+                "observation": message,
+                "raw_result": message,
+            }
+
+        return self._build_text_result(
+            text,
+            env,
+            self._fixed_text_vm_path(env, "pdf.txt"),
+            kind="PDF text",
+            metadata={"page_count": page_count},
+        )
 
     def _invoke_via_vm(
         self,

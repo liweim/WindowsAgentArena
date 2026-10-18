@@ -55,6 +55,7 @@ class LMMEngineOpenAI(LMMEngine):
         rate_limit=-1,
         temperature=None,
         organization=None,
+        thinking_token_budget=None,
         **kwargs,
     ):
         super().__init__()  # Initialize base class (including usage_stats)
@@ -66,6 +67,7 @@ class LMMEngineOpenAI(LMMEngine):
         self.request_interval = 0 if rate_limit == -1 else 60.0 / rate_limit
         self.llm_client = None
         self.temperature = temperature  # Can force temperature to be the same (in the case of o3 requiring temperature to be 1)
+        self.thinking_token_budget = thinking_token_budget
         self.abstract_llm = None
         if model in MODEL_CONFIGS and MODEL_CONFIGS[model].client_class == "LocalLLM":
             self.abstract_llm = AbstractLLM(
@@ -81,7 +83,11 @@ class LMMEngineOpenAI(LMMEngine):
         if self.abstract_llm is not None:
             if hasattr(self.abstract_llm.client, "max_tokens"):
                 self.abstract_llm.client.max_tokens = max_new_tokens if max_new_tokens else 4096
-            response = self.abstract_llm(messages, max_retries=3)
+            response = self.abstract_llm(
+                messages,
+                max_retries=3,
+                thinking_token_budget=self.thinking_token_budget,
+            )
             self._sync_usage_from_abstract_llm()
             return response
         api_key = self.api_key or os.getenv("OPENAI_API_KEY")
@@ -408,6 +414,7 @@ class LMMEnginevLLM(LMMEngine):
         model=None,
         rate_limit=-1,
         temperature=None,
+        thinking_token_budget=None,
         **kwargs,
     ):
         super().__init__()  # Initialize base class (including usage_stats)
@@ -418,6 +425,7 @@ class LMMEnginevLLM(LMMEngine):
         self.request_interval = 0 if rate_limit == -1 else 60.0 / rate_limit
         self.llm_client = None
         self.temperature = temperature
+        self.thinking_token_budget = thinking_token_budget
         self.abstract_llm = None
         if model in MODEL_CONFIGS and MODEL_CONFIGS[model].client_class == "LocalLLM":
             self.abstract_llm = AbstractLLM(
@@ -441,7 +449,11 @@ class LMMEnginevLLM(LMMEngine):
         if self.abstract_llm is not None:
             if hasattr(self.abstract_llm.client, "max_tokens"):
                 self.abstract_llm.client.max_tokens = max_new_tokens if max_new_tokens else 512
-            response = self.abstract_llm(messages, max_retries=3)
+            response = self.abstract_llm(
+                messages,
+                max_retries=3,
+                thinking_token_budget=self.thinking_token_budget,
+            )
             self._sync_usage_from_abstract_llm()
             return response
         api_key = self.api_key or os.getenv("vLLM_API_KEY")
@@ -458,13 +470,16 @@ class LMMEnginevLLM(LMMEngine):
             self.llm_client = OpenAI(base_url=base_url, api_key=api_key)
         # Use self.temperature if set, otherwise use the temperature argument
         temp = self.temperature if self.temperature is not None else temperature
+        extra_body = {"repetition_penalty": repetition_penalty}
+        if self.thinking_token_budget is not None:
+            extra_body["thinking_token_budget"] = self.thinking_token_budget
         completion = self.llm_client.chat.completions.create(
             model=self.model,
             messages=messages,
             max_tokens=max_new_tokens if max_new_tokens else 4096,
             temperature=temp,
             top_p=top_p,
-            extra_body={"repetition_penalty": repetition_penalty},
+            extra_body=extra_body,
         )
         # Update token usage statistics
         if hasattr(completion, 'usage'):

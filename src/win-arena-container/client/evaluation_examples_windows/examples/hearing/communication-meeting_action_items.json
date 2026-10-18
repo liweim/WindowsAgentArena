@@ -6,16 +6,18 @@
   ],
   "category": "communication",
   "need_ids": [
-    "H1"
+    "H1",
+    "H2"
   ],
   "difficulty": "medium",
   "operation_time": 41.86,
-  "instruction": "I cannot reliably hear the recording. Use Chrome Live Caption to identify the three operational warnings in the cloud-cluster meeting audio, then record them in a Sticky Note.",
+  "instruction": "I cannot reliably hear the recording and need larger captions. Use Windows Live captions with the caption style set to Large text to identify the three operational warnings in the cloud-cluster meeting audio, then record them in a Sticky Note.",
   "source": "synthetic",
   "transcript": "Alright team, thanks for joining the sync. Regarding the new deployment workflow on the cloud cluster, there are three absolute deal-breakers you need to remember. First, under no circumstances should you manually delete the cluster cache—this will crash the live gateway. Second, please, never bypass the pre-check script before pushing your updates to staging. Um, and the last one, let's see... ah, yes, do not hardcode any API tokens in the configuration files, use the environment vault instead. Make sure to log these down so the rest of the team doesn't mess up.",
   "gt_steps": [
-    "Turn on Chrome Live Caption.",
-    "Play the audio with Live Caption enabled.",
+    "Open Windows Settings to Accessibility > Captions.",
+    "Set Caption style to Large text, then turn on Live captions.",
+    "Play the audio with Windows Live captions enabled.",
     "Switch to Sticky Notes.",
     "Close the sign-in prompt if it appears.",
     "Create a sticky note.",
@@ -89,6 +91,7 @@
   ],
   "related_apps": [
     "chrome",
+    "settings",
     "sticky_notes"
   ],
   "evaluator": {
@@ -102,6 +105,7 @@
     ],
     "func": [
       "check_text_points",
+      "check_include_exclude",
       "exact_match"
     ],
     "conj": "and",
@@ -110,7 +114,16 @@
         "type": "sticky_notes_content"
       },
       {
-        "type": "live_caption_enabled"
+        "type": "vm_command_line",
+        "command": [
+          "powershell",
+          "-NoProfile",
+          "-Command",
+          "$found = Get-Process | Where-Object { $_.ProcessName -match 'LiveCaptions|LiveCaption' -or $_.MainWindowTitle -match 'Live captions|Live Caption' }; if ($found) { 'windows_live_caption_enabled' }"
+        ]
+      },
+      {
+        "type": "selected_caption_style_name"
       }
     ],
     "expected": [
@@ -164,7 +177,15 @@
       {
         "type": "rule",
         "rules": {
-          "expected": "true"
+          "include": [
+            "windows_live_caption_enabled"
+          ]
+        }
+      },
+      {
+        "type": "rule",
+        "rules": {
+          "expected": "Large text"
         }
       }
     ],
@@ -173,7 +194,8 @@
         0
       ],
       "access_requirement": [
-        1
+        1,
+        2
       ]
     }
   },

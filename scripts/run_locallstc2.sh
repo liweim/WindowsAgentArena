@@ -22,6 +22,7 @@ nohup setsid env \
     --global_planner_model qwen3.8-27b \
     --visual_grounder_model gta1-7b \
     --state_manager_model qwen3.8-27b \
+    --thinking_token_budget 16384 \
     --max_steps 50 \
     --som-origin oss \
     --a11y-backend uia \
