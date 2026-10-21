@@ -1,5 +1,5 @@
 {
-  "version": "2026-10-16-v5",
+  "version": "2026-10-21-v6-iso29138",
   "sources": {
     "webaim_sr10": {
       "title": "WebAIM Screen Reader User Survey #10 Results",
@@ -92,14 +92,24 @@
     "coga_reminders": {
       "title": "W3C COGA: Provide Reminders",
       "url": "https://www.w3.org/WAI/WCAG2/supplemental/patterns/o7p07-reminders/"
+    },
+    "iso29138": {
+      "title": "ISO/IEC 29138-1:2018 — Information technology — User interface accessibility — Part 1: User accessibility needs",
+      "url": "https://www.iso.org/standard/71953.html"
     }
   },
   "taxonomy": {
     "V1": {
       "group": "visual",
-      "name": "Non-visual access to text and interface content",
-      "definition": "Use screen readers or equivalent non-visual representations to read, navigate, and act on digital text, controls, documents, and web content.",
+      "name": "Visual information in other modalities",
+      "definition": "ISO/IEC 29138-1:2018 user need 5-1-2 concerns access to visual information through another sensory modality. Tasks can require non-visual access to visual content, controls, or cues, or preservation of auditory or tactile accessibility support for subsequent user interaction.",
+      "iso_need_id": "5-1-2",
+      "iso_need_description": "Visual information can be made available through another sensory modality.",
+      "legacy_need_ids": [
+        "V1"
+      ],
       "sources": [
+        "iso29138",
         "webaim_sr10",
         "w3c_visual",
         "w3c_stories"
@@ -107,41 +117,47 @@
     },
     "V2": {
       "group": "visual",
-      "name": "Magnification and text enlargement",
-      "definition": "Enlarge text, controls, or the screen through zoom, text sizing, or magnification so that content is perceivable and usable.",
+      "name": "Adaptable visual presentation",
+      "definition": "ISO/IEC 29138-1:2018 user need 5-2-1 concerns individually suitable visual presentation. Its instances encompass information not conveyed by colour alone (5-2-1-c), contrast adaptation (5-2-1-d/e), and magnification (5-2-1-f). This need grounds tasks involving zoom, text enlargement, contrast, colour-independent cues, and other visual display adaptations.",
+      "iso_need_id": "5-2-1",
+      "iso_need_description": "Visual presentation characteristics can be adapted to individual perceptual needs.",
+      "iso_instances": [
+        "5-2-1-c",
+        "5-2-1-d",
+        "5-2-1-e",
+        "5-2-1-f"
+      ],
+      "legacy_need_ids": [
+        "V2",
+        "V3",
+        "V4"
+      ],
       "sources": [
+        "iso29138",
         "webaim_lv2",
         "w3c_resize",
         "w3c_presentation",
-        "w3c_stories"
+        "w3c_stories",
+        "w3c_visual",
+        "ms_color",
+        "w3c_color"
       ]
     },
     "V3": {
       "group": "visual",
-      "name": "Contrast and display adaptation",
-      "definition": "Adjust contrast, foreground/background presentation, inversion, or display palette to improve visual readability.",
+      "name": "Text alternatives for non-text information",
+      "definition": "ISO/IEC 29138-1:2018 user need 6-2-4 concerns textual alternatives for non-text information. Relevant instances 6-2-4-a/b cover images and illustrations; tasks may involve accessible descriptions or text extracted from images, diagrams, maps, charts, scans, or visual verification challenges.",
+      "iso_need_id": "6-2-4",
+      "iso_need_description": "Non-text information can be understood using a textual alternative.",
+      "iso_instances": [
+        "6-2-4-a",
+        "6-2-4-b"
+      ],
+      "legacy_need_ids": [
+        "V5"
+      ],
       "sources": [
-        "webaim_lv2",
-        "w3c_visual",
-        "ms_color",
-        "w3c_presentation"
-      ]
-    },
-    "V4": {
-      "group": "visual",
-      "name": "Color differentiation support",
-      "definition": "Use color filters or non-color cues when color differences are difficult or impossible to distinguish.",
-      "sources": [
-        "w3c_color",
-        "ms_color",
-        "w3c_stories"
-      ]
-    },
-    "V5": {
-      "group": "visual",
-      "name": "Access to non-text visual information",
-      "definition": "Obtain equivalent information from images, maps, charts, infographics, scanned documents, labels, and other visual-only or poorly described content.",
-      "sources": [
+        "iso29138",
         "webaim_sr10",
         "w3c_nontext",
         "w3c_stories"
@@ -149,9 +165,15 @@
     },
     "H1": {
       "group": "hearing",
-      "name": "Text/non-auditory access to speech and audio",
-      "definition": "Access spoken and relevant non-speech audio information through captions, transcripts, or another non-auditory representation.",
+      "name": "Audio information in other modalities",
+      "definition": "ISO/IEC 29138-1:2018 user need 5-1-4 concerns access to speech and other audio information through non-auditory modalities. Captions or transcripts can satisfy user-facing access needs or be kept enabled for user takeover; the agent is not required to use those resources itself.",
+      "iso_need_id": "5-1-4",
+      "iso_need_description": "Audio information can be made available through other sensory modalities.",
+      "legacy_need_ids": [
+        "H1"
+      ],
       "sources": [
+        "iso29138",
         "w3c_media",
         "afb_ai_captions",
         "acma_captioning",
@@ -162,9 +184,18 @@
     },
     "H2": {
       "group": "hearing",
-      "name": "Caption presentation and language adaptation",
-      "definition": "Configure caption language and visual presentation so caption text is readable and appropriate for the media being consumed.",
+      "name": "Manageable textual presentation",
+      "definition": "ISO/IEC 29138-1:2018 user need 5-2-2 concerns readable, individually appropriate text presentation such as size, style, contrast, and layout. This cross-cutting need is instantiated here for caption or transcript presentation; caption language may additionally relate to ISO need 6-2-2.",
+      "iso_need_id": "5-2-2",
+      "iso_need_description": "Text presentation characteristics can be adapted to individual reading needs.",
+      "related_iso_need_ids": [
+        "6-2-2"
+      ],
+      "legacy_need_ids": [
+        "H2"
+      ],
       "sources": [
+        "iso29138",
         "ms_hearing",
         "acma_captioning",
         "w3c_auditory"
@@ -172,26 +203,55 @@
     },
     "H3": {
       "group": "hearing",
-      "name": "Visual/persistent alternatives to auditory alerts",
-      "definition": "Receive alerts visually rather than by sound alone and keep visual notifications available long enough to notice and read.",
+      "name": "Perceivable important alerts",
+      "definition": "ISO/IEC 29138-1:2018 user need 5-6 concerns appropriately perceivable important information and alerts. Instances 5-6-b/c cover visual or tactile attention cues, supporting non-auditory notifications when users cannot rely on sound.",
+      "iso_need_id": "5-6",
+      "iso_need_description": "Important information can attract attention through a suitable sensory modality.",
+      "iso_instances": [
+        "5-6-b",
+        "5-6-c"
+      ],
+      "legacy_need_ids": [
+        "H3"
+      ],
       "sources": [
+        "iso29138",
         "ms_hearing",
         "w3c_auditory"
       ]
     },
     "H4": {
       "group": "hearing",
-      "name": "Audio-channel adaptation",
-      "definition": "Adapt audio channels so that information remains available through the user's usable listening channel.",
+      "name": "Adaptable auditory presentation",
+      "definition": "ISO/IEC 29138-1:2018 user need 5-2-5 concerns audio presentation suited to individual hearing abilities. Instances 5-2-5-a/d include volume adaptation and monaural access to multichannel information; tasks may involve mono audio, balance, and volume settings.",
+      "iso_need_id": "5-2-5",
+      "iso_need_description": "Audio presentation characteristics can be adapted to an individual listening need.",
+      "iso_instances": [
+        "5-2-5-a",
+        "5-2-5-d"
+      ],
+      "legacy_need_ids": [
+        "H4"
+      ],
       "sources": [
+        "iso29138",
         "ms_hearing"
       ]
     },
     "M1": {
       "group": "motor",
-      "name": "Alternative text entry",
-      "definition": "Enter text through an on-screen keyboard, speech, or another alternative input when conventional physical-keyboard entry is difficult.",
+      "name": "Alternative input modalities",
+      "definition": "ISO/IEC 29138-1:2018 user need 7-1-1 concerns access to alternative input modalities. Instance 7-1-1-e addresses text entry, grounding tasks that preserve on-screen keyboard, dictation, or other accessible input options in place of conventional physical-keyboard entry.",
+      "iso_need_id": "7-1-1",
+      "iso_need_description": "People can use alternative sensory or interaction modalities to provide input.",
+      "iso_instances": [
+        "7-1-1-e"
+      ],
+      "legacy_need_ids": [
+        "M1"
+      ],
       "sources": [
+        "iso29138",
         "webaim_motor",
         "ms_mobility",
         "w3c_physical",
@@ -200,9 +260,18 @@
     },
     "M2": {
       "group": "motor",
-      "name": "Keyboard interaction adaptation",
-      "definition": "Adapt keyboard timing, sensitivity, repetition, or multi-key input so keyboard interaction does not require simultaneous presses or precise key timing.",
+      "name": "Non-simultaneous and self-paced action",
+      "definition": "ISO/IEC 29138-1:2018 user need 7-4-3 concerns operation without simultaneous input actions. Related need 7-4-4 addresses interaction at an individual pace. Keyboard timing and accidental-input accommodations (for example Sticky Keys and Filter Keys) are task realizations rather than separate ISO need definitions.",
+      "iso_need_id": "7-4-3",
+      "iso_need_description": "Input can be performed without requiring simultaneous actions.",
+      "related_iso_need_ids": [
+        "7-4-4"
+      ],
+      "legacy_need_ids": [
+        "M2"
+      ],
       "sources": [
+        "iso29138",
         "ms_mobility",
         "w3c_physical",
         "w3c_input"
@@ -210,9 +279,18 @@
     },
     "M3": {
       "group": "motor",
-      "name": "Alternative/adapted pointer control",
-      "definition": "Use keyboard, speech, an alternative pointing method, delegated activation, or adapted pointer settings when conventional mouse use is difficult.",
+      "name": "Alternative interaction methods",
+      "definition": "ISO/IEC 29138-1:2018 user need 7-3 concerns choosing usable interaction methods rather than relying on one conventional method. Tasks may preserve keyboard, speech, or alternative pointer operation; related need 7-4-2 addresses options for body use and handedness.",
+      "iso_need_id": "7-3",
+      "iso_need_description": "Functionality can be operated by an individually suitable interaction method.",
+      "related_iso_need_ids": [
+        "7-4-2"
+      ],
+      "legacy_need_ids": [
+        "M3"
+      ],
       "sources": [
+        "iso29138",
         "ms_mobility",
         "webaim_motor",
         "w3c_physical",
@@ -221,9 +299,19 @@
     },
     "M4": {
       "group": "motor",
-      "name": "Reduced fine-motor, precision, dragging, repetition, and timing demand",
-      "definition": "Avoid or delegate interactions requiring sustained press-hold-drag movements, repeated precise target acquisition, small-target selection, fine motor control, or tightly timed action.",
+      "name": "Reduced motor effort and demanding movements",
+      "definition": "ISO/IEC 29138-1:2018 user need 7-2-1 concerns manageable tactile or physical input, including limited force, sustained force, gripping, twisting, and movement. Related need 8-4 concerns physical exertion and 7-4-4 concerns self-paced interaction. Alternatives to dragging or precise repeated actions are benchmark-specific task realizations, not independent ISO instances.",
+      "iso_need_id": "7-2-1",
+      "iso_need_description": "Physical and tactile input demands can be adjusted to manageable force and movement.",
+      "related_iso_need_ids": [
+        "8-4",
+        "7-4-4"
+      ],
+      "legacy_need_ids": [
+        "M4"
+      ],
       "sources": [
+        "iso29138",
         "webaim_motor",
         "w3c_dragging",
         "w3c_physical",
@@ -232,9 +320,15 @@
     },
     "C1": {
       "group": "cognitive",
-      "name": "Attention and distraction reduction",
-      "definition": "Reduce distraction, competing stimuli, and visual or cognitive clutter so that attention can be directed and sustained.",
+      "name": "Reduced distraction",
+      "definition": "ISO/IEC 29138-1:2018 user need 5-4-2 concerns avoiding visual, auditory, or other distractions that interfere with attention. Tasks can preserve reduced interruptions, visual clutter, motion, or other attention-supporting settings.",
+      "iso_need_id": "5-4-2",
+      "iso_need_description": "Distracting stimuli that interfere with attention can be avoided or reduced.",
+      "legacy_need_ids": [
+        "C1"
+      ],
       "sources": [
+        "iso29138",
         "w3c_coga_overview",
         "coga_simplify",
         "w3c_stories"
@@ -242,9 +336,18 @@
     },
     "C2": {
       "group": "cognitive",
-      "name": "Readability and comprehension simplification",
-      "definition": "Reduce reading and language-processing demand through clearer presentation, simpler language, or better-structured content.",
+      "name": "Reduced cognitive demands",
+      "definition": "ISO/IEC 29138-1:2018 user need 6-3-2 concerns reducing unnecessary cognitive demands in information presentation. Related need 6-2-1 concerns understandability. Tasks can provide simplified or structured explanations and summaries while retaining important information.",
+      "iso_need_id": "6-3-2",
+      "iso_need_description": "Information can be presented with a manageable cognitive burden.",
+      "related_iso_need_ids": [
+        "6-2-1"
+      ],
+      "legacy_need_ids": [
+        "C2"
+      ],
       "sources": [
+        "iso29138",
         "w3c_coga_overview",
         "coga_simplify",
         "w3c_stories"
@@ -252,18 +355,18 @@
     },
     "C3": {
       "group": "cognitive",
-      "name": "Memory externalization and persistent information support",
-      "definition": "Reduce reliance on working memory or short-term retention by creating or using notes, checklists, persistent cues, and other durable external representations.",
+      "name": "Memory and recall support",
+      "definition": "ISO/IEC 29138-1:2018 user need 6-3-4 concerns assistance with remembering and recalling information both during current activities and for future actions. Task realizations can include persistent notes, checklists, bookmarks, calendar entries, reminders, and timers.",
+      "iso_need_id": "6-3-4",
+      "iso_need_description": "People can receive support for remembering or recalling information.",
+      "legacy_need_ids": [
+        "C3",
+        "C4"
+      ],
       "sources": [
+        "iso29138",
         "coga_memory_calc",
-        "w3c_stories"
-      ]
-    },
-    "C4": {
-      "group": "cognitive",
-      "name": "Time and prospective-memory support",
-      "definition": "Use reminders, calendars, timers, notification persistence, and other time-based cues to manage appointments, deadlines, intervals, and future actions.",
-      "sources": [
+        "w3c_stories",
         "coga_reminders"
       ]
     }

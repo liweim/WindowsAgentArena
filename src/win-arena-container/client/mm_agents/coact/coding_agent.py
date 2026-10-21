@@ -38,6 +38,7 @@ class TerminalProxyAgent(MultimodalConversableAgent):
         max_consecutive_auto_reply: Optional[int] = None,
         default_auto_reply: Optional[str] = None,
         description: Optional[str] = None,
+        on_code_execution: Optional[Callable[[], bool]] = None,
     ):
         super().__init__(
             name=name,
@@ -51,6 +52,23 @@ class TerminalProxyAgent(MultimodalConversableAgent):
             description=description
         )
         self.env = env
+        self.on_code_execution = on_code_execution
+        self.code_execution_count = 0
+        self.execution_results = []
+
+    def generate_code_execution_reply(self, messages=None, sender=None, config=None):
+        """Execute one coding step and stop before another LLM call at the limit."""
+        final, reply = super().generate_code_execution_reply(
+            messages=messages, sender=sender, config=config
+        )
+        if not final:
+            return final, reply
+
+        self.code_execution_count += 1
+        self.execution_results.append(reply)
+        if self.on_code_execution is not None and self.on_code_execution():
+            return True, "TERMINATE"
+        return final, reply
 
     def run_code(self, code: str, lang: str = "python", **kwargs):
         image = None

@@ -1,56 +1,197 @@
 {
-  "version": "2026-09-15-v4",
+  "version": "2026-10-21-v6-who-icf-only",
+  "standards": {
+    "who_icf": {
+      "title": "International Classification of Functioning, Disability and Health (ICF)",
+      "publisher": "World Health Organization (WHO)",
+      "url": "https://www.who.int/classifications/international-classification-of-functioning-disability-and-health",
+      "application": "Sole classification standard used to ground subgroup functional domains. WHO ICF supplies category codes and official category labels; the nine benchmark subgroup names, their combinations of codes and their relationship to task-construction needs are benchmark-defined operationalizations, not WHO-designated subgroups or clinical diagnoses."
+    }
+  },
   "design": {
-    "user_group": "Exactly one of visual, hearing, motor, cognitive. It is duplicated in task JSON for self-contained analysis even though the directory also encodes the group.",
-    "subgroup_ids": "One or more broad, non-mutually-exclusive functional/population subgroups. These are intentionally coarse and should not be treated as diagnoses or prevalence categories. A user group may have only one broad subgroup when the benchmark tasks do not support a meaningful finer split.",
-    "need_ids": "One or more finer-grained documented accessibility needs from documented_user_need_taxonomy.json.",
-    "relationship": "During benchmark curation, subgroup_ids are assigned consistently from need_ids using need_id_to_subgroup_ids. This is a metadata construction rule, not a runtime inference requirement; a task may belong to multiple subgroups when the broad groups genuinely overlap."
+    "user_group": "Exactly one of visual, hearing, motor, cognitive; these are benchmark organizational groups, not a WHO ICF four-class taxonomy.",
+    "subgroup_ids": "One or more broad, potentially overlapping ICF-informed functional/interaction support subgroups. The nine labels are defined by the benchmark; they are not official ICF categories, diagnostic classes, or prevalence strata.",
+    "need_ids": "One or more IDs from the revised 14-entry documented_user_need_taxonomy.json, grounded in ISO/IEC 29138-1:2018.",
+    "relationship": "need_id_to_subgroup_ids defines permissible candidate subgroups for each of the 14 Need IDs, not deterministic assignments. Annotators select only subgroups supported by the instantiated task and its user-facing accessibility requirement, independently of how the agent obtains information or performs actions.",
+    "assignment_policy": "Assign one or more of the eligible subgroups only when relevant to the task realization. In particular, C3 notes/checklists need not be tagged time/prospective-memory, and C3 reminders need not be tagged short-term memory; similarly alternative-keyboard and input-timing requirements are distinct realizations under M2.",
+    "standard_basis": "WHO ICF is the sole international classification basis for subgroup functional domains. The task-construction Need IDs are separately grounded in ISO/IEC 29138-1:2018. ICF-to-subgroup and Need-to-subgroup associations are benchmark-authored mappings, not official WHO or ISO crosswalks.",
+    "severity_and_diagnosis": "No ICF severity qualifiers or clinically assessed disability statuses are assigned. Both V-S1 and V-S2 use b210 (seeing functions) because their non-visual versus low-vision task scenarios cannot be inferred as distinct diagnoses or severity grades from an ICF category code.",
+    "handoff": "Subgroups characterize the user-facing access that tasks should enable at completion or takeover; the agent is not constrained to using the same modality or accessibility feature while completing the task."
   },
   "taxonomy": {
     "V-S1": {
       "group": "visual",
-      "name": "Blindness",
-      "definition": "Tasks relevant to users who require non-visual access to interface/content or alternatives to visual-only information and verification."
+      "name": "Blindness / non-visual access",
+      "definition": "Tasks requiring visual information or controls to remain accessible without reliance on vision, including user takeover through screen-reader, speech or other non-visual representations.",
+      "icf_categories": [
+        {
+          "code": "b210",
+          "label": "Seeing functions",
+          "role": "functional_anchor",
+          "url": "https://apps.who.int/classifications/icfbrowser/Browse.aspx?code=b210"
+        }
+      ],
+      "standard_alignment": "ICF b210 is the standardized seeing-functions domain. Non-visual access is the benchmark scenario, not a diagnostic classification derived from b210."
     },
     "V-S2": {
       "group": "visual",
-      "name": "Low vision / visual perception difficulty",
-      "definition": "Tasks relevant to users who benefit from magnification, contrast/palette/color support, or assistance perceiving visual content."
+      "name": "Low vision / adaptable visual presentation",
+      "definition": "Tasks requiring individually usable visual presentation, including enlarged text or controls, contrast/colour adaptations, and perceivable alternatives for visually dense content.",
+      "icf_categories": [
+        {
+          "code": "b210",
+          "label": "Seeing functions",
+          "role": "functional_anchor",
+          "url": "https://apps.who.int/classifications/icfbrowser/Browse.aspx?code=b210"
+        }
+      ],
+      "standard_alignment": "ICF b210 is the standardized seeing-functions domain. The benchmark focuses on residual-vision presentation support; b210 itself does not distinguish this subgroup from V-S1 without clinical assessment."
     },
     "H-S1": {
       "group": "hearing",
-      "name": "Deaf or hard of hearing",
-      "definition": "Tasks relevant to users who need or benefit from non-auditory access to speech, alerts, media, verification, or other sound-dependent information."
+      "name": "Deaf or hard of hearing / auditory access limitations",
+      "definition": "Tasks preserving alternatives to speech, sound and audio-only notifications, or an individually usable auditory presentation for later user interaction.",
+      "icf_categories": [
+        {
+          "code": "b230",
+          "label": "Hearing functions",
+          "role": "functional_anchor",
+          "url": "https://apps.who.int/classifications/icfbrowser/Browse.aspx?code=b230"
+        }
+      ],
+      "standard_alignment": "ICF b230 describes hearing functions, including auditory discrimination. The benchmark combines deafness and limited-hearing access scenarios under one operational subgroup."
     },
     "M-S1": {
       "group": "motor",
       "name": "Keyboard input difficulty",
-      "definition": "Tasks relevant to users who have difficulty using a physical keyboard or simultaneous modifier-key input."
+      "definition": "Tasks supporting alternative text entry, serial key actions, adjusted key acceptance, or other alternatives to demanding physical-keyboard actions.",
+      "icf_categories": [
+        {
+          "code": "d440",
+          "label": "Fine hand use",
+          "role": "functional_anchor",
+          "url": "https://apps.who.int/classifications/icfbrowser/Browse.aspx?code=d440"
+        },
+        {
+          "code": "b760",
+          "label": "Control of voluntary movement functions",
+          "role": "functional_anchor",
+          "url": "https://apps.who.int/classifications/icfbrowser/Browse.aspx?code=b760"
+        }
+      ],
+      "standard_alignment": "ICF d440 concerns fine hand use and b760 voluntary movement coordination. Keyboard access demands are benchmark instances of those broader domains, not named ICF subcategories."
     },
     "M-S2": {
       "group": "motor",
       "name": "Pointer / fine-motor control difficulty",
-      "definition": "Tasks relevant to users who have difficulty with conventional pointing, dragging, target precision, mouse-button use, or sustained fine-motor control."
+      "definition": "Tasks supporting alternatives to fine target acquisition, conventional pointing, dragging, continuous movement or precision mouse manipulation.",
+      "icf_categories": [
+        {
+          "code": "d440",
+          "label": "Fine hand use",
+          "role": "functional_anchor",
+          "url": "https://apps.who.int/classifications/icfbrowser/Browse.aspx?code=d440"
+        },
+        {
+          "code": "d445",
+          "label": "Hand and arm use",
+          "role": "functional_anchor",
+          "url": "https://apps.who.int/classifications/icfbrowser/Browse.aspx?code=d445"
+        },
+        {
+          "code": "b760",
+          "label": "Control of voluntary movement functions",
+          "role": "functional_anchor",
+          "url": "https://apps.who.int/classifications/icfbrowser/Browse.aspx?code=b760"
+        }
+      ],
+      "standard_alignment": "ICF d440, d445 and b760 cover fine hand use, hand/arm use and voluntary movement coordination. Pointer- and mouse-related tasks are benchmark operationalizations."
     },
     "M-S3": {
       "group": "motor",
-      "name": "Involuntary input / timing difficulty",
-      "definition": "Tasks relevant to users affected by accidental/repeated input or tightly timed input demands."
+      "name": "Input control / timing difficulty",
+      "definition": "Tasks requiring keyboard or other input to accommodate unintended repetition, delayed responses, or strict input-timing constraints, for example adjustable repeat and acceptance settings.",
+      "icf_categories": [
+        {
+          "code": "b760",
+          "label": "Control of voluntary movement functions",
+          "role": "functional_anchor",
+          "url": "https://apps.who.int/classifications/icfbrowser/Browse.aspx?code=b760"
+        },
+        {
+          "code": "b765",
+          "label": "Involuntary movement functions",
+          "role": "conditional_context",
+          "url": "https://apps.who.int/classifications/icfbrowser/Browse.aspx?code=b765"
+        }
+      ],
+      "standard_alignment": "ICF b760 anchors voluntary movement coordination. ICF b765 describes involuntary movement functions and is only contextually relevant when such movements are actually involved; input timing or accidental presses alone do not imply b765 impairment."
     },
     "C-S1": {
       "group": "cognitive",
-      "name": "Attention / readability / simplification difficulty",
-      "definition": "Tasks relevant to users who benefit from reduced distraction, reduced reading load, clearer presentation, or simplified information."
+      "name": "Attention / comprehension and simplification support",
+      "definition": "Tasks reducing competing stimuli and unnecessary reading, language-processing or cognitive load to support focused, comprehensible interaction.",
+      "icf_categories": [
+        {
+          "code": "b140",
+          "label": "Attention functions",
+          "role": "functional_anchor",
+          "url": "https://apps.who.int/classifications/icfbrowser/Browse.aspx?code=b140"
+        },
+        {
+          "code": "b167",
+          "label": "Mental functions of language",
+          "role": "functional_anchor",
+          "url": "https://apps.who.int/classifications/icfbrowser/Browse.aspx?code=b167"
+        },
+        {
+          "code": "d166",
+          "label": "Reading",
+          "role": "functional_anchor",
+          "url": "https://apps.who.int/classifications/icfbrowser/Browse.aspx?code=d166"
+        }
+      ],
+      "standard_alignment": "ICF b140 describes attention functions; b167 describes mental functions of language; d166 describes reading activity. The benchmark combines these as one interface-related support subgroup, not as a single WHO code."
     },
     "C-S2": {
       "group": "cognitive",
       "name": "Memory / persistent-information support",
-      "definition": "Tasks relevant to users who benefit from notes, checklists, durable external representations, or reduced short-term retention burden."
+      "definition": "Tasks supporting information retention and retrieval by keeping notes, checklists, bookmarks or other durable external representations available.",
+      "icf_categories": [
+        {
+          "code": "b144",
+          "label": "Memory functions",
+          "role": "functional_anchor",
+          "url": "https://apps.who.int/classifications/icfbrowser/Browse.aspx?code=b144"
+        }
+      ],
+      "standard_alignment": "ICF b144 covers memory functions. Notes, checklists and persistent information artifacts are selected task-level supports rather than an ICF subgroup definition."
     },
     "C-S3": {
       "group": "cognitive",
       "name": "Time / prospective-memory support",
-      "definition": "Tasks relevant to users who benefit from reminders, calendars, timers, persistent notifications, or other future-action/time cues."
+      "definition": "Tasks supporting future intentions, appointments and time-dependent actions through accessible reminders, calendars, alarms, timers or persistent time cues.",
+      "icf_categories": [
+        {
+          "code": "b144",
+          "label": "Memory functions",
+          "role": "functional_anchor",
+          "url": "https://apps.who.int/classifications/icfbrowser/Browse.aspx?code=b144"
+        },
+        {
+          "code": "b164",
+          "label": "Higher-level cognitive functions",
+          "role": "functional_anchor",
+          "url": "https://apps.who.int/classifications/icfbrowser/Browse.aspx?code=b164"
+        },
+        {
+          "code": "d230",
+          "label": "Carrying out daily routine",
+          "role": "functional_anchor",
+          "url": "https://apps.who.int/classifications/icfbrowser/Browse.aspx?code=d230"
+        }
+      ],
+      "standard_alignment": "ICF b144 concerns memory, b164 higher-level cognitive functions including time management, and d230 carrying out daily routine. Calendar and reminder use operationalizes these domains, without claiming WHO defines prospective memory as a separate subgroup here."
     }
   },
   "need_id_to_subgroup_ids": {
@@ -61,16 +202,6 @@
       "V-S2"
     ],
     "V3": [
-      "V-S2"
-    ],
-    "V4": [
-      "V-S2"
-    ],
-    "V5": [
-      "V-S1",
-      "V-S2"
-    ],
-    "V6": [
       "V-S1",
       "V-S2"
     ],
@@ -86,39 +217,62 @@
     "H4": [
       "H-S1"
     ],
-    "H5": [
-      "H-S1"
-    ],
     "M1": [
       "M-S1"
     ],
     "M2": [
-      "M-S1"
+      "M-S1",
+      "M-S3"
     ],
     "M3": [
-      "M-S3"
+      "M-S1",
+      "M-S2"
     ],
     "M4": [
       "M-S2"
-    ],
-    "M5": [
-      "M-S2"
-    ],
-    "M6": [
-      "M-S2"
-    ],
-    "M7": [
-      "M-S2",
-      "M-S3"
     ],
     "C1": [
       "C-S1"
     ],
     "C2": [
-      "C-S2"
+      "C-S1"
     ],
     "C3": [
+      "C-S2",
       "C-S3"
     ]
+  },
+  "subgroup_assignment_guidance": {
+    "V3": "Choose V-S1 for non-visual access to non-text material; V-S2 only when the task specifically supports residual visual perception or adapted visual display; assign both only when both are substantiated.",
+    "M2": "Choose M-S1 for sequential or adapted keyboard actions; M-S3 for time/acceptance/repeat or unintentional input control; assign both only for tasks that provide both kinds of support.",
+    "M3": "Choose M-S1 for keyboard-related alternative interaction; M-S2 for pointer/target-access alternatives; assign both only when both are supported.",
+    "C3": "Choose C-S2 for notes, checklists and durable recall cues; C-S3 for future-oriented reminders, calendars and time-management cues; assign both only for tasks explicitly addressing both.",
+    "default": "One eligible subgroup: select it when applicable to the scenario. Multiple candidates: choose based on the task-specific accessibility requirement; never automatically assign every candidate merely from Need ID."
+  },
+  "migration": {
+    "previous_version": "2026-10-21-v5-icf-en",
+    "mapping_rebuilt_from_revised_need_taxonomy": true,
+    "removed_old_mapping_keys_not_in_14_need_taxonomy": [
+      "H5",
+      "M5",
+      "M6",
+      "M7",
+      "V4",
+      "V5",
+      "V6"
+    ],
+    "old_need_ids_reassigned_under_17_to_14_crosswalk": [
+      "V4",
+      "V5"
+    ],
+    "old_subgroup_file_ids_without_match_in_previous_17_need_taxonomy": [
+      "V6",
+      "H5",
+      "M5",
+      "M6",
+      "M7"
+    ],
+    "old_C4_mapping_absent_from_uploaded_subgroup_file": true,
+    "note": "Subgroup functional classification is now grounded exclusively in WHO ICF. The 9 subgroup IDs and 14 Need ID candidates remain unchanged from the earlier ICF-informed JSON. Main text and JSON are now aligned on cognitive and motor mappings. Mapping task records and recomputing subgroup analyses still require task-level review."
   }
 }

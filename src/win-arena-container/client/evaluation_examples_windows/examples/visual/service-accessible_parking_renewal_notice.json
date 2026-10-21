@@ -8,7 +8,7 @@
   "category": "service",
   "need_ids": [
     "V2",
-    "V5"
+    "V3"
   ],
   "difficulty": "medium",
   "operation_time": 109.59,

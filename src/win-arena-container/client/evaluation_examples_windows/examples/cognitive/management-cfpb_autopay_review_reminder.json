@@ -8,7 +8,7 @@
   "category": "management",
   "need_ids": [
     "C2",
-    "C4"
+    "C3"
   ],
   "difficulty": "medium",
   "operation_time": 71.9,

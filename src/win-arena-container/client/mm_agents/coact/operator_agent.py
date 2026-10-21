@@ -254,6 +254,7 @@ class OrchestratorUserProxyAgent(MultimodalConversableAgent):
         # Add statistics tracking
         self.action_logs = []  # Unified action log list
         self.global_step = 0  # Global step counter across all agent calls
+        self.total_step_count = 0  # Live CUA + coding count for cut_off_steps
 
         # Track usage in the same shape as llm.py get_usage() output.
         self.model_usage = {}
@@ -283,19 +284,19 @@ class OrchestratorUserProxyAgent(MultimodalConversableAgent):
         return super().generate_reply(messages=messages, sender=sender, **kwargs)
     
     def _count_current_steps(self) -> int:
-        cua_steps = len(glob.glob(f"{self.history_save_dir}/cua_output*/step_*.png"))
-        
-        coding_paths = glob.glob(f"{self.history_save_dir}/coding_output*/chat_history.json")
-        coding_steps = 0
-        for hist_path in coding_paths:
-            try:
-                with open(hist_path, 'r') as f:
-                    hist_content = json.dumps(json.load(f))
-                    coding_steps += hist_content.count('exitcode:')
-            except:
-                pass
-        
-        return cua_steps + coding_steps
+        return self.total_step_count
+
+    def _record_coding_step(self) -> bool:
+        """Record a code execution immediately and report whether the cap is hit."""
+        self.total_step_count += 1
+        reached_limit = self.total_step_count >= self.cut_off_steps
+        if reached_limit:
+            print(
+                f"Reached cut_off_steps limit during coding: "
+                f"{self.total_step_count}/{self.cut_off_steps}",
+                flush=True,
+            )
+        return reached_limit
 
     def _call_gui_agent(self, task: str, screen_width: int = 1920, screen_height: int = 1080) -> str:
         """Run a GUI agent to solve the task."""
@@ -358,6 +359,7 @@ class OrchestratorUserProxyAgent(MultimodalConversableAgent):
             for step_detail in step_details:
                 # Increment global step counter
                 self.global_step += 1
+                self.total_step_count += 1
 
                 # Build token_usage dict for this step
                 token_usage = {
@@ -501,6 +503,7 @@ class OrchestratorUserProxyAgent(MultimodalConversableAgent):
                     self.thinking_token_budget,
                 ),
                 system_message=CODER_SYSTEM_MESSAGE.format(CLIENT_PASSWORD=self.client_password),
+                is_termination_msg=is_termination_message,
             )
             summarizer = ConversableAgent(
                 name="summarizer",
@@ -525,12 +528,13 @@ class OrchestratorUserProxyAgent(MultimodalConversableAgent):
                 description = None,
                 is_termination_msg=is_termination_message,
                 env=self.env,
+                on_code_execution=self._record_coding_step,
             )
 
             code_interpreter.initiate_chat(
                 recipient=coding_agent,
                 message=f"# Task\n{task}\n\n# Environment\n{environment}<img data:image/png;base64,{base64.b64encode(screenshot).decode('utf-8')}>",
-                max_turns=actual_max_steps,
+                max_turns=actual_max_steps + 1,
             )
         
             chat_history = []
@@ -635,17 +639,31 @@ class OrchestratorUserProxyAgent(MultimodalConversableAgent):
                         })
 
             # Count coding steps (number of exitcode occurrences)
-            coding_steps = len(step_infos)
+            coding_steps = code_interpreter.code_execution_count
+            while len(step_infos) < coding_steps:
+                result_index = len(step_infos)
+                execution_results = code_interpreter.execution_results
+                step_infos.append({
+                    "step": result_index + 1,
+                    "code": "# Code execution reached the global step limit",
+                    "result": execution_results[result_index],
+                })
 
             # Review the group chat history
-            summarized_history = summarizer.generate_oai_reply(
-                messages=[
-                    {
-                        "role": "user",
-                        "content": self.CONVERSATION_REVIEW_PROMPT.format(chat_history=chat_history),
-                    }
-                ]
-            )[1]
+            if self._count_current_steps() >= self.cut_off_steps:
+                summarized_history = (
+                    f"Reached global step limit "
+                    f"{self._count_current_steps()}/{self.cut_off_steps}; task stopped."
+                )
+            else:
+                summarized_history = summarizer.generate_oai_reply(
+                    messages=[
+                        {
+                            "role": "user",
+                            "content": self.CONVERSATION_REVIEW_PROMPT.format(chat_history=chat_history),
+                        }
+                    ]
+                )[1]
 
             # Get token usage before recording action log
             coding_prompt = 0

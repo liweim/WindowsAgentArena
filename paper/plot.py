@@ -51,6 +51,14 @@ CATEGORY_COLORS = (
     "#E8CDCD",
     "#DDCABE",
 )
+# A more saturated companion palette for the narrow outer user-group ring.
+# The inner category ring stays light so its larger wedges remain understated.
+OUTER_GROUP_COLORS = (
+    "#9BB4CC",
+    "#D8A28C",
+    "#A8BC98",
+    "#B89DBD",
+)
 DIFFICULTY_COLORS = ("#D5DFD0", "#EBD7BD", "#E5C4C1")
 PREFIX_COLORS = dict(zip(("V", "H", "M", "C"), GROUP_COLORS))
 
@@ -207,7 +215,7 @@ def plot_applications(metadata: pd.DataFrame, output_dir: Path) -> Path:
     counts = Counter(app for apps in metadata["related_apps"] for app in apps)
     ordered = sorted(counts, key=lambda app: (-counts[app], app))
     labels = [
-        app.replace("libreoffice_", "LO ").replace("_", " ").title()
+        app.replace("_", " ").title().replace("Libreoffice", "LibreOffice")
         for app in ordered
     ]
     fig, ax = plt.subplots(figsize=(3.8, 3.0))
@@ -245,7 +253,7 @@ def plot_group_category(metadata: pd.DataFrame, output_dir: Path) -> Path:
     _, _, outer_count_texts = ax.pie(
         outer_values,
         radius=1.0,
-        colors=list(GROUP_COLORS) * len(CATEGORIES),
+        colors=list(OUTER_GROUP_COLORS) * len(CATEGORIES),
         startangle=90,
         counterclock=False,
         center=(center_x, 0),
@@ -326,7 +334,7 @@ def plot_group_category(metadata: pd.DataFrame, output_dir: Path) -> Path:
     )
     legend_handles = [
         Patch(facecolor=color, edgecolor="white", label=group.title())
-        for group, color in zip(USER_GROUPS, GROUP_COLORS)
+        for group, color in zip(USER_GROUPS, OUTER_GROUP_COLORS)
     ]
     ax.legend(
         handles=legend_handles,

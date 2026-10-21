@@ -7,8 +7,8 @@
   ],
   "category": "health",
   "need_ids": [
-    "V4",
-    "V5"
+    "V2",
+    "V3"
   ],
   "difficulty": "hard",
   "operation_time": 115.93,

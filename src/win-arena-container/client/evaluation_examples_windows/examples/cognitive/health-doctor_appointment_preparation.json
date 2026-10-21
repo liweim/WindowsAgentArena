@@ -9,8 +9,7 @@
   "category": "health",
   "need_ids": [
     "C2",
-    "C3",
-    "C4"
+    "C3"
   ],
   "difficulty": "hard",
   "operation_time": 74.01,

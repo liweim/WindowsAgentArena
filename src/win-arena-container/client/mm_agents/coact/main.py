@@ -215,6 +215,7 @@ def _run_local_orchestrator(
     orchestrator_max_steps: int,
     client_password: str,
     thinking_token_budget: Optional[int] = None,
+    logger=None,
 ) -> tuple[List[dict], dict]:
     llm = AbstractLLM(model_name=orchestrator_model)
     chat_history: List[dict] = []
@@ -279,6 +280,15 @@ def _run_local_orchestrator(
             tool_result = f"# Response from coordinator error: unsupported action `{action}`."
 
         chat_history.append({"role": "user", "content": tool_result})
+
+        if orchestrator_proxy._count_current_steps() >= orchestrator_proxy.cut_off_steps:
+            if logger is not None:
+                logger.info(
+                    "Reached cut_off_steps limit: %s/%s",
+                    orchestrator_proxy._count_current_steps(),
+                    orchestrator_proxy.cut_off_steps,
+                )
+            break
 
     cost, prompt_tokens, completion_tokens, image_count = llm.get_usage()
     usage_entry = make_usage_entry(
@@ -463,6 +473,7 @@ def process_task(task_info,
                 orchestrator_max_steps=orchestrator_max_steps,
                 client_password=client_password,
                 thinking_token_budget=thinking_token_budget,
+                logger=logger,
             )
         else:
             llm_config = build_llm_config(orchestrator_model, config_path)

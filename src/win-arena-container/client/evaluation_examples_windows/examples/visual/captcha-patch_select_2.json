@@ -7,7 +7,7 @@
   ],
   "category": "captcha",
   "need_ids": [
-    "V5"
+    "V3"
   ],
   "difficulty": "medium",
   "operation_time": 23.98,

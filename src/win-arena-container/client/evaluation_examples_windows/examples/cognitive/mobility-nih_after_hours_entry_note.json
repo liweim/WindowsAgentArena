@@ -7,8 +7,7 @@
   ],
   "category": "mobility",
   "need_ids": [
-    "C3",
-    "C4"
+    "C3"
   ],
   "difficulty": "hard",
   "operation_time": 277.63,

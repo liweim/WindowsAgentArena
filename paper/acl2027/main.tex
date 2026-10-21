@@ -38,7 +38,7 @@
 \maketitle
 
 \begin{abstract}
-Accessibility needs often do not change the underlying digital goal; they change what information, support, or interface state is required for usable completion. Computer-use agents (CUAs) could reduce access barriers by completing GUI workflows on users' behalf, yet current benchmarks mainly measure nominal task completion and provide little evidence about whether agents can satisfy accessibility-related requirements. We introduce \bench, an executable Windows benchmark with 198 tasks informed by 17 documented functional support requirements derived from real-user evidence, accessibility research, standards and design guidance, and platform documentation across visual, hearing, motor, and cognitive scenarios. Each task is paired with automatic setup and task-specific end-state evaluation, and the required accessibility condition is built into what counts as task success rather than added as an optional tool-use constraint. This design distinguishes generic execution failure from the accessibility-conditioned case in which the nominal GUI goal is reached but the required access-supporting outcome is not. We evaluate Agent S3, CoAct-1, GTA1, HiSA, and LocalLSTC on OSWorld, WindowsAgentArena, and \bench under matched 15- and 50-step budgets, where \todo{insert headline cross-benchmark result}; further analysis with manually annotated difficulty, operating time, and decomposed task/accessibility outcomes shows \todo{insert strongest analysis finding}.
+Accessibility needs often do not change the underlying digital goal; they change what information, support, or interface state is required for usable completion. Computer-use agents (CUAs) could reduce access barriers by completing GUI workflows on users' behalf, yet current benchmarks mainly measure nominal task completion and provide little evidence about whether agents can satisfy accessibility-related requirements. We introduce \bench, an executable Windows benchmark with 198 tasks organized under 14 ISO/IEC 29138-1-grounded user-accessibility need IDs, consolidating 17 formative working needs documented in real-user evidence, accessibility research, standards and design guidance, and platform documentation across visual, hearing, motor, and cognitive scenarios. Each task is paired with automatic setup and task-specific end-state evaluation, and the required accessibility condition is built into what counts as task success rather than added as an optional tool-use constraint. This design distinguishes generic execution failure from the accessibility-conditioned case in which the nominal GUI goal is reached but the required access-supporting outcome is not. We evaluate Agent S3, CoAct-1, GTA1, HiSA, and LocalLSTC on OSWorld, WindowsAgentArena, and \bench under matched 15- and 50-step budgets, where \todo{insert headline cross-benchmark result}; further analysis with manually annotated difficulty, operating time, and decomposed task/accessibility outcomes shows \todo{insert strongest analysis finding}.
 \end{abstract}
 
 \section{Introduction}
@@ -47,7 +47,7 @@ More than 1.3 billion people---approximately one in six people worldwide---exper
 
 Recent work suggests that the accessibility problem is not well captured by inventing a separate class of ``disabled-user tasks.'' A11y-CUA places sighted and blind/low-vision users on the same 60 everyday Windows tasks, showing that high-level goals can be shared even when accessible perception, control, and monitoring differ substantially \citep{a11ycua}. Complementarily, Kodandaram et al. study blind screen-reader users using a desktop CUA in naturalistic workflows; the resulting commands likewise center on familiar desktop activities such as document editing, spreadsheet operations, application configuration, and file management \citep{arewethereyet}. Importantly, the agent-side breakdowns they observe---grounding, planning, constraint tracking, state maintenance, and termination---are largely familiar CUA failure mechanisms rather than failures unique to blindness. What changes in an accessibility setting is the consequence of those failures: when interface state is harder to inspect or verify through a user's access modality, the same execution error can create a larger burden for monitoring, verification, recovery, and handoff. Consistent with this distinction, blind participants asked not only for end-to-end automation, but also for interface explanation, situated troubleshooting, recovery support, and user-controlled execution around consequential or difficult-to-verify actions \citep{arewethereyet}. These findings motivate a separation between the \emph{underlying activity}, the agent's \emph{generic execution reliability}, and the \emph{conditions for usable assistance}. Accessibility-oriented evaluation should therefore preserve ordinary user goals while testing whether execution leaves the information, support, and user-facing state needed for those goals to be usable.
 
-To address this gap, we introduce \bench, an executable Windows benchmark with 198 tasks spanning visual, hearing, motor, and cognitive functional groups. We first synthesize recurring accessibility needs from accessibility research, user surveys and stories, standards and design guidance, and platform documentation; we then use the resulting need taxonomy as the systematic unit for constructing controlled, executable tasks. Rather than constructing disability-exclusive activities or requiring agents to imitate a prescribed assistive-technology trajectory, we instantiate documented needs within ordinary workflows and make the resulting access requirement part of the graded end state. This operationalizes one prerequisite for assistive collaboration: when a user delegates execution, the agent should leave a usable, access-supporting result rather than merely reach a nominal task endpoint.
+To address this gap, we introduce \bench, an executable Windows benchmark with 198 tasks spanning visual, hearing, motor, and cognitive functional groups. Task construction began from 17 evidence-informed working needs synthesized from research, user surveys and stories, standards and design guidance, and platform documentation. We subsequently align and consolidate these working needs into 14 user-need IDs grounded in the published ISO/IEC 29138-1:2018 standard for systematic description and analysis \citep{iso29138}. Rather than constructing disability-exclusive activities or requiring agents to imitate a prescribed assistive-technology trajectory, we instantiate documented needs within ordinary workflows and make the resulting access requirement part of the graded end state. This operationalizes one prerequisite for assistive collaboration: when a user delegates execution, the agent should leave a usable, access-supporting result rather than merely reach a nominal task endpoint.
 
 Accessibility-oriented evaluation also requires distinguishing nominal task completion from completion of the accessibility-specific requirement. An agent may, for example, place the correct items in a shopping cart while failing to update a checklist used for memory support, or complete a workflow while leaving a required accessibility setting disabled. We therefore decompose task success, where applicable, into the ordinary \taskout and the accessibility-specific \accessreq, enabling direct measurement of cases in which an agent completes the nominal workflow but still fails to satisfy the user's need.
 
@@ -65,7 +65,7 @@ Kodandaram et al. provide complementary ecological evidence through a three-week
 
 \section{Benchmark Design of \bench}
 
-Following the benchmark-comparison table in OSWorld (Table~4) \citep{osworld}, we compare representative GUI-agent benchmarks along environment, task, and evaluation dimensions, and extend the comparison with accessibility-specific dimensions. We order prior work from general-purpose interactive GUI benchmarks, to multimodal and video-centric benchmarks, to accessibility-focused studies, followed by \bench. We use \(\checkmark/\times\) only for properties that admit a clear binary interpretation. Specifically, \textbf{Interactive Env.} indicates whether agents can act in an executable environment and receive state transitions during evaluation, whereas \textbf{Evaluation} describes how performance is actually measured. \textbf{Task-relevant Modalities} summarizes the information modalities required by the benchmark tasks rather than the agent's GUI observation representation. Finally, \textbf{A11y-Graded} indicates whether satisfying an explicit accessibility requirement is itself part of the graded task outcome.
+Table~\ref{tab:benchmark_comparison} compares representative GUI-agent datasets and benchmarks along environment, task, and evaluation dimensions, including accessibility-specific criteria. We order prior work from general-purpose interactive GUI benchmarks, to multimodal and video-centric benchmarks, to accessibility-focused studies, followed by \bench. We use \(\checkmark/\times\) only for properties that admit a clear binary interpretation. Specifically, \textbf{Interactive Env.} indicates whether agents can act in an executable environment and receive state transitions during evaluation, whereas \textbf{Evaluation Protocol} describes how performance is measured. \textbf{Environment Modalities} reports the information modalities present in benchmark tasks and their environments, including text, static visual content, and task-relevant video or audio. It does not denote an agent's observation interface, and media captured solely for post-hoc trajectory analysis are excluded. Finally, \textbf{Access Req. in Success} indicates whether satisfying an explicit accessibility requirement is necessary for task success.
 
 \begin{table*}[t]
 \centering
@@ -73,26 +73,26 @@ Following the benchmark-comparison table in OSWorld (Table~4) \citep{osworld}, w
 \setlength{\tabcolsep}{3.5pt}
 \renewcommand{\arraystretch}{1.18}
 \begin{tabularx}{\textwidth}{@{}
-  >{\raggedright\arraybackslash}p{0.135\textwidth}
-  >{\raggedright\arraybackslash}p{0.105\textwidth}
-  >{\centering\arraybackslash}p{0.080\textwidth}
-  >{\raggedright\arraybackslash}p{0.090\textwidth}
-  >{\raggedright\arraybackslash}p{0.130\textwidth}
-  >{\raggedright\arraybackslash}p{0.155\textwidth}
+  >{\raggedright\arraybackslash}p{0.165\textwidth}
+  >{\raggedright\arraybackslash}p{0.095\textwidth}
+  >{\centering\arraybackslash}p{0.072\textwidth}
+  >{\raggedright\arraybackslash}p{0.084\textwidth}
+  >{\raggedright\arraybackslash}p{0.125\textwidth}
   >{\raggedright\arraybackslash}X
-  >{\centering\arraybackslash}p{0.075\textwidth}@{}}
+  >{\raggedright\arraybackslash}p{0.115\textwidth}
+  >{\centering\arraybackslash}p{0.070\textwidth}@{}}
 \toprule
 Work & Scale &
 \shortstack{Interactive\\Env.} &
 Platform &
-\shortstack[l]{Task-relevant\\Modalities} &
-Evaluation &
+\shortstack[l]{Environment\\Modalities} &
+\shortstack[l]{Evaluation\\Protocol} &
 \shortstack[l]{Accessibility\\Scope} &
-\shortstack{A11y-\\Graded} \\
+\shortstack{Access Req.\\in Success} \\
 \midrule
 WebArena \citep{webarena}
 & 812 tasks
-& $\checkmark$ & Web & Text & Programmatic end-state & -- & $\times$ \\
+& $\checkmark$ & Web & Text + image & Programmatic end-state & -- & $\times$ \\
 
 VisualWebArena \citep{visualwebarena}
 & 910 tasks
@@ -100,7 +100,7 @@ VisualWebArena \citep{visualwebarena}
 
 OSWorld \citep{osworld}
 & 369 tasks
-& $\checkmark$ & Desktop OS & Text + image & Execution-based end-state & -- & $\times$ \\
+& $\checkmark$ & Ubuntu / Windows & Text + image & Execution-based end-state & -- & $\times$ \\
 
 AndroidWorld \citep{androidworld}
 & 116 task types
@@ -109,15 +109,15 @@ AndroidWorld \citep{androidworld}
 \addlinespace[2pt]
 VideoWebArena \citep{videowebarena}
 & 2,021 tasks
-& $\checkmark$ & Web & Text + video + audio & Execution-based end-state & -- & $\times$ \\
+& $\checkmark$ & Web & Text + image + video + audio & Execution-based end-state & -- & $\times$ \\
 
 VideoGUI \citep{videogui}
 & 178 tasks / 463 subtasks
-& $\times$ & Desktop / Web & Image + video & Hierarchical planning / action & -- & $\times$ \\
+& $\times$ & Windows & Text + image + video & Hierarchical planning / action & -- & $\times$ \\
 
 OmniGUI \citep{omnigui}
 & 709 episodes / 2,579 steps
-& $\times$ & Smartphone & Image + video + audio & Step-level action prediction & -- & $\times$ \\
+& $\times$ & Android & Text + image + video + audio & Step-level action prediction & -- & $\times$ \\
 
 \addlinespace[2pt]
 A11y-CUA \citep{a11ycua}
@@ -126,7 +126,7 @@ A11y-CUA \citep{a11ycua}
 
 \textit{Are We There Yet?} \citep{arewethereyet}
 & 1,258 commands / 8 users
-& $\times$ & Desktop & Text & Replay + trace analysis & Blind & $\times$ \\
+& $\times$ & Windows & Text + image & Replay + trace analysis & Blind & $\times$ \\
 
 \midrule
 \textbf{\bench}
@@ -134,7 +134,7 @@ A11y-CUA \citep{a11ycua}
 & $\checkmark$ & \textbf{Windows} & \textbf{Text + image + video + audio} & \textbf{TaskOutcome + AccessRequirement} & \textbf{Visual / hearing / motor / cognitive} & $\checkmark$ \\
 \bottomrule
 \end{tabularx}
-\caption{Comparison with representative GUI-agent datasets and benchmarks. Rows are ordered from general-purpose interactive GUI benchmarks, to multimodal/video-centric benchmarks, to accessibility-focused studies, followed by \bench. \textbf{Interactive Env.} denotes an executable environment in which an agent can act and receive state transitions. \textbf{Task-relevant Modalities} describes information modalities required by the tasks, rather than the agent's GUI observation format. \textbf{Evaluation} summarizes the primary evaluation protocol. \textbf{A11y-Graded} indicates whether satisfying an explicit accessibility requirement contributes directly to graded task success. References are provided in the \textbf{Work} column.}
+\caption{Comparison with representative GUI-agent datasets and benchmarks. Rows are ordered from general-purpose interactive GUI benchmarks, to multimodal/video-centric benchmarks, to accessibility-focused studies, followed by \bench. \textbf{Interactive Env.} denotes an executable environment in which an agent can act and receive state transitions. \textbf{Platform} reports the execution platform; browser-only benchmarks are marked Web. \textbf{Environment Modalities} describes information modalities present in tasks and the environments in which they are performed, including text and visual GUI content as well as video/audio when involved in task content; post-hoc trajectory recordings are not counted. \textbf{Evaluation Protocol} summarizes how performance is measured. \textbf{Access Req. in Success} indicates whether satisfying an explicit accessibility requirement is necessary for task success. References are provided in the \textbf{Work} column.}
 \label{tab:benchmark_comparison}
 \end{table*}
 
@@ -171,9 +171,9 @@ The central design principle of \bench is \emph{evidence-informed, need-driven t
 Construction stage & Concrete instantiation \\
 \midrule
 Real-user evidence & Deaf and hard-of-hearing users use captions or transcripts to recover spoken information from media, calls, voicemails, and recordings before acting on it. \\
-Documented need & H1: obtain speech through a textual alternative such as captions or a transcript. \\
-Requirement shift & The appointment facts in a recording must be available as text, and the captioning state must remain enabled after the appointment is recorded. \\
-User instruction & I cannot reliably hear the recording. Use Chrome Live Caption to read the service appointment recording on the Desktop. Create a 45-minute Thunderbird Calendar event titled \texttt{Home support assessment} at the stated date and time. \\
+Documented need & H1: audio information available in another modality (ISO need 5-1-4); captions are a possible user-facing realization. \\
+Requirement shift & Chrome Live Caption must remain enabled at handoff so the user can access subsequent audio; the agent is not required to obtain the appointment facts from captions. \\
+Recorded user instruction & I cannot reliably hear the recording. Use Chrome Live Caption to read the service appointment recording on the Desktop. Create a 45-minute Thunderbird Calendar event titled \texttt{Home support assessment} at the stated date and time. \\
 Windows realization & The fixed MP3 is opened in Chrome and the resulting appointment is created in Thunderbird Calendar. \\
 Setup & Upload the pinned recording, prepare a fixed Thunderbird profile, launch both applications, and open the audio file. \\
 Evaluator & Conjoin the Chrome Live Caption setting with a structured calendar check for the title, date, start time, and duration. \\
@@ -185,19 +185,19 @@ Counterfactual check & Removing H1 deletes the caption-state requirement and its
 \end{figure*}
 
 \paragraph{A concrete construction example.}
-Figure~\ref{fig:pipeline} traces one released task from need to evaluator. The starting construct is H1, which captures the need to obtain spoken information through text. We instantiate it as appointment management: a fixed recording states that a home-support assessment is scheduled for September 29, 2026 at 1:15 PM, and the user asks the agent to recover these facts with Chrome Live Caption and create a 45-minute Thunderbird event. Creating the exact event satisfies $E_{\mathrm{task}}$, but it does not satisfy $E_{\mathrm{access}}$ unless Live Caption remains enabled. The environment uploads the pinned MP3, prepares a fixed Thunderbird profile, and opens both applications. At termination, one evaluator inspects the caption setting and a second checks the structured event fields; \fullsuccess is their conjunction. Removing the H1 requirement would remove the caption state and its check without changing the calendar goal, so the example passes the counterfactual relevance test. Appendix~\ref{app:construction_examples} gives eight additional worked examples spanning all four functional groups and all eight non-CAPTCHA workflow categories.
+Figure~\ref{fig:pipeline} traces one released task from need to evaluator. The starting construct is H1 (ISO need 5-1-4), which captures access to audio content through an alternative modality. We instantiate it as appointment management: a fixed recording states that a home-support assessment is scheduled for September 29, 2026 at 1:15 PM, and the user asks for Chrome Live Caption to be available while a 45-minute Thunderbird event is created. The currently recorded user instruction says ``Use Chrome Live Caption to read, whereas the intended benchmark construct and executable evaluator require only that Live Caption remain enabled for subsequent user use; the agent may derive the appointment facts from any permitted source. \todo{Align the released user instruction with this source-agnostic handoff semantics, without modifying the task evaluator.} Creating the exact event satisfies $E_{\mathrm{task}}$, but it does not satisfy $E_{\mathrm{access}}$ unless Live Caption remains enabled. The environment uploads the pinned MP3, prepares a fixed Thunderbird profile, and opens both applications. At termination, one evaluator inspects the caption setting and a second checks the structured event fields; \fullsuccess is their conjunction. Removing the H1 requirement would remove the caption state and its check without changing the calendar goal, so the example passes the counterfactual relevance test. Appendix~\ref{app:construction_examples} gives eight additional worked examples spanning all four functional groups and all eight non-CAPTCHA workflow categories.
 
 \paragraph{Formative evidence review.}
-Before task synthesis, we conducted a formative review of accessibility research, user surveys and stories, standards and design guidance, and platform documentation to identify recurring functional barriers and support needs \citep{w3cpeople,w3cstories,webaimsr,w3cauditory,w3cphysical}. We abstract these findings into a 17-need taxonomy at a consistent level of functional support requirement; for each need, Appendix~\ref{app:taxonomy} also records representative observed user behaviors/scenarios and their supporting evidence. Many high-level digital goals---such as communication, information seeking, scheduling, shopping, and service access---are shared across users. This is consistent with matched-task evidence from A11y-CUA and with the ordinary desktop activities that emerge from blind users' naturalistic CUA use \citep{a11ycua,arewethereyet}. Accessibility needs can instead change the information representation, interaction conditions, persistent support, or continuation state required for usable completion.
+Before task synthesis, we conducted a formative review of accessibility research, user surveys and stories, standards and design guidance, and platform documentation to identify recurring functional barriers and support needs \citep{w3cpeople,w3cstories,webaimsr,w3cauditory,w3cphysical}. We initially organized the evidence into 17 working support needs for task design, then consolidated overlapping constructs against the published user-need identifiers of ISO/IEC 29138-1:2018 into 14 final need IDs (3 visual, 4 hearing, 4 motor, and 3 cognitive) \citep{iso29138}. Appendix~\ref{app:taxonomy} records each final ID, the corresponding ISO need identifier and its scope, representative task realizations, and an explicit legacy-to-final mapping. This consolidation is a transparent re-annotation of the construction prompts, not a claim that ISO prescribed our benchmark tasks or its four functional groups. Many high-level digital goals---such as communication, information seeking, scheduling, shopping, and service access---are shared across users. This is consistent with matched-task evidence from A11y-CUA and with the ordinary desktop activities that emerge from blind users' naturalistic CUA use \citep{a11ycua,arewethereyet}. Accessibility needs can instead change the information representation, interaction conditions, persistent support, or continuation state required for usable completion.
 
 \paragraph{Functional coverage.}
-We organize tasks into four top-level functional groups---visual, hearing, motor, and cognitive---as operational slices of barriers exercised by GUI interaction, rather than as an exhaustive diagnostic taxonomy. They correspond to limitations in acquiring visual information, acquiring auditory information, executing physical input actions, and processing or maintaining task-relevant information, respectively, and are consistent with common accessibility framings of sight, hearing, movement, and cognitive abilities \citep{w3cpeople}. A functional organization is preferable to diagnosis-based grouping for our purpose because the same diagnosis can produce heterogeneous interaction needs, while similar GUI barriers can arise across diagnoses. We additionally annotate broad functional subgroups for finer-grained analysis, but treat them only as secondary, potentially overlapping labels; their definitions and mappings are given in Appendix~\ref{app:taxonomy}.
+We organize tasks into four top-level functional groups---visual, hearing, motor, and cognitive---as operational slices of barriers exercised by GUI interaction, rather than as an exhaustive diagnostic taxonomy. They correspond to limitations in acquiring visual information, acquiring auditory information, executing physical input actions, and processing or maintaining task-relevant information, respectively, and are consistent with common accessibility framings of sight, hearing, movement, and cognitive abilities \citep{w3cpeople}. A functional organization is preferable to diagnosis-based grouping for our purpose because the same diagnosis can produce heterogeneous interaction needs, while similar GUI barriers can arise across diagnoses. We additionally annotate nine broad functional subgroups for finer-grained analysis, using relevant codes from the World Health Organization's International Classification of Functioning, Disability and Health (ICF) as standardized descriptions of functional domains \citep{whoicf}. The nine subgroup labels and their combinations of ICF categories are benchmark-defined and potentially overlapping, not ICF-defined diagnoses or population strata; definitions and task-to-subgroup assignment guidance appear in Appendix~\ref{app:taxonomy}.
 
 \paragraph{Why construct from needs?}
-After the formative review, the 17 need IDs serve as the lowest-level constructs used to generate tasks. Each describes a functional support requirement rather than a particular application, assistive technology, platform mechanism, or barrier scenario. For example, Sticky Keys and Filter Keys are realizations of keyboard interaction adaptation rather than separate peer-level needs, and mouse-button settings are realizations of adapted pointer control. Using needs as the construction unit provides systematic coverage, separates a user requirement from any single implementation, and gives a reproducible unit for task design and validation. Every released core task maps to at least one documented need, and that need must materially change at least one observable completion condition: the information to be acquired, the user-facing representation or support artifact to be produced, or the accessibility/continuation state to be established or preserved. The resulting taxonomy contains 5 visual, 4 hearing, 4 motor, and 4 cognitive need IDs; the full definitions and evidence sources are provided in Appendix~\ref{app:taxonomy}. We distinguish attention/distraction reduction from readability/comprehension simplification, while continuing to exclude generic planning burden, long horizons, arithmetic, or decision difficulty unless they induce an observable accessibility-support requirement.
+Task synthesis was driven by documented support needs rather than diagnoses, tools, or applications. For the final taxonomy and release metadata, we map the 17 original construction prompts to 14 standard-grounded need IDs: 3 visual, 4 hearing, 4 motor, and 3 cognitive (Appendix~\ref{app:taxonomy}). Each ID points to an ISO/IEC 29138-1 user need, with any relevant ISO instances and additional supporting need identifiers identified explicitly. We merge magnification, contrast, and colour-independent presentation under ISO need 5-2-1, and merge short-term memory externalization and prospective-memory cues under ISO need 6-3-4. We retain distinct needs where the standard distinguishes cross-modal visual information (5-1-2), textual equivalents of non-text information (6-2-4), and modality-specific presentation adaptations. Sticky Keys, Filter Keys, Mouse Keys, and reminder applications are possible task realizations, not need definitions. The final annotation scheme requires every core task to map to at least one need, and the instantiated need must materially change at least one observable completion condition: the information available to the user, a support artifact, or the accessibility/continuation state preserved for handoff. This mapping does not impose restrictions on what information sources or interaction methods an agent may use. ISO needs 3-6 and 11-3 additionally motivate retention and uninterrupted availability of accessibility support at handoff; they are cross-cutting principles rather than separate V/H/M/C task-generation IDs. We exclude generic planning burden, long horizons, arithmetic, or decision difficulty unless they induce an observable accessibility-support requirement.
 
 \paragraph{Why these workflows?}
-Need IDs describe \emph{why} a task is accessibility-oriented; workflow categories describe \emph{what everyday activity} is being performed. To obtain broad life-domain coverage without inventing disability-exclusive activities, we use the WHO ICF Activities and Participation component as a coverage guide rather than reproducing its hierarchy verbatim \citep{whoicf}. This choice also reflects empirical evidence that sighted and blind/low-vision users often pursue the same everyday computer goals \citep{a11ycua}, and that blind users naturally delegate familiar desktop work to CUAs \citep{arewethereyet}. We therefore consolidate relevant digital activities into eight benchmark-specific everyday workflow categories: \textit{communication}, \textit{information}, \textit{management}, \textit{mobility}, \textit{consumption}, \textit{service}, \textit{health}, and \textit{access}. These categories are orthogonal to user groups and need IDs: the same workflow can exercise different access needs, and the same need can appear in multiple workflows. Accessibility enters the benchmark through the required information, support artifact, or persistent state, rather than through a separate set of supposedly disability-specific activities. CAPTCHA is a particularly salient accessibility barrier for screen-reader users; in WebAIM's 2024 Screen Reader User Survey, it was rated the most problematic web accessibility item \citep{webaimsr}. We therefore include \textit{captcha} as a cross-cutting, deterministic verification-barrier stress test rather than treating it as either a need or an everyday-life domain. CAPTCHA instances are mapped to the underlying functional requirement exercised by the challenge---for example, V1 or V5 for non-visual access to a visual challenge and H1 for non-auditory access to an audio challenge. Crossing documented needs with everyday workflows reduces a one-to-one coupling between disability group, application, and task type, and allows later analysis to separate need-related effects from workflow-specific difficulty.
+Need IDs describe \emph{why} a task is accessibility-oriented; workflow categories describe \emph{what everyday activity} is being performed. To obtain broad life-domain coverage without inventing disability-exclusive activities, we use the WHO ICF Activities and Participation component as a coverage guide rather than reproducing its hierarchy verbatim \citep{whoicf}. This choice also reflects empirical evidence that sighted and blind/low-vision users often pursue the same everyday computer goals \citep{a11ycua}, and that blind users naturally delegate familiar desktop work to CUAs \citep{arewethereyet}. We therefore consolidate relevant digital activities into eight benchmark-specific everyday workflow categories: \textit{communication}, \textit{information}, \textit{management}, \textit{mobility}, \textit{consumption}, \textit{service}, \textit{health}, and \textit{access}. These categories are orthogonal to user groups and need IDs: the same workflow can exercise different access needs, and the same need can appear in multiple workflows. Accessibility enters the benchmark through the required information, support artifact, or persistent state, rather than through a separate set of supposedly disability-specific activities. CAPTCHA is a particularly salient accessibility barrier for screen-reader users; in WebAIM's 2024 Screen Reader User Survey, it was rated the most problematic web accessibility item \citep{webaimsr}. We therefore include \textit{captcha} as a cross-cutting, deterministic verification-barrier stress test rather than treating it as either a need or an everyday-life domain. CAPTCHA instances are mapped to the underlying functional requirement exercised by the challenge---for example, V1 (cross-modal visual access) or V3 (text equivalents of non-text information) for a visual challenge and H1 (cross-modal audio access) for an audio challenge. Crossing documented needs with everyday workflows reduces a one-to-one coupling between disability group, application, and task type, and allows later analysis to separate need-related effects from workflow-specific difficulty.
 
 \paragraph{Construction procedure.}
 For each task, annotators first select a documented need, then instantiate it in an everyday scenario consistent with the observed user behavior/context documented for that need and determine how the need changes the required outcome. They write a concise user instruction, instantiate the scenario in the Windows environment, and implement both the initial-state configuration and the executable end-state evaluator. Every requirement stated in the instruction is mapped to an observable final-state check. For example, a C3 memory-support task may require both a correct shopping-cart state and an updated persistent checklist; a hearing task may require recovered spoken facts in a non-auditory representation; and a motor task may require a requested keyboard-assistance state to remain enabled after the underlying workflow is completed.
@@ -243,13 +243,13 @@ Statistic & Value \\
 \midrule
 Tasks & 198 \\
 Functional groups & 4 \\
-Documented need IDs & 17 \\
+Documented need IDs & 14 \\
 Everyday workflow categories & 8 (+1 stress test) \\
 Difficulty labels (Easy / Medium / Hard) & 59 / 99 / 40 \\
 Median human operating time & 64.02 s \\
 Related applications & 9 \\
 Cross-application tasks & 112 \\
-Tasks assigned multiple need IDs & 28 \\
+Tasks assigned multiple need IDs & \todo{Recompute after ID merge} \\
 \bottomrule
 \end{tabularx}
 \caption{Main statistics of \bench.}
@@ -266,7 +266,7 @@ Tasks assigned multiple need IDs & 28 \\
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.86\columnwidth]{../plot/tasks_by_need.png}
-\caption{Number of task assignments for each documented need ID. Because a task can carry multiple need IDs, counts sum to 227 rather than 198.}
+\caption{Task assignments by documented need ID. \todo{Regenerate this plot and its counts after remapping to the 14-ID scheme; the displayed legacy plot may still use 17 IDs.}}
 \label{fig:need-counts}
 \end{figure}
 
@@ -601,6 +601,12 @@ Weiming Li, Helen Paik, and Yulei Sui. 2026b.
 \newblock LocalLSTC: A Long Short-Term Control Architecture for Locally Deployed GUI Agents.
 \newblock arXiv:2608.25777.
 
+\bibitem[ISO/IEC(2018)]{iso29138}
+ISO/IEC. 2018.
+\newblock \emph{ISO/IEC 29138-1:2018: Information technology---User interface accessibility---Part 1: User accessibility needs}.
+\newblock International Organization for Standardization and International Electrotechnical Commission.
+\newblock \url{https://www.iso.org/standard/71953.html}.
+
 \end{thebibliography}
 
 \appendix
@@ -608,104 +614,107 @@ Weiming Li, Helen Paik, and Yulei Sui. 2026b.
 \section{Full Documented User-Need Taxonomy and Functional Subgroups}
 \label{app:taxonomy}
 
-Tables~\ref{tab:visual_needs}--\ref{tab:cognitive_needs} give the complete need taxonomy used during task curation. Each need is a functional requirement that can change an observable task end state, rather than a diagnosis, application category, or prescribed assistive technology. The taxonomy is grounded in user surveys, accessibility standards and design patterns, and platform documentation; the observed behavior/scenario column summarizes representative ways each need appears in everyday use. A task may carry more than one need ID when each requirement independently changes what must be achieved.
+Tables~\ref{tab:visual_needs}--\ref{tab:cognitive_needs} define the \emph{14 release-level, ISO-grounded need IDs}. The identifiers (e.g., \texttt{5-2-1}) are ISO/IEC 29138-1:2018 \emph{user-need IDs}, not clause numbers; their corresponding standard clauses are given in parentheses. Short phrases describing the ISO needs below are paraphrases. Lettered suffixes (e.g., \texttt{5-2-1-f}) refer to formal \emph{instances} nested under a need, not peer-level user needs. Our four V/H/M/C functional groups, choice of the 14 selected needs, and task examples are benchmark-specific; the ISO standard does not prescribe those groupings, the selected subset, or a particular agent observation/interaction method \citep{iso29138}. Each ID captures a reason to construct a task; an evaluator checks the resulting user-facing support artifact or handoff state, not whether the agent used a particular assistive technology.
 
 \begin{table*}[h]
 \centering
 \scriptsize
-\begin{tabularx}{\textwidth}{>{\bfseries}p{0.035\textwidth} p{0.20\textwidth} p{0.25\textwidth} X p{0.15\textwidth}}
+\begin{tabularx}{\textwidth}{>{\bfseries}p{0.038\textwidth} p{0.22\textwidth} p{0.33\textwidth} X p{0.12\textwidth}}
 \toprule
-ID & Documented need & Operational definition & Observed user behavior / scenario & Evidence \tabularnewline
+ID & ISO-grounded need (ISO need ID) & Standard meaning / construction scope & Representative realizations & Evidence \tabularnewline
 \midrule
-V1 & Non-visual access to text and interface content & Use screen readers or equivalent non-visual representations to read, navigate, and act on digital text, controls, documents, and web content. & Screen-reader users navigate pages, forms, messages, and documents through speech or braille output and activate controls non-visually. & \citep{webaimsr,w3cvisual,w3cstories} \tabularnewline
-V2 & Magnification and text enlargement & Enlarge text, controls, or the screen through zoom, text sizing, or magnification so that content is perceivable and usable. & Low-vision users zoom pages or magnify text and interface regions while reading, browsing, or completing forms. & \citep{webaimlv,w3cresize,w3cpresentation,w3cstories} \tabularnewline
-V3 & Contrast and display adaptation & Adjust contrast, foreground/background presentation, inversion, or display palette to improve visual readability. & Low-vision users switch to higher-contrast, inverted, or otherwise adapted displays when default text and controls are difficult to perceive. & \citep{webaimlv,w3cvisual,mscolor,w3cpresentation} \tabularnewline
-V4 & Color differentiation support & Use color filters or non-color cues when color differences are difficult or impossible to distinguish. & Users with color-vision differences rely on filters, labels, icons, or other non-color cues when options or status are distinguished mainly by color. & \citep{w3ccolor,mscolor,w3cstories} \tabularnewline
-V5 & Access to non-text visual information & Obtain equivalent information from images, maps, charts, infographics, scanned documents, labels, and other visual-only or poorly described content. & Blind and low-vision users use descriptions, OCR, or equivalent text to obtain task-relevant information from images, scans, charts, maps, and labels. & \citep{webaimsr,w3cnontext,w3cstories} \tabularnewline
+V1 & Visual information in other modalities (\textbf{5-1-2}, Sec.~6.5.3) & Users may need visual content, controls, or interaction cues in an auditory or tactile form. Our tasks may preserve speech or braille/screen-reader support for the user at handoff, independent of the agent's own observation method. & Narrator-enabled documents, forms, GUI controls, and visual verification challenges. & \citep{iso29138,webaimsr,w3cvisual,w3cstories} \tabularnewline
+V2 & Adaptable visual presentation (\textbf{5-2-1}, Sec.~6.5.10) & Visual properties should match individual perception needs. ISO instances \textbf{5-2-1-f} (magnification), \textbf{5-2-1-d/e} (contrast), and \textbf{5-2-1-c} (not relying on colour alone) jointly ground this ID. & Zoom, text enlargement, contrast themes, visual palettes, and non-colour labels or cues. & \citep{iso29138,webaimlv,w3cresize,w3ccolor,mscolor} \tabularnewline
+V3 & Text alternatives for non-text information (\textbf{6-2-4}, Sec.~6.6.11) & Non-text content should be understandable through a textual alternative; ISO instances \textbf{6-2-4-a/b} address images and illustrations. For visual tasks, this can entail task-relevant text extracted or described from images, scans, charts, or maps. & OCR, chart/image descriptions, and text alternatives for visual challenges. & \citep{iso29138,webaimsr,w3cnontext,w3cstories} \tabularnewline
 \bottomrule
 \end{tabularx}
-\caption{Documented visual accessibility needs.}
+\caption{Visual task-construction needs normalized to ISO/IEC 29138-1:2018. V2 combines previous V2--V4, and V3 is the former V5.}
 \label{tab:visual_needs}
 \end{table*}
 
 \begin{table*}[h]
 \centering
 \scriptsize
-\begin{tabularx}{\textwidth}{>{\bfseries}p{0.035\textwidth} p{0.20\textwidth} p{0.25\textwidth} X p{0.15\textwidth}}
+\begin{tabularx}{\textwidth}{>{\bfseries}p{0.038\textwidth} p{0.22\textwidth} p{0.33\textwidth} X p{0.12\textwidth}}
 \toprule
-ID & Documented need & Operational definition & Observed user behavior / scenario & Evidence \tabularnewline
+ID & ISO-grounded need (ISO need ID) & Standard meaning / construction scope & Representative realizations & Evidence \tabularnewline
 \midrule
-H1 & Text/non-auditory access to speech and audio & Access spoken and relevant non-speech audio information through captions, transcripts, or another non-auditory representation. & Deaf and hard-of-hearing users use captions or transcripts to recover information from media, calls, voicemails, recordings, and audio challenges before acting on it. & \citep{w3cmedia,afbcaptions,acmacaptions,w3cauditory,w3cstories,w3cnontext} \tabularnewline
-H2 & Caption presentation and language adaptation & Configure caption language and visual presentation so that caption text is readable and appropriate for the media being consumed. & Caption users adjust language, size, contrast, or presentation when default captions are difficult to read or do not match the spoken language. & \citep{mshearing,acmacaptions,w3cauditory} \tabularnewline
-H3 & Visual/persistent alternatives to auditory alerts & Receive alerts visually rather than by sound alone and keep visual notifications available long enough to notice and read. & Deaf and hard-of-hearing users rely on visual or persistent alerts for calls, timers, messages, and system notifications that may otherwise be signaled only by sound. & \citep{mshearing,w3cauditory} \tabularnewline
-H4 & Audio-channel adaptation & Adapt audio channels so that information remains available through the user's usable listening channel. & Users who hear primarily through one ear use mono audio so information split across left and right stereo channels remains available in the audible channel. & \citep{mshearing} \tabularnewline
+H1 & Audio information in other modalities (\textbf{5-1-4}, Sec.~6.5.5) & Users may need speech and sound information available visually or tactilely. Captioning or transcripts are user-facing implementations, not a required information-acquisition path for the agent. & Chrome/Windows Live Caption, transcripts, and audio verification support left usable for takeover. & \citep{iso29138,w3cmedia,afbcaptions,w3cauditory} \tabularnewline
+H2 & Manageable textual presentation (\textbf{5-2-2}, Sec.~6.5.11) & Readable, individually appropriate text presentation includes adjustable size, style, contrast, and layout; language matching can additionally be linked to ISO \textbf{6-2-2} (linguistic requirements). ISO 5-2-2 is a cross-cutting text need, which our benchmark instantiates in hearing-related caption or transcript scenarios. & Caption size, visual style, contrast, and language where supported. & \citep{iso29138,mshearing,acmacaptions,w3cauditory} \tabularnewline
+H3 & Perceivable important alerts (\textbf{5-6}, Sec.~6.5.32) & Important information needs to attract the user's attention in an appropriate modality. ISO instance \textbf{5-6-b/c} provides visual or tactile alerts; tasks use non-auditory cues when sound cannot be relied upon. & Visible, textual, tactile, or retained notification cues for significant events. & \citep{iso29138,mshearing,w3cauditory} \tabularnewline
+H4 & Adaptable auditory presentation (\textbf{5-2-5}, Sec.~6.5.14) & Audio characteristics should match the user's usable listening channel; instances include volume and multichannel information offered monaurally (\textbf{5-2-5-a/d}). & Mono audio, channel balance, volume, or intelligibility settings. & \citep{iso29138,mshearing} \tabularnewline
 \bottomrule
 \end{tabularx}
-\caption{Documented hearing accessibility needs.}
+\caption{Hearing-related task-construction needs. H2 operationalizes a generally applicable ISO text-presentability need specifically in hearing-related caption scenarios.}
 \label{tab:hearing_needs}
 \end{table*}
 
 \begin{table*}[h]
 \centering
 \scriptsize
-\begin{tabularx}{\textwidth}{>{\bfseries}p{0.035\textwidth} p{0.20\textwidth} p{0.25\textwidth} X p{0.15\textwidth}}
+\begin{tabularx}{\textwidth}{>{\bfseries}p{0.038\textwidth} p{0.22\textwidth} p{0.33\textwidth} X p{0.12\textwidth}}
 \toprule
-ID & Documented need & Operational definition & Observed user behavior / scenario & Evidence \tabularnewline
+ID & ISO-grounded need (ISO need ID) & Standard meaning / construction scope & Representative realizations & Evidence \tabularnewline
 \midrule
-M1 & Alternative text entry & Enter text through an on-screen keyboard, speech, or another alternative input when conventional physical-keyboard entry is difficult. & Users who cannot comfortably use a physical keyboard enter search terms, messages, and form fields with an on-screen keyboard or other alternative input. & \citep{webaimmotor,msmobility,w3cphysical,w3cinput} \tabularnewline
-M2 & Keyboard interaction adaptation & Adapt keyboard timing, sensitivity, repetition, or multi-key input so keyboard interaction does not require simultaneous presses or precise key timing. & Users with limited dexterity, tremor, or involuntary input use mechanisms such as Sticky Keys or Filter Keys to enter shortcuts sequentially and suppress brief or repeated presses. & \citep{msmobility,w3cphysical,w3cinput} \tabularnewline
-M3 & Alternative/adapted pointer control & Use keyboard, speech, an alternative pointing method, delegated activation, or adapted pointer settings when conventional mouse use is difficult. & Users navigate and activate controls with Mouse Keys, speech, alternative pointing devices, delegated interaction, or button/handedness settings matched to their reach and strength. & \citep{msmobility,webaimmotor,w3cphysical,w3cinput} \tabularnewline
-M4 & Reduced fine-motor, precision, dragging, repetition, and timing demand & Avoid or delegate interactions requiring sustained press--hold--drag movements, repeated precise target acquisition, small-target selection, fine motor control, or tightly timed action. & Users with limited dexterity or tremor use alternatives that reduce dragging, repeated clicking, precise targeting, or timed pointer actions. & \citep{webaimmotor,w3cdragging,w3cphysical,w3cinput} \tabularnewline
+M1 & Alternative input modalities (\textbf{7-1-1}, Sec.~6.7.2) & Users may need alternative modalities for entering commands or text. ISO instance \textbf{7-1-1-e} explicitly addresses text entry; the benchmark covers alternatives to physical-keyboard entry. & On-Screen Keyboard, dictation, or other accessible input channels. & \citep{iso29138,webaimmotor,msmobility,w3cinput} \tabularnewline
+M2 & Non-simultaneous and self-paced action (\textbf{7-4-3}, Sec.~6.7.15; related \textbf{7-4-4}) & Tasks should be operable without simultaneous actions; timing can additionally be adapted to the user's pace. Keyboard sensitivity/accidental-input accommodations are realizations supported by related ISO input and error-tolerance needs. & Sticky Keys, Filter Keys, sequential shortcuts, and suitable keyboard timing. & \citep{iso29138,msmobility,w3cphysical,w3cinput} \tabularnewline
+M3 & Alternative interaction methods (\textbf{7-3}, Sec.~6.7.11; related \textbf{7-4-2}) & Users may need to operate functionality via an individually suitable input method, including a keyboard or speech in place of conventional pointing; body-use and handedness options additionally map to 7-4-2. & Mouse Keys, speech activation, keyboard navigation, and adapted pointer configuration. & \citep{iso29138,msmobility,webaimmotor,w3cphysical} \tabularnewline
+M4 & Reduced motor effort and demanding movements (\textbf{7-2-1}, Sec.~6.7.7; related \textbf{8-4} and \textbf{7-4-4}) & ISO 7-2-1 includes minimizing force, sustained force, gripping, twisting, and movement (notably instance f). ISO 8-4 addresses physical exertion, while 7-4-4 addresses self-paced interaction. Precise targeting and dragging are benchmark task realizations motivated by these broader needs and complementary accessibility guidance, not separately named ISO instances. & Delegated dragging, less precision-sensitive controls, and low-effort interaction. & \citep{iso29138,webaimmotor,w3cdragging,w3cphysical} \tabularnewline
 \bottomrule
 \end{tabularx}
-\caption{Documented motor accessibility needs.}
+\caption{Motor-related task-construction needs. Related ISO IDs clarify additional aspects without introducing benchmark need IDs for individual features.}
 \label{tab:motor_needs}
 \end{table*}
 
 \begin{table*}[h]
 \centering
 \scriptsize
-\begin{tabularx}{\textwidth}{>{\bfseries}p{0.035\textwidth} p{0.20\textwidth} p{0.25\textwidth} X p{0.15\textwidth}}
+\begin{tabularx}{\textwidth}{>{\bfseries}p{0.038\textwidth} p{0.22\textwidth} p{0.33\textwidth} X p{0.12\textwidth}}
 \toprule
-ID & Documented need & Operational definition & Observed user behavior / scenario & Evidence \tabularnewline
+ID & ISO-grounded need (ISO need ID) & Standard meaning / construction scope & Representative realizations & Evidence \tabularnewline
 \midrule
-C1 & Attention and distraction reduction & Reduce distraction, competing stimuli, and visual or cognitive clutter so that attention can be directed and sustained. & Users with attention or cognitive difficulties reduce distracting content, notifications, motion, or clutter while completing a task. & \citep{w3ccognitive,cogasimplify,w3cstories} \tabularnewline
-C2 & Readability and comprehension simplification & Reduce reading and language-processing demand through clearer presentation, simpler language, or better-structured content. & Users with learning or cognitive difficulties simplify dense pages or use clearer presentation and language to understand task-relevant information. & \citep{w3ccognitive,cogasimplify,w3cstories} \tabularnewline
-C3 & Memory externalization and persistent information support & Reduce reliance on working memory or short-term retention by creating or using notes, checklists, persistent cues, and other durable external representations. & Users externalize task-relevant details into notes, checklists, bookmarks, or other persistent cues so they do not need to retain information across steps. & \citep{cogamemory,w3cstories} \tabularnewline
-C4 & Time and prospective-memory support & Use reminders, calendars, timers, notification persistence, and other time-based cues to manage appointments, deadlines, intervals, and future actions. & Users rely on calendars, reminders, timers, and persistent notifications to remember appointments, deadlines, intervals, and other future actions. & \citep{cogareminders} \tabularnewline
+C1 & Reduced distraction (\textbf{5-4-2}, Sec.~6.5.27) & Users may need to avoid visual, auditory, or other distractions that interfere with attention to a task. This is distinct from making text easier to understand. & Suppressing interruptions, reducing clutter or motion, and focus-oriented presentation. & \citep{iso29138,w3ccognitive,cogasimplify,w3cstories} \tabularnewline
+C2 & Reduced cognitive demands (\textbf{6-3-2}, Sec.~6.6.17; related \textbf{6-2-1}) & Information may need simpler presentation and a manageable level of abstraction without loss of critical content. The related understandability need 6-2-1 supports clear language and explanations. & Simplified/summarized text, structured explanations, and readable information. & \citep{iso29138,w3ccognitive,cogasimplify,w3cstories} \tabularnewline
+C3 & Memory and recall support (\textbf{6-3-4}, Sec.~6.6.19) & Users may need help remembering or retrieving information, both during a workflow and for future actions. Durable external records, reminders, and time-based cues are distinct task realizations of this one ISO need. & Notes, checklists, bookmarks, calendars, reminders, timers, and prospective-memory cues. & \citep{iso29138,cogamemory,cogareminders,w3cstories} \tabularnewline
 \bottomrule
 \end{tabularx}
-\caption{Documented cognitive accessibility needs. The benchmark intentionally excludes generic planning burden, long horizons, arithmetic, decision difficulty, or age unless they induce an observable accessibility-support requirement.}
+\caption{Cognitive task-construction needs. C3 merges previous C3 (persistent information) and C4 (time/prospective-memory support). Generic task complexity alone does not establish an accessibility requirement.}
 \label{tab:cognitive_needs}
 \end{table*}
+
+\paragraph{Legacy ID crosswalk and handoff.}
+The final 14-label scheme consolidates the 17 formative working labels as follows: previous \texttt{V1}$\rightarrow$\texttt{V1}; \texttt{V2/V3/V4}$\rightarrow$\texttt{V2}; \texttt{V5}$\rightarrow$\texttt{V3}; \texttt{H1--H4}$\rightarrow$the corresponding \texttt{H1--H4}; \texttt{M1--M4}$\rightarrow$the corresponding \texttt{M1--M4}; \texttt{C1/C2}$\rightarrow$\texttt{C1/C2}; and \texttt{C3/C4}$\rightarrow$\texttt{C3}. Since ISO need IDs concern users and systems rather than agents, selecting a need does not mandate a particular agent sensing or actuation trajectory. ISO \textbf{3-6} (retaining individualization settings) and \textbf{11-3} (availability of accessibility functions without disruption) provide cross-cutting support for end-state handoff checks, without being counted as additional functional need IDs \citep{iso29138}. Need-level counts, ICF-informed subgroup assignments, and need-conditioned rates must be recomputed using the merged labels and scenario-specific subgroup assignment; existing task instances and evaluators are not changed by this relabeling. The task JSON and plots need the same mapping before these figures can be reported as final.
 \FloatBarrier
 
 \section{Broad Subgroups and Workflow Definitions}
 
+We use the WHO International Classification of Functioning, Disability and Health (ICF) as the \emph{sole international classification basis} for the functional domains represented by our user-subgroup labels \citep{whoicf}. The ICF codes in Table~\ref{tab:functional_subgroups} name body functions (\texttt{b}-codes) or activities and participation domains (\texttt{d}-codes). They anchor the functional barriers relevant to task design, but the nine \texttt{V-S}/\texttt{H-S}/\texttt{M-S}/\texttt{C-S} subgroup labels, their grouping, and their associations with benchmark needs are our own operational metadata, not official ICF subcategories. In particular, \texttt{b210} anchors both non-visual and low-vision scenarios without establishing clinical severity; we do not assign ICF severity qualifiers or infer diagnoses from tasks.
+
 \begin{table*}[h]
 \centering
 \scriptsize
-\begin{tabularx}{\textwidth}{>{\bfseries}p{0.065\textwidth} >{\bfseries}p{0.055\textwidth} p{0.20\textwidth} X p{0.12\textwidth}}
+\setlength{\tabcolsep}{3.2pt}
+\renewcommand{\arraystretch}{1.12}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.093\textwidth} >{\raggedright\arraybackslash}p{0.052\textwidth} >{\raggedright\arraybackslash}p{0.173\textwidth} >{\raggedright\arraybackslash}p{0.148\textwidth} >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}p{0.082\textwidth}@{}}
 \toprule
-Group & ID & Broad subgroup & Operational definition & Need IDs \tabularnewline
+Group & ID & Benchmark subgroup & WHO ICF categories & Task-construction relevance & Need IDs \tabularnewline
 \midrule
-Visual & V-S1 & Blindness & Tasks requiring non-visual access to interface or content, including visual verification challenges. & V1, V5 \tabularnewline
-Visual & V-S2 & Low vision / visual perception difficulty & Tasks benefiting from magnification, contrast, palette or color support, or assistance perceiving visual content. & V2--V5 \tabularnewline
-Hearing & H-S1 & Deaf or hard of hearing & Tasks requiring or benefiting from non-auditory access to speech, alerts, media, audio verification, or other sound-dependent information. & H1--H4 \tabularnewline
-Motor & M-S1 & Keyboard input difficulty & Tasks involving difficulty with a physical keyboard or simultaneous modifier-key input. & M1, M2 \tabularnewline
-Motor & M-S2 & Pointer / fine-motor control difficulty & Tasks involving difficulty with conventional pointing, dragging, target precision, mouse-button use, or sustained fine-motor control. & M3, M4 \tabularnewline
-Motor & M-S3 & Involuntary input / timing difficulty & Tasks affected by accidental or repeated input, or tightly timed input demands. & M2, M4 \tabularnewline
-Cognitive & C-S1 & Attention / distraction difficulty & Tasks benefiting from reduced distraction, competing stimuli, motion, or clutter. & C1 \tabularnewline
-Cognitive & C-S2 & Readability / comprehension difficulty & Tasks benefiting from reduced reading or language-processing load, clearer presentation, or simplified information. & C2 \tabularnewline
-Cognitive & C-S3 & Memory / persistent-information support & Tasks benefiting from notes, checklists, durable external representations, or reduced short-term retention burden. & C3 \tabularnewline
-Cognitive & C-S4 & Time / prospective-memory support & Tasks benefiting from reminders, calendars, timers, persistent notifications, or other future-action or time cues. & C4 \tabularnewline
+Visual & V-S1 & Blindness / non-visual access & \texttt{b210} (seeing functions) & Non-visual access to interface/content and alternatives to visual-only information. & V1, V3 \tabularnewline
+Visual & V-S2 & Low vision / adapted visual presentation & \texttt{b210} (seeing functions) & Magnification, contrast, colour-independent cues, and perceptible visual presentation. & V2, V3 \tabularnewline
+Hearing & H-S1 & Deaf or hard of hearing / auditory access & \texttt{b230} (hearing functions) & Captions, audio-presentation adaptation, and non-auditory access to sound-dependent content or alerts. & H1--H4 \tabularnewline
+Motor & M-S1 & Keyboard input difficulty & \texttt{d440} (fine hand use); \texttt{b760} (voluntary movement control) & Alternatives to physical typing and simultaneous or demanding key actions. & M1, M2, M3 \tabularnewline
+Motor & M-S2 & Pointer / fine-motor control difficulty & \texttt{d440} (fine hand use); \texttt{d445} (hand and arm use); \texttt{b760} & Alternatives to precise pointing, dragging, target acquisition, and sustained manual control. & M3, M4 \tabularnewline
+Motor & M-S3 & Input control / timing difficulty & \texttt{b760}; \texttt{b765} (conditional) & Adjustable repeat, acceptance, or timing demands; \texttt{b765} applies only where involuntary movement is relevant. & M2 \tabularnewline
+Cognitive & C-S1 & Attention / comprehension and simplification & \texttt{b140} (attention); \texttt{b167} (language); \texttt{d166} (reading) & Reduced distraction and reading/language-processing demands. & C1, C2 \tabularnewline
+Cognitive & C-S2 & Memory / persistent-information support & \texttt{b144} (memory functions) & Notes, checklists, and other durable cues supporting recall. & C3 \tabularnewline
+Cognitive & C-S3 & Time / prospective-memory support & \texttt{b144}; \texttt{b164} (higher-level cognition); \texttt{d230} (daily routine) & Reminders, calendars, and time-based support for future actions. & C3 \tabularnewline
 \bottomrule
 \end{tabularx}
-\caption{Broad functional subgroups and their deterministic mapping from need IDs. The subgroup labels are coarse, non-mutually-exclusive metadata: they are not diagnoses or prevalence categories, and a task receives multiple subgroup IDs when its need IDs map to overlapping subgroups.}
+\caption{Nine benchmark-defined, ICF-informed functional subgroups and their candidate ISO/IEC 29138-1-grounded need IDs. WHO ICF categories provide functional anchors, \emph{not} official nine-class subgroup definitions, medical diagnoses, or impairment-severity assignments. The need-to-subgroup mapping is many-to-many and requires task-specific confirmation.}
 \label{tab:functional_subgroups}
 \end{table*}
 
-Each task has exactly one top-level \texttt{user\_group} (visual, hearing, motor, or cognitive) and one or more \texttt{need\_ids}. During curation, \texttt{subgroup\_ids} are assigned deterministically from those need IDs according to Table~\ref{tab:functional_subgroups}; this is a metadata-construction rule, not a requirement that an agent infer a user's diagnosis or subgroup at run time. The top-level group is duplicated in each task record even when it is also encoded by the task directory, keeping released examples self-contained.
+Each task has exactly one benchmark \texttt{user\_group} (visual, hearing, motor, or cognitive) and one or more \texttt{need\_ids}. The \texttt{need\_id\_to\_subgroup\_ids} crosswalk specifies \emph{eligible candidate subgroups}, not labels assigned automatically to every task with a given need. Annotators select only subgroup IDs warranted by the concrete scenario and observable user-facing accessibility requirement; multiple IDs are allowed where more than one subgroup is actually addressed. For example, a C3 note/checklist task can warrant C-S2, whereas a C3 calendar/reminder task can warrant C-S3; both are assigned only if both functions are explicitly required. Likewise M2 may support keyboard adaptation (M-S1), acceptance/timing adaptation (M-S3), or both. Group and subgroup annotations describe the accessibility condition to be supported at completion or user takeover, not the agent's required observation modality or interaction path. These labels are metadata for analysis, not clinical inference. Existing task records and subgroup-level statistics require task-by-task reassignment before they can be reported as finalized.
 
 The everyday workflow categories are communication, information, management, mobility, consumption, service, health, and access. Motivated by prior evidence that CAPTCHA is a major accessibility barrier for screen-reader users \citep{webaimsr}, CAPTCHA is reported separately as a cross-cutting verification-barrier stress test rather than interpreted as a need or a daily-life workflow category. Each CAPTCHA task is assigned the underlying visual or hearing need exercised by its challenge modality.
 
@@ -741,7 +750,7 @@ This cross-validation establishes internal construct and execution quality, but 
 \section{Full Benchmark Statistics}
 \label{app:statistics}
 
-The released task metadata currently supports exact summaries by functional group, subgroup, need ID, workflow category, application involvement, cross-application status, difficulty, and human operating time. Figures~\ref{fig:appendix-groups}--\ref{fig:appendix-difficulty-time} report the complementary slices not shown in the main text. Modality, requirement mechanism, output type, distinct/coincident structure, and continuation-state status require separate annotations and are therefore not inferred from instructions or evaluator code here.
+The task metadata supports summaries by functional group, subgroup, need ID, workflow category, application involvement, cross-application status, difficulty, and human operating time, subject to propagating the final 14-ID mapping into the task metadata. Figures~\ref{fig:appendix-groups}--\ref{fig:appendix-difficulty-time} report the complementary slices not shown in the main text. Modality, requirement mechanism, output type, distinct/coincident structure, and continuation-state status require separate annotations and are therefore not inferred from instructions or evaluator code here.
 
 \begin{figure}[h]
 \centering
@@ -872,7 +881,7 @@ Service & 19 & 57.9 & & & \\
 \label{tab:locallstc-workflow}
 \end{table*}
 
-Under the revised taxonomy, tasks in the former CAPTCHA-specific hearing category are reassigned to their underlying hearing requirement, and the motor categories are merged by functional requirement. The need-level counts and rates must therefore be recomputed from the remapped metadata rather than obtained by relabeling the previous cells. \todo{Insert the recomputed H1--H4, M1--M4, and C1--C4 need-level results.} The previous analysis suggests that enabling states and durable records can be easier to establish than their contents are to align with the source and nominal task state, but this claim should be reported with the recomputed assignment counts and uncertainty for the 17-need taxonomy.
+Under the ISO-grounded 14-ID scheme, the former V2/V3/V4 labels are combined as V2, former V5 becomes V3, and former C3/C4 become C3. Need-level counts and rates must be recomputed by aggregating task-level annotations (and deduplicating tasks with multiple legacy IDs that map to the same final ID); legacy per-need percentages must not simply be averaged. \todo{Insert recalculated V1--V3, H1--H4, M1--M4, and C1--C3 need-level results for the 14-ID scheme.} Previously noted differences between enabled states and durable records should be reassessed after this remapping.
 
 \subsection{Observation-channel limitation for transient captions}
 
@@ -880,7 +889,7 @@ The H1 failures expose a limitation of the observation interface as well as of t
 
 This mechanism is visible in downstream artifacts. In \nolinkurl{communication-dental_reschedule_voicemail}, the system leaves Live Caption enabled and persists Thunderbird drafts, but its body omits required fields such as the weekday and year and normalizes the confirmation code incompletely; the run receives $A=1,T=0$. Other H1 runs similarly obtain the accessibility state but fail when converting transient speech into an email, note, calendar entry, CMS update, or factual answer. We therefore code these cases separately from failures in which the agent saw the relevant caption evidence but later lost or miscopied it. The former are observation-coverage failures induced by temporally sparse screenshot sampling; the latter are planning, memory, transfer, or artifact-construction failures.
 
-This finding is specific to the evaluated scaffold rather than an unavoidable property of caption-based assistance. A continuous caption-event stream, transcript buffer, denser temporally triggered observations, or an explicit replay-and-accumulate policy could expose the missing evidence. The benchmark nevertheless reveals whether a deployed CUA's actual observation channel is adequate for speech-to-text tasks; merely toggling the platform feature is insufficient.
+This finding is specific to the evaluated scaffold rather than an unavoidable property of caption-based assistance. A continuous caption-event stream, transcript buffer, denser temporally triggered observations, or an explicit replay-and-accumulate policy could expose the missing evidence. This case identifies a weakness in that particular baseline's observations when handling the nominal speech-content task, not an H1 requirement that the agent must read captions. Preserving the caption feature and accurately completing the nominal task remain separate checks.
 
 \subsection{GUI-grounding errors and accessibility consequences}
 
@@ -969,7 +978,7 @@ The case study suggests four separable interventions. First, verification should
 \section{Additional Task-Construction Examples}
 \label{app:construction_examples}
 
-The eight examples below complement the H1 management example in Figure~\ref{fig:pipeline}. We select two tasks per functional group and one task from each non-CAPTCHA workflow category. Every selected task received an A naturalness rating and a low runtime web-risk rating in our task audit. Each example reproduces the complete user-facing instruction from the released task JSON, then identifies how its setup and evaluator make the accessibility-oriented completion condition executable.
+The eight examples below complement the H1 management example in Figure~\ref{fig:pipeline}. They retain the recorded user instructions and benchmark evaluators; those instructions may name an assistive feature, but need labels do not constrain the information source or interaction strategy the agent uses. We select two tasks per functional group and one task from each non-CAPTCHA workflow category. Every selected task received an A naturalness rating and a low runtime web-risk rating in our task audit. Each example reproduces the complete user-facing instruction from the released task JSON, then identifies how its setup and evaluator make the accessibility-oriented completion condition executable.
 
 \subsection{Visual}
 
@@ -998,9 +1007,9 @@ Task \nolinkurl{health-insulin_storage_temperature} instantiates M1 in a health-
 \subsection{Cognitive}
 
 \paragraph{Management: creating a prospective-memory cue.}
-Task \nolinkurl{management-prescription_refill_reminder} represents C4 time and prospective-memory support. \textbf{Instruction.} I rely on reminders and time cues to keep track of future actions. Create an all-day Thunderbird Calendar reminder titled \texttt{Refill medication} for the refill deadline in the pharmacy message on the Desktop. \textbf{Construction and evaluation.} Setup creates a fixed desktop message and prepares a Thunderbird profile. A structured calendar evaluator checks the title, July 20, 2026 date, all-day duration, and time fields. The nominal and accessibility outcomes coincide because the reminder itself is the requested support artifact.
+Task \nolinkurl{management-prescription_refill_reminder} represents the prospective-memory realization of C3 (ISO 6-3-4). \textbf{Instruction.} I rely on reminders and time cues to keep track of future actions. Create an all-day Thunderbird Calendar reminder titled \texttt{Refill medication} for the refill deadline in the pharmacy message on the Desktop. \textbf{Construction and evaluation.} Setup creates a fixed desktop message and prepares a Thunderbird profile. A structured calendar evaluator checks the title, July 20, 2026 date, all-day duration, and time fields. The nominal and accessibility outcomes coincide because the reminder itself is the requested support artifact.
 
 \paragraph{Information: externalizing reference locations.}
-Task \nolinkurl{information-chrome_reference_bookmarks} realizes C3 memory externalization in an information workflow. \textbf{Instruction.} I rely on persistent written records so I do not have to remember important details. Save the two already-open local Wikipedia reference pages \texttt{Accessibility} and \texttt{Computer accessibility} as persistent bookmarks on the Chrome bookmark bar so they can be reopened without having to remember or search for them again. \textbf{Construction and evaluation.} Setup opens two fixed Kiwix pages hosted inside the benchmark environment. The evaluator inspects Chrome's structured bookmark state and requires both exact local URLs on the bookmark bar.
+Task \nolinkurl{information-chrome_reference_bookmarks} realizes the persistent-record realization of C3 (ISO 6-3-4) in an information workflow. \textbf{Instruction.} I rely on persistent written records so I do not have to remember important details. Save the two already-open local Wikipedia reference pages \texttt{Accessibility} and \texttt{Computer accessibility} as persistent bookmarks on the Chrome bookmark bar so they can be reopened without having to remember or search for them again. \textbf{Construction and evaluation.} Setup opens two fixed Kiwix pages hosted inside the benchmark environment. The evaluator inspects Chrome's structured bookmark state and requires both exact local URLs on the bookmark bar.
 
 \end{document}

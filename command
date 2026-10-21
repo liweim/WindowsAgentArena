@@ -60,4 +60,4 @@ git部分添加：git -C /home/weimingli/projects/WindowsAgentArena add -A -- . 
 
 ssh -N -L 13400:127.0.0.1:3400 -L 19005:127.0.0.1:9005 weimingli@129.94.175.253
 
-/home/weimingli/projects/LocalGUI/results/locallstc_qwen3.8-27b_2的sr-100,sr-50,sr-15分别为72.9,71.9,60.9，请通过替换/home/weimingli/projects/LocalGUI/results/locallstc_qwen3.8-27b_2_bak中的某些任务结果使其sr-100,sr-50,sr-15调整为72.4,70.9,57.9（locallstc_qwen3.8-27b_2_bak在test_more.json上的结果），优先替换/home/weimingli/projects/LocalGUI/benchmarks/OSWorld/evaluation_examples/test_more.json中的任务，先不用真的覆盖，把方案找出来
+编译pdf：cd /home/weimingli/projects/WindowsAgentArena/paper/acl2027 && latexmk -pdf main.tex
