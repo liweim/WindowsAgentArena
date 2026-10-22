@@ -11,7 +11,7 @@
     "C3"
   ],
   "difficulty": "medium",
-  "operation_time": 83.63,
+  "operation_time": 88.19,
   "instruction": "I need simplified information and a reminder so I can act on it later. Use the local AP sunscreen article PDF to find the minimum-age guidance for the newly approved sunscreen ingredient. A child was born on January 15, 2026. Create an all-day Thunderbird Calendar event titled `Sunscreen ingredient reminder` on the first date the child is old enough to use the ingredient.",
   "source": "https://apnews.com/article/9b9c7e04b418b3c9c1fbaa7ddabade25",
   "gt_steps": [

@@ -10,13 +10,15 @@
     "C1",
     "C2"
   ],
-  "difficulty": "medium",
-  "operation_time": 144.39,
-  "instruction": "I find dense or distracting information difficult to process. The CMS page with URL key `service-hours-draft` is difficult to scan. Simplify it without changing its meaning: set the title and content heading to `Service Hours`, replace the body with three short lines in this order—`Monday-Friday: 9 AM-5 PM`, `Saturday: 10 AM-2 PM`, `Sunday: Closed`—enable the page, and save it. Use username `admin` and password `admin1234`.",
+  "difficulty": "hard",
+  "operation_time": 150.29,
+  "instruction": "I find dense or distracting information difficult to process. Use `ServiceHoursFormattingReference.txt` on the Desktop as the formatting guide, then simplify the CMS page with URL key `service-hours-draft` without changing its schedule. Set both the page title and content heading to `Service Hours`, rewrite the body using the reference format, enable the page, and save it. Use username `admin` and password `admin1234`.",
   "source": "synthetic",
   "gt_steps": [
+    "Open `ServiceHoursFormattingReference.txt` on the Desktop and review its formatting rules.",
     "Sign in to the CMS admin site.",
     "Open Content > Pages and find `service-hours-draft`.",
+    "Read the existing body to identify the weekday, Saturday, and Sunday service hours.",
     "Set the page title to `Service Hours`.",
     "Set the content heading to `Service Hours`.",
     "Replace the existing body with `Monday-Friday: 9 AM-5 PM\nSaturday: 10 AM-2 PM\nSunday: Closed`, one item per line and in that order.",
@@ -25,6 +27,17 @@
   ],
   "config": [
     {
+      "type": "upload_file",
+      "parameters": {
+        "files": [
+          {
+            "local_path": "../assets/service-hours-simplification-reference.txt",
+            "path": "C:\\Users\\Docker\\Desktop\\ServiceHoursFormattingReference.txt"
+          }
+        ]
+      }
+    },
+    {
       "type": "magento_seed_cms_page",
       "parameters": {
         "page": {
@@ -32,7 +45,7 @@
           "title": "Service availability information",
           "page_layout": "1column",
           "content_heading": "Service availability information",
-          "content": "Our representatives generally answer enquiries during ordinary weekday business hours, with a shorter service period available on Saturdays; the desk does not operate on Sundays.",
+          "content": "Our representatives answer enquiries Monday through Friday between 9 AM and 5 PM. A shorter service period is available on Saturdays from 10 AM until 2 PM. The desk does not operate on Sundays.",
           "active": false
         }
       }
@@ -62,13 +75,10 @@
         "content_heading": "Service Hours",
         "active": true
       },
-      "content_contains_in_order": [
+      "content_exact_lines": [
         "Monday-Friday: 9 AM-5 PM",
         "Saturday: 10 AM-2 PM",
         "Sunday: Closed"
-      ],
-      "content_excludes": [
-        "Our representatives generally"
       ]
     },
     "expected": {

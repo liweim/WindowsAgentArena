@@ -9,7 +9,7 @@
     "V1"
   ],
   "difficulty": "medium",
-  "operation_time": 70.0,
+  "operation_time": 70.05,
   "instruction": "I rely on a screen reader to shop online. I am furnishing a guest bathroom and need a towel holder. Turn on Windows Narrator, open OneStopShop's `Bathroom Accessories` category, sort by price from lowest to highest, and choose the lowest-priced towel rack or towel holder. Select Pink if a colour choice is required, add exactly one unit to the shopping cart, and leave the cart page open.",
   "source": "synthetic",
   "gt_steps": [

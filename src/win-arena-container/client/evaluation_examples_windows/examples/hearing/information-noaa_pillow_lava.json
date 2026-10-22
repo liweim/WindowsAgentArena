@@ -9,7 +9,7 @@
     "H1"
   ],
   "difficulty": "medium",
-  "operation_time": 56.39,
+  "operation_time": 75.95,
   "instruction": "I cannot reliably hear the recording. Use Chrome Live Caption on the opened NOAA video to identify where the pillow lavas were imaged and the age estimate given for the lava flows. Save those two facts in `answer.txt` on the Desktop.",
   "source": "https://oceanexplorer.noaa.gov/multimedia/video-shorts-ex1702-pillowlava/",
   "gt_steps": [

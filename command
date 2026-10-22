@@ -13,7 +13,7 @@ bash run_win.sh
 conda activate winarena
 cd /home/weimingli/projects/WindowsAgentArena/scripts
 python run_human.py \
-    --example /home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client/evaluation_examples_windows/examples/hearing/health-anaphylaxis_medicine.json \
+    --example /home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client/evaluation_examples_windows/examples/visual/consumption-guest_bathroom_towel_holders.json \
     --container-name winarena-human \
     --browser-port 9016 \
     --rdp-port 3400

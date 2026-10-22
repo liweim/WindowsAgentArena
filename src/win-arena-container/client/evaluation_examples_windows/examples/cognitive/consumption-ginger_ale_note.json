@@ -9,7 +9,7 @@
     "C3"
   ],
   "difficulty": "medium",
-  "operation_time": 52.26,
+  "operation_time": 75.40,
   "instruction": "I rely on persistent written records so I do not have to remember important details. Complete the ginger-ale item in `ginger_ale_shopping_list.xlsx` on the Desktop using the listed preferences and customer reviews. When finished, check it off by changing its `Status` from `Pending` to `Done`, then save the spreadsheet.",
   "source": "synthetic",
   "gt_steps": [

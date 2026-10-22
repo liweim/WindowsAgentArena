@@ -9,7 +9,7 @@
     "M1"
   ],
   "difficulty": "medium",
-  "operation_time": 64.72,
+  "operation_time": 153.44,
   "instruction": "I have difficulty using a physical keyboard. Open the Windows On-Screen Keyboard and leave it available for me. Copy the touchpad-cleaning instructions from the provided Dell User's Guide exactly as written into `answer.txt` on the Desktop.",
   "source": "synthetic",
   "gt_steps": [

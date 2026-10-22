@@ -10,7 +10,7 @@
     "M4"
   ],
   "difficulty": "easy",
-  "operation_time": 36.80,
+  "operation_time": 36.95,
   "instruction": "A verification step is blocking me, and its interaction is difficult with my motor limitations. Complete the geometry-click CAPTCHA verification in Microsoft Edge.",
   "source": "synthetic",
   "gt_steps": [

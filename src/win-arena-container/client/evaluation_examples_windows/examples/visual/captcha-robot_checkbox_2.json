@@ -9,7 +9,7 @@
     "V1"
   ],
   "difficulty": "easy",
-  "operation_time": 15.31,
+  "operation_time": 15.38,
   "instruction": "The verification step currently open in Microsoft Edge is not accessible to me. Complete the I'm-not-a-robot CAPTCHA verification in Microsoft Edge.",
   "source": "synthetic",
   "gt_steps": [

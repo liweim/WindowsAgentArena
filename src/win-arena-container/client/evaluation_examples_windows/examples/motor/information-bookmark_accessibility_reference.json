@@ -9,7 +9,7 @@
     "M3"
   ],
   "difficulty": "easy",
-  "operation_time": 35.13,
+  "operation_time": 35.56,
   "instruction": "Precise mouse control is difficult for me. Turn on Windows Mouse Keys and leave it enabled for me. Add the opened local Wikipedia `Accessibility` article to Chrome's Other bookmarks folder.",
   "source": "synthetic",
   "gt_steps": [

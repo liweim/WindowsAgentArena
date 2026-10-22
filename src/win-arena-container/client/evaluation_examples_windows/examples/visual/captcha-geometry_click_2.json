@@ -10,7 +10,7 @@
     "V3"
   ],
   "difficulty": "easy",
-  "operation_time": 25.34,
+  "operation_time": 25.20,
   "instruction": "The verification step currently open in Microsoft Edge is not accessible to me. Complete the geometry-click CAPTCHA verification in Microsoft Edge.",
   "source": "synthetic",
   "gt_steps": [

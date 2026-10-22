@@ -9,7 +9,7 @@
     "V2"
   ],
   "difficulty": "easy",
-  "operation_time": 68.36,
+  "operation_time": 76.20,
   "instruction": "I need screen magnification to work with this document. Turn on Windows Magnifier and leave it available for me. Add `Olivia Brown` with email `olivia.brown@example.com` to the contact list in the provided `Contacts.odt`, then save the document.",
   "source": "synthetic",
   "gt_steps": [

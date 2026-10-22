@@ -11,7 +11,7 @@
     "C3"
   ],
   "difficulty": "medium",
-  "operation_time": 63.66,
+  "operation_time": 94.66,
   "instruction": "I find dense information easier to manage when it is simplified and saved as a persistent reference. Use the local AP sunscreen article PDF to complete the sunscreen entry in `health-sunscreen_reference.xlsx` on the Desktop. Fill in the missing information, save the spreadsheet, and leave the PDF open in Microsoft Edge.",
   "source": "https://apnews.com/article/9b9c7e04b418b3c9c1fbaa7ddabade25",
   "gt_steps": [

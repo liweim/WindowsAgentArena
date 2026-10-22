@@ -1,10 +1,92 @@
 import logging
-from typing import Dict
-import requests
 import os
 import subprocess
+import unicodedata
+from html.parser import HTMLParser
+from typing import Dict
+
+import requests
 
 logger = logging.getLogger("desktopenv.getters.general")
+
+
+class _CMSVisibleTextParser(HTMLParser):
+    """Convert CMS HTML into visible text while preserving line boundaries."""
+
+    _BLOCK_TAGS = {
+        "address", "article", "aside", "blockquote", "dd", "div", "dl", "dt",
+        "figcaption", "figure", "footer", "form", "h1", "h2", "h3", "h4",
+        "h5", "h6", "header", "hr", "li", "main", "nav", "ol", "p", "pre",
+        "section", "table", "tbody", "td", "tfoot", "th", "thead", "tr", "ul",
+    }
+    _HIDDEN_TAGS = {"script", "style"}
+
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self._parts = []
+        self._hidden_depth = 0
+
+    def _line_break(self):
+        if not self._parts or self._parts[-1] != "\n":
+            self._parts.append("\n")
+
+    def handle_starttag(self, tag, attrs):
+        tag = tag.lower()
+        if tag in self._HIDDEN_TAGS:
+            self._hidden_depth += 1
+        elif not self._hidden_depth and (tag == "br" or tag in self._BLOCK_TAGS):
+            self._line_break()
+
+    def handle_startendtag(self, tag, attrs):
+        if not self._hidden_depth and (tag.lower() == "br" or tag.lower() in self._BLOCK_TAGS):
+            self._line_break()
+
+    def handle_endtag(self, tag):
+        tag = tag.lower()
+        if tag in self._HIDDEN_TAGS:
+            self._hidden_depth = max(0, self._hidden_depth - 1)
+        elif not self._hidden_depth and tag in self._BLOCK_TAGS:
+            self._line_break()
+
+    def handle_data(self, data):
+        if not self._hidden_depth:
+            self._parts.append(data)
+
+    def lines(self):
+        text = unicodedata.normalize("NFKC", "".join(self._parts))
+        return [
+            " ".join(line.split())
+            for line in text.splitlines()
+            if " ".join(line.split())
+        ]
+
+
+def _cms_visible_text_lines(content):
+    parser = _CMSVisibleTextParser()
+    parser.feed(str(content))
+    parser.close()
+    return parser.lines()
+
+
+def _cms_content_matches(content, config):
+    content = str(content)
+    ordered = config.get("content_contains_in_order", [])
+    positions = [content.find(value) for value in ordered]
+    ordered_match = all(position >= 0 for position in positions) and positions == sorted(positions)
+    excludes_match = all(value not in content for value in config.get("content_excludes", []))
+
+    exact_lines = config.get("content_exact_lines")
+    if exact_lines is None:
+        exact_lines_match = True
+    else:
+        expected_lines = [
+            " ".join(unicodedata.normalize("NFKC", str(line)).split())
+            for line in exact_lines
+            if " ".join(unicodedata.normalize("NFKC", str(line)).split())
+        ]
+        exact_lines_match = _cms_visible_text_lines(content) == expected_lines
+
+    return ordered_match and excludes_match and exact_lines_match
 
 
 def get_magento_product_match(env, config):
@@ -94,12 +176,8 @@ def get_magento_cms_page_match(env, config):
             return "1" if not items else "0"
         for page in items:
             content = str(page.get("content", ""))
-            ordered = config.get("content_contains_in_order", [])
-            positions = [content.find(value) for value in ordered]
-            ordered_match = all(position >= 0 for position in positions) and positions == sorted(positions)
-            excludes_match = all(value not in content for value in config.get("content_excludes", []))
             if (all(page.get(field) == value for field, value in config.get("fields", {}).items())
-                    and ordered_match and excludes_match):
+                    and _cms_content_matches(content, config)):
                 return "1"
         return "0"
     except (requests.RequestException, TypeError, ValueError, KeyError) as e:

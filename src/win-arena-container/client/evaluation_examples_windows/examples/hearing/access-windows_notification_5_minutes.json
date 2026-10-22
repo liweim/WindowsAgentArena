@@ -9,7 +9,7 @@
     "H3"
   ],
   "difficulty": "easy",
-  "operation_time": 23.78,
+  "operation_time": 23.98,
   "instruction": "I need enough time to notice and read visual notifications. Set Windows notifications to stay visible for 5 minutes.",
   "source": "synthetic",
   "gt_steps": [

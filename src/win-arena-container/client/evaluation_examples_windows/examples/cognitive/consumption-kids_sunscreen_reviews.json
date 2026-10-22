@@ -9,7 +9,7 @@
     "C3"
   ],
   "difficulty": "medium",
-  "operation_time": 67.33,
+  "operation_time": 75.82,
   "instruction": "I rely on persistent written records so I do not have to remember important details. Complete the kids-sunscreen item in `family_trip_shopping.txt` on the Desktop using the listed requirements and customer reviews. When finished, check it off by changing `[ ]` to `[x]` on that item, then save the list.",
   "source": "synthetic",
   "gt_steps": [

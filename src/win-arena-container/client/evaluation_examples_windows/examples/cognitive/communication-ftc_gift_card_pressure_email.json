@@ -9,7 +9,7 @@
     "C2"
   ],
   "difficulty": "medium",
-  "operation_time": 83.92,
+  "operation_time": 99.92,
   "instruction": "I find dense or distracting information difficult to process. Read the local FTC gift-card guidance PDF in Microsoft Edge. Draft a Thunderbird email to `relative@example.org` with subject `Gift card pressure tactics`, include the three scam-pressure phrases exactly as written in the PDF, and save the draft without sending it.",
   "source": "https://consumer.ftc.gov/articles/avoiding-and-reporting-gift-card-scams",
   "gt_steps": [

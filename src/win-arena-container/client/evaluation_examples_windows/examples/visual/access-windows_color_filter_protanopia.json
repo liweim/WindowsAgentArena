@@ -9,7 +9,7 @@
     "V2"
   ],
   "difficulty": "easy",
-  "operation_time": 46.01,
+  "operation_time": 46.51,
   "instruction": "I have difficulty distinguishing red and green hues. Set the Windows color filter to Protanopia with intensity 80% and color boost 75%.",
   "source": "synthetic",
   "gt_steps": [

@@ -10,7 +10,7 @@
     "M4"
   ],
   "difficulty": "medium",
-  "operation_time": 31.96,
+  "operation_time": 31.86,
   "instruction": "A verification step is blocking me, and its interaction is difficult with my motor limitations. Complete the patch-select CAPTCHA verification in Microsoft Edge.",
   "source": "synthetic",
   "gt_steps": [

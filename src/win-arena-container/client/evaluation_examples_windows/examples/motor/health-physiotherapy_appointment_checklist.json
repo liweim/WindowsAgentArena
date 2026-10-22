@@ -9,7 +9,7 @@
     "M1"
   ],
   "difficulty": "hard",
-  "operation_time": 278.76,
+  "operation_time": 278.50,
   "instruction": "I have difficulty using a physical keyboard. Open the Windows On-Screen Keyboard and leave it available for me. Create a 1-hour Thunderbird Calendar event for 10:00 AM tomorrow titled `Physiotherapy Appointment`, with every item from the provided PDF snapshot's `Common Mistakes to Avoid` section copied exactly into the description, one item per line.",
   "source": "https://inclinehealth.com.au/how-to-prepare-for-first-appointment/",
   "gt_steps": [

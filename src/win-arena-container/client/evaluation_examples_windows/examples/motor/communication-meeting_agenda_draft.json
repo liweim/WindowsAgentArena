@@ -8,8 +8,8 @@
   "need_ids": [
     "M1"
   ],
-  "difficulty": "hard",
-  "operation_time": 162.37,
+  "difficulty": "medium",
+  "operation_time": 162.60,
   "instruction": "I have difficulty using a physical keyboard. Open the Windows On-Screen Keyboard and leave it available for me. Create and save, but do not send, a Thunderbird draft to `alice@example.com` with subject `Meeting Agenda`, using `MeetingAgenda.odt` saved on Desktop to include the meeting date, time, location, all four agenda items, and the preparation requirement.",
   "source": "synthetic",
   "gt_steps": [

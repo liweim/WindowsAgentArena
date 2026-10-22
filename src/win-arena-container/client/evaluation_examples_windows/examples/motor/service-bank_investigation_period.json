@@ -10,7 +10,7 @@
     "M2"
   ],
   "difficulty": "medium",
-  "operation_time": 202.76,
+  "operation_time": 202.63,
   "instruction": "I have difficulty holding several keys at once. Turn on Windows Sticky Keys and leave it enabled for me. From the provided bank statement PDF, find the maximum investigation period for a complaint or question involving a new account, point-of-sale transaction, or similar issue, and save only that period in `answer.txt` on the Desktop.",
   "source": "https://www.carsonbank.com/",
   "gt_steps": [

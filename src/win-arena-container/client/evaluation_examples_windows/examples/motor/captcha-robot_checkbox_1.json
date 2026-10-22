@@ -9,7 +9,7 @@
     "M3"
   ],
   "difficulty": "easy",
-  "operation_time": 13.27,
+  "operation_time": 13.48,
   "instruction": "A verification step is blocking me, and its interaction is difficult with my motor limitations. Complete the I'm-not-a-robot CAPTCHA verification in Microsoft Edge.",
   "source": "synthetic",
   "gt_steps": [

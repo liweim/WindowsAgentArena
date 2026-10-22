@@ -9,7 +9,7 @@
     "M1"
   ],
   "difficulty": "medium",
-  "operation_time": 100.37,
+  "operation_time": 100.68,
   "instruction": "I have difficulty using a physical keyboard. Open the Windows On-Screen Keyboard and leave it available for me. Complete `TransportRequest.txt` on the Desktop using the supplied request details, then save the file.",
   "source": "synthetic",
   "gt_steps": [

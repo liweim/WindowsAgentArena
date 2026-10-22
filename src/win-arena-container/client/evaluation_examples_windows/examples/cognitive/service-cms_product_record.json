@@ -8,8 +8,8 @@
   "need_ids": [
     "C3"
   ],
-  "difficulty": "hard",
-  "operation_time": 129.73,
+  "difficulty": "medium",
+  "operation_time": 129.14,
   "instruction": "I rely on persistent written records so I do not have to remember important details. Use `cms_product_record.xlsx` on the Desktop as a checklist. Fill the blank row beneath the `Name`, `Type`, `SKU`, `Price`, and `Quantity` headers with the current CMS details for `Joust Duffle Bag`, then save the spreadsheet. Use username `admin` and password `admin1234` to access the CMS admin site.",
   "source": "synthetic",
   "gt_steps": [

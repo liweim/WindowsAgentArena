@@ -9,7 +9,7 @@
     "M3"
   ],
   "difficulty": "medium",
-  "operation_time": 114.3,
+  "operation_time": 151.02,
   "instruction": "Precise mouse control is difficult for me. Turn on Windows Mouse Keys and leave it enabled for me. Use the official Quantum 600E owner’s manual saved on the Desktop to create and save a Thunderbird draft to `equipmentdesk@example.org` with subject `Quantum 600E charging guidance`. Include the battery type and voltage, the required charger, and the extension-cord warning. Do not send it.",
   "source": "https://www.quantumrehab.com/pdf/owners-manuals/us_q600e_om.pdf",
   "gt_steps": [

@@ -9,8 +9,8 @@
     "M3"
   ],
   "difficulty": "medium",
-  "operation_time": 85.08,
-  "instruction": "Precise mouse control is difficult for me. Turn on Windows Mouse Keys and leave it enabled for me. In Reddit, open the Forums tab and sort the forums alphabetically. Under the M category, click `monitor` to see more details. Find the total number of posts in the Monitor forum and save only that number to `answer.txt` on the Desktop.",
+  "operation_time": 85.96,
+  "instruction": "Precise mouse control is difficult for me. Turn on Windows Mouse Keys and leave it enabled for me. Find the total number of posts in Reddit's `monitor` forum and save only that number to `answer.txt` on the Desktop.",
   "source": "synthetic",
   "gt_steps": [
     "Open Windows Accessibility mouse settings.",

@@ -9,7 +9,7 @@
     "M1"
   ],
   "difficulty": "easy",
-  "operation_time": 61.49,
+  "operation_time": 89.85,
   "instruction": "I have difficulty using a physical keyboard. Open the Windows On-Screen Keyboard and leave it available for me. The PDF is already open in Chrome. Open the website link for the voter authority certificate application from the PDF in a new Chrome tab, leave that tab open, and leave the On-Screen Keyboard open.",
   "source": "synthetic",
   "gt_steps": [

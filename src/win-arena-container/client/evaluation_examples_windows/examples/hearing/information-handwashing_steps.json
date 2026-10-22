@@ -9,7 +9,7 @@
     "H1"
   ],
   "difficulty": "medium",
-  "operation_time": 67.63,
+  "operation_time": 75.62,
   "instruction": "I cannot reliably hear the video. Use the available captions on the opened video and record the physical hand-washing sequence from wetting the hands through drying them in a Sticky Note, one step per line in the video's order. Include each hand area the video specifically says to wash.",
   "source": "https://www.canada.ca/en/public-health/services/video/covid-19-hand-washing-heroes.html",
   "gt_steps": [

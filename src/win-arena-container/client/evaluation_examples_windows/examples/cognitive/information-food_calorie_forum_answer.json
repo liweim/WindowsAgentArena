@@ -9,8 +9,8 @@
     "C2"
   ],
   "difficulty": "medium",
-  "operation_time": 96.22,
-  "instruction": "I find dense or distracting information difficult to process. Find the thread about how food manufacturers know the calories in each package. Based on the discussion's main answer, create a persistent two-line reference note in `answer.txt` on the Desktop: write `Question: exact or estimate?` on the first line and `Answer: exact` or `Answer: estimate` on the second line.",
+  "operation_time": 96.76,
+  "instruction": "I find long forum discussions hard to process. In the forum, find the discussion about how manufacturers determine the calories shown on food packages. Read the main answer and save a concise, two-line reference note in `answer.txt` on the Desktop: the first line must begin with `Question:` and briefly state the issue; the second must begin with `Answer:` and give the discussion's conclusion in your own words. Do not include any other lines.",
   "source": "synthetic",
   "gt_steps": [
     "Search for `calorie package` and open the first result",
@@ -40,25 +40,25 @@
     "notepad"
   ],
   "evaluator": {
-    "func": "check_text_points",
+    "func": "check_include_exclude",
     "result": {
       "type": "vm_command_line",
-      "command": "powershell -NoProfile -Command \"$p=Join-Path $env:USERPROFILE 'Desktop\\answer.txt'; if(Test-Path $p){Get-Content $p -Raw}\"",
-      "shell": true
+      "command": [
+        "powershell",
+        "-NoProfile",
+        "-Command",
+        "$p=Join-Path $env:USERPROFILE 'Desktop\\answer.txt'; if(!(Test-Path $p)){Write-Output 'HANDOFF_FAIL'; exit}; $lines=@(Get-Content $p | Where-Object {$_.Trim().Length -gt 0}); $q=($lines.Count -eq 2 -and $lines[0] -match '^Question:\\s*.+$' -and $lines[0] -match 'calor(?:ie|ies)|food|package'); $a=($lines.Count -eq 2 -and $lines[1] -match '^Answer:\\s*.+$' -and $lines[1] -match '\\b(estimat(e|ed|es|ion)|approximat(e|ely|ion)|not exact|roughly|rough figure)\\b' -and $lines[1] -notmatch '^Answer:\\s*(?:they are |it is )?exact\\b'); if($q -and $a){Write-Output 'HANDOFF_PASS'}else{Write-Output 'HANDOFF_FAIL'}"
+      ],
+      "shell": false
     },
     "expected": {
       "type": "rule",
       "rules": {
-        "ignore_case": true,
-        "ordered": true,
-        "line_based": true,
-        "points": [
-          [
-            "Question: exact or estimate?"
-          ],
-          [
-            "Answer: estimate"
-          ]
+        "include": [
+          "HANDOFF_PASS"
+        ],
+        "exclude": [
+          "HANDOFF_FAIL"
         ]
       }
     },

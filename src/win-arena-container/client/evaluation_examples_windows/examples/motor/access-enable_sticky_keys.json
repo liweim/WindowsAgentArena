@@ -10,7 +10,7 @@
     "M2"
   ],
   "difficulty": "easy",
-  "operation_time": 27.01,
+  "operation_time": 27.39,
   "instruction": "I have difficulty holding several keys at once. Turn on Windows Sticky Keys and leave it enabled for me.",
   "source": "synthetic",
   "gt_steps": [

@@ -9,7 +9,7 @@
     "M3"
   ],
   "difficulty": "easy",
-  "operation_time": 41.75,
+  "operation_time": 41.91,
   "instruction": "Precise mouse control is difficult for me. Turn on Windows Mouse Keys and leave it enabled for me.",
   "source": "synthetic",
   "gt_steps": [

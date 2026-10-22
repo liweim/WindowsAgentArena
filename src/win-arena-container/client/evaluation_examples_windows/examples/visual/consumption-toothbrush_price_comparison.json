@@ -8,8 +8,8 @@
   "need_ids": [
     "V1"
   ],
-  "difficulty": "hard",
-  "operation_time": 60.99,
+  "difficulty": "medium",
+  "operation_time": 137.35,
   "instruction": "I rely on a screen reader to follow the content. Turn on Windows Narrator, then use the provided oral-care catalogue to compare all six products. Among the packs containing exactly six toothbrushes, identify the one with the lowest catalogue price. Add exactly one unit of the matching product to the shopping cart and leave the cart page open.",
   "source": "synthetic",
   "gt_steps": [

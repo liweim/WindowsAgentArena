@@ -9,7 +9,7 @@
     "M1"
   ],
   "difficulty": "hard",
-  "operation_time": 239.77,
+  "operation_time": 239.89,
   "instruction": "I have difficulty using a physical keyboard. Open the Windows On-Screen Keyboard and leave it available for me. Save every walk title in the provided PDF snapshot of the NSW National Parks webpage that is Grade 1 with a maximum listed walking time of 45 minutes or less to `answer.txt` on the Desktop, one title per line in walking-track listing order.",
   "source": "https://www.nationalparks.nsw.gov.au/access-friendly/access-friendly-walking-tracks",
   "gt_steps": [

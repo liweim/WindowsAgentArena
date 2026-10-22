@@ -10,7 +10,7 @@
     "H3"
   ],
   "difficulty": "easy",
-  "operation_time": 38.41,
+  "operation_time": 38.79,
   "instruction": "I can miss information split between stereo channels and audio-only alerts. Enable Mono audio and set visual audio alerts to Flash the entire screen in Windows.",
   "source": "synthetic",
   "gt_steps": [

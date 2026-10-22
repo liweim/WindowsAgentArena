@@ -9,7 +9,7 @@
     "H3"
   ],
   "difficulty": "easy",
-  "operation_time": 38.23,
+  "operation_time": 38.13,
   "instruction": "I need a visual indication when an audio notification occurs. Set Windows to flash the active window during audio notifications.",
   "source": "synthetic",
   "gt_steps": [

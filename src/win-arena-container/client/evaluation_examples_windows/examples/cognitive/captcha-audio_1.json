@@ -9,7 +9,7 @@
     "C3"
   ],
   "difficulty": "easy",
-  "operation_time": 20.27,
+  "operation_time": 20.07,
   "instruction": "Verification sequences are difficult for me to keep track of. Complete the audio CAPTCHA open in Chrome.",
   "source": "synthetic",
   "gt_steps": [

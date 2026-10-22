@@ -9,7 +9,7 @@
     "M3"
   ],
   "difficulty": "medium",
-  "operation_time": 115.36,
+  "operation_time": 138.86,
   "instruction": "Precise mouse control is difficult for me. Turn on Windows Mouse Keys and leave it enabled for me. Using the provided walking-route directory, compare all listed routes from Dubai Mall, Downtown Dubai, Dubai, United Arab Emirates. Among the destinations with a walking route of less than 6 km, choose the one with the shortest walking time. Open that destination's walking directions and leave them visible.",
   "source": "synthetic",
   "gt_steps": [

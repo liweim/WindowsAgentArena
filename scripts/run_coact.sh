@@ -35,7 +35,7 @@ nohup setsid env \
     --isolate-tasks true \
     --container-name a11yarena-coact \
     --result-dir /locallstc/projects/WindowsAgentArena/results/coact_qwen3.8-27b \
-    --json-name evaluation_examples_windows/test_all.json \
+    --json-name evaluation_examples_windows/motor.json \
     --remove-container true \
     "$@" >"$LOG_FILE" 2>&1 < /dev/null &
 

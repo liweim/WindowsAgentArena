@@ -9,7 +9,7 @@
     "C2"
   ],
   "difficulty": "medium",
-  "operation_time": 205.15,
+  "operation_time": 205.17,
   "instruction": "I find dense or distracting information difficult to process. Using only the section `What To Do About Spam Text Messages` in the local FTC guidance PDF, draft an email to `family@example.org` with subject `Spam text safety`. Use the FTC's exact wording to state what to do about links in an unexpected text asking for personal or financial information and how to contact a company if the message may be real. Do not paraphrase or add outside information. Save the draft.",
   "source": "https://consumer.ftc.gov/articles/how-recognize-and-report-spam-text-messages",
   "gt_steps": [

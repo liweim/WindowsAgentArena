@@ -9,7 +9,7 @@
     "C2"
   ],
   "difficulty": "medium",
-  "operation_time": 63.18,
+  "operation_time": 99.70,
   "instruction": "I find dense or distracting information difficult to process. Read the local FTC gift-card guidance PDF in Microsoft Edge and find the website it gives for reporting a gift card scam directly to the FTC. Draft an email in Thunderbird to `parent@example.com` with the subject `Report a gift card scam`. Enter only the website address in the message body, exactly as shown in the PDF, and save the draft without sending it.",
   "source": "https://consumer.ftc.gov/articles/avoiding-and-reporting-gift-card-scams",
   "gt_steps": [

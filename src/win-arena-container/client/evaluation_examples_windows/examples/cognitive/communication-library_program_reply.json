@@ -9,7 +9,7 @@
     "C3"
   ],
   "difficulty": "hard",
-  "operation_time": 260.67,
+  "operation_time": 260.08,
   "instruction": "I rely on reminders and time cues to keep track of future actions. Use the library program notice on the Desktop to choose the memory-support workshop that is on Thursday. Create and save a Thunderbird draft to `programs@example.org` with subject `Workshop confirmation` confirming one place and including the selected event date, time, room, and confirmation code. Do not send it. Also add the selected workshop to the Thunderbird calendar as a persistent reminder titled `Memory-support workshop`, using the workshop start and end time. Set the library and room as the event location and put the confirmation code in the event description.",
   "source": "synthetic",
   "gt_steps": [

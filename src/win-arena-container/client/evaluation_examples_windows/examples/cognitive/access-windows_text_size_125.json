@@ -9,7 +9,7 @@
     "C2"
   ],
   "difficulty": "easy",
-  "operation_time": 34.10,
+  "operation_time": 34.23,
   "instruction": "I find larger text easier to process. Set the Windows text size to 125%.",
   "source": "synthetic",
   "gt_steps": [

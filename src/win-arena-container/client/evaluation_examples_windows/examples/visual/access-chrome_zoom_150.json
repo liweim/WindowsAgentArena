@@ -9,7 +9,7 @@
     "V2"
   ],
   "difficulty": "easy",
-  "operation_time": 22.24,
+  "operation_time": 22.33,
   "instruction": "I need larger page content to read comfortably. Set the Chrome page zoom to 150% on https://www.digital.nsw.gov.au/delivery/accessibility-and-inclusivity-toolkit and leave the page open.",
   "source": "https://www.digital.nsw.gov.au/delivery/accessibility-and-inclusivity-toolkit",
   "gt_steps": [

@@ -9,7 +9,7 @@
     "C3"
   ],
   "difficulty": "easy",
-  "operation_time": 29.96,
+  "operation_time": 29.31,
   "instruction": "Verification sequences are difficult for me to keep track of. Complete the character-count CAPTCHA open in Chrome.",
   "source": "synthetic",
   "gt_steps": [

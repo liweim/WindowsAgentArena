@@ -9,7 +9,7 @@
     "C3"
   ],
   "difficulty": "easy",
-  "operation_time": 21.25,
+  "operation_time": 21.15,
   "instruction": "I rely on persistent written records so I do not have to remember important details. Save the two already-open local Wikipedia reference pages `Accessibility` and `Computer accessibility` as persistent bookmarks on the Chrome bookmark bar so they can be reopened without having to remember or search for them again.",
   "source": "synthetic",
   "gt_steps": [

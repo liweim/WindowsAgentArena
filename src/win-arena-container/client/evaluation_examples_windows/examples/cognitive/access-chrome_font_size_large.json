@@ -9,7 +9,7 @@
     "C2"
   ],
   "difficulty": "easy",
-  "operation_time": 29.16,
+  "operation_time": 29.88,
   "instruction": "I find larger text easier to process. Set Chrome's default font size to Large.",
   "source": "synthetic",
   "gt_steps": [

@@ -10,7 +10,7 @@
     "V3"
   ],
   "difficulty": "easy",
-  "operation_time": 24.66,
+  "operation_time": 24.20,
   "instruction": "The verification step currently open in Microsoft Edge is not accessible to me. Complete the image-recognition CAPTCHA verification in Microsoft Edge.",
   "source": "synthetic",
   "gt_steps": [

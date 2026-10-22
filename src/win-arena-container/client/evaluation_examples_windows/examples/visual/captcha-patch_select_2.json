@@ -10,7 +10,7 @@
     "V3"
   ],
   "difficulty": "medium",
-  "operation_time": 23.98,
+  "operation_time": 23.66,
   "instruction": "The verification step currently open in Microsoft Edge is not accessible to me. Complete the patch-select CAPTCHA verification in Microsoft Edge.",
   "source": "synthetic",
   "gt_steps": [

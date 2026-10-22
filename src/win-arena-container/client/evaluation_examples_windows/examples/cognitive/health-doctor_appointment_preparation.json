@@ -11,8 +11,8 @@
     "C2",
     "C3"
   ],
-  "difficulty": "hard",
-  "operation_time": 74.01,
+  "difficulty": "medium",
+  "operation_time": 96.14,
   "instruction": "I find dense information easier to manage when it is simplified, saved, and tied to a reminder. Create a 2-hour Thunderbird Calendar event titled `Doctor appointment` for tomorrow at 9:00 AM. Read the local appointment-preparation PDF in Microsoft Edge, then add a note to the event description stating, in the article's exact wording, which medicines and related health products should be included when completing paperwork at home.",
   "source": "https://apnews.com/article/3fcde5b5c927734429818bd0ed1c6680",
   "gt_steps": [

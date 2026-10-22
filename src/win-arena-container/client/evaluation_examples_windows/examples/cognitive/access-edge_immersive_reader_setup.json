@@ -9,7 +9,7 @@
     "C1"
   ],
   "difficulty": "medium",
-  "operation_time": 32.27,
+  "operation_time": 32.75,
   "instruction": "I focus better when text is shown one line at a time. Set up the local Wikipedia Accessibility article in Microsoft Edge Immersive Reader with one-line focus turned on.",
   "source": "synthetic",
   "gt_steps": [

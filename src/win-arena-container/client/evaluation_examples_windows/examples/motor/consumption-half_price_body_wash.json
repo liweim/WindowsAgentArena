@@ -10,7 +10,7 @@
     "M2"
   ],
   "difficulty": "hard",
-  "operation_time": 92.04,
+  "operation_time": 166.75,
   "instruction": "I have difficulty holding several keys at once. Turn on Windows Sticky Keys and leave it enabled for me. From the provided Coles catalogue, save every product whose full name contains `Body Wash` and costs less than $9 to `answer.txt` on the Desktop, one exact product name per line in catalogue order, without prices.",
   "source": "synthetic",
   "gt_steps": [

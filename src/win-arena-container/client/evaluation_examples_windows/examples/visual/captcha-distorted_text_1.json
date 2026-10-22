@@ -9,7 +9,7 @@
     "V1"
   ],
   "difficulty": "easy",
-  "operation_time": 18.87,
+  "operation_time": 18.23,
   "instruction": "The verification step currently open in Microsoft Edge is not accessible to me. Complete the CAPTCHA verification in Microsoft Edge.",
   "source": "synthetic",
   "gt_steps": [

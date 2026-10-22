@@ -10,7 +10,7 @@
     "V3"
   ],
   "difficulty": "medium",
-  "operation_time": 201.47,
+  "operation_time": 201.88,
   "instruction": "I rely on a screen reader to follow the content. Turn on Windows Narrator and use the Wikipedia page already open in Chrome to identify the person in its first image. Open that person's Wikipedia page and leave it open.",
   "source": "synthetic",
   "gt_steps": [

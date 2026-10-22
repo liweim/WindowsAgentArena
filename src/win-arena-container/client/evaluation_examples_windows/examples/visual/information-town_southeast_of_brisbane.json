@@ -10,7 +10,7 @@
     "V3"
   ],
   "difficulty": "hard",
-  "operation_time": 40.95,
+  "operation_time": 150.56,
   "instruction": "I rely on a screen reader to follow the content. Turn on Windows Narrator and use the Australia map PDF already open in Chrome to identify the city or town label immediately southeast of Brisbane in the displayed map layout. Save that label in `answer.txt` on the Desktop.",
   "source": "synthetic",
   "gt_steps": [

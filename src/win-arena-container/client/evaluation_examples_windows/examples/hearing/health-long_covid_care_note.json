@@ -9,7 +9,7 @@
     "H1"
   ],
   "difficulty": "medium",
-  "operation_time": 68.36,
+  "operation_time": 90.01,
   "instruction": "I cannot reliably hear the recording. Use Chrome Live Caption on the opened CDC video and create a Sticky Note containing the three consequences or care needs named in its opening description of Long COVID.",
   "source": "https://www.cdc.gov/long-covid/resources/video-navigating-long-covid.html",
   "gt_steps": [

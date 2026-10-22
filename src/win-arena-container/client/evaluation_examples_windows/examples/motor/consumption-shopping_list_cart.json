@@ -10,7 +10,7 @@
     "M2"
   ],
   "difficulty": "hard",
-  "operation_time": 92.77,
+  "operation_time": 160.07,
   "instruction": "Brief or repeated keystrokes are difficult for me to control. Turn on Windows Filter Keys and leave it enabled for me. Add the products and quantities listed in the provided `ShoppingList.ods` on Desktop to the OneStopMarket cart, with no additional products.",
   "source": "synthetic",
   "gt_steps": [
