@@ -22,10 +22,11 @@ AGENT_ALIASES = {
     "local-lstc2": "locallstc2",
     "local_lstc2": "locallstc2",
     "tars_agent": "tars",
+    "os-symphony": "os_symphony",
 }
 STEP_AGENT_NAMES = frozenset({"gta1", "agents3"})
 FRAMEWORK_AGENT_NAMES = frozenset(
-    {"locallstc", "locallstc2", "hisa", "coact", "tars"}
+    {"locallstc", "locallstc2", "hisa", "coact", "tars", "os_symphony"}
 )
 SUPPORTED_AGENT_NAMES = frozenset(
     {"navi", "claude"} | STEP_AGENT_NAMES | FRAMEWORK_AGENT_NAMES
@@ -38,6 +39,7 @@ FRAMEWORK_DEFAULT_MODELS = {
     "locallstc": "qwen3.8-27b",
     "locallstc2": "qwen3.8-27b",
     "tars": "qwen3.8-27b",
+    "os_symphony": "qwen3.8-27b",
 }
 
 
@@ -386,6 +388,10 @@ def run_framework_example(
         score = _run_coact(env, example, args, example_result_dir)
     elif args.agent_name == "tars":
         score = _run_tars(env, example, args, example_result_dir)
+    elif args.agent_name == "os_symphony":
+        from mm_agents.os_symphony.main import run_task
+
+        score = run_task(env, example, args, example_result_dir)
     else:
         raise ValueError("{} is not a framework agent".format(args.agent_name))
 

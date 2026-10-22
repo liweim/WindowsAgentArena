@@ -27,7 +27,6 @@ nohup setsid env \
     --clean-results false \
     --worker-id 0 \
     --num-workers 1 \
-    --isolate-tasks true \
     --container-name a11yarena-locallstc \
     --result-dir /locallstc/projects/WindowsAgentArena/results/locallstc_qwen3.8-27b \
     --json-name evaluation_examples_windows/test_all.json \

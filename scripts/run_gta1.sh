@@ -28,7 +28,6 @@ nohup setsid env \
     --clean-results false \
     --worker-id 0 \
     --num-workers 1 \
-    --isolate-tasks true \
     --container-name a11yarena-gta1 \
     --result-dir /locallstc/projects/WindowsAgentArena/results/gta1_qwen3.8-27b \
     --json-name evaluation_examples_windows/cognitive.json \

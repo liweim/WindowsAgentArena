@@ -37,7 +37,6 @@ result_dir="./results"
 json_name="evaluation_examples_windows/test_all.json"
 diff_lvl="normal"
 remove_container=true
-isolate_tasks=false
 storage_base_path=""
 OPENAI_API_KEY=""
 AZURE_API_KEY=""
@@ -78,7 +77,7 @@ while [[ $# -gt 0 ]]; do
         --json-name) json_name=$2; shift 2 ;;
         --diff-lvl) diff_lvl=$2; shift 2 ;;
         --remove-container) remove_container=$2; shift 2 ;;
-        --isolate-tasks) isolate_tasks=$2; shift 2 ;;
+        --isolate-*) log_error_exit "Task-isolation options do not exist; task execution is always isolated." ;;
         --storage-base-path) storage_base_path=$2; shift 2 ;;
         --openai-api-key) OPENAI_API_KEY="$2"; shift 2 ;;
         --azure-api-key) AZURE_API_KEY="$2"; shift 2 ;;
@@ -88,6 +87,23 @@ while [[ $# -gt 0 ]]; do
         *) method_cli_args+=("$1"); shift ;;
     esac
 done
+
+task_execution=false
+if [ "$start_client" = true ] && [ "$prepare_image" = false ] && \
+   [ "$connect" = false ] && [ "$interactive" = false ]; then
+    task_execution=true
+fi
+
+if [ "$task_execution" = true ]; then
+    if [ "$ephemeral_vm_storage" = true ]; then
+        log_error_exit "Task execution only supports per-task isolation; --ephemeral-vm-storage is not allowed."
+    fi
+else
+    if [ "$prepare_image" != true ] && [ "$connect" != true ] && \
+       [ "$mount_vm_storage" = true ] && [ "$ephemeral_vm_storage" != true ]; then
+        log_error_exit "Non-task VM sessions must use --ephemeral-vm-storage true; writable golden VM storage is forbidden."
+    fi
+fi
 
 # The outer launcher owns only container/VM options. Preserve every other
 # token for the selected agent's parser inside the client.
@@ -169,10 +185,6 @@ prepare_vm_storage_mount_path() {
     if [ "$connect" = true ]; then
         log_error_exit "--ephemeral-vm-storage true is incompatible with --connect true."
     fi
-    if [ "$isolate_tasks" = true ]; then
-        log_error_exit "--ephemeral-vm-storage true is redundant with --isolate-tasks true; choose one."
-    fi
-
     ephemeral_vm_storage_dir=$(mktemp -d -t winarena-storage-XXXXXX)
     trap cleanup_ephemeral_vm_storage EXIT
     echo "Creating ephemeral VM storage copy at: $ephemeral_vm_storage_dir"
@@ -181,6 +193,22 @@ prepare_vm_storage_mount_path() {
 }
 
 invoke_docker_container() {
+    if [ "$task_execution" = true ]; then
+        local overlay_root overlay_path base_path
+        overlay_root=$(realpath -- "$storage_run_root")
+        overlay_path=$(realpath -- "$vm_storage_mount_path")
+        base_path=$(realpath -- "$vm_storage_base_path")
+        case "$overlay_path" in
+            "$overlay_root"/storage-*) ;;
+            *)
+                log_error_exit "Refusing task run: /storage must be a per-task overlay, not shared VM storage ($vm_storage_mount_path)."
+                ;;
+        esac
+        if [ "$overlay_path" = "$base_path" ]; then
+            log_error_exit "Refusing task run: golden VM storage cannot be mounted read-write at /storage."
+        fi
+    fi
+
     docker_command="docker run"
     if [ "$interactive" = true ] && [ -t 1 ]; then docker_command+=" -it"; fi
     if [ -n "$browser_port" ]; then
@@ -200,7 +228,7 @@ invoke_docker_container() {
     docker_command+=" -e RAM_SIZE=$ram_size -e CPU_CORES=$cpu_cores"
     if [ "$prepare_image" = true ]; then docker_command+=" --mount type=bind,source=${vm_setup_image_path}/setup.iso,target=/custom.iso"; fi
     if [ "$mount_vm_storage" = true ]; then docker_command+=" -v ${vm_storage_mount_path}/.:/storage"; fi
-    if [ "$isolate_tasks" = true ]; then
+    if [ "$task_execution" = true ]; then
         docker_command+=" -e WAA_BATCH_TOTAL=${#task_entries[@]} -e WAA_BATCH_INDEX=$((index + 1))"
         # Keep the backing filename identical on host and guest. Mount only the
         # disk read-only; firmware and TPM files belong to each task's storage.
@@ -260,7 +288,7 @@ invoke_docker_container() {
     fi
 
     echo "Container $container_name exited with status $status."
-    if [ "$remove_container" = true ] && [ "$isolate_tasks" != true ]; then
+    if [ "$remove_container" = true ] && [ "$task_execution" != true ]; then
         docker rm "$container_name" >/dev/null
     fi
     return "$status"
@@ -329,16 +357,16 @@ run_isolated_tasks() {
     local -a task_entries
 
     if [ "$mount_vm_storage" != true ]; then
-        log_error_exit "--isolate-tasks requires --mount-vm-storage true."
+        log_error_exit "Task execution requires --mount-vm-storage true."
     fi
     if [ "$start_client" != true ] || [ "$prepare_image" = true ] || [ "$interactive" = true ] || [ "$connect" = true ]; then
-        log_error_exit "--isolate-tasks requires a non-interactive client run with --prepare-image false and --connect false."
+        log_error_exit "Task isolation requires a non-interactive client run with --prepare-image false and --connect false."
     fi
     if [ "$num_workers" -ne 1 ]; then
-        log_error_exit "--isolate-tasks currently requires --num-workers 1."
+        log_error_exit "Task isolation currently requires --num-workers 1."
     fi
     if [ "$worker_id" -ne 0 ]; then
-        log_error_exit "--isolate-tasks requires --worker-id 0 with --num-workers 1."
+        log_error_exit "Task isolation requires --worker-id 0 with --num-workers 1."
     fi
     if docker container inspect "$container_name" >/dev/null 2>&1; then
         log_error_exit "Container $container_name already exists; choose another --container-name or stop it explicitly."
@@ -533,7 +561,7 @@ PY
     return "$overall_status"
 }
 
-if [ "$isolate_tasks" = true ]; then
+if [ "$task_execution" = true ]; then
     run_isolated_tasks
 else
     prepare_vm_storage_mount_path

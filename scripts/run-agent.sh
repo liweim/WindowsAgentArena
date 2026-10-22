@@ -31,7 +31,6 @@ nohup setsid env \
     --clean-results false \
     --worker-id 0 \
     --num-workers 1 \
-    --isolate-tasks true \
     --container-name a11yarena \
     --browser-port 18113 \
     --rdp-port 13392 \

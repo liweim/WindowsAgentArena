@@ -26,7 +26,6 @@ nohup setsid env \
     --clean-results false \
     --worker-id 0 \
     --num-workers 1 \
-    --isolate-tasks true \
     --container-name a11yarena-tars \
     --result-dir /locallstc/projects/WindowsAgentArena/results/tars_qwen3.8-27b \
     --json-name evaluation_examples_windows/test_one.json \

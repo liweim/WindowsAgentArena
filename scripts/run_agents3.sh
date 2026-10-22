@@ -31,7 +31,6 @@ nohup setsid env \
     --clean-results false \
     --worker-id 0 \
     --num-workers 1 \
-    --isolate-tasks true \
     --container-name a11yarena-agents3 \
     --result-dir /locallstc/projects/WindowsAgentArena/results/agents3_qwen3.8-27b \
     --json-name evaluation_examples_windows/test_all.json \

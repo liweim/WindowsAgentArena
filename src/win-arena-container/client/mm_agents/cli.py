@@ -410,6 +410,29 @@ def _add_tars_options(parser: argparse.ArgumentParser) -> None:
     )
 
 
+def _add_os_symphony_options(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument("--symphony-search-mode", choices=["windows", "linux"], default="windows",
+                        help="Search in a private browser on the task VM, or a separate Linux VM")
+    parser.add_argument("--symphony-search-url", default=None)
+    parser.add_argument("--symphony-search-token-file", default=None)
+    parser.add_argument("--symphony-search-smoke", action="store_true",
+                        help="Before the task, open/close the Windows search browser and save a screenshot")
+    parser.add_argument("--symphony-grounder-model", default="uitars-1.5-7b",
+                        choices=["uitars-1.5-7b"])
+    parser.add_argument("--symphony-grounding-space", choices=["normalized", "resized"],
+                        default="normalized",
+                        help="UI-TARS coordinate contract: 0..1000 or smart-resized image pixels")
+    parser.add_argument("--symphony-coder-budget", type=int, default=20)
+    parser.add_argument("--symphony-search-budget", type=int, default=20)
+    parser.add_argument("--symphony-memory-images", type=int, default=8)
+    parser.add_argument("--symphony-reset-wait", type=float, default=30)
+    parser.add_argument("--symphony-evaluation-wait", type=float, default=20)
+    parser.set_defaults(model="qwen3.8-27b", max_tokens=4096,
+                        observation_type="screenshot", action_space="pyautogui",
+                        screen_width=1920, screen_height=1080, max_trajectory_length=8,
+                        result_dir="./results/os_symphony")
+
+
 METHOD_CONFIGURERS: Dict[str, Optional[ParserConfigurer]] = {
     "navi": None,
     "claude": None,
@@ -420,10 +443,27 @@ METHOD_CONFIGURERS: Dict[str, Optional[ParserConfigurer]] = {
     "hisa": _add_hisa_options,
     "coact": _add_coact_options,
     "tars": _add_tars_options,
+    "os_symphony": _add_os_symphony_options,
 }
 
 
 def _validate_method_options(args: argparse.Namespace, parser: argparse.ArgumentParser) -> None:
+    if args.agent_name == "os_symphony":
+        if args.symphony_search_mode == "linux" and not (
+                args.symphony_search_url and args.symphony_search_token_file):
+            parser.error("Linux search mode requires --symphony-search-url and --symphony-search-token-file")
+        if args.symphony_search_smoke and args.symphony_search_mode != "windows":
+            parser.error("--symphony-search-smoke requires Windows search mode")
+        if args.model != "qwen3.8-27b":
+            parser.error("OS-Symphony's language-model roles must use local qwen3.8-27b")
+        if min(args.max_steps, args.max_tokens, args.screen_width, args.screen_height,
+               args.symphony_coder_budget, args.symphony_search_budget,
+               args.symphony_memory_images) <= 0 or args.max_trajectory_length < 2:
+            parser.error("OS-Symphony budgets/dimensions must be positive; trajectory length >= 2")
+        if min(args.symphony_reset_wait, args.symphony_evaluation_wait,
+               args.sleep_after_execution) < 0:
+            parser.error("OS-Symphony wait durations must be nonnegative")
+
     if args.agent_name == "agents3":
         args.grounding_width = args.grounding_width or args.screen_width
         args.grounding_height = args.grounding_height or args.screen_height
