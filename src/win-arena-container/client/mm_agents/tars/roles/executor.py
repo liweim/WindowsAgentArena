@@ -595,6 +595,7 @@ class Executor:
             model=config.executor_model,
             provider=config.provider,
             only_n_most_recent_images=config.executor_n_recent_images,
+            thinking_token_budget=config.thinking_token_budget,
             effort=config.executor_effort,
         )
 

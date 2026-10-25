@@ -387,6 +387,9 @@ def _add_coact_options(parser: argparse.ArgumentParser) -> None:
 def _add_tars_options(parser: argparse.ArgumentParser) -> None:
     _add_standalone_environment_options(parser, provider=True)
     parser.add_argument(
+        "--thinking_token_budget", "--thinking-token-budget", type=int, default=None
+    )
+    parser.add_argument(
         "--global_planner_model", "--global-planner-model", default=None
     )
     parser.add_argument(

@@ -366,6 +366,7 @@ def _run_tars(env, example, args, example_result_dir) -> float:
         record=args.record,
         global_planner_model=model,
         visual_grounder_model=args.visual_grounder_model,
+        thinking_token_budget=args.thinking_token_budget,
         reset_wait=args.tars_reset_wait,
         evaluation_wait=args.tars_evaluation_wait,
     )

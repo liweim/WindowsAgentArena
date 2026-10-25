@@ -17,7 +17,7 @@ vm_storage_path=""
 ephemeral_vm_storage=false
 mount_client=true
 mount_server=true
-container_name="a11yarena"
+container_name=""
 browser_port=""
 rdp_port=""
 start_client=true
@@ -104,6 +104,26 @@ else
         log_error_exit "Non-task VM sessions must use --ephemeral-vm-storage true; writable golden VM storage is forbidden."
     fi
 fi
+
+if ! [[ "$num_workers" =~ ^[1-9][0-9]*$ ]]; then
+    log_error_exit "--num-workers must be a positive integer."
+fi
+if ! [[ "$worker_id" =~ ^[0-9]+$ ]]; then
+    log_error_exit "--worker-id must be a non-negative integer."
+fi
+
+# Task runs consist of automatically named worker containers. Keep the old
+# default name for setup and interactive sessions, where there is one container.
+run_id="$(date +%Y%m%d-%H%M%S)-$$"
+safe_agent=${agent//[^a-zA-Z0-9_.-]/-}
+if [ -z "$container_name" ]; then
+    if [ "$task_execution" = true ]; then
+        container_name="a11yarena-${safe_agent}-${run_id}"
+    else
+        container_name="a11yarena"
+    fi
+fi
+container_name_base="$container_name"
 
 # The outer launcher owns only container/VM options. Preserve every other
 # token for the selected agent's parser inside the client.
@@ -222,6 +242,9 @@ invoke_docker_container() {
         docker_command+=" -p 3389"
     fi
     docker_command+=" --name $container_name --platform linux/amd64"
+    if [ "$task_execution" = true ]; then
+        docker_command+=" --label waa.managed=true --label waa.run-id=$run_id --label waa.agent=$safe_agent --label waa.worker-id=${worker_slot:-0}"
+    fi
     if [ "$remove_container" = true ] && [ "$interactive" = true ]; then docker_command+=" --rm"; fi
     if [ "$interactive" != true ]; then docker_command+=" -d"; fi
     if [ "$use_kvm" = true ]; then docker_command+=" --device=/dev/kvm"; else docker_command+=" -e KVM=N"; fi
@@ -259,7 +282,14 @@ invoke_docker_container() {
         if [ -n "$AZURE_ENDPOINT" ]; then docker_command+=" -e AZURE_ENDPOINT=$AZURE_ENDPOINT"; fi
     fi
     docker_command+=" $winarena_full_image_name:$winarena_image_tag"
-    entrypoint_args=" -c 'bash /entry.sh --prepare-image $prepare_image --start-client $start_client --agent $agent --model $model --temperature $temperature --seed $seed --top-p $top_p --top-k $top_k --som-origin $som_origin --a11y-backend $a11y_backend --clean-results $clean_results --worker-id $worker_id --num-workers $num_workers --result-dir $result_dir --json-name $json_name --diff-lvl $diff_lvl; status=\$?; if [ -n "\${LOCALLSTC_HOST_UID:-}" ] && [ -n "\${LOCALLSTC_HOST_GID:-}" ] && [ -d "$result_dir" ]; then chown -R \"\$LOCALLSTC_HOST_UID:\$LOCALLSTC_HOST_GID\" "$result_dir"; fi; exit \$status'"
+    client_worker_id="$worker_id"
+    client_num_workers="$num_workers"
+    if [ "$task_execution" = true ]; then
+        # The outer launcher already sliced the batch and mounts one task.
+        client_worker_id=0
+        client_num_workers=1
+    fi
+    entrypoint_args=" -c 'bash /entry.sh --prepare-image $prepare_image --start-client $start_client --agent $agent --model $model --temperature $temperature --seed $seed --top-p $top_p --top-k $top_k --som-origin $som_origin --a11y-backend $a11y_backend --clean-results $clean_results --worker-id $client_worker_id --num-workers $client_num_workers --result-dir $result_dir --json-name $json_name --diff-lvl $diff_lvl; status=\$?; if [ -n "\${LOCALLSTC_HOST_UID:-}" ] && [ -n "\${LOCALLSTC_HOST_GID:-}" ] && [ -d "$result_dir" ]; then chown -R \"\$LOCALLSTC_HOST_UID:\$LOCALLSTC_HOST_GID\" "$result_dir"; fi; exit \$status'"
     if [ "$interactive" = true ]; then entrypoint_args=""; fi
     docker_command+=$entrypoint_args
     echo "Invoking Docker Container with the command:"
@@ -362,15 +392,6 @@ run_isolated_tasks() {
     if [ "$start_client" != true ] || [ "$prepare_image" = true ] || [ "$interactive" = true ] || [ "$connect" = true ]; then
         log_error_exit "Task isolation requires a non-interactive client run with --prepare-image false and --connect false."
     fi
-    if [ "$num_workers" -ne 1 ]; then
-        log_error_exit "Task isolation currently requires --num-workers 1."
-    fi
-    if [ "$worker_id" -ne 0 ]; then
-        log_error_exit "Task isolation requires --worker-id 0 with --num-workers 1."
-    fi
-    if docker container inspect "$container_name" >/dev/null 2>&1; then
-        log_error_exit "Container $container_name already exists; choose another --container-name or stop it explicitly."
-    fi
     if [ ! -f "$vm_storage_base_path/data.img" ]; then
         log_error_exit "Golden VM storage is missing data.img: $vm_storage_base_path"
     fi
@@ -416,12 +437,26 @@ PY
 import json
 import os
 import shlex
+import shutil
 import sys
 
 source_path, manifest_path, result_dir, legacy_args, method_args, clean_results = sys.argv[1:]
 extra_argv = shlex.split(legacy_args) + shlex.split(method_args)
 rerun = "--rerun" in extra_argv or clean_results == "true"
 rerun_fail = "--rerun_fail" in extra_argv or "--rerun-fail" in extra_argv
+
+if clean_results == "true" and result_dir:
+    target = os.path.realpath(os.path.abspath(result_dir))
+    current = os.path.realpath(os.getcwd())
+    if target == os.path.realpath(os.sep) or target == current or current.startswith(target + os.sep):
+        raise ValueError(f"Refusing to clean protected result directory: {target}")
+    os.makedirs(target, exist_ok=True)
+    for name in os.listdir(target):
+        path = os.path.join(target, name)
+        if os.path.isdir(path) and not os.path.islink(path):
+            shutil.rmtree(path)
+        else:
+            os.unlink(path)
 
 def should_run(domain, example_id):
     if not result_dir or rerun:
@@ -480,69 +515,147 @@ PY
     original_clean_results="$clean_results"
     overall_status=0
     golden_signature=$(stat -c '%s:%b:%Y:%Z' "$vm_storage_base_path/data.img")
+    worker_pids=()
+    main_shell_pid=$BASHPID
+    run_state_dir="${WAA_RUN_STATE_DIR:-/tmp/windows-agent-arena-runs-$(id -u)}"
+    mkdir -p "$run_state_dir"
+    run_state_file="$run_state_dir/$run_id.tsv"
+    process_group=$(ps -o pgid= -p $$ | tr -d ' ')
+    printf '%s\t%s\t%s\t%s\t%s\n' "$run_id" "$$" "$process_group" "$container_name_base" "$safe_agent" > "$run_state_file"
+
     cleanup_isolated_run() {
-        if [[ "${copy_pid:-}" =~ ^[0-9]+$ ]]; then
-            kill "$copy_pid" >/dev/null 2>&1 || true
-            wait "$copy_pid" >/dev/null 2>&1 || true
-            copy_pid=""
-        fi
-        docker rm -f "$container_name" >/dev/null 2>&1 || true
+        [ "$BASHPID" = "$main_shell_pid" ] || return 0
+        trap - EXIT INT TERM
+        local pid running_container
+        for pid in "${worker_pids[@]:-}"; do
+            [[ "$pid" =~ ^[0-9]+$ ]] || continue
+            kill "$pid" >/dev/null 2>&1 || true
+        done
+        while read -r running_container; do
+            [ -n "$running_container" ] || continue
+            docker rm -f "$running_container" >/dev/null 2>&1 || true
+        done < <(docker ps -aq --filter "label=waa.run-id=$run_id")
         if [[ -n "$storage_run_root" && "$storage_run_root" == */task-storage.* ]]; then
             rm -rf "$storage_run_root"
         fi
+        rm -f "$run_state_file"
     }
     trap cleanup_isolated_run EXIT
     trap 'cleanup_isolated_run; exit 130' INT
     trap 'cleanup_isolated_run; exit 143' TERM
 
-    current_storage="$storage_run_root/storage-0"
-    prepare_task_storage "$current_storage"
+    run_isolated_worker() (
+        local worker_slot=$1
+        local start_index=$2
+        local end_index=$3
+        local line domain example_id current_storage next_storage
+        local index next_index copy_pid task_status worker_status=0
+        local current_golden_signature
+        local container_name="${container_name_base}-w${worker_slot}"
+        local json_name="/winarena-task.json"
+        local clean_results=false
+        local task_json_mount_path
+        local vm_storage_mount_path
 
-    for ((index = 0; index < ${#task_entries[@]}; index++)); do
-        line=${task_entries[$index]}
-        domain=${line%%$'\t'*}
-        example_id=${line#*$'\t'}
-
-        copy_pid=""
-        next_index=$((index + 1))
-        if [ "$next_index" -lt "${#task_entries[@]}" ]; then
-            next_storage="$storage_run_root/storage-$next_index"
-            prepare_task_storage "$next_storage" &
-            copy_pid=$!
-            echo "Preparing task $((next_index + 1)) storage in background (PID $copy_pid)."
-        fi
-
-        task_json_mount_path="$storage_run_root/task-$index.json"
-        write_single_task_json "$domain" "$example_id" "$task_json_mount_path"
-        vm_storage_mount_path="$current_storage"
-        json_name="/winarena-task.json"
-        if [ "$index" -gt 0 ]; then
-            clean_results=false
-        fi
-
-        echo "Running isolated task $((index + 1))/${#task_entries[@]}: $domain/$example_id"
-        task_status=0
-        invoke_docker_container || task_status=$?
-
-        docker rm -f "$container_name" >/dev/null 2>&1 || true
-        rm -rf "$current_storage"
-
-        if [ -n "$copy_pid" ]; then
-            if ! wait "$copy_pid"; then
-                log_error_exit "Failed to prepare storage for task $((next_index + 1))."
+        cleanup_worker() {
+            if [[ "${copy_pid:-}" =~ ^[0-9]+$ ]]; then
+                kill "$copy_pid" >/dev/null 2>&1 || true
+                wait "$copy_pid" >/dev/null 2>&1 || true
             fi
-            current_storage="$next_storage"
+            docker rm -f "$container_name" >/dev/null 2>&1 || true
+        }
+        trap cleanup_worker EXIT
+        trap 'exit 130' INT
+        trap 'exit 143' TERM
+
+        if [ -n "$browser_port" ]; then
+            [[ "$browser_port" =~ ^[0-9]+$ ]] || log_error_exit "--browser-port must be numeric for parallel task runs."
+            local browser_port=$((browser_port + worker_slot))
+        fi
+        if [ -n "$rdp_port" ]; then
+            [[ "$rdp_port" =~ ^[0-9]+$ ]] || log_error_exit "--rdp-port must be numeric for parallel task runs."
+            local rdp_port=$((rdp_port + worker_slot))
+        fi
+        if docker container inspect "$container_name" >/dev/null 2>&1; then
+            log_error_exit "Container $container_name already exists; stop it before starting this run."
         fi
 
-        current_golden_signature=$(stat -c '%s:%b:%Y:%Z' "$vm_storage_base_path/data.img")
-        if [ "$current_golden_signature" != "$golden_signature" ]; then
-            log_error_exit "Golden VM storage changed while running isolated task $domain/$example_id."
+        current_storage="$storage_run_root/storage-${worker_slot}-${start_index}"
+        prepare_task_storage "$current_storage"
+
+        for ((index = start_index; index < end_index; index++)); do
+            line=${task_entries[$index]}
+            domain=${line%%$'\t'*}
+            example_id=${line#*$'\t'}
+
+            copy_pid=""
+            next_index=$((index + 1))
+            if [ "$next_index" -lt "$end_index" ]; then
+                next_storage="$storage_run_root/storage-${worker_slot}-${next_index}"
+                prepare_task_storage "$next_storage" &
+                copy_pid=$!
+                echo "Worker $worker_slot: preparing task $((next_index + 1)) storage in background (PID $copy_pid)."
+            fi
+
+            task_json_mount_path="$storage_run_root/task-$index.json"
+            write_single_task_json "$domain" "$example_id" "$task_json_mount_path"
+            vm_storage_mount_path="$current_storage"
+
+            echo "Worker $worker_slot: running isolated task $((index + 1))/${#task_entries[@]}: $domain/$example_id"
+            task_status=0
+            invoke_docker_container || task_status=$?
+
+            docker rm -f "$container_name" >/dev/null 2>&1 || true
+            rm -rf "$current_storage"
+
+            if [ -n "$copy_pid" ]; then
+                if ! wait "$copy_pid"; then
+                    log_error_exit "Worker $worker_slot failed to prepare storage for task $((next_index + 1))."
+                fi
+                current_storage="$next_storage"
+            fi
+
+            current_golden_signature=$(stat -c '%s:%b:%Y:%Z' "$vm_storage_base_path/data.img")
+            if [ "$current_golden_signature" != "$golden_signature" ]; then
+                log_error_exit "Golden VM storage changed while running isolated task $domain/$example_id."
+            fi
+            if [ "$task_status" -ne 0 ]; then
+                worker_status="$task_status"
+                echo "WARNING: Worker $worker_slot task $domain/$example_id exited with status $task_status; continuing with a fresh storage copy." >&2
+            fi
+        done
+        trap - INT TERM
+        return "$worker_status"
+    )
+
+    task_count=${#task_entries[@]}
+    active_workers=$num_workers
+    if [ "$active_workers" -gt "$task_count" ]; then
+        active_workers=$task_count
+    fi
+    echo "Run ID: $run_id"
+    echo "Running $task_count isolated tasks across $active_workers worker(s)."
+
+    tasks_per_worker=$((task_count / num_workers))
+    extra_workers=$((task_count % num_workers))
+    for ((worker_slot = 0; worker_slot < active_workers; worker_slot++)); do
+        worker_start=$((worker_slot * tasks_per_worker + (worker_slot < extra_workers ? worker_slot : extra_workers)))
+        worker_size=$tasks_per_worker
+        if [ "$worker_slot" -lt "$extra_workers" ]; then
+            worker_size=$((worker_size + 1))
         fi
-        if [ "$task_status" -ne 0 ]; then
-            overall_status="$task_status"
-            echo "WARNING: Isolated task $domain/$example_id exited with status $task_status; continuing with the next fresh storage copy." >&2
+        worker_end=$((worker_start + worker_size))
+        run_isolated_worker "$worker_slot" "$worker_start" "$worker_end" &
+        worker_pids+=("$!")
+    done
+
+    for worker_slot in "${!worker_pids[@]}"; do
+        if ! wait "${worker_pids[$worker_slot]}"; then
+            overall_status=1
+            echo "WARNING: Worker $worker_slot failed." >&2
         fi
     done
+    worker_pids=()
 
     json_name="$original_json_name"
     vm_storage_mount_path="$original_storage_mount_path"

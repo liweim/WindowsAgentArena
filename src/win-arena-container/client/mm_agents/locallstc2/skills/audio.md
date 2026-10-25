@@ -15,4 +15,4 @@ when_to_use: Load when speech in a VM audio/video file or an embedded web video 
 - Both APIs produce plain transcript text without timestamps. Results up to 1000 characters are returned directly.
 - Longer results overwrite one fixed local text file: `C:/Users/Docker/Desktop/audio.txt` on Windows, `/home/user/audio.txt` on Linux, or `/sdcard/Download/audio.txt` on Android. Use `bash_execution` to search that exact path for targeted keywords or patterns and limit the output; never print the whole file into context.
 - When copying transcript details into another app, preserve exact names, codes, prices, quantities, and deadlines. Use conventional readable formatting for spoken times (for example `8:00 AM`, not `8am`) and verify the completed text before terminating.
-- AudioTools does not enable Live Caption. If the task requires it, transcribe first, enable it in Chrome, and continue; do not replay media or verify Live Caption separately unless explicitly requested.
+- Whenever either `AudioTools` transcription API is used, Chrome Live Caption must also be enabled and left enabled. Transcription does not replace this requirement.

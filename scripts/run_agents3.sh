@@ -29,14 +29,12 @@ nohup setsid env \
     --som-origin oss \
     --a11y-backend uia \
     --clean-results false \
-    --worker-id 0 \
     --num-workers 1 \
-    --container-name a11yarena-agents3 \
     --result-dir /locallstc/projects/WindowsAgentArena/results/agents3_qwen3.8-27b \
     --json-name evaluation_examples_windows/test_all.json \
     --remove-container true \
     "$@" >"$LOG_FILE" 2>&1 < /dev/null &
 
 runner_pid=$!
-echo "Started agents3 in container winarena-waa2 (PID: $runner_pid)"
+echo "Started agents3 task run (PID: $runner_pid)"
 echo "Logs: tail -f $LOG_FILE"

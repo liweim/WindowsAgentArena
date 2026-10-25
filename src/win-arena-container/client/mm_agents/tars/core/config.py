@@ -36,6 +36,7 @@ class Config:
     executor_effort: str
     executor_n_recent_images: int
     max_tokens: int
+    thinking_token_budget: int | None
     summarization_model: str
     max_input_token_threshold: int
     log_raw_api_response: bool
@@ -62,6 +63,7 @@ def _load_config() -> Config:
         executor_effort=_env_str("TARS_EXECUTOR_AGENT_EFFORT_LEVEL", "max"),
         executor_n_recent_images=_env_int("TARS_EXECUTOR_AGENT_N_RECENT_IMAGES", 5),
         max_tokens=_env_int("TARS_MAX_TOKENS", 4096),
+        thinking_token_budget=None,
         summarization_model=_env_str("TARS_SUMMARIZATION_MODEL", "claude-haiku-4-5"),
         max_input_token_threshold=_env_int("TARS_MAX_INPUT_TOKEN_THRESHOLD", 256_000),
         log_raw_api_response=_env_bool("TARS_LOG_RAW_API_RESPONSE"),

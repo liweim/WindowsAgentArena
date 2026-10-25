@@ -330,13 +330,35 @@ Tasks assigned multiple need IDs & \todo{Recompute after ID merge} \\
 
 \subsection{Experimental setup}
 
-We evaluate Agent S3, CoAct-1, GTA1, HiSA, and LocalLSTC on OSWorld, WindowsAgentArena (WAA), and \bench. For all three benchmarks, we report success under maximum budgets of 15 and 50 interaction steps (SR-15 and SR-50) using matched agent configurations. For \bench, we additionally report $T$, handoff readiness $H$ (called $A$ in the original analysis), $F$, handoff-gap metrics on distinct-component tasks, and results by functional group, need ID, and handoff mechanism. \todo{Insert model versions, observation/action settings, repetitions, confidence intervals, and fairness controls.}
+We evaluate Agent S3, CoAct-1, GTA1, HiSA, and LocalLSTC on OSWorld, WindowsAgentArena (WAA), and \bench. For all three benchmarks, we report the arithmetic mean of evaluator scores under maximum budgets of 15 and 50 interaction steps (SR-15 and SR-50) using matched agent configurations. SR is an average score and must not be interpreted as the proportion of runs that are completely successful. For \bench, we additionally report mean scores for $T$, handoff readiness $H$ (called $A$ in the original analysis), and $F$, plus handoff-gap metrics on distinct-component tasks and results by functional group, need ID, and handoff mechanism. In the failure analysis, by contrast, any terminal score below one is classified as a failure or partial failure. \todo{Insert model versions, observation/action settings, repetitions, confidence intervals, and fairness controls.}
 
 \subsection{Main results}
 
-Table~\ref{tab:crossbench} and Figure~\ref{fig:crossbench} compare nominally comparable agent configurations under matched budgets. \todo{Insert exact values and verify all cross-benchmark comparisons.} The cross-benchmark comparison asks whether ordinary GUI competence predicts \emph{complete, handoff-ready} task performance. Any observed drop must be interpreted alongside workflow difficulty, app involvement, and action horizon rather than automatically attributed to accessibility.
+Table~\ref{tab:main-accessneed} reports the three completed Qwen3.8-27B configurations on \bench. At 50 steps, LocalLSTC obtains the highest mean $F$ score (55.6), followed by Agent S3 (46.0) and CoAct (29.8). The ordering is consistent for the mean $T$ and $H$ scores. Mean $H$ is higher than mean $T$ for all three methods, but mean $F$ remains lower than either component because high task and handoff scores do not necessarily occur on the same run. Functional-group scores should be interpreted as mixtures of needs and workflows rather than differences in user ability. CoAct's mean hearing-group score is especially low (10.0), while LocalLSTC is strongest or tied for strongest in every reported group.
 
-We additionally compare SR-15 and SR-50 to distinguish budget-sensitive execution errors from handoff-specific omissions. An agent may have enough steps to complete the nominal task yet still terminate without ensuring that a caption interface, saved artifact, or alternate input state is ready. \todo{Report 15-to-50-step changes in $T$, $H$, and $F$, not only the aggregate full-success rate.}
+Increasing the budget from 15 to 50 steps raises mean $F$ by 8.1 points for CoAct and by 27.3 points for both Agent S3 and LocalLSTC. The corresponding changes in mean $T$ and $H$ show substantial budget sensitivity, but a longer horizon does not collapse the two objectives into one: at 50 steps, the mean-score difference $H-T$ is 7.1 points for CoAct, 4.1 for Agent S3, and 6.5 for LocalLSTC. The binary failure analysis below separately treats every run with a terminal score below one as unsuccessful or partially successful.
+
+\begin{table*}[t]
+\centering
+\scriptsize
+\setlength{\tabcolsep}{3.1pt}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lrrrrrrrrrrrrrrr}
+\toprule
+& \multicolumn{3}{c}{15-step mean SR} & \multicolumn{3}{c}{50-step mean SR} & \multicolumn{4}{c}{50-step mean $F$ by group} & \multicolumn{5}{c}{Mean efficiency} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}\cmidrule(lr){8-11}\cmidrule(lr){12-16}
+Method & $F$ & $T$ & $H$ & $F$ & $T$ & $H$ & Cog. & Hear. & Motor & Visual & Tokens (k) & Prompt (k) & Compl. (k) & Steps & Time (s) \\
+\midrule
+CoAct & 21.7 & 22.7 & 22.2 & 29.8 & 32.3 & 39.4 & 38.8 & 10.0 & 36.0 & 34.7 & 365.3 & 318.2 & 47.1 & 29.7 & 2675.3 \\
+Agent S3 & 18.7 & 20.2 & 19.2 & 46.0 & 51.0 & 55.1 & 51.0 & 38.0 & \textbf{54.0} & 40.8 & 413.0 & 396.6 & 16.4 & 24.2 & 1808.1 \\
+LocalLSTC & \textbf{28.3} & \textbf{29.3} & \textbf{29.3} & \textbf{55.6} & \textbf{58.1} & \textbf{64.6} & \textbf{67.3} & \textbf{50.0} & \textbf{54.0} & \textbf{51.0} & 258.2 & 226.3 & 31.9 & 23.1 & 1579.5 \\
+\bottomrule
+\end{tabular}}
+\caption{Main \bench results for the three completed Qwen3.8-27B configurations. $F$, $T$, $H$, and group columns are arithmetic mean evaluator scores on a 0--100 scale, not binary complete-success rates. Efficiency values are per-run means; token columns are in thousands and time is in seconds. Bold marks the best mean score in each result column; Agent S3 and LocalLSTC tie on motor tasks.}
+\label{tab:main-accessneed}
+\end{table*}
+
+Table~\ref{tab:crossbench} and Figure~\ref{fig:crossbench} are reserved for the full five-agent comparison under matched budgets. \todo{Insert the remaining GTA1/HiSA and OSWorld/WAA values and verify all cross-benchmark comparisons.} The cross-benchmark comparison asks whether ordinary GUI competence predicts \emph{complete, handoff-ready} task performance. Any observed drop must be interpreted alongside workflow difficulty, app involvement, and action horizon rather than automatically attributed to accessibility.
 
 \begin{table*}[t]
 \centering
@@ -407,21 +429,23 @@ Mean & \todo{x} & \todo{x} & \todo{x} & \todo{x} & \todo{x} & \todo{x} \\
 \section{Handoff-Centered Failure Analysis}
 \label{sec:handoff-failures}
 
-Our failure analysis asks \emph{where the transfer from agent execution to user-usable state breaks}. We distinguish the generic action-level mechanism (e.g., imprecise grounding, loss of constraints, weak state tracking, brittle cross-application navigation, or premature termination) from the \emph{handoff obligation} it violates. This avoids presenting familiar GUI failures as if they were mechanisms unique to particular disabilities. We annotate a stratified sample of failed trajectories using the following handoff stages: (i) acquisition and preservation of task evidence; (ii) transfer of evidence across applications or modalities; (iii) accurate creation or updating of persistent user-facing artifacts; (iv) establishment and preservation of required assistive/continuation state; and (v) final verification and honest termination. \todo{Insert annotation sample, coding guide, inter-annotator agreement, and stage-level results.}
+Our failure analysis asks \emph{where the transfer from agent execution to user-usable state breaks}. We distinguish the generic action-level mechanism (e.g., imprecise grounding, loss of constraints, weak state tracking, brittle cross-application navigation, or premature termination) from the \emph{handoff obligation} it violates. This avoids presenting familiar GUI failures as if they were mechanisms unique to particular disabilities. We organize the result records and inspected trajectories by the following handoff stages: (i) acquisition and preservation of task evidence; (ii) transfer of evidence across applications or modalities; (iii) accurate creation or updating of persistent user-facing artifacts; (iv) establishment and preservation of required assistive/continuation state; and (v) final verification and honest termination. Appendix~\ref{app:failure} gives the coding rule and distinguishes this audit synthesis from a formal multi-annotator study.
+
+Across the current 198-task runs of Agent S3, CoAct, and LocalLSTC with Qwen3.8-27B, 332 of 594 terminal \texttt{result.txt} records are failures or partial failures under the strict criterion $F<1$. Of these runs, 272 (81.9\%) have $H=0$. The decomposition is important: 20 runs have $T=1,H=0$, so an ordinary task-success measure would conceal a failed accessibility-conditioned handoff, whereas 60 have $T=0,H=1$, meaning that support is present but the underlying work is wrong. The remaining 252 have $T=H=0$. This audit follows the failure definition \texttt{eval(result.txt) < 1}; Table~\ref{tab:main-accessneed} instead reports arithmetic mean scores at the fixed 50-step snapshot. For CoAct, the terminal and 50-step summaries differ, so their values must not be interchanged. The pooled audit counts are descriptive because the configurations share tasks, a model family, and parts of the environment.
 
 \paragraph{Evidence does not survive to handoff.}
-An agent may observe task-relevant speech or visual content yet fail to preserve the full evidence needed in a saved artifact or downstream application. A particularly instructive scaffold limitation appears in the LocalLSTC--Qwen3.8-27B hearing trajectories: speech is sampled through intermittent screenshots of transient captions. Discontinuous observation can omit a date, code, or negation, while a later, fluent artifact hides the missing evidence. The underlying limitation is temporal evidence capture and state transfer; the handoff consequence is an incomplete or unreliable non-auditory record. This motivates continuous or buffered evidence capture with fact-level provenance before composing the user-facing output.
+An agent may observe task-relevant speech or visual content yet fail to preserve the full evidence needed in a saved artifact or downstream application. H1, which requires audio information in another modality, fails in 28/44 Agent S3 runs, 39/44 CoAct runs, and 23/44 LocalLSTC runs. A concrete observation-channel limitation appears in LocalLSTC: speech is sampled through intermittent screenshots of transient captions rather than a continuous transcript. A date, code, quantity, or negation can appear between observations or be overwritten, while a later fluent artifact hides the omission. Maps, images, and complex PDFs exhibit a related representation problem: linear OCR can destroy spatial relations, after which the agent sometimes presents a plausible inference as verified fact. The accessibility consequence is an incomplete or unreliable alternative representation.
 
 \paragraph{The handoff artifact is plausible but wrong.}
-The agent may correctly create a reminder, checklist, note, or spreadsheet update while making an incorrect nominal decision in the underlying workflow. Conversely, it may finish the workflow while leaving the support artifact stale. These two directions correspond to $T=0,H=1$ and $T=1,H=0$ on independently observable tasks. Neither is captured by an undifferentiated ``task completed'' message. The targeted intervention is to track task facts and the downstream handoff artifact separately, checking their consistency before declaring success.
+The agent may create a reminder, checklist, note, or spreadsheet update while making an incorrect nominal decision in the underlying workflow. Conversely, it may finish the workflow while leaving the support artifact stale. Seven tasks produce $T=0,H=1$ under all three methods, including three cognitive consumption tasks and four hearing tasks that transfer audio-derived facts into notes or services. Two tasks, \nolinkurl{information-maricopa_census_search} and \nolinkurl{management-quick_sponge_timer}, produce the central $T=1,H=0$ handoff gap under all three. Neither direction is captured by an undifferentiated ``task completed'' message. Task facts and the downstream artifact or continuation state must therefore be tracked and checked separately.
 
 \paragraph{The user-facing interface is not ready.}
-A standard GUI grounding or settings-navigation error may leave a requested caption mode, on-screen keyboard, Mouse Keys configuration, magnification value, or screen reader inactive or incorrectly configured. This is not evidence that the agent must use the assistive feature itself. It is evidence that the terminal handoff state must be checked independently of the workflow it executed. Confidence-aware grounding and structural verification of the requested configuration are therefore more directly targeted than enforcing a prescribed assistive interaction path.
+A standard GUI grounding or settings-navigation error may leave a requested caption mode, on-screen keyboard, Mouse Keys configuration, magnification value, or screen reader inactive or incorrectly configured. Exact settings and delegated precision interaction are especially unstable. For M2, which includes timing and keyboard-control requirements, failure rates are 68.8\%, 81.2\%, and 62.5\% for Agent S3, CoAct, and LocalLSTC; for M4 sustained or precise pointer interaction, they are 57.1\%, 71.4\%, and 71.4\%. The underlying grounding and actuation errors are generic, but the accessibility consequence is direct: the requested continuation state is unusable, or the interaction barrier that motivated delegation remains. This does not imply that the agent must use the assistive feature itself; it requires independent verification of the state left for the user.
 
 \paragraph{Premature termination breaks the handoff contract.}
-Agents may stop when the ordinary goal appears finished, before rechecking an accessibility setting, saved artifact, or a final view needed for user continuation. A dedicated pre-handoff audit should verify both $G$ and $H_u$; a failed check should trigger targeted repair or an explicit incomplete-state report instead of an unqualified completion claim. Current benchmark scores capture the missing terminal state, not the quality of such reports.
+Agents often stop after observing a local change, before rechecking the complete task, saved artifact, assistive state, or final view. Agent S3, CoAct, and LocalLSTC respectively self-report completion in 56, 52, and 52 failed runs; 47, 47, and 43 of those runs also have $H=0$. Long trajectories form a second general cluster: agents repeat ineffective clicks or scrolling, lose constraints across applications, exhaust the action budget, or leave too few steps for saving and verification. A pre-handoff audit should verify $G$ and $H_u$ separately and trigger bounded repair or an explicit incomplete-state report instead of an unqualified completion claim.
 
-A LocalLSTC case study makes the distinction concrete, but its reported 200 completed runs do not exactly match the current 198-task release count, and therefore must not be silently treated as one-to-one benchmark-wide estimates. For that 200-run analysis the recorded full, nominal, and access-requirement success rates are 56.0\%, 58.0\%, and 66.0\%, respectively. Among 51 separately scored two-component tasks, the recorded contingency counts are 19 with $T=H=1$, 20 with $T=0,H=1$, four with $T=1,H=0$, and eight with $T=H=0$. Thus the failure direction can be \emph{failed work with prepared support} as well as \emph{successful work with failed handoff}. These are case-study outcomes, not general prevalence claims across the five baselines. \todo{Reconcile the 200-run case study with the released 198-task set before presenting directly comparable rates.} Appendix~\ref{app:locallstc_case} presents trajectory examples and instrumentation caveats.
+The overlap across methods indicates stable difficulty rather than one scaffold-specific defect. Fifty-nine of 198 tasks fail under all three configurations, including 20 hearing, 16 visual, 12 motor, and 11 cognitive tasks; 37 tasks have $H=0$ for all three. Consumption accounts for 17 of the 59 common failures, followed by information (9) and communication (8). Other recurring generic causes are imprecise grounding, incomplete conjunctive constraint tracking, cross-application transfer and save errors, and unsupported inference under uncertain perception. Appendix~\ref{app:failure} reports the complete decomposition, need and workflow slices, common-task set, and method-specific exceptions.
 
 \begin{figure*}[t]
 \centering
@@ -465,7 +489,7 @@ Our handoff construct is intentionally narrower than accessible user experience.
 
 The four functional groups and 14 documented needs are analytical categories, not complete descriptions of any individual or diagnosis. Users may have overlapping and changing needs and distinct preferences, so the contract appropriate for one user is not universally appropriate for another. Tasks are controlled, evidence-informed synthetic realizations, not participant-generated workflows; external user validation is still needed, particularly for whether each handoff contract is meaningful in context. Requiring an assistive feature without a plausible link to the subsequent workflow would compromise construct validity; we therefore specify an alignment audit and flag instruction/evaluator mismatches for correction. In particular, examples whose recorded wording says that the agent must \emph{use} a specific assistive feature need to be reconciled with source-agnostic, end-state scoring. More broadly, a need-conditioned toggle that serves no plausible subsequent inspection or continuation purpose is not a valid handoff contract merely because it can be checked automatically.
 
-The environment is limited to Windows and a fixed application mix, with self-hosted services and pinned media for reproducibility. Handoff content and tool states can be task-dependent; deterministic evaluators can reject valid alternatives or overlook invalid user-facing representations. Difficulty labels, successful-human operating times, and cross-benchmark comparison require finalized protocols and matched configurations. The LocalLSTC trajectory case study covers 200 runs rather than the current 198-task benchmark count; its relationship to the released task set must be reconciled before using it for direct corpus-level comparisons. Finally, the proposed handoff-aware method remains unvalidated until its implementation and ablation experiments are reported.
+The environment is limited to Windows and a fixed application mix, with self-hosted services and pinned media for reproducibility. Handoff content and tool states can be task-dependent; deterministic evaluators can reject valid alternatives or overlook invalid user-facing representations. Difficulty labels, successful-human operating times, and cross-benchmark comparison require finalized protocols and matched configurations. The cross-method failure analysis covers three Qwen3.8-27B configurations on the same 198 tasks. Its 594 runs are therefore repeated configuration--task observations rather than independent samples, and neither pooled counts nor common failures establish prevalence beyond this agent family and environment. Finally, the proposed handoff-aware method remains unvalidated until its implementation and ablation experiments are reported.
 
 
 \section{Ethical Considerations}
@@ -905,21 +929,163 @@ Agent S3 & \todo{benchmark} & \todo{model} & \todo{grounder} & \todo{15/50} & \t
 \section{Additional Need and Mechanism Analyses}
 \label{app:needanalysis}
 
-\todo{Insert the full agent-by-need matrix; subgroup results; modality, workflow, and output-type slices; continuation-state subset; information/artifact/state mechanism breakdowns; and cell counts for every reported slice.}
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{lrrrr}
+\toprule
+Group & $n$ & Agent S3 & CoAct & LocalLSTC \\
+\midrule
+Cognitive & 49 & 51.0 & 38.8 & 67.3 \\
+Hearing & 50 & 38.0 & 10.0 & 50.0 \\
+Motor & 50 & 54.0 & 36.0 & 54.0 \\
+Visual & 49 & 40.8 & 34.7 & 51.0 \\
+\bottomrule
+\end{tabular}
+\caption{Mean 50-step $F$ score on a 0--100 scale by functional group. These are average evaluator scores, not binary complete-success rates. Groups index the motivating handoff contract and workflow mix, not user ability.}
+\label{tab:group-sr}
+\end{table}
 
-\section{Failure-Annotation Details}
+Table~\ref{tab:group-sr} mirrors the fixed 50-step mean scores in the main table. The finer-grained need and workflow analyses below use a different, strict trajectory-audit definition: every terminal \texttt{eval(result.txt) < 1} is a failure or partial failure. Table~\ref{tab:need-failure-rates} reports the incidence of such runs for the final 14-ID taxonomy. A task may carry more than one need ID, so rows are descriptive overlapping slices and their sample sizes do not sum to 198. The rates use current task-source metadata rather than legacy need labels stored in some execution logs.
+
+\begin{table*}[t]
+\centering
+\small
+\begin{tabular}{llrrrr}
+\toprule
+Need & Handoff interpretation & $n$ & Agent S3 & CoAct & LocalLSTC \\
+\midrule
+V1 & Nonvisual access or continuation & 21 & 57.1 & 52.4 & 52.4 \\
+V2 & Adaptable visual presentation & 13 & 69.2 & 61.5 & 38.5 \\
+V3 & Text alternative for non-text content & 20 & 55.0 & 70.0 & 45.0 \\
+H1 & Audio information in another modality & 44 & 63.6 & 88.6 & 52.3 \\
+H2 & Manageable caption/text presentation & 5 & 20.0 & 60.0 & 40.0 \\
+H3 & Perceivable important alerts & 4 & 75.0 & 100.0 & 50.0 \\
+H4 & Adaptable audio presentation & 5 & 100.0 & 100.0 & 60.0 \\
+M1 & Alternative input modality & 17 & 23.5 & 35.3 & 17.6 \\
+M2 & Non-simultaneous, user-paced operation & 16 & 68.8 & 81.2 & 62.5 \\
+M3 & Alternative interaction method & 10 & 40.0 & 80.0 & 50.0 \\
+M4 & Reduced sustained force or precision & 7 & 57.1 & 71.4 & 71.4 \\
+C1 & Reduced distraction & 3 & 66.7 & 66.7 & 33.3 \\
+C2 & Reduced cognitive load & 16 & 43.8 & 68.8 & 37.5 \\
+C3 & Memory and recall support & 40 & 47.5 & 62.5 & 30.0 \\
+\bottomrule
+\end{tabular}
+\caption{Full-success failure rate (\%) by final need ID for three Qwen3.8-27B configurations. Small cells, especially H2--H4, C1, and M4, should not be used for stable rankings.}
+\label{tab:need-failure-rates}
+\end{table*}
+
+H1, H4, M2, M4, V1, and V3 are consistently difficult across the three configurations. By contrast, M1 is relatively strong: enabling or preserving a common alternative input is easier than configuring exact parameters, capturing transient information, constructing a complete alternative representation, or proxying sustained precision interaction. H2--H4, C1, and M4 have small denominators, so this comparison identifies candidate mechanisms rather than population-level differences between user groups.
+
+\begin{table*}[t]
+\centering
+\small
+\begin{tabular}{lrrrrrrr}
+\toprule
+& $n$ & \multicolumn{2}{c}{Agent S3} & \multicolumn{2}{c}{CoAct} & \multicolumn{2}{c}{LocalLSTC} \\
+\cmidrule(lr){3-4}\cmidrule(lr){5-6}\cmidrule(lr){7-8}
+Workflow & & Fail & Rate & Fail & Rate & Fail & Rate \\
+\midrule
+Access & 26 & 11 & 42.3 & 21 & 80.8 & 9 & 34.6 \\
+CAPTCHA & 25 & 9 & 36.0 & 12 & 48.0 & 7 & 28.0 \\
+Communication & 18 & 15 & 83.3 & 13 & 72.2 & 8 & 44.4 \\
+Consumption & 24 & 19 & 79.2 & 23 & 95.8 & 20 & 83.3 \\
+Health & 21 & 9 & 42.9 & 17 & 81.0 & 8 & 38.1 \\
+Information & 29 & 17 & 58.6 & 15 & 51.7 & 13 & 44.8 \\
+Management & 20 & 9 & 45.0 & 15 & 75.0 & 7 & 35.0 \\
+Mobility & 16 & 9 & 56.2 & 10 & 62.5 & 10 & 62.5 \\
+Service & 19 & 9 & 47.4 & 11 & 57.9 & 6 & 31.6 \\
+\bottomrule
+\end{tabular}
+\caption{Failure counts and rates (\%) by workflow. Consumption is the weakest workflow for all three methods; mobility also remains difficult.}
+\label{tab:workflow-failure-rates}
+\end{table*}
+
+Consumption combines candidate comparison, exact product/variant selection, cart state, and synchronization with an external record. Mobility combines spatial relations, route order, and accessible textualization. These are not exclusively accessibility mechanisms. They become accessibility-relevant when an incorrect alternative representation or persistent record is the user's primary means of inspecting and continuing the result.
+
+\section{Complete Cross-Method Failure Analysis}
 \label{app:failure}
 
-\todo{Insert two-level coding guide: (1) generic execution cause and (2) handoff failure stage/contract type; sampling, inter-annotator agreement, adjudication, and per-agent/group cross-tabulations.}
+\subsection{Scope and coding rule}
+
+We analyze the current top-level results for Agent S3, CoAct, and LocalLSTC with Qwen3.8-27B, each containing the same 198 tasks. A run fails when its executable evaluator score in \texttt{result.txt} is below one. The analysis uses all 594 result records and their available execution logs; it does not treat three configurations on the same task as independent samples. The mechanism labels below are an audit synthesis rather than a completed multi-annotator study, so no inter-annotator agreement is claimed.
+
+We use two levels of description. The first names a generic execution cause: missing evidence, grounding or actuation error, constraint loss, cross-application transfer error, persistence/save failure, inference under uncertain perception, repeated recovery or budget exhaustion, premature termination, environment infeasibility, or scaffold/controller failure. The second records the accessibility-conditioned consequence: incomplete accessible information, a missing/stale/incorrect persistent artifact, an unestablished assistive or continuation state, a delegated interaction barrier that remains, increased user verification/recovery burden, or no handoff failure when $H=1$ but $T=0$. This separation prevents an ordinary GUI error from being redescribed as disability-specific while retaining its effect on the state returned to the user.
+
+\subsection{Outcome decomposition}
+
+\begin{table*}[t]
+\centering
+\small
+\begin{tabular}{lrrrrrrrr}
+\toprule
+Method & $F=1$ & $F=0$ & Fail rate & $H=0$ failures & $(1,1)$ & $(1,0)$ & $(0,1)$ & $(0,0)$ \\
+\midrule
+Agent S3 & 91 & 107 & 54.04 & 89 & 91 & 10 & 18 & 79 \\
+CoAct & 61 & 137 & 69.19 & 113 & 61 & 5 & 24 & 108 \\
+LocalLSTC & 110 & 88 & 44.44 & 70 & 110 & 5 & 18 & 65 \\
+\midrule
+Pooled & 262 & 332 & 55.89 & 272 & 262 & 20 & 60 & 252 \\
+\bottomrule
+\end{tabular}
+\caption{Full-success outcomes and $(T,H)$ decomposition for the three current 198-task runs. Percentages are descriptive, not inferential.}
+\label{tab:failure-decomposition}
+\end{table*}
+
+The 20 $(T=1,H=0)$ runs are the cleanest evidence that nominal task success can conceal failed handoff. The 60 $(T=0,H=1)$ runs expose the reverse risk: a caption mode, reminder, checklist, or other support may be present while carrying or accompanying an incorrect result. The 252 $(T=0,H=0)$ runs combine nominal and handoff failure; for coincident tasks, the support state or delegated access action is itself the nominal goal.
+
+\subsection{Recurring causes and accessibility consequences}
+
+\paragraph{Premature completion and incomplete verification.}
+Agent S3 reports completion in 56 failed runs, CoAct terminates in 52, and LocalLSTC finishes in 52. Among these, 47, 47, and 43 respectively have $H=0$. Although the three terminal actions are not architecturally identical, all exhibit the same failure pattern: a local visible change, object existence check, or plausible final summary substitutes for re-reading the authoritative end state and checking every conjunctive requirement. This is the strongest recurring mechanism in the logs.
+
+\paragraph{Non-convergent recovery.}
+Long failures repeatedly scroll, click adjacent controls with small coordinate changes, alternate between GUI and code paths without reconciling state, or continue exploration until no budget remains for persistence and verification. Agent S3 has 23 failed runs that reach 50 steps and 16 additional nonterminal stops. CoAct has 68 no-terminal failures with at least 50 logged actions. LocalLSTC has 22 failures at the 50-step limit and 12 stopped by its three-stall rule. These measures are scaffold-specific and not directly interchangeable, but they consistently show weak bounded recovery.
+
+\paragraph{Grounding, actuation, and exact settings.}
+Errors include clicking a chevron beside a toggle, focusing the wrong field, assuming an ineffective click succeeded, or losing the target after zoom, scrolling, or window changes. Exact magnification and text size, color filters, Filter/Sticky/Mouse Keys subsettings, ClickLock, primary-button selection, audio flash/mono options, and caption presentation require more than opening the relevant settings page. The generic cause is control and state-estimation error; the handoff consequence is a configuration that cannot support user continuation.
+
+\paragraph{Evidence transfer and persistence.}
+Dates, codes, quantities, and ordered facts may be incompletely transferred from audio, PDFs, images, or web pages into email, calendar, notes, spreadsheets, or CMS fields. Save, Save As, auto-save, and Save-and-Close semantics add another failure point, and code-level edits may not refresh an application's cached view. Existence-only checks miss stale or semantically incorrect artifacts. This mechanism explains both missing handoff support and confidently wrong external memory.
+
+\paragraph{Uncertain perception and accessible representations.}
+When OCR or visual inspection is ambiguous, all three systems sometimes complete a map route, product relation, image description, or PDF answer with a plausible but unsupported inference. V3 failure rates are 55.0\%, 70.0\%, and 45.0\%. The error is not unique to accessibility, but an unverified textual representation may be the user's only available account of the non-text content.
+
+\paragraph{Delegated precision barriers.}
+Hold, slide, drag, patch selection, and fine target acquisition are unstable for all three systems. An unsuccessful proxy action has a particular consequence for M4 tasks: it leaves intact the interaction barrier for which the user delegated the task. The benchmark changes the practical interpretation of a generic control failure; it does not posit a separate motor-specific algorithmic mechanism.
+
+\subsection{Cross-method common failures}
+
+Fifty-nine tasks fail under all three methods. Their functional-group distribution is hearing 20, visual 16, motor 12, and cognitive 11. Their workflow distribution is consumption 17, information 9, communication 8, health 5, mobility 5, CAPTCHA 5, service 4, management 3, and access 3. Thirty-seven tasks have $H=0$ under every method.
+
+Two tasks exhibit the pure handoff gap $(T=1,H=0)$ under all three methods: \nolinkurl{hearing/information-maricopa_census_search} and \nolinkurl{hearing/management-quick_sponge_timer}. Seven exhibit support-ready but nominally incorrect behavior $(T=0,H=1)$ under all three: \nolinkurl{cognitive/consumption-elsa_water_bottle}, \nolinkurl{cognitive/consumption-ginger_ale_note}, \nolinkurl{cognitive/consumption-kids_sunscreen_reviews}, \nolinkurl{hearing/health-long_covid_care_note}, \nolinkurl{hearing/information-ftc_washington_q4_fraud}, \nolinkurl{hearing/management-home_delivery_window_audio}, and \nolinkurl{hearing/service-cms_update_access_desk_page_audio}.
+
+For reproducibility, the complete 59-task intersection is listed below, grouped by functional category.
+
+\paragraph{Cognitive (11).}
+\nolinkurl{communication-ftc_gift_card_pressure_email}, \nolinkurl{communication-library_program_reply}, \nolinkurl{consumption-elsa_water_bottle}, \nolinkurl{consumption-ginger_ale_note}, \nolinkurl{consumption-kids_sunscreen_reviews}, \nolinkurl{consumption-lowest_price_white_mouse}, \nolinkurl{consumption-movie_night_shopping}, \nolinkurl{consumption-tomato_egg_stir_fry}, \nolinkurl{health-running_hydration_guide_note}, \nolinkurl{mobility-victoria_train_interchange_note}, and \nolinkurl{service-cms_import_service_product}.
+
+\paragraph{Hearing (20).}
+\nolinkurl{access-windows_audio_flash_window}, \nolinkurl{communication-community_class_registration}, \nolinkurl{communication-dental_reschedule_voicemail}, \nolinkurl{communication-equipment_reimbursement_email}, \nolinkurl{communication-meeting_action_items}, \nolinkurl{consumption-order_substitution_audio}, \nolinkurl{consumption-sony_alpha}, \nolinkurl{health-child_visit_preparation}, \nolinkurl{health-long_covid_care_note}, \nolinkurl{information-ftc_2024_fraud_reports}, \nolinkurl{information-ftc_florida_fraud_data}, \nolinkurl{information-ftc_washington_q4_fraud}, \nolinkurl{information-handwashing_steps}, \nolinkurl{information-maricopa_census_search}, \nolinkurl{information-noaa_pillow_lava}, \nolinkurl{management-home_delivery_window_audio}, \nolinkurl{management-quick_sponge_timer}, \nolinkurl{mobility-opera_house_street_view}, \nolinkurl{mobility-walking_route_alhambra}, and \nolinkurl{service-cms_update_access_desk_page_audio}.
+
+\paragraph{Motor (12).}
+\nolinkurl{access-enable_filter_keys}, \nolinkurl{captcha-patch_select_3}, \nolinkurl{captcha-slide_puzzle_1}, \nolinkurl{captcha-slide_puzzle_3}, \nolinkurl{communication-filter_keys_volunteer_email}, \nolinkurl{communication-mouse_keys_equipment_update_email}, \nolinkurl{consumption-running_shoe_release_comparison}, \nolinkurl{consumption-shopping_list_cart}, \nolinkurl{consumption-wireless_mouse_search_result}, \nolinkurl{health-sticky_keys_emergency_contact_card}, \nolinkurl{information-ucla_economics_premajor_gpa}, and \nolinkurl{service-reddit_monitor_post_count}.
+
+\paragraph{Visual (16).}
+\nolinkurl{access-windows_magnifier_200}, \nolinkurl{captcha-hold_button_2}, \nolinkurl{captcha-patch_select_2}, \nolinkurl{consumption-guest_bathroom_towel_holders}, \nolinkurl{consumption-keto_bread}, \nolinkurl{consumption-lavender_coupon}, \nolinkurl{consumption-marshmallow_bunnies}, \nolinkurl{consumption-saute_pan}, \nolinkurl{consumption-toothbrush_price_comparison}, \nolinkurl{health-drug_facts_package}, \nolinkurl{information-cta_rail_map_alt_text}, \nolinkurl{information-wikipedia_image_person}, \nolinkurl{management-weekly_planner_calendar}, \nolinkurl{mobility-cta_airport_transfer}, \nolinkurl{mobility-walking_route_wat_arun}, and \nolinkurl{service-real_id_infographic}.
+
+\subsection{Method-specific exceptions}
+
+The common taxonomy should not erase architecture-specific faults. Agent S3 has nine plan/action mismatches in which the textual plan continues while the executed record is already marked failed, plus nonterminal interruptions. CoAct exhibits coordinator/subagent state disagreement, coding shims, and incorrect registry proxies. LocalLSTC has a dedicated three-stall termination gate and two failures with explicit environment evidence: one run has no audio endpoint for Live Caption, and another encounters a DNS failure. These cases are retained as method-specific or infrastructure labels rather than generalized to all three agents.
 
 \section{LocalLSTC--Qwen3.8-27B Case Study}
 \label{app:locallstc_case}
 
-This appendix reports a trajectory-level case study of one baseline configuration, LocalLSTC with Qwen3.8-27B as global planner and state manager and GTA1-7B as visual grounder. The analysis covers all 200 completed runs under the 50-step budget. It is intended to identify concrete mechanisms and instrumentation limitations, not to estimate failure prevalence for all evaluated agents. Unless otherwise stated, percentages are computed from the executable end-state evaluators rather than from the agent's self-reported completion decision.
+This appendix reports a trajectory-level case study of one baseline configuration, LocalLSTC with Qwen3.8-27B as global planner and state manager and GTA1-7B as visual grounder. The analysis covers all 198 tasks in the current result directory under the 50-step budget. It is intended to identify concrete mechanisms and instrumentation limitations, not to estimate failure prevalence for all evaluated agents. Unless otherwise stated, percentages are computed from the executable end-state evaluators rather than from the agent's self-reported completion decision.
 
 \subsection{Aggregate and decomposed outcomes}
 
-Table~\ref{tab:locallstc-summary} summarizes the run. The increase from 29.5\% success at 15 steps to 56.0\% at 50 steps shows that interaction horizon and recovery materially affect this configuration. Nevertheless, 22 failed runs exhaust the 50-step budget. Failed runs use 29.2 steps on average, compared with 18.7 for successful runs. Of the 88 failed runs, 57 terminate after the agent itself declares completion, whereas 22 reach the step limit; the remaining failures stop through another terminal condition. Premature or insufficiently checked completion is therefore at least as important as budget exhaustion in this case study.
+Table~\ref{tab:locallstc-summary} summarizes the current run. Mean $F$ rises from 28.3 at 15 steps to 55.6 at 50 steps, showing that interaction horizon and recovery materially affect this configuration. Separately, applying the strict terminal threshold $F<1$ yields 88 failed or partially failed runs: 52 terminate after the agent itself declares completion, 22 reach the step limit, 12 trigger the three-stall rule, and two are marked infeasible with environment evidence. Premature or insufficiently checked completion is therefore more frequent than budget exhaustion in this case study.
 
 \begin{table}[t]
 \centering
@@ -928,23 +1094,23 @@ Table~\ref{tab:locallstc-summary} summarizes the run. The increase from 29.5\% s
 \toprule
 Slice & $T$ & $H$ & $F$ \\
 \midrule
-All tasks ($n=200$) & 58.0 & 66.0 & 56.0 \\
-Cognitive ($n=50$) & 64.0 & 76.0 & 64.0 \\
-Hearing ($n=50$) & 58.0 & 78.0 & 50.0 \\
-Motor ($n=50$) & 52.0 & 52.0 & 52.0 \\
-Visual ($n=50$) & 58.0 & 58.0 & 58.0 \\
-Distinct components ($n=51$) & 45.1 & 76.5 & 37.3 \\
+All tasks ($n=198$) & 58.1 & 64.6 & 55.6 \\
+Cognitive ($n=49$) & 67.3 & 77.6 & 67.3 \\
+Hearing ($n=50$) & 56.0 & 74.0 & 50.0 \\
+Motor ($n=50$) & 54.0 & 54.0 & 54.0 \\
+Visual ($n=49$) & 55.1 & 53.1 & 51.0 \\
+Distinct components ($n=55$) & 45.5 & 69.1 & 36.4 \\
 \bottomrule
 \end{tabular}
-\caption{LocalLSTC--Qwen3.8-27B task outcome ($T$), handoff-requirement satisfaction ($H$), and full success ($F$), in percent. Equality of $T$, $H$, and $F$ in some slices reflects tasks whose task and access conditions are coincident, not evidence that the two constructs are interchangeable.}
+\caption{LocalLSTC--Qwen3.8-27B mean task-outcome ($T$), handoff-requirement ($H$), and full-success ($F$) evaluator scores on a 0--100 scale. Equality of $T$, $H$, and $F$ in some slices reflects tasks whose task and access conditions are coincident, not evidence that the two constructs are interchangeable.}
 \label{tab:locallstc-summary}
 \end{table}
 
-The 51 distinct-component tasks make the source of the aggregate gap explicit. Nineteen runs satisfy both components, 20 satisfy only $H$, four satisfy only $T$, and eight satisfy neither. The $T=1,H=0$ cases are the accessibility-conditioned failures that a nominal benchmark would score as successful. For this particular system, however, the more frequent pattern is $T=0,H=1$: the agent establishes the support condition---for example, leaving Live Caption enabled or updating a persistent checklist---but the ordinary task result is missing or incorrect. Consequently, the overall two-point difference between $T$ and $F$ obscures a much larger separation on tasks where the components can be evaluated independently.
+The 55 distinct-component tasks make the source of the aggregate gap explicit. Twenty runs satisfy both components, 18 satisfy only $H$, five satisfy only $T$, and 12 satisfy neither. The $T=1,H=0$ cases are the accessibility-conditioned failures that a nominal benchmark would score as successful. For this particular system, however, the more frequent pattern is $T=0,H=1$: the agent establishes the support condition---for example, leaving Live Caption enabled or updating a persistent checklist---but the ordinary task result is missing or incorrect. Consequently, the 2.5-point difference between $T$ and $F$ obscures a much larger separation on tasks where the components can be evaluated independently.
 
 \subsection{Workflow and need-level concentration}
 
-Table~\ref{tab:locallstc-workflow} shows that failures are concentrated in workflows requiring open-ended comparison or spatial reasoning. Consumption and mobility obtain 37.5\% and 31.3\% full success, respectively. Within functional groups, all six cognitive consumption tasks and all four visual mobility tasks fail. These errors include selecting an incorrect product variant or SKU, confusing a route segment, and writing a plausible but unsupported answer after OCR or visual inspection remains ambiguous. By contrast, deterministic verification tasks and structured management tasks are substantially stronger.
+Table~\ref{tab:locallstc-workflow} shows that failures are concentrated in workflows requiring open-ended comparison or spatial reasoning. Consumption and mobility obtain 16.7\% and 37.5\% full success, respectively. These errors include selecting an incorrect product variant or SKU, confusing a route segment, and writing a plausible but unsupported answer after OCR or visual inspection remains ambiguous. By contrast, access, CAPTCHA, management, and service tasks are substantially stronger in this run.
 
 \begin{table*}[t]
 \centering
@@ -953,18 +1119,18 @@ Table~\ref{tab:locallstc-workflow} shows that failures are concentrated in workf
 \toprule
 Workflow & $n$ & $F$ & Workflow & $n$ & $F$ \\
 \midrule
-Access & 26 & 65.4 & CAPTCHA & 26 & 73.1 \\
-Communication & 18 & 55.6 & Consumption & 24 & 37.5 \\
-Health & 21 & 57.1 & Information & 30 & 50.0 \\
-Management & 20 & 70.0 & Mobility & 16 & 31.3 \\
-Service & 19 & 57.9 & & & \\
+Access & 26 & 65.4 & CAPTCHA & 25 & 72.0 \\
+Communication & 18 & 55.6 & Consumption & 24 & 16.7 \\
+Health & 21 & 61.9 & Information & 29 & 55.2 \\
+Management & 20 & 65.0 & Mobility & 16 & 37.5 \\
+Service & 19 & 68.4 & & & \\
 \bottomrule
 \end{tabular}
 \caption{Full success by workflow for the LocalLSTC--Qwen3.8-27B case study, in percent.}
 \label{tab:locallstc-workflow}
 \end{table*}
 
-Under the ISO-grounded 14-ID scheme, the former V2/V3/V4 labels are combined as V2, former V5 becomes V3, and former C3/C4 become C3. Need-level counts and rates must be recomputed by aggregating task-level annotations (and deduplicating tasks with multiple legacy IDs that map to the same final ID); legacy per-need percentages must not simply be averaged. \todo{Insert recalculated V1--V3, H1--H4, M1--M4, and C1--C3 need-level results for the 14-ID scheme.} Previously noted differences between enabled states and durable records should be reassessed after this remapping.
+Under the ISO-grounded 14-ID scheme, the former V2/V3/V4 labels are combined as V2, former V5 becomes V3, and former C3/C4 become C3. Table~\ref{tab:need-failure-rates} reports the recomputed task-level rates after mapping current source metadata and deduplicating tasks with multiple legacy IDs. Legacy percentages are not averaged.
 
 \subsection{Observation-channel limitation for transient captions}
 

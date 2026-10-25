@@ -20,10 +20,12 @@ def reply(name, **inputs):
 class FakeLLM:
     responses = []
     models = []
+    call_kwargs = []
     def __init__(self, model, **kwargs):
         self.model_name = model
         self.models.append(model)
     def __call__(self, messages, **kwargs):
+        self.call_kwargs.append(kwargs)
         return self.responses.pop(0)
     def call_cua(self, description, image, **kwargs):
         assert description == "Save button"
@@ -59,6 +61,19 @@ class LocalTarsTests(unittest.TestCase):
         Image.new("RGB", (1280, 800)).save(buffer, format="PNG")
         self.png = buffer.getvalue()
         FakeLLM.models = []
+        FakeLLM.call_kwargs = []
+
+    @patch("mm_agents.tars.core.local_session.AbstractLLM", FakeLLM)
+    def test_thinking_token_budget_is_forwarded(self):
+        from mm_agents.tars.toolkit.schemas import TASK_DONE
+        FakeLLM.responses = [reply("done", summary="complete")]
+        session = LLMClient(
+            "test", "test", [TASK_DONE.schema], "qwen3.8-27b",
+            thinking_token_budget=16384,
+        )
+        session.add_user_message("Finish")
+        session.generate_and_process()
+        self.assertEqual(FakeLLM.call_kwargs[0]["thinking_token_budget"], 16384)
 
     @patch("mm_agents.tars.core.local_session.AbstractLLM", FakeLLM)
     def test_grounding_and_invalid_response_retry(self):
@@ -96,7 +111,7 @@ class LocalTarsTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             env = Env()
             task = TARS(env, directory, max_steps=5, screen_width=1920, screen_height=1080,
-                        reset_wait=0, evaluation_wait=0)
+                        thinking_token_budget=16384, reset_wait=0, evaluation_wait=0)
             self.assertEqual(task.execute_task({"id": "test", "instruction": "Save"}), 1.0)
             # The configured size is deliberately stale. Grounding happens in
             # canonical 1280x720 space, but execution must use the current
@@ -118,6 +133,11 @@ class LocalTarsTests(unittest.TestCase):
             self.assertEqual(log["statistics"]["prompt_tokens"], sum(
                 usage["prompt_tokens"] for usage in log["statistics"]["model_usage"].values()))
             self.assertEqual(set(FakeLLM.models), {"qwen3.8-27b", "gta1-7b"})
+            self.assertTrue(FakeLLM.call_kwargs)
+            self.assertTrue(all(
+                kwargs["thinking_token_budget"] == 16384
+                for kwargs in FakeLLM.call_kwargs
+            ))
             self.assertFalse(FakeLLM.responses)
             trace = (Path(directory) / "model_trace.txt").read_text()
             for label in ('"agent": "feasibility_gate"', '"agent": "planner"',

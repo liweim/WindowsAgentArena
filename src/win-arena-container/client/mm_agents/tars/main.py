@@ -10,7 +10,7 @@ class TARS:
     def __init__(self, env, save_dir, max_steps=100, screen_width=1280,
                  screen_height=720, sleep_after_execution=0.5, record=False,
                  global_planner_model="qwen3.8-27b", visual_grounder_model="gta1-7b",
-                 reset_wait=60, evaluation_wait=20):
+                 thinking_token_budget=None, reset_wait=60, evaluation_wait=20):
         self.env, self.save_dir = env, Path(save_dir)
         if max_steps <= 0 or min(reset_wait, evaluation_wait, sleep_after_execution) < 0:
             raise ValueError("max_steps must be positive and waits must be nonnegative")
@@ -21,6 +21,7 @@ class TARS:
         self.pause, self.record = sleep_after_execution, record
         self.reset_wait, self.evaluation_wait = reset_wait, evaluation_wait
         self.planner_model, self.grounder_model = global_planner_model, visual_grounder_model
+        self.thinking_token_budget = thinking_token_budget
         self.logger = logging.getLogger("desktopenv.tars")
         self.recording, self.agent = False, None
 
@@ -31,7 +32,8 @@ class TARS:
         # Roles share the same immutable config snapshot, set before their import.
         config_module.config = replace(config_module.config,
             gate_model=self.planner_model, planner_model=self.planner_model,
-            executor_model=self.planner_model, summarization_model=self.planner_model)
+            executor_model=self.planner_model, summarization_model=self.planner_model,
+            thinking_token_budget=self.thinking_token_budget)
         from .roles import probing, executor
         from . import agent as agent_module
         for module in (probing, executor, agent_module):

@@ -731,6 +731,7 @@ class SkillGate:
             model=config.gate_model,
             provider=config.provider,
             only_n_most_recent_images=config.gate_n_recent_images,
+            thinking_token_budget=config.thinking_token_budget,
             effort=config.gate_effort,
         )
 
@@ -901,6 +902,7 @@ class Planner:
             model=config.planner_model,
             provider=config.provider,
             only_n_most_recent_images=config.planner_n_recent_images,
+            thinking_token_budget=config.thinking_token_budget,
             effort=config.planner_effort,
         )
 

@@ -26,14 +26,12 @@ nohup setsid env \
     --som-origin oss \
     --a11y-backend uia \
     --clean-results false \
-    --worker-id 0 \
-    --num-workers 1 \
-    --container-name a11yarena-gta1 \
+    --num-workers 4 \
     --result-dir /locallstc/projects/WindowsAgentArena/results/gta1_qwen3.8-27b \
-    --json-name evaluation_examples_windows/cognitive.json \
+    --json-name evaluation_examples_windows/test_small.json \
     --remove-container true \
     "$@" >"$LOG_FILE" 2>&1 < /dev/null &
 
 runner_pid=$!
-echo "Started gta1 in container winarena-waa4 (PID: $runner_pid)"
+echo "Started gta1 task run (PID: $runner_pid)"
 echo "Logs: tail -f $LOG_FILE"

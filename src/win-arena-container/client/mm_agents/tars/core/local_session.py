@@ -34,12 +34,14 @@ def normalize_grounded_point(point, width=1280, height=720):
 
 class LLMClient:
     def __init__(self, name, system_prompt, tools, model, provider=None,
-                 temperature=None, top_p=None, only_n_most_recent_images=5, **kwargs):
+                 temperature=None, top_p=None, only_n_most_recent_images=5,
+                 thinking_token_budget=None, **kwargs):
         self.name = name
         self.system_prompt = system_prompt
         self.tools = copy.deepcopy(tools)
         self.model_name = model
         self.image_limit = only_n_most_recent_images
+        self.thinking_token_budget = thinking_token_budget
         self.client = AbstractLLM(model, temperature=temperature or 0,
                                  max_tokens=int(os.getenv("TARS_MAX_TOKENS", "4096")),
                                  top_p=top_p if top_p is not None else 0.95)
@@ -145,7 +147,11 @@ class LLMClient:
             dump_model_trace("request", {"messages": prompt}, agent=self.name,
                              model=self.model_name, attempt=attempt + 1)
             try:
-                raw = self.client(prompt, max_retries=3)
+                raw = self.client(
+                    prompt,
+                    max_retries=3,
+                    thinking_token_budget=self.thinking_token_budget,
+                )
             except Exception as exc:
                 dump_model_trace("request_error", {"error": repr(exc)}, agent=self.name,
                                  model=self.model_name, attempt=attempt + 1)

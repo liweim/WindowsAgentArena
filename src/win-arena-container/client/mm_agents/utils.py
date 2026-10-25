@@ -851,6 +851,7 @@ def summary(result_dir, test_all_meta):
             "task_outcome": [],
             "access_requirement": [],
             "success_rate": [],
+            "success_rate_50": [],
             "cost": [],
             "gui_steps": [],
             "api_steps": [],
@@ -912,6 +913,7 @@ def summary(result_dir, test_all_meta):
                 all_success_rates_50.append(success_rate_50)
                 all_access_requirements_15.append(access_requirement_15)
                 all_access_requirements_50.append(access_requirement_50)
+                stats[domain]["success_rate_50"].append(success_rate_50)
                 continue
 
             if os.path.exists(execution_log_file):
@@ -998,6 +1000,7 @@ def summary(result_dir, test_all_meta):
                     all_success_rates_50.append(success_rate_50)
                     all_access_requirements_15.append(access_requirement_15)
                     all_access_requirements_50.append(access_requirement_50)
+                    stats[domain]["success_rate_50"].append(success_rate_50)
                 except Exception:
                     print(f"error loading execution_log_file: {execution_log_file}")
                     if has_completed_score:
@@ -1007,6 +1010,7 @@ def summary(result_dir, test_all_meta):
                         all_success_rates_50.append(success_rate_50)
                         all_access_requirements_15.append(access_requirement_15)
                         all_access_requirements_50.append(access_requirement_50)
+                        stats[domain]["success_rate_50"].append(success_rate_50)
                     continue
             else:
                 if has_completed_score:
@@ -1017,6 +1021,7 @@ def summary(result_dir, test_all_meta):
                     all_success_rates_50.append(success_rate_50)
                     all_access_requirements_15.append(access_requirement_15)
                     all_access_requirements_50.append(access_requirement_50)
+                    stats[domain]["success_rate_50"].append(success_rate_50)
                 continue
 
     num_tasks = sum(len(example_ids) for example_ids in test_all_meta.values())
@@ -1111,6 +1116,7 @@ def summary(result_dir, test_all_meta):
                     "task_outcome": np.mean(stats[domain]["task_outcome"]) if stats[domain]["task_outcome"] else 0,
                     "access_requirement": np.mean(stats[domain]["access_requirement"]) if stats[domain]["access_requirement"] else 0,
                     "success_rate": np.mean(stats[domain]["success_rate"]) if stats[domain]["success_rate"] else 0,
+                    "success_rate_50": np.mean(stats[domain]["success_rate_50"]) if stats[domain]["success_rate_50"] else 0,
                 }
                 for domain in test_all_meta
             },
@@ -1121,6 +1127,7 @@ def summary(result_dir, test_all_meta):
                 "task_outcome": np.mean(stats[domain]["task_outcome"]) if stats[domain]["task_outcome"] else 0,
                 "access_requirement": np.mean(stats[domain]["access_requirement"]) if stats[domain]["access_requirement"] else 0,
                 "success_rate": np.mean(stats[domain]["success_rate"]) if stats[domain]["success_rate"] else 0,
+                "success_rate_50": np.mean(stats[domain]["success_rate_50"]) if stats[domain]["success_rate_50"] else 0,
                 "cost": np.mean(stats[domain]["cost"]) if stats[domain]["cost"] else 0,
                 "tokens": (
                     np.mean(stats[domain]["prompt_tokens"])
@@ -1152,9 +1159,14 @@ def summary(result_dir, test_all_meta):
     )
     print(
         "method, final_50, task_50, a11y_50, "
+        "cognitive_50, hearing_50, motor_50, visual_50, "
         "final_15, task_15, a11y_15, "
         "tokens, prompt_tokens, completion_tokens, steps, execution_time\n"
         f"{result_dir},{avg_success_rate_50:.1f},{avg_task_outcome_50:.1f},{avg_access_requirement_50:.1f},"
+        f"{summary_stats['domain_metrics'].get('cognitive', {}).get('success_rate_50', 0):.1f},"
+        f"{summary_stats['domain_metrics'].get('hearing', {}).get('success_rate_50', 0):.1f},"
+        f"{summary_stats['domain_metrics'].get('motor', {}).get('success_rate_50', 0):.1f},"
+        f"{summary_stats['domain_metrics'].get('visual', {}).get('success_rate_50', 0):.1f},"
         f"{avg_success_rate_15:.1f},{avg_task_outcome_15:.1f},"
         f"{avg_access_requirement_15:.1f},{avg_total_tokens:.1f},"
         f"{avg_prompt_tokens:.1f},{avg_completion_tokens:.1f},{avg_steps:.1f},{avg_execution_time:.1f}"
@@ -1227,9 +1239,9 @@ def save_detail_results():
 
 if __name__ == "__main__":
     # summary('/home/weimingli/projects/WindowsAgentArena/results/locallstc_qwen3.8-27b', '/home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client/evaluation_examples_windows/test_all.json')
-    summary('/home/weimingli/projects/WindowsAgentArena/results/agents3_qwen3.8-27b', '/home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client/evaluation_examples_windows/test_all.json')
-    summary('/home/weimingli/projects/WindowsAgentArena/results/coact_qwen3.8-27b', '/home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client/evaluation_examples_windows/test_all.json')
-    # summary('/home/weimingli/projects/WindowsAgentArena/results/tars_qwen3.8-27b', '/home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client/evaluation_examples_windows/cognitive.json')
+    # summary('/home/weimingli/projects/WindowsAgentArena/results/agents3_qwen3.8-27b', '/home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client/evaluation_examples_windows/test_all.json')
+    # summary('/home/weimingli/projects/WindowsAgentArena/results/coact_qwen3.8-27b', '/home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client/evaluation_examples_windows/test_all.json')
+    summary('/home/weimingli/projects/WindowsAgentArena/results/tars_qwen3.8-27b', '/home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client/evaluation_examples_windows/test_all.json')
     # summary('/home/weimingli/projects/WindowsAgentArena/results/locallstc2_qwen3.8-27b', '/home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client/evaluation_examples_windows/test_all.json')
-    # summary('/home/weimingli/projects/WindowsAgentArena/results/locallstc2_qwen3.8-27b_wo_jev_api', '/home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client/evaluation_examples_windows/cognitive.json')
-    # summary('/home/weimingli/projects/WindowsAgentArena/results/locallstc2_qwen3.8-27b_wo_jev_memory', '/home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client/evaluation_examples_windows/cognitive.json')
+    # summary('/home/weimingli/projects/WindowsAgentArena/results/locallstc2_qwen3.8-27b_wo_jev_api', '/home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client/evaluation_examples_windows/test_all.json')
+    # summary('/home/weimingli/projects/WindowsAgentArena/results/locallstc2_qwen3.8-27b_wo_jev_memory', '/home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client/evaluation_examples_windows/test_all.json')

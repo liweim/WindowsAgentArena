@@ -28,9 +28,7 @@ nohup setsid env \
     --som-origin oss \
     --a11y-backend uia \
     --clean-results false \
-    --worker-id 0 \
     --num-workers 1 \
-    --container-name a11yarena-hisa \
     --result-dir /locallstc/projects/WindowsAgentArena/results/hisa_qwen3.8-27b_wo_pattern \
     --json-name evaluation_examples_windows/test_one.json \
     --remove-container true \
@@ -38,5 +36,5 @@ nohup setsid env \
     "$@" >"$LOG_FILE" 2>&1 < /dev/null &
 
 runner_pid=$!
-echo "Started hisa in container winarena-waa5 (PID: $runner_pid)"
+echo "Started hisa task run (PID: $runner_pid)"
 echo "Logs: tail -f $LOG_FILE"

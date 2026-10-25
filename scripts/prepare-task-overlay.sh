@@ -17,6 +17,13 @@ fi
 shopt -s dotglob nullglob
 for entry in "$baseline"/*; do
     [ "${entry##*/}" = data.img ] && continue
-    cp -a --reflink=auto --sparse=always -- "$entry" "$destination/"
+    # VM state files can inherit host ACL entries that are not representable
+    # on the task-storage filesystem (for example UID 4294967295). They are not
+    # guest state, so copy the data and timestamps without host ACLs/xattrs,
+    # then restore the ordinary Unix mode.
+    cp -a --no-preserve=mode,ownership,xattr --reflink=auto --sparse=always -- "$entry" "$destination/"
+    if [ ! -L "$entry" ]; then
+        chmod --reference="$entry" "$destination/${entry##*/}"
+    fi
 done
 qemu-img create -q -f qcow2 -F raw -b "$baseline/data.img" "$destination/data.qcow2"

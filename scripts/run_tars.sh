@@ -24,15 +24,12 @@ nohup setsid env \
     --som-origin oss \
     --a11y-backend uia \
     --clean-results false \
-    --worker-id 0 \
-    --num-workers 1 \
-    --container-name a11yarena-tars \
+    --num-workers 4 \
     --result-dir /locallstc/projects/WindowsAgentArena/results/tars_qwen3.8-27b \
-    --json-name evaluation_examples_windows/test_one.json \
+    --json-name evaluation_examples_windows/test_all.json \
     --remove-container true \
-    --rerun \
     "$@" >"$LOG_FILE" 2>&1 < /dev/null &
 
 runner_pid=$!
-echo "Started TARS in container a11yarena-tars (PID: $runner_pid)"
+echo "Started TARS task run (PID: $runner_pid)"
 echo "Logs: tail -f $LOG_FILE"

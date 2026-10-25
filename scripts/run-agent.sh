@@ -29,9 +29,7 @@ nohup setsid env \
     --som-origin oss \
     --a11y-backend uia \
     --clean-results false \
-    --worker-id 0 \
     --num-workers 1 \
-    --container-name a11yarena \
     --browser-port 18113 \
     --rdp-port 13392 \
     --result-dir /locallstc/projects/WindowsAgentArena/results/locallstc_qwen3.5-9b \
@@ -40,5 +38,5 @@ nohup setsid env \
     "$@" >"$LOG_FILE" 2>&1 < /dev/null &
 
 runner_pid=$!
-echo "Started $method in container winarena-waa (PID: $runner_pid)"
+echo "Started $method task run (PID: $runner_pid)"
 echo "Logs: tail -f $LOG_FILE"
