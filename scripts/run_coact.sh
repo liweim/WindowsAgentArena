@@ -17,7 +17,7 @@ nohup setsid env \
     --start-client true \
     --agent coact \
     --model qwen3.8-27b \
-    --thinking_token_budget 16384 \
+    --thinking_token_budget 2048 \
     --orchestrator_model qwen3.8-27b \
     --coding_model qwen3.8-27b \
     --summarizer_model qwen3.8-27b \

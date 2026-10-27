@@ -7,10 +7,12 @@ from pathlib import Path
 import tempfile
 import unittest
 from unittest.mock import patch
+from types import SimpleNamespace
 
 from PIL import Image
 from mm_agents.tars.main import TARS
 from mm_agents.tars.core.local_session import LLMClient, normalize_grounded_point
+from mm_agents.tars.runtime.task_log import _TurnRecorder
 
 
 def reply(name, **inputs):
@@ -21,11 +23,14 @@ class FakeLLM:
     responses = []
     models = []
     call_kwargs = []
+    calls = []
     def __init__(self, model, **kwargs):
         self.model_name = model
+        self.client = self
         self.models.append(model)
     def __call__(self, messages, **kwargs):
         self.call_kwargs.append(kwargs)
+        self.calls.append((self.model_name, messages))
         return self.responses.pop(0)
     def call_cua(self, description, image, **kwargs):
         assert description == "Save button"
@@ -36,6 +41,29 @@ class FakeLLM:
 
 
 class LocalTarsTests(unittest.TestCase):
+    def test_turn_log_omits_empty_error_and_keeps_real_error(self):
+        class Sink:
+            def __init__(self):
+                self.entries = []
+
+            def info(self, message, *args):
+                self.entries.append(message % args if args else message)
+
+        sink = Sink()
+        recorder = _TurnRecorder(sink)
+        recorder.record(
+            thinking_blocks=[], text_blocks=[], tool_calls=[],
+            tool_results=[
+                ("ok", SimpleNamespace(output="done", error=None)),
+                ("bad", SimpleNamespace(output="", error="connection failed")),
+            ],
+            agent_action=None,
+        )
+        rendered = "\n".join(sink.entries)
+        self.assertIn("Tool call [ok]:\nRESULT:\ndone", rendered)
+        self.assertNotIn("Tool call [ok]:\nRESULT:\ndone\nERROR:", rendered)
+        self.assertIn("Tool call [bad]:\nRESULT:\n\nERROR:\nconnection failed", rendered)
+
     def test_grounder_bounds(self):
         self.assertEqual(normalize_grounded_point((320, 180)), [320, 180])
         for point in ((1283, 90), (-2, 721), (1400, 90), (10, float("nan")), (True, 0), None):
@@ -45,11 +73,13 @@ class LocalTarsTests(unittest.TestCase):
     @patch("mm_agents.tars.core.local_session.AbstractLLM", FakeLLM)
     def test_large_overshoot_retries(self):
         from mm_agents.tars.toolkit.schemas import CLICK
-        FakeLLM.responses = [reply("click", target="Save button")] * 2
+        FakeLLM.responses = [
+            reply("click", target="Save button"), "(1400,90)",
+            reply("click", target="Save button"), "(320,180)",
+        ]
         session = LLMClient("test", "test", [CLICK.schema], "qwen3.8-27b")
         session.add_user_message("Save", [base64.b64encode(self.png).decode()])
-        with patch.object(FakeLLM, "call_cua", side_effect=[((1400, 90), ""), ((320, 180), "")]):
-            calls, _, _, _ = session.generate_and_process()
+        calls, _, _, _ = session.generate_and_process()
         self.assertEqual(calls[0]["input"]["coordinate"], [320, 180])
 
     def setUp(self):
@@ -62,6 +92,7 @@ class LocalTarsTests(unittest.TestCase):
         self.png = buffer.getvalue()
         FakeLLM.models = []
         FakeLLM.call_kwargs = []
+        FakeLLM.calls = []
 
     @patch("mm_agents.tars.core.local_session.AbstractLLM", FakeLLM)
     def test_thinking_token_budget_is_forwarded(self):
@@ -78,12 +109,21 @@ class LocalTarsTests(unittest.TestCase):
     @patch("mm_agents.tars.core.local_session.AbstractLLM", FakeLLM)
     def test_grounding_and_invalid_response_retry(self):
         from mm_agents.tars.toolkit.schemas import CLICK
-        FakeLLM.responses = [reply("unknown"), reply("click", target="Save button")]
+        FakeLLM.responses = [
+            reply("unknown"), reply("click", target="Save button"), "(320,180)"
+        ]
         session = LLMClient("test", "test", [CLICK.schema], "qwen3.8-27b")
         session.add_user_message("Save", [base64.b64encode(self.png).decode()])
         calls, _, _, _ = session.generate_and_process()
         self.assertEqual(calls[0]["input"]["coordinate"], [320, 180])
-        self.assertIn("gta1-7b", FakeLLM.models)
+        self.assertIn("uitars-1.5-7b", FakeLLM.models)
+        grounder_messages = next(
+            messages for model, messages in FakeLLM.calls if model == "uitars-1.5-7b"
+        )
+        self.assertEqual(
+            grounder_messages[1]["content"][0]["text"],
+            "Query:Save button\nOutput only the coordinate of one point in your response.\n",
+        )
         self.assertIn("coordinate", CLICK.schema["input_schema"]["properties"])
 
     @patch("mm_agents.tars.core.local_session.AbstractLLM", FakeLLM)
@@ -93,6 +133,7 @@ class LocalTarsTests(unittest.TestCase):
                              reply("report_feasible", reason='### Skill basis\n- [skill-os] "Use GUI"'),
                              reply("submit_plan", milestones=["Save"]),
                              reply("click", target="Save button"),
+                             "(320,180)",
                              reply("done", summary="Saved")]
         test = self
         class Env:
@@ -132,11 +173,12 @@ class LocalTarsTests(unittest.TestCase):
             self.assertIn("x=320, y=200", gui[0]["action"])
             self.assertEqual(log["statistics"]["prompt_tokens"], sum(
                 usage["prompt_tokens"] for usage in log["statistics"]["model_usage"].values()))
-            self.assertEqual(set(FakeLLM.models), {"qwen3.8-27b", "gta1-7b"})
+            self.assertEqual(set(FakeLLM.models), {"qwen3.8-27b", "uitars-1.5-7b"})
             self.assertTrue(FakeLLM.call_kwargs)
             self.assertTrue(all(
                 kwargs["thinking_token_budget"] == 16384
-                for kwargs in FakeLLM.call_kwargs
+                for (model, _), kwargs in zip(FakeLLM.calls, FakeLLM.call_kwargs)
+                if model == "qwen3.8-27b"
             ))
             self.assertFalse(FakeLLM.responses)
             trace = (Path(directory) / "model_trace.txt").read_text()

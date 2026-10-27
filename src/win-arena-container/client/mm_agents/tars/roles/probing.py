@@ -50,9 +50,9 @@ Use these for verifying features and limitations from official documentation —
 
 Use these for navigating the UI to verify that menus, dialogs, or features exist — not for completing the task.
 
-- `click` — Click a described target, located by GTA1. Supports single/double/triple click, left/middle/right button, and modifier keys.
+- `click` — Click a described target, located by UI-TARS. Supports single/double/triple click, left/middle/right button, and modifier keys.
 - `type` — Type text into a field. Optionally click-to-focus first, overwrite existing text, and press Enter at the end.
-- `scroll` — Scroll over a described target, located by GTA1. Positive `clicks` scrolls up (or right with shift=true), negative scrolls down (or left).
+- `scroll` — Scroll over a described target, located by UI-TARS. Positive `clicks` scrolls up (or right with shift=true), negative scrolls down (or left).
 - `hotkey` — Press a keyboard shortcut like ['ctrl', 'c'] or ['ctrl', 'shift', 't'].
 - `hold_and_press` — Hold modifier keys while pressing a sequence of other keys.
 - `wait` — Sleep for N seconds to let the UI settle.

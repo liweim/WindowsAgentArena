@@ -9,7 +9,7 @@ import time
 class TARS:
     def __init__(self, env, save_dir, max_steps=100, screen_width=1280,
                  screen_height=720, sleep_after_execution=0.5, record=False,
-                 global_planner_model="qwen3.8-27b", visual_grounder_model="gta1-7b",
+                 global_planner_model="qwen3.8-27b", visual_grounder_model="uitars-1.5-7b",
                  thinking_token_budget=None, reset_wait=60, evaluation_wait=20):
         self.env, self.save_dir = env, Path(save_dir)
         if max_steps <= 0 or min(reset_wait, evaluation_wait, sleep_after_execution) < 0:

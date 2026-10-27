@@ -20,8 +20,8 @@ from typing import Callable
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", None)
 # LOCAL_API_URL = "http://129.94.173.199:30001/v1"
 LOCAL_API_URL = os.getenv("LOCAL_API_URL", "http://localhost:30000/v1")
-GTA1_API_URL = "http://129.94.173.199:1230/v1"
-# GTA1_API_URL = os.getenv("GTA1_API_URL", "http://localhost:1234/v1")
+# GTA1_API_URL = "http://129.94.173.199:1230/v1"
+GTA1_API_URL = os.getenv("GTA1_API_URL", "http://localhost:1234/v1")
 # UITARS_API_URL = "http://129.94.173.199:1235/v1"
 UITARS_API_URL = os.getenv("UITARS_API_URL", "http://localhost:1235/v1")
 
@@ -2070,7 +2070,7 @@ if __name__ == "__main__":
     # response = client(messages)
     # print(response)
 
-    client = AbstractLLM('uitars-1.5-7b')
+    client = AbstractLLM('gta1-7b')
     image = Image.open("/home/weimingli/projects/WindowsAgentArena/img/banner.png")
     messages = [
         {

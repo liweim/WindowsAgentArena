@@ -17,9 +17,9 @@ nohup setsid env \
     --start-client true \
     --agent tars \
     --model qwen3.8-27b \
-    --thinking_token_budget 16384 \
+    --thinking_token_budget 2048 \
     --global-planner-model qwen3.8-27b \
-    --visual-grounder-model gta1-7b \
+    --visual-grounder-model uitars-1.5-7b \
     --max-steps 50 \
     --som-origin oss \
     --a11y-backend uia \

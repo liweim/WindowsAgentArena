@@ -801,11 +801,36 @@ class SetupController:
             remote_debugging_url: str,
             browser_name: str,
             attempts: int = 15,
-            initial_wait_seconds: float = 2,
             retry_wait_seconds: float = 5
     ):
-        if initial_wait_seconds:
-            time.sleep(initial_wait_seconds)
+        version_url = f"{remote_debugging_url.rstrip('/')}/json/version"
+        last_error = None
+        for attempt in range(attempts):
+            try:
+                response = requests.get(version_url, timeout=3)
+                response.raise_for_status()
+                version_info = response.json()
+                if version_info.get("webSocketDebuggerUrl"):
+                    break
+                last_error = RuntimeError(
+                    "CDP version response has no webSocketDebuggerUrl"
+                )
+            except (requests.RequestException, ValueError) as exc:
+                last_error = exc
+
+            if attempt == attempts - 1:
+                raise RuntimeError(
+                    f"{browser_name} DevTools endpoint did not become ready: "
+                    f"{last_error}"
+                ) from last_error
+            logger.info(
+                "%s DevTools health check is not ready yet (%d/%d): %s",
+                browser_name,
+                attempt + 1,
+                attempts,
+                last_error,
+            )
+            time.sleep(1)
 
         for attempt in range(attempts):
             try:

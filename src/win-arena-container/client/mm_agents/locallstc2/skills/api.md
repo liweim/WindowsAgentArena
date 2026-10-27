@@ -12,14 +12,14 @@ when_to_use: Load when the planner can call software-level APIs directly
 - Use exactly one API call per `actions` item. Do not bundle multiple API calls together.
 - Only call methods that are listed for the current domain in the system prompt.
 - If the available API methods cannot express the needed step, do not invent new method calls.
-- Use successful API results as evidence to update the task completion checklist, but do not treat API success as whole-task completion while any checklist item remains `[ ]`.
-- Use `TERMINATE` only when every task completion checklist item is `[x]`.
+- Use successful API results as evidence for the active completion target.
+- Use `TERMINATE` only according to the completion mode in the planner prompt.
 
 ### API example
 
 ```json
 {
-  "thought": "[ ] Apply the requested application-level change\nThe requested operation maps directly to an available application method, so I will use one API action and update the checklist from its result.",
+  "thought": "The requested operation maps directly to an available application method, so I will use one API action and inspect its result.",
   "subgoal": "Apply the requested application-level change",
   "actions": [
     "GoogleDriveTools.upload_file('/home/user/report.pdf')"

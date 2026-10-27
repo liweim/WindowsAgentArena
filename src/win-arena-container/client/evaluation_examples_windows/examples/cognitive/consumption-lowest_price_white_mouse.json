@@ -10,7 +10,7 @@
   ],
   "difficulty": "medium",
   "operation_time": 75.90,
-  "instruction": "I rely on persistent written records so I do not have to remember important details. Complete the mouse item in `computer_accessories.xlsx` on the Desktop following the listed requirements. When finished, check it off by changing its `Status` from `Pending` to `Done`, then save the spreadsheet.",
+  "instruction": "I rely on persistent written records so I do not have to remember important details. Read the mouse item and its requirements in `computer_accessories.xlsx` on the Desktop, find the matching product on the shopping website, and add exactly one unit with the required options to the shopping cart. When finished, check off the mouse item by changing its `Status` from `Pending` to `Done`, then save the spreadsheet.",
   "source": "synthetic",
   "gt_steps": [
     "Open `computer_accessories.xlsx` and read the pending Mouse row.",

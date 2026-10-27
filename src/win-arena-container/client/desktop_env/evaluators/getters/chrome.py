@@ -37,6 +37,41 @@ _accessibility_ns_map = {
 
 logger = logging.getLogger("desktopenv.getters.chrome")
 
+
+def _wait_for_cdp_ready(
+        remote_debugging_url: str,
+        attempts: int = 5,
+        retry_delay_seconds: float = 2,
+) -> None:
+    """Wait until the CDP version endpoint returns a usable websocket URL."""
+    version_url = f"{remote_debugging_url.rstrip('/')}/json/version"
+    last_error = None
+    for attempt in range(attempts):
+        try:
+            response = requests.get(version_url, timeout=3)
+            response.raise_for_status()
+            version_info = response.json()
+            if version_info.get("webSocketDebuggerUrl"):
+                return
+            last_error = RuntimeError(
+                "CDP version response has no webSocketDebuggerUrl"
+            )
+        except (requests.RequestException, ValueError) as exc:
+            last_error = exc
+
+        if attempt < attempts - 1:
+            logger.warning(
+                "CDP health check attempt %s/%s failed; retrying: %s",
+                attempt + 1,
+                attempts,
+                last_error,
+            )
+            time.sleep(retry_delay_seconds)
+
+    raise RuntimeError(
+        f"CDP endpoint did not become ready at {version_url}: {last_error}"
+    ) from last_error
+
 """
 WARNING: 
 1. Functions from this script assume that no account is registered on Chrome, otherwise the default file path needs to be changed.
@@ -559,7 +594,24 @@ def get_page_info(env, config: Dict[str, str]):
     remote_debugging_url = f"http://{host}:{port}"
 
     with sync_playwright() as p:
-        browser = p.chromium.connect_over_cdp(remote_debugging_url)
+        _wait_for_cdp_ready(remote_debugging_url)
+        # Chrome and the 9222 -> 1337 proxy can briefly be unavailable while
+        # settling. Retry transient 502/timeout failures before failing the
+        # metric outright.
+        for attempt in range(3):
+            try:
+                browser = p.chromium.connect_over_cdp(
+                    remote_debugging_url, timeout=15000
+                )
+                break
+            except Exception:
+                if attempt == 2:
+                    raise
+                logger.warning(
+                    "CDP connection attempt %s/3 failed; retrying",
+                    attempt + 1,
+                )
+                time.sleep(2 * (attempt + 1))
 
         context = browser.contexts[0]
 

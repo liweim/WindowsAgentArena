@@ -32,6 +32,8 @@ nohup python -m vllm.entrypoints.openai.api_server \
     --port 30000 \
     > qwen.log 2>&1 &
 
+测试llm: cd ~/projects/WindowsAgentArena/src/win-arena-container/client && python -m mm_agents.llm
+
 Jev服务：
 DECIDER_DEVICE=cuda \
 DECIDER_CUDA_MEMORY_FRACTION=0.25 \

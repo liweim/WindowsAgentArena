@@ -5,7 +5,7 @@ skill selection and feasibility probing → milestone planning → execution.
 
 The three reasoning roles share `--global-planner-model` (default
 `qwen3.8-27b`). GUI tools ask for visual target descriptions and
-`--visual-grounder-model` (default `gta1-7b`) resolves them to coordinates.
+`--visual-grounder-model` (default `uitars-1.5-7b`) resolves them to coordinates.
 TARS uses the repository's `mm_agents.llm.AbstractLLM` and the standard
 WindowsAgentArena `DesktopEnv`.
 
@@ -25,7 +25,7 @@ Extra launcher or TARS arguments can be appended, for example:
 Relevant options:
 
 - `--global-planner-model`: gate, planner, and executor model.
-- `--visual-grounder-model`: GTA1-compatible point grounder.
+- `--visual-grounder-model`: UI-TARS point grounder (default `uitars-1.5-7b`).
 - `--tars-reset-wait` / `--tars-evaluation-wait`: waits around execution.
 - `--max-steps`: outer TARS action budget.
 - `TARS_GATE_AGENT_MAX_STEPS`, `TARS_PLANNER_AGENT_MAX_STEPS`, and

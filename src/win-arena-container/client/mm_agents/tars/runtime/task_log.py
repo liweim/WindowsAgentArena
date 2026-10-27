@@ -166,12 +166,14 @@ class _TurnRecorder:
         for call in tool_calls:
             self._sink.info("Tool call [%s][%s]: %s", call["id"], call["name"], call["input"])
         for tool_id, payload in tool_results:
-            self._sink.info(
-                "Tool call [%s]:\nRESULT:\n%s\nERROR:\n%s",
-                tool_id,
-                getattr(payload, "output", None),
-                getattr(payload, "error", None),
-            )
+            output = getattr(payload, "output", None)
+            error = getattr(payload, "error", None)
+            message = "Tool call [%s]:\nRESULT:\n%s"
+            args = [tool_id, output]
+            if error:
+                message += "\nERROR:\n%s"
+                args.append(error)
+            self._sink.info(message, *args)
         self._sink.info("Agent action:\n%s", agent_action)
         self._sink.info("")
 

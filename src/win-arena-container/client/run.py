@@ -132,6 +132,7 @@ def test(
         test_all_meta: dict
 ) -> None:
     scores = []
+    task_errors = 0
     max_steps = args.max_steps
 
     # log args
@@ -281,6 +282,7 @@ def test(
                     )
                     score = scores[-1] if scores else 0.0
             except Exception as e:
+                task_errors += 1
                 logger.error(f"Exception in {domain}/{example_id}: {e}")
                 error_traceback = traceback.format_exc()
                 logger.error(error_traceback)
@@ -338,6 +340,8 @@ def test(
         logger.info("No examples finished.")
     else:
         logger.info(f"Average score: {sum(scores) / len(scores)}")
+    if args.agent_name == "os_symphony" and task_errors:
+        raise SystemExit(1)
 
 
 def _clear_task_result_dir(example_path):

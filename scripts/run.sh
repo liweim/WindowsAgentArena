@@ -111,6 +111,67 @@ fi
 if ! [[ "$worker_id" =~ ^[0-9]+$ ]]; then
     log_error_exit "--worker-id must be a non-negative integer."
 fi
+if ! [[ "$cpu_cores" =~ ^[1-9][0-9]*$ ]]; then
+    log_error_exit "--cpu-cores must be a positive integer."
+fi
+num_workers=$((10#$num_workers))
+cpu_cores=$((10#$cpu_cores))
+
+memory_to_bytes() {
+    local value=${1^^}
+    local number unit multiplier
+
+    value=${value%B}
+    if ! [[ "$value" =~ ^([1-9][0-9]*)([KMGT]?)$ ]]; then
+        log_error_exit "--ram-size must be an integer optionally followed by K, M, G, or T."
+    fi
+    number=$((10#${BASH_REMATCH[1]}))
+    unit=${BASH_REMATCH[2]}
+    case "$unit" in
+        K) multiplier=$((1024)) ;;
+        M) multiplier=$((1024 ** 2)) ;;
+        G) multiplier=$((1024 ** 3)) ;;
+        T) multiplier=$((1024 ** 4)) ;;
+        '') multiplier=1 ;;
+    esac
+    echo $((number * multiplier))
+}
+
+format_gib() {
+    awk -v bytes="$1" 'BEGIN { printf "%.1f GiB", bytes / 1024 / 1024 / 1024 }'
+}
+
+ram_bytes=$(memory_to_bytes "$ram_size")
+
+check_host_resources() {
+    local concurrent_workers=$1
+    local required_memory_bytes
+    local available_memory_kib available_memory_bytes
+
+    required_memory_bytes=$((concurrent_workers * ram_bytes))
+    available_memory_kib=$(awk '/^MemAvailable:/ { print $2; exit }' /proc/meminfo)
+
+    if ! [[ "$available_memory_kib" =~ ^[1-9][0-9]*$ ]]; then
+        log_error_exit "Unable to determine available memory from /proc/meminfo."
+    fi
+    available_memory_bytes=$((available_memory_kib * 1024))
+
+    echo "Host memory check: ${concurrent_workers} concurrent worker(s) x ${ram_size} RAM"
+    echo "  Need $(format_gib "$required_memory_bytes"), available $(format_gib "$available_memory_bytes")"
+
+    if [ "$available_memory_bytes" -lt "$required_memory_bytes" ]; then
+        echo "Error: Insufficient available memory for $concurrent_workers concurrent worker(s)." >&2
+        log_error_exit "Reduce --num-workers or --ram-size and try again."
+    fi
+}
+
+if [ "$connect" != true ]; then
+    concurrent_workers=1
+    if [ "$task_execution" = true ]; then
+        concurrent_workers=$num_workers
+    fi
+    check_host_resources "$concurrent_workers"
+fi
 
 # Task runs consist of automatically named worker containers. Keep the old
 # default name for setup and interactive sessions, where there is one container.

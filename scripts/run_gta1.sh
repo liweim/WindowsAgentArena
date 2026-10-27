@@ -17,7 +17,7 @@ nohup setsid env \
     --start-client true \
     --agent gta1 \
     --model qwen3.8-27b \
-    --thinking_token_budget 16384 \
+    --thinking_token_budget 2048 \
     --judge_model qwen3.8-27b \
     --ground_model gta1-7b \
     --n_samples 3 \

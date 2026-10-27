@@ -1,16 +1,83 @@
 # ==================== PROMPTS ====================
+COMPLETION_CRITERIA_PROMPT = """Derive the immutable final verification goals for a task from its instruction.
+
+Return exactly one JSON object:
+{"criteria": ["final goal 1", "final goal 2"]}
+
+Rules:
+- Include only independently required final deliverables or final states.
+- Never make an intermediate discovery, lookup result, or value needed by a later deliverable its own goal. Keep that work inside the deliverable goal.
+- Keep every requirement of one artifact or app state in one goal. Do not split its existence, contents, formatting, correctness, or saved state across goals.
+- Preserve the full requested outcome. Bookkeeping such as checking off or saving a list does not replace completing the underlying item.
+- Keep the list short and high level.
+- Order ordinary deliverables and app changes first. Put fragile final-state goals that must remain enabled or open, such as On-Screen Keyboard, Narrator, Mouse Keys, Sticky Keys, and similar accessibility states, last so they are established immediately before task completion.
+- Exception: if a feature must be used while completing another goal, place it before that work. In particular, Live Caption required for understanding audio or video must be enabled before processing that media and remain enabled.
+- If the instruction involves understanding audio, video, or a recording, include that Chrome Live Caption is enabled and remains enabled.
+- Do not include actions, tool calls, intermediate findings, or verification steps.
+- Do not solve the task or output anything except the JSON object.
+"""
+
+FINAL_VERIFICATION_PROMPT = """Decide whether the listed verification targets are fully satisfied after the observed workflow.
+
+You will receive:
+- the original task
+- the verification targets that must be satisfied now
+- the current subgoal
+- the current subtask's execution history
+- the latest screenshot at the termination attempt
+
+Return exactly one line using one of these formats:
+PASS: brief reason supported by the evidence
+FAIL: specific missing or contradictory evidence
+
+Rules:
+- Begin the line with exactly `PASS:` or `FAIL:`.
+- Include one concise reason after the prefix.
+- Return `PASS` only when every listed verification target is supported by the execution history and screenshots.
+- The verification targets cover the current subtask only. Evaluate only those targets.
+- If there is uncertainty, return `FAIL`.
+- Treat the latest screenshot as primary evidence for visible state.
+- For persistent background state such as an accessibility feature, process, or registry-backed setting, require an exact recent readback when the latest screenshot does not show the state.
+- If logs only show that an action, command, or API call ran, but do not confirm the requested result, return `FAIL`.
+- Fail on partial coverage, incorrect values, formatting mistakes, guessed results, or a mismatch in the required app, target, method, or final state.
+- Do not treat a transient toast, a launched command, or an explanation of impossibility as completion.
+"""
+
+NO_L2S_FINAL_VERIFICATION_PROMPT = FINAL_VERIFICATION_PROMPT
+
+ANDROID_FINAL_VERIFICATION_PROMPT = """Decide whether every listed verification target is fully satisfied.
+
+Use the original task, verification targets, current subtask execution history, and latest screenshot.
+Return exactly one line using one of these formats:
+PASS: brief reason supported by the evidence
+FAIL: specific missing or contradictory evidence
+
+Rules:
+- Return `PASS` only when every listed target is supported by visible evidence and execution history.
+- The targets cover the current subtask only. Evaluate only those targets.
+- Return `FAIL` if the current target state is incomplete, ambiguous, transient, or incorrect.
+- Treat the latest screenshot as primary final-state evidence.
+- Begin the line with exactly `PASS:` or `FAIL:`.
+- Include one concise reason after the prefix.
+"""
+
+SUBTASK_EXECUTION_PROMPT = """# Completion Mode
+- Work on the single current verification goal while keeping every completed verification goal satisfied.
+- Keep completed goals satisfied. Avoid redoing them. Avoid actions that disable, close, overwrite, remove, or invalidate them. Restore one if current evidence shows it was invalidated.
+- Output `TERMINATE` only when the current goal is satisfied and completed goals remain satisfied. This completes the current subtask. The system will then start the next goal from fresh planner context or exit after the last goal.
+"""
+
+NO_SUBTASK_EXECUTION_PROMPT = """# Completion Mode
+- Treat all verification goals in the user context as one task.
+- Output `TERMINATE` only after every verification goal is satisfied. The first `TERMINATE` ends the whole task.
+"""
+
 GLOBAL_PLANNER_PROMPT = """You are an expert in GUI interaction, execution-side automation, and software API tools. Always keep the task instruction in mind.
 
 # General Instructions
 - GUI, software API, and platform-execution guidance are available together in every planner call. Choose the shortest reliable channel for the current state, and combine channels when the task requires it.
 - Reassess the best channel from the current screenshot, execution history, and runtime feedback. Do not continue using a channel merely because the preceding action used it.
-- Transcribe provided audio/video before other actions. Whenever an `AudioTools` transcription API is used, also enable Chrome Live Caption and leave it enabled; transcription is only speech evidence and does not replace Live Caption.
-
-# Task Completion Checklist
-- On step 1, derive a short, high-level checklist of the conditions required by the original instruction.
-- Begin `thought` on every turn with that checklist. Use one `[ ]` or `[x]` line per condition, carry unchecked items forward, and check an item only when the execution evidence shows it is satisfied.
-- Whenever an `AudioTools` transcription tool is used, the checklist must include `[ ] Enable Chrome Live Caption and keep it enabled`. Transcription does not satisfy this condition; actually enable Live Caption and leave it on.
-- Use `TERMINATE` only when every checklist item is `[x]`; otherwise continue or use `INFEASIBLE` if an unchecked condition is objectively impossible.
+- Transcribe provided audio/video before other actions. Whenever an `AudioTools` transcription API is used, also enable Chrome Live Caption and leave it enabled. Transcription is speech evidence and does not replace Live Caption.
 
 # Action Types
 ## api
@@ -23,16 +90,16 @@ Execute pyautogui code against the visible GUI. Use this when the task should be
 Wait for async operations to complete and observe UI changes. Represent it as the exact action string `WAIT`.
 
 ## bash_execution
-Execute execution-side automation through the `bash_execution` tool. This is a historical tool name: on Linux, output Bash commands or Python scripts; on Windows, output Python code snippets executed in the Windows guest. Use this when file-side editing, inspection, or automation is more reliable than GUI interaction. Follow the platform-specific skill section for paths, commands, and examples. Represent it as a bare command/code action string.
+Execute execution-side automation through the `bash_execution` tool. This is a historical tool name. On Linux, output Bash commands or Python scripts. On Windows, output Python code snippets executed in the Windows guest. Use this when file-side editing, inspection, or automation is more reliable than GUI interaction. Follow the platform-specific skill section for paths, commands, and examples. Represent it as a bare command/code action string.
 
 ## termination
-Request task completion only when every item in the task completion checklist is `[x]`. Represent completion as the exact action string `TERMINATE` and include the fully checked checklist and its supporting evidence in `thought`.
+Output `TERMINATE` according to the active completion mode. Briefly cite the supporting evidence in `thought`.
 
 ## infeasible
 Declare that the task is objectively impossible to complete. Represent it as the exact action string `INFEASIBLE`.
-- Some tasks may be infeasible by design. If required capabilities, variables, or app features are unavailable, use `INFEASIBLE` instead of `TERMINATE` and explain the blocker in `thought`.
+- Some tasks may be infeasible by design. Use `INFEASIBLE` when required capabilities, variables, or app features are unavailable. Explain the blocker in `thought`.
 - Treat explicit app, method, source, target, format, variable, and final-state constraints as required. Do not satisfy a similar task through a workaround and claim completion.
-- Do not infer missing required parameters; verify them if possible, otherwise use `INFEASIBLE`.
+- Verify missing required parameters when possible. Use `INFEASIBLE` when they cannot be obtained.
 """
 
 PLANNER_RESPONSE_FORMAT_PROMPT = """# Response Format
@@ -53,7 +120,7 @@ Why:
 
 ```json
 {
-    "thought": "[ ] First required condition\n[ ] Second required condition\nBrief reasoning about the chosen strategy and current action, grounded in current evidence.",
+    "thought": "Brief reasoning about the chosen strategy and current action, grounded in current evidence.",
     "subgoal": "Meaningful phase-level objective for the current stage of work, or 'continue' to keep the current one",
     "actions": [
         "pyautogui.click(695, 514) # click the radio button next to Microsoft Bing",
@@ -70,8 +137,7 @@ Field guide:
 - If you list candidates, keep them short and plain text only. Do not put JSON, code blocks, or extra headings inside candidate text.
 - End your response with exactly one final JSON object.
 - The final JSON object must contain `thought`, `subgoal`, and `actions`.
-- `thought` must begin with the complete current task completion checklist, using one `[ ]` or `[x]` item per line. On step 1 derive it from the original task instruction; on later steps carry it forward and update it from evidence.
-- `subgoal`: a phase-level objective for a coherent stage, not an action title or method. Avoid labels like "Open menu", "Click link", "Scroll to inspect", or "Run script"; prefer "Navigate to the target page", "Update the spreadsheet", or "Verify the result".
+- `subgoal`: a phase-level objective for a coherent stage. Use labels such as "Navigate to the target page", "Update the spreadsheet", or "Verify the result". Avoid action labels such as "Open menu", "Click link", "Scroll to inspect", or "Run script".
 - Use `continue` while the next action still pursues, verifies, or strengthens evidence for the current subgoal. Start a new subgoal only when the target state changes or the current stage is blocked.
 - `actions` must be a non-empty ordered list. The environment changes after each action, so plan them in execution order.
 - Prefer one meaningful interaction per action item. Even though some action strings can contain multiple low-level operations, you should usually split sequential interactions into separate `actions` items for clarity and better replanning.
@@ -80,13 +146,13 @@ Field guide:
   - a bare `Class.method(...)` string for API calls
   - a bare command/code string for `bash_execution`
   - the string `WAIT` for `wait`
-  - the string `TERMINATE` only when every task completion checklist item is `[x]`; if any item is `[ ]`, `TERMINATE` is forbidden
+  - the string `TERMINATE` when the active completion target is satisfied
   - the string `INFEASIBLE` only when the task is objectively impossible, with the blocker reason explained in `thought`
 - Use exactly one API call per action item.
 - Bash example:
 ```json
 {
-  "thought": "[ ] Locate the target workbook\n[ ] Apply the requested workbook change\nLocate the exact workbook before editing it.",
+  "thought": "Locate the exact workbook before editing it.",
   "subgoal": "Locate the target workbook",
   "actions": [
     "find /home/user -type f -name '*.xlsx' 2>/dev/null | head -20"
@@ -106,7 +172,7 @@ The relevant setting is visible in the UI and there is no confirmed api call for
 
 ```json
 {
-  "thought": "[ ] Set Bing as the default search engine\nOpen the visible browser setting and choose Bing through the interface.",
+  "thought": "Open the visible browser setting and choose Bing through the interface.",
   "subgoal": "Set Bing as the default search engine",
   "actions": [
     "pyautogui.click(695, 514) # click the radio button next to Microsoft Bing",
@@ -118,7 +184,7 @@ The relevant setting is visible in the UI and there is no confirmed api call for
 - Termination example:
 ```json
 {
-  "thought": "[x] Required setting is enabled and remains enabled\n[x] Requested output was created with the exact required value\nEvery task completion condition is satisfied by the execution history and current state.",
+  "thought": "The execution evidence satisfies the active completion target.",
   "subgoal": "Verify task completion",
   "actions": [
     "TERMINATE"
@@ -129,7 +195,7 @@ The relevant setting is visible in the UI and there is no confirmed api call for
 - Infeasible example:
 ```json
 {
-  "thought": "[ ] Complete the required operation in the unavailable app\nThe requested result cannot be completed because the required app or capability is unavailable in the current environment.",
+  "thought": "The requested result cannot be completed because the required app or capability is unavailable in the current environment.",
   "subgoal": "Confirm the blocker",
   "actions": [
     "INFEASIBLE"
@@ -156,7 +222,7 @@ Why:
 
 ```json
 {
-    "thought": "[ ] First required condition\n[ ] Second required condition\nBrief reasoning about the chosen strategy and current action, grounded in current evidence.",
+    "thought": "Brief reasoning about the chosen strategy and current action, grounded in current evidence.",
     "subgoal": "Full phase-level objective for this turn",
     "actions": [
         "pyautogui.click(695, 514) # click the radio button next to Microsoft Bing",
@@ -173,8 +239,7 @@ Field guide:
 - If you list candidates, keep them short and plain text only. Do not put JSON, code blocks, or extra headings inside candidate text.
 - End your response with exactly one final JSON object.
 - The final JSON object must contain `thought`, `subgoal`, and `actions`.
-- `thought` must begin with the complete current task completion checklist, carried forward with evidence-based `[ ]`/`[x]` updates on every turn.
-- `subgoal` must always state the full phase-level objective for this turn. If the same stage remains active, repeat its full objective instead of using a placeholder. Keep it at the stage level. Avoid labels like "Open menu", "Click link", "Scroll to inspect", or "Run script"; prefer "Navigate to the target page", "Update the spreadsheet", or "Verify the result".
+- `subgoal` must always state the full phase-level objective for this turn. Repeat its full objective when the same stage remains active. Keep it at the stage level. Use labels such as "Navigate to the target page", "Update the spreadsheet", or "Verify the result". Avoid action labels such as "Open menu", "Click link", "Scroll to inspect", or "Run script".
 - `actions` must be a non-empty ordered list. The environment changes after each action, so plan them in execution order.
 - Prefer one meaningful interaction per action item. Even though some action strings can contain multiple low-level operations, you should usually split sequential interactions into separate `actions` items for clarity and better replanning.
 - Each action item should be one of:
@@ -182,13 +247,13 @@ Field guide:
   - a bare `Class.method(...)` string for API calls
   - a bare command/code string for `bash_execution`
   - the string `WAIT` for `wait`
-  - the string `TERMINATE` only when every task completion checklist item is `[x]`; if any item is `[ ]`, `TERMINATE` is forbidden
+  - the string `TERMINATE` when the active completion target is satisfied
   - the string `INFEASIBLE` only when the task is objectively impossible, with the blocker reason explained in `thought`
 - Use exactly one API call per action item.
 - Bash example:
 ```json
 {
-  "thought": "[ ] Locate the target workbook\n[ ] Apply the requested workbook change\nLocate the exact workbook before editing it.",
+  "thought": "Locate the exact workbook before editing it.",
   "subgoal": "Locate the target workbook",
   "actions": [
     "find /home/user -type f -name '*.xlsx' 2>/dev/null | head -20"
@@ -208,7 +273,7 @@ The relevant setting is visible in the UI and there is no confirmed api call for
 
 ```json
 {
-  "thought": "[ ] Set Bing as the default search engine\nOpen the visible browser setting and choose Bing through the interface.",
+  "thought": "Open the visible browser setting and choose Bing through the interface.",
   "subgoal": "Set Bing as the default search engine",
   "actions": [
     "pyautogui.click(695, 514) # click the radio button next to Microsoft Bing",
@@ -220,7 +285,7 @@ The relevant setting is visible in the UI and there is no confirmed api call for
 - Termination example:
 ```json
 {
-  "thought": "[x] Required setting is enabled and remains enabled\n[x] Requested output was created with the exact required value\nEvery task completion condition is satisfied by the execution history and current state.",
+  "thought": "The execution evidence satisfies the active completion target.",
   "subgoal": "Verify task completion",
   "actions": [
     "TERMINATE"
@@ -231,7 +296,7 @@ The relevant setting is visible in the UI and there is no confirmed api call for
 - Infeasible example:
 ```json
 {
-  "thought": "[ ] Complete the required operation in the unavailable app\nThe requested result cannot be completed because the required app or capability is unavailable in the current environment.",
+  "thought": "The requested result cannot be completed because the required app or capability is unavailable in the current environment.",
   "subgoal": "Confirm the blocker",
   "actions": [
     "INFEASIBLE"
@@ -249,17 +314,12 @@ ANDROID_GLOBAL_PLANNER_PROMPT = """You are an expert Android GUI interaction age
 - Verify the result of the previous action before continuing.
 - Treat explicit app, value, format, and final-state requirements as mandatory.
 
-# Task Completion Checklist
-- On step 1, derive a short, high-level checklist of the conditions required by the original instruction.
-- Begin `thought` on every turn with that checklist. Use one `[ ]` or `[x]` line per condition, carry unchecked items forward, and check an item only when the execution evidence shows it is satisfied.
-- Use `TERMINATE` only when every checklist item is `[x]`; otherwise continue or use `INFEASIBLE` if an unchecked condition is objectively impossible.
-
 # Action Types
 ## gui_action
 Execute a visible interaction using one of these forms:
 - `pyautogui.click(x, y)`
 - `pyautogui.doubleClick(x, y)`
-- `pyautogui.moveTo(x, y); pyautogui.dragTo(x, y, duration=seconds)`
+- `pyautogui.dragTo(x, y, duration=seconds)`
 - `pyautogui.swipe(x1, y1, x2, y2, duration=seconds)`
 - `pyautogui.swipeUp(...)`, `pyautogui.swipeDown(...)`, `pyautogui.swipeLeft(...)`, or `pyautogui.swipeRight(...)`
 - `pyautogui.write(text)` or `pyautogui.typewrite(text)`
@@ -280,7 +340,7 @@ must end with exactly one JSON object:
 
 ```json
 {
-  "thought": "[ ] First required condition\n[ ] Second required condition\nBrief reasoning grounded in the current Android screenshot and previous result.",
+  "thought": "Brief reasoning grounded in the current Android screenshot and previous result.",
   "subgoal": "A meaningful phase-level objective, or 'continue' to keep the active subgoal",
   "actions": [
     "pyautogui.click(540, 1200) # tap the visible target"
@@ -290,12 +350,11 @@ must end with exactly one JSON object:
 
 Rules:
 - The JSON object must contain `thought`, `subgoal`, and a non-empty `actions` list.
-- `thought` must begin with the complete current task completion checklist. Derive it on step 1 and carry it forward with evidence-based `[ ]`/`[x]` updates on every later step.
 - `subgoal` must be a phase-level objective, not a tap/swipe/type/menu action. Use `continue` while the next action still pursues the current stage.
 - Each action must be one of:
   - a `pyautogui...` action listed in the action types
   - `WAIT`
-  - `TERMINATE`, only when every task completion checklist item is `[x]`; it is forbidden while any item remains `[ ]`
+  - `TERMINATE`, when the active completion target is satisfied
   - `INFEASIBLE`, only when the task is objectively impossible
 - Do not output bare mobile action aliases such as `swipe_up()`, `swipeDown()`, `tap()`, or `long_press()`.
 - Prefer one meaningful interaction per action item.
@@ -334,11 +393,6 @@ NO_API_GLOBAL_PLANNER_PROMPT = """You are an expert in GUI interaction and execu
 - Reassess the best channel from the current screenshot, execution history, and runtime feedback. Do not continue using a channel merely because the preceding action used it.
 - Treat an explicitly requested app, feature, or method as part of the required result. A shortcut or helper tool may improve accuracy, but it does not replace evidence that the requested method was actually used.
 
-# Task Completion Checklist
-- On step 1, derive a short, high-level checklist of the conditions required by the original instruction.
-- Begin `thought` on every turn with that checklist. Use one `[ ]` or `[x]` line per condition, carry unchecked items forward, and check an item only when the execution evidence shows it is satisfied.
-- Use `TERMINATE` only when every checklist item is `[x]`; otherwise continue or use `INFEASIBLE` if an unchecked condition is objectively impossible.
-
 # Action Types
 ## gui_action
 Execute pyautogui code against the visible GUI. Use this when the task should be completed through visible interface interactions. Represent it as a bare `pyautogui...` action string.
@@ -347,16 +401,16 @@ Execute pyautogui code against the visible GUI. Use this when the task should be
 Wait for async operations to complete and observe UI changes. Represent it as the exact action string `WAIT`.
 
 ## bash_execution
-Execute execution-side automation through the `bash_execution` tool. This is a historical tool name: on Linux, output Bash commands or Python scripts; on Windows, output Python code snippets executed in the Windows guest. Use this when file-side editing, inspection, or automation is more reliable than GUI interaction. Follow the platform-specific skill section for paths, commands, and examples. Represent it as a bare command/code action string.
+Execute execution-side automation through the `bash_execution` tool. This is a historical tool name. On Linux, output Bash commands or Python scripts. On Windows, output Python code snippets executed in the Windows guest. Use this when file-side editing, inspection, or automation is more reliable than GUI interaction. Follow the platform-specific skill section for paths, commands, and examples. Represent it as a bare command/code action string.
 
 ## termination
-Request task completion only when every item in the task completion checklist is `[x]`. Represent completion as the exact action string `TERMINATE` and include the fully checked checklist and its supporting evidence in `thought`.
+Output `TERMINATE` according to the active completion mode. Briefly cite the supporting evidence in `thought`.
 
 ## infeasible
 Declare that the task is objectively impossible to complete. Represent it as the exact action string `INFEASIBLE`.
-- Some tasks may be infeasible by design. If required capabilities, variables, or app features are unavailable, use `INFEASIBLE` instead of `TERMINATE` and explain the blocker in `thought`.
+- Some tasks may be infeasible by design. Use `INFEASIBLE` when required capabilities, variables, or app features are unavailable. Explain the blocker in `thought`.
 - Treat explicit app, method, source, target, format, variable, and final-state constraints as required. Do not satisfy a similar task through a workaround and claim completion.
-- Do not infer missing required parameters; verify them if possible, otherwise use `INFEASIBLE`.
+- Verify missing required parameters when possible. Use `INFEASIBLE` when they cannot be obtained.
 
 # Disabled Channels
 The api action channel is disabled. Do not output Class.method(...) actions.
@@ -380,7 +434,7 @@ Why:
 
 ```json
 {
-    "thought": "[ ] First required condition\n[ ] Second required condition\nBrief reasoning about the chosen strategy and current action, grounded in current evidence.",
+    "thought": "Brief reasoning about the chosen strategy and current action, grounded in current evidence.",
     "subgoal": "Meaningful phase-level objective for the current stage of work, or 'continue' to keep the current one",
     "actions": [
         "pyautogui.click(695, 514) # click the radio button next to Microsoft Bing",
@@ -397,8 +451,7 @@ Field guide:
 - If you list candidates, keep them short and plain text only. Do not put JSON, code blocks, or extra headings inside candidate text.
 - End your response with exactly one final JSON object.
 - The final JSON object must contain `thought`, `subgoal`, and `actions`.
-- `thought` must begin with the complete current task completion checklist, carried forward with evidence-based `[ ]`/`[x]` updates on every turn.
-- `subgoal`: a phase-level objective for a coherent stage, not an action title or method. Avoid labels like "Open menu", "Click link", "Scroll to inspect", or "Run script"; prefer "Navigate to the target page", "Update the spreadsheet", or "Verify the result".
+- `subgoal`: a phase-level objective for a coherent stage. Use labels such as "Navigate to the target page", "Update the spreadsheet", or "Verify the result". Avoid action labels such as "Open menu", "Click link", "Scroll to inspect", or "Run script".
 - Use `continue` while the next action still pursues, verifies, or strengthens evidence for the current subgoal. Start a new subgoal only when the target state changes or the current stage is blocked.
 - `actions` must be a non-empty ordered list. The environment changes after each action, so plan them in execution order.
 - Prefer one meaningful interaction per action item. Even though some action strings can contain multiple low-level operations, you should usually split sequential interactions into separate `actions` items for clarity and better replanning.
@@ -406,12 +459,12 @@ Field guide:
   - a bare `pyautogui...` string for GUI actions
   - a bare command/code string for `bash_execution`
   - the string `WAIT` for `wait`
-  - the string `TERMINATE` only when every task completion checklist item is `[x]`; if any item is `[ ]`, `TERMINATE` is forbidden
+  - the string `TERMINATE` when the active completion target is satisfied
   - the string `INFEASIBLE` only when the task is objectively impossible, with the blocker reason explained in `thought`
 - Bash example:
 ```json
 {
-  "thought": "[ ] Locate the target workbook\n[ ] Apply the requested workbook change\nLocate the exact workbook before editing it.",
+  "thought": "Locate the exact workbook before editing it.",
   "subgoal": "Locate the target workbook",
   "actions": [
     "find /home/user -type f -name '*.xlsx' 2>/dev/null | head -20"
@@ -430,7 +483,7 @@ The relevant setting is visible in the UI and can be changed through direct inte
 
 ```json
 {
-  "thought": "[ ] Set Bing as the default search engine\nOpen the visible browser setting and choose Bing through the interface.",
+  "thought": "Open the visible browser setting and choose Bing through the interface.",
   "subgoal": "Set Bing as the default search engine",
   "actions": [
     "pyautogui.click(695, 514) # click the radio button next to Microsoft Bing",
@@ -442,7 +495,7 @@ The relevant setting is visible in the UI and can be changed through direct inte
 - Termination example:
 ```json
 {
-  "thought": "[x] Required setting is enabled and remains enabled\n[x] Requested output was created with the exact required value\nEvery task completion condition is satisfied by the execution history and current state.",
+  "thought": "The execution evidence satisfies the active completion target.",
   "subgoal": "Verify task completion",
   "actions": [
     "TERMINATE"
@@ -453,7 +506,7 @@ The relevant setting is visible in the UI and can be changed through direct inte
 - Infeasible example:
 ```json
 {
-  "thought": "[ ] Complete the required operation in the unavailable app\nThe requested result cannot be completed because the required app or capability is unavailable in the current environment.",
+  "thought": "The requested result cannot be completed because the required app or capability is unavailable in the current environment.",
   "subgoal": "Confirm the blocker",
   "actions": [
     "INFEASIBLE"
@@ -468,7 +521,7 @@ Return exactly one final JSON object and no candidate strategy list.
 Use this exact structure:
 ```json
 {
-    "thought": "[ ] First required condition\n[ ] Second required condition\nBrief reasoning about the chosen strategy and current action, grounded in current evidence.",
+    "thought": "Brief reasoning about the chosen strategy and current action, grounded in current evidence.",
     "subgoal": "Meaningful phase-level objective for the current stage of work, or 'continue' to keep the current one",
     "actions": [
         "pyautogui.click(695, 514) # click the radio button next to Microsoft Bing",
@@ -481,8 +534,7 @@ Field guide:
 - The final JSON object is the only executable output.
 - End your response with exactly one final JSON object.
 - The final JSON object must contain `thought`, `subgoal`, and `actions`.
-- `thought` must begin with the complete current task completion checklist, carried forward with evidence-based `[ ]`/`[x]` updates on every turn.
-- `subgoal`: a phase-level objective for a coherent stage, not an action title or method. Avoid labels like "Open menu", "Click link", "Scroll to inspect", or "Run script"; prefer "Navigate to the target page", "Update the spreadsheet", or "Verify the result".
+- `subgoal`: a phase-level objective for a coherent stage. Use labels such as "Navigate to the target page", "Update the spreadsheet", or "Verify the result". Avoid action labels such as "Open menu", "Click link", "Scroll to inspect", or "Run script".
 - Use `continue` while the next action still pursues, verifies, or strengthens evidence for the current subgoal. Start a new subgoal only when the target state changes or the current stage is blocked.
 - `actions` must be a non-empty ordered list. The environment changes after each action, so plan them in execution order.
 - Prefer one meaningful interaction per action item. Even though some action strings can contain multiple low-level operations, you should usually split sequential interactions into separate `actions` items for clarity and better replanning.
@@ -491,7 +543,7 @@ Field guide:
   - a bare `Class.method(...)` string for API calls
   - a bare command/code string for `bash_execution`
   - the string `WAIT` for `wait`
-  - the string `TERMINATE` only when every task completion checklist item is `[x]`; if any item is `[ ]`, `TERMINATE` is forbidden
+  - the string `TERMINATE` when the active completion target is satisfied
   - the string `INFEASIBLE` only when the task is objectively impossible, with the blocker reason explained in `thought`
 - Use exactly one API call per action item.
 """
@@ -514,7 +566,7 @@ Why:
 
 ```json
 {
-    "thought": "[ ] First required condition\n[ ] Second required condition\nBrief reasoning about the chosen action, grounded in current evidence.",
+    "thought": "Brief reasoning about the chosen action, grounded in current evidence.",
     "subgoal": "Meaningful phase-level objective for the current stage of work, or 'continue' to keep the current one",
     "action": "pyautogui.click(695, 514) # click the radio button next to Microsoft Bing"
 }
@@ -527,15 +579,14 @@ Field guide:
 - If one approach is clearly dominant, output just 1 candidate.
 - If you list candidates, keep them short and plain text only. Do not put JSON, code blocks, or extra headings inside candidate text.
 - The final JSON object must contain `thought`, `subgoal`, and `action`.
-- `thought` must begin with the complete current task completion checklist, carried forward with evidence-based `[ ]`/`[x]` updates on every turn.
-- `subgoal`: a phase-level objective for a coherent stage, not an action title or method. Avoid labels like "Open menu", "Click link", "Scroll to inspect", or "Run script"; prefer "Navigate to the target page", "Update the spreadsheet", or "Verify the result".
+- `subgoal`: a phase-level objective for a coherent stage. Use labels such as "Navigate to the target page", "Update the spreadsheet", or "Verify the result". Avoid action labels such as "Open menu", "Click link", "Scroll to inspect", or "Run script".
 - Use `continue` while the next action still pursues, verifies, or strengthens evidence for the current subgoal. Start a new subgoal only when the target state changes or the current stage is blocked.
 - `action` must be one action string. It should be one of:
   - a bare `pyautogui...` string for GUI actions
   - a bare `Class.method(...)` string for API calls
   - a bare command/code string for `bash_execution`
   - the string `WAIT` for `wait`
-  - the string `TERMINATE` only when every task completion checklist item is `[x]`; if any item is `[ ]`, `TERMINATE` is forbidden
+  - the string `TERMINATE` when the active completion target is satisfied
   - the string `INFEASIBLE` only when the task is objectively impossible, with the blocker reason explained in `thought`
 - Use exactly one API call per action item.
 - End your response with exactly one final JSON object.
@@ -547,7 +598,7 @@ You may think through the next action briefly before the final answer, but the e
 Use this exact structure:
 ```json
 {
-    "thought": "[ ] First required condition\n[ ] Second required condition\nBrief reasoning about the chosen action, grounded in current evidence.",
+    "thought": "Brief reasoning about the chosen action, grounded in current evidence.",
     "action": "pyautogui.click(695, 514) # click the radio button next to Microsoft Bing"
 }
 ```
@@ -555,13 +606,12 @@ Use this exact structure:
 Field guide:
 - The final JSON object is the only executable output.
 - The final JSON object has exactly these fields: `thought` and `action`.
-- `thought` must begin with the complete current task completion checklist, carried forward with evidence-based `[ ]`/`[x]` updates on every turn.
 - `action` must be one action string. It should be one of:
   - a bare `pyautogui...` string for GUI actions
   - a bare `Class.method(...)` string for API calls
   - a bare command/code string for `bash_execution`
   - the string `WAIT` for `wait`
-  - the string `TERMINATE` only when every task completion checklist item is `[x]`; if any item is `[ ]`, `TERMINATE` is forbidden
+  - the string `TERMINATE` when the active completion target is satisfied
   - the string `INFEASIBLE` only when the task is objectively impossible, with the blocker reason explained in `thought`
 - Use exactly one API call per action item.
 - For a shell action, put only the command in `action`. Correct: `"action": "find /home/user -type f | head"`. Incorrect: `"action": "bash_execution(find ...)"` or `"action": "bash_execution: find ..."`.
@@ -573,7 +623,7 @@ You may think through the next action briefly before the final answer, but the e
 Use this exact structure:
 ```json
 {
-    "thought": "[ ] First required condition\n[ ] Second required condition\nBrief reasoning about the chosen action, grounded in current evidence.",
+    "thought": "Brief reasoning about the chosen action, grounded in current evidence.",
     "action": "pyautogui.click(695, 514) # click the radio button next to Microsoft Bing"
 }
 ```
@@ -581,19 +631,18 @@ Use this exact structure:
 Field guide:
 - The final JSON object is the only executable output.
 - The final JSON object has exactly these fields: `thought` and `action`.
-- `thought` must begin with the complete current task completion checklist, carried forward with evidence-based `[ ]`/`[x]` updates on every turn.
 - `action` must be one action string. It should be one of:
   - a bare `pyautogui...` string for GUI actions
   - a bare command/code string for `bash_execution`
   - the string `WAIT` for `wait`
-  - the string `TERMINATE` only when every task completion checklist item is `[x]`; if any item is `[ ]`, `TERMINATE` is forbidden
+  - the string `TERMINATE` when the active completion target is satisfied
   - the string `INFEASIBLE` only when the task is objectively impossible, with the blocker reason explained in `thought`
 - For a shell action, put only the command in `action`. Correct: `"action": "find /home/user -type f | head"`. Incorrect: `"action": "bash_execution(find ...)"`, `"action": "bash_execution: find ..."`, or `"action": "bash_execution find ..."`.
 
 - Shell example:
 ```json
 {
-  "thought": "[ ] Locate the target workbook\n[ ] Apply the requested workbook change\nLocate the exact workbook before editing it.",
+  "thought": "Locate the exact workbook before editing it.",
   "action": "find /home/user -type f -name '*.xlsx' 2>/dev/null | head -20"
 }
 ```
@@ -633,7 +682,7 @@ Rules:
 - Do not judge subgoal status or long-horizon task completion.
 - Keep the summary concise and concrete.
 - For bash/API output, preserve exact task-relevant identifiers from the output, especially paths, filenames, URLs, IDs, sheet/table/column names, window titles, counts, and selected values.
-- Use the task instruction and current subgoal to decide which output details are key; do not replace needed paths or IDs with generic wording.
+- Use the task instruction and current subgoal to decide which output details are key. Preserve needed paths and IDs exactly.
 """
 
 NO_L2S_STEP_ABSTRACTION_PROMPT = """Compare the latest observations and summarize what happened in 1-2 concise sentences.
@@ -648,7 +697,7 @@ Rules:
 - Do not judge long-horizon task completion.
 - Keep the summary concise and concrete.
 - For bash/API output, preserve exact task-relevant identifiers from the output, especially paths, filenames, URLs, IDs, sheet/table/column names, window titles, counts, and selected values.
-- Use the task instruction to decide which output details are key; do not replace needed paths or IDs with generic wording.
+- Use the task instruction to decide which output details are key. Preserve needed paths and IDs exactly.
 """
 
 CONTEXT_REFINEMENT_PROMPT = """Analyze task execution progress and provide guidance.

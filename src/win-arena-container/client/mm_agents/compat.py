@@ -233,6 +233,7 @@ def _run_locallstc(env, example, args, example_result_dir) -> float:
             "wo_global_facts": args.wo_global_facts,
             "wo_jev_memory": args.wo_jev_memory,
             "wo_jev_api": args.wo_jev_api,
+            "wo_subtask": args.wo_subtask,
         }
     else:
         final_verification_options = {"wo_fv": args.wo_fv}

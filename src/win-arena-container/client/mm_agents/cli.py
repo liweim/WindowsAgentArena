@@ -294,11 +294,13 @@ def _add_locallstc_options(
 
 def _add_locallstc2_options(parser: argparse.ArgumentParser) -> None:
     _add_locallstc_options(parser, include_wo_fv=False)
+    parser.set_defaults(visual_grounder_model="uitars-1.5-7b")
     for option in (
         "wo_global_facts",
         "wo_jev_memory",
         "wo_jev_api",
         "wo_jev",
+        "wo_subtask",
     ):
         parser.add_argument(
             "--{}".format(option),
@@ -409,6 +411,7 @@ def _add_tars_options(parser: argparse.ArgumentParser) -> None:
         screen_height=720,
         sleep_after_execution=0.5,
         model="qwen3.8-27b",
+        visual_grounder_model="uitars-1.5-7b",
         result_dir="./results/tars_qwen3.8-27b",
     )
 
@@ -420,8 +423,8 @@ def _add_os_symphony_options(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--symphony-search-token-file", default=None)
     parser.add_argument("--symphony-search-smoke", action="store_true",
                         help="Before the task, open/close the Windows search browser and save a screenshot")
-    parser.add_argument("--symphony-grounder-model", default="uitars-1.5-7b",
-                        choices=["uitars-1.5-7b"])
+    parser.add_argument("--symphony-grounder-model", default="gta1-7b",
+                        choices=["gta1-7b", "uitars-1.5-7b"])
     parser.add_argument("--symphony-grounding-space", choices=["normalized", "resized"],
                         default="normalized",
                         help="UI-TARS coordinate contract: 0..1000 or smart-resized image pixels")

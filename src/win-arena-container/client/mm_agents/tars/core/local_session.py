@@ -55,15 +55,15 @@ class LLMClient:
                     continue
                 del props[coordinate]
                 props[target] = {"type": "string", "description":
-                                 "Precise visual description of the target element for GTA1."}
+                                 "Precise visual description of the target element for UI-TARS."}
                 schema["required"] = [target if key == coordinate else key
                                       for key in schema.get("required", [])]
                 tool["description"] = {
-                    "click": "Click the described target using GTA1; supports click count, button and modifier keys.",
-                    "type": "Type text; optionally describe a target field to focus using GTA1 first.",
-                    "scroll": "Scroll over the described target using GTA1. Positive clicks: up; negative: down; shift: horizontal.",
-                    "drag_and_drop": "Drag from start_target to end_target, both described visually and located by GTA1.",
-                }.get(tool["name"], "Act on the described GUI target located by GTA1.")
+                    "click": "Click the described target using UI-TARS; supports click count, button and modifier keys.",
+                    "type": "Type text; optionally describe a target field to focus using UI-TARS first.",
+                    "scroll": "Scroll over the described target using UI-TARS. Positive clicks: up; negative: down; shift: horizontal.",
+                    "drag_and_drop": "Drag from start_target to end_target, both described visually and located by UI-TARS.",
+                }.get(tool["name"], "Act on the described GUI target located by UI-TARS.")
 
     def reset(self):
         self.messages = []
@@ -90,12 +90,37 @@ class LLMClient:
                                              ensure_ascii=False, default=str),
                                   images=[image] if image else None)
 
+    @staticmethod
+    def _parse_uitars_grounding_point(response, width, height):
+        """Parse UI-TARS's pixel-space point using the LocalLSTC2 contract."""
+        import re
+
+        numericals = re.findall(r"\d+", str(response or ""))
+        if len(numericals) < 2:
+            raise ValueError(
+                f"UI-TARS grounding did not return a coordinate pair: {response!r}"
+            )
+        point = (int(numericals[0]), int(numericals[1]))
+        return normalize_grounded_point(point, width, height)
+
+    def _ground_uitars_point(self, target, image):
+        prompt = (
+            f"Query:{target}\n"
+            "Output only the coordinate of one point in your response.\n"
+        )
+        response = self.grounding_adapter(
+            prompt,
+            image,
+            system_prompt="You are a helpful assistant.",
+        )
+        return self._parse_uitars_grounding_point(response, *image.size)
+
     def _ground(self, call):
         inp = call["input"]
         props = next(tool for tool in self.tools if tool["name"] == call["name"])["input_schema"]["properties"]
         for coordinate, target in TARGETS:
             if coordinate in inp:
-                raise ValueError("GUI coordinates must come from GTA1; supply target descriptions")
+                raise ValueError("GUI coordinates must come from the visual grounder; supply target descriptions")
             if target not in props or target not in inp:
                 continue
             if not isinstance(inp[target], str) or not inp[target].strip():
@@ -103,7 +128,10 @@ class LLMClient:
             if not self.latest_image:
                 raise RuntimeError("Cannot ground without a screenshot")
             if self.grounder is None:
-                self.grounder = AbstractLLM(os.getenv("TARS_GROUNDER_MODEL", "gta1-7b"), temperature=0)
+                self.grounder = AbstractLLM(
+                    os.getenv("TARS_GROUNDER_MODEL", "uitars-1.5-7b"),
+                    temperature=0,
+                )
                 self.grounding_adapter = SingleCallGroundingAdapter(self.grounder)
                 if hasattr(self.grounder, "client"):
                     self.grounder.client.cua_trace_callback = lambda stage, payload: dump_model_trace(
@@ -114,13 +142,17 @@ class LLMClient:
                             call["name"], inp[target], image.size)
                 # The existing role handlers expect coordinates in this space.
                 image = image.resize((1280, 720))
-                if self.grounder.model_name.lower().startswith("gta1"):
+                if "uitars" in self.grounder.model_name.lower():
+                    point = self._ground_uitars_point(inp[target], image)
+                    reason = "UI-TARS point grounding"
+                elif self.grounder.model_name.lower().startswith("gta1"):
                     point, reason = self.grounder.call_cua(inp[target], image,
                         environment="windows", screen_width=1280, screen_height=720)
                 else:
                     point = self.grounding_adapter.ground_point(inp[target], image)
                     reason = "Separate image-based grounding call"
-                logger.info("Grounding response: point=%s trace=%s", point,
+                logger.info("Grounding response: model=%s point=%s trace=%s",
+                            self.grounder.model_name, point,
                             getattr(getattr(self.grounder, "client", None), "last_gta1_trace", None))
             inp[coordinate] = normalize_grounded_point(point)
 

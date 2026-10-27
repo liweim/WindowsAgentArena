@@ -14,8 +14,8 @@ when_to_use: Load when Long-to-Short Planning is disabled and the planner should
 - Every grounded mouse-position operation should carry a local `# comment`. If one action string contains multiple grounded mouse-position operations, provide per-operation comments rather than relying on `thought`.
 - If a text field is clearly identifiable, combine focus and typing in one `gui_action`.
 - Use `WAIT` only for real async delays; do not replace ordinary observation steps with blind waiting.
-- Use GUI results as evidence to update the task completion checklist, but do not treat GUI success as whole-task completion while any checklist item remains `[ ]`.
-- Use `TERMINATE` only when every task completion checklist item is `[x]`. Gather the evidence needed to decide checklist status, while avoiding unrelated or duplicate verification actions.
+- Use GUI results as evidence for the active completion target.
+- Use `TERMINATE` only according to the completion mode in the planner prompt.
 
 ### GUI action schema
 

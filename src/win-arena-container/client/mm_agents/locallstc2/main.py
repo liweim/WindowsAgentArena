@@ -11,7 +11,7 @@ import hashlib
 import textwrap
 import tokenize
 from typing import Optional, Dict, List, Tuple, Any
-from mm_agents.llm import AbstractLLM
+from mm_agents.llm import AbstractLLM, encode_image
 from mm_agents.llm import (
     DIRECT_COORDINATE_GROUNDING_PROMPT,
     DirectCoordinateActionAdapter,
@@ -26,9 +26,12 @@ from mm_agents.utils import postprocess_action
 from mm_agents.locallstc2.prompt import (
     ANDROID_GLOBAL_PLANNER_PROMPT,
     ANDROID_CONTEXT_REFINEMENT_PROMPT,
+    ANDROID_FINAL_VERIFICATION_PROMPT,
     ANDROID_PLANNER_RESPONSE_FORMAT_PROMPT,
     ANDROID_STEP_ABSTRACTION_PROMPT,
+    COMPLETION_CRITERIA_PROMPT,
     CONTEXT_REFINEMENT_PROMPT,
+    FINAL_VERIFICATION_PROMPT,
     FIX_RESPONSE_PROMPT,
     GLOBAL_PLANNER_PROMPT,
     NO_AL_PLANNER_RESPONSE_FORMAT_PROMPT,
@@ -37,9 +40,12 @@ from mm_agents.locallstc2.prompt import (
     NO_API_PLANNER_RESPONSE_FORMAT_PROMPT,
     NO_CP_PLANNER_RESPONSE_FORMAT_PROMPT,
     NO_L2S_PLANNER_RESPONSE_FORMAT_PROMPT,
+    NO_L2S_FINAL_VERIFICATION_PROMPT,
     NO_L2S_STEP_ABSTRACTION_PROMPT,
+    NO_SUBTASK_EXECUTION_PROMPT,
     PLANNER_RESPONSE_FORMAT_PROMPT,
     STEP_ABSTRACTION_PROMPT,
+    SUBTASK_EXECUTION_PROMPT,
     WO_PS_PLANNER_RESPONSE_FORMAT_PROMPT,
 )
 from PIL import Image
@@ -113,7 +119,7 @@ class LocalLSTC:
         self,
         env,
         global_planner_model: str = "gpt-5",
-        visual_grounder_model: str = "gta1-7b",
+        visual_grounder_model: str = "uitars-1.5-7b",
         visual_grounder_scale: float = 1.0,
         state_manager_model: str = "gpt-5-mini",
         client_password: str = "password",
@@ -144,6 +150,7 @@ class LocalLSTC:
         wo_global_facts: bool = False,
         wo_jev_memory: bool = False,
         wo_jev_api: bool = False,
+        wo_subtask: bool = False,
         thinking_token_budget: Optional[int] = None,
         temperature: float = 1,
         seed: Optional[int] = 42,
@@ -198,6 +205,7 @@ class LocalLSTC:
         self.wo_global_facts = bool(wo_global_facts)
         self.wo_jev_memory = bool(wo_jev_memory)
         self.wo_jev_api = bool(wo_jev_api)
+        self.wo_subtask = bool(wo_subtask)
         self.api_enabled = not self.wo_l2s
         self.enable_thinking = not wo_think
         self.thinking_token_budget = thinking_token_budget
@@ -255,6 +263,10 @@ class LocalLSTC:
         self.operation_count = 0
         self.operations_dir = ""
         self.action_logs = []
+        self.completion_criteria: Tuple[str, ...] = ()
+        self.completion_criteria_index = 0
+        self.completed_completion_criteria: List[str] = []
+        self.subtask_action_log_start_index = 0
         self.global_facts: Dict[str, str] = {}
         self.subgoal_anchors: List[Dict[str, Any]] = []
         self.last_error_feedback = None
@@ -271,6 +283,7 @@ class LocalLSTC:
         self.current_subgoal = ""
         self.consecutive_stall_count = 0
         self.current_step_context_refinement = False
+        self.current_step_final_verification = False
         self.consecutive_stall_count = 0
         self.last_execution_status = "continue"
         self.last_recovery_feedback_event = None
@@ -361,6 +374,75 @@ class LocalLSTC:
         with open(self.prompt_dump_path, "w", encoding="utf-8") as f:
             f.write("\n".join(header))
 
+    def _generate_completion_criteria(self) -> Tuple[str, ...]:
+        """Generate the task's immutable final verification goals once."""
+        messages = [
+            {"role": "system", "content": COMPLETION_CRITERIA_PROMPT},
+            {"role": "user", "content": self.task_instruction},
+        ]
+        last_error: Optional[Exception] = None
+        for attempt in range(self.max_parse_retries):
+            self._dump_prompt_entry(
+                stage="completion_criteria",
+                payload={"messages": messages},
+                step=0,
+                attempt=attempt + 1,
+            )
+            started_at = time.perf_counter()
+            try:
+                response = self.global_planner_llm(
+                    messages,
+                    enable_thinking=self.enable_thinking,
+                    thinking_token_budget=self.thinking_token_budget,
+                )
+            finally:
+                latency = time.perf_counter() - started_at
+                self._planner_task_latency_seconds += latency
+                self.logger.info(
+                    "[latency] component=completion_criteria seconds=%.6f",
+                    latency,
+                )
+            self._dump_prompt_entry(
+                stage="completion_criteria_response",
+                payload=response,
+                step=0,
+                attempt=attempt + 1,
+            )
+            try:
+                payload = json.loads(
+                    repair_json(self._extract_final_planner_json(str(response or "")))
+                )
+                raw_criteria = payload.get("criteria") if isinstance(payload, dict) else None
+                if not isinstance(raw_criteria, list) or not raw_criteria:
+                    raise ValueError("criteria must be a non-empty list")
+                criteria: List[str] = []
+                seen = set()
+                for item in raw_criteria:
+                    criterion = re.sub(r"\s+", " ", str(item or "").strip())
+                    if not criterion or criterion in seen:
+                        continue
+                    seen.add(criterion)
+                    criteria.append(criterion)
+                if not criteria:
+                    raise ValueError("criteria contains no usable goals")
+                if len(criteria) > 12:
+                    raise ValueError("criteria must contain at most 12 high-level goals")
+                result = tuple(criteria)
+                self.logger.info(
+                    "[completion_criteria] %s",
+                    json.dumps(result, ensure_ascii=False),
+                )
+                return result
+            except Exception as exc:
+                last_error = exc
+                self.logger.warning(
+                    "Invalid completion criteria response (attempt %s/%s): %s",
+                    attempt + 1,
+                    self.max_parse_retries,
+                    exc,
+                )
+        raise ValueError(f"Failed to generate completion criteria: {last_error}")
+
     def _reset_execution_state(self) -> None:
         self.operation_count = 0
         self._jev_model_name = ""
@@ -372,6 +454,10 @@ class LocalLSTC:
         self._jev_memory_cache_subgoal = ""
         self._jev_memory_start_step = None
         self.action_logs = []
+        self.completion_criteria = ()
+        self.completion_criteria_index = 0
+        self.completed_completion_criteria = []
+        self.subtask_action_log_start_index = 0
         self.global_facts = {}
         self.subgoal_anchors = []
         self.last_full_summary = None
@@ -382,6 +468,7 @@ class LocalLSTC:
         self.current_proposed_subgoal = ""
         self.consecutive_stall_count = 0
         self.current_step_context_refinement = False
+        self.current_step_final_verification = False
         self.consecutive_stall_count = 0
         self.last_execution_status = "continue"
         self.last_recovery_feedback_event = None
@@ -392,6 +479,29 @@ class LocalLSTC:
         self.current_foreground_window_title = ""
         self.current_foreground_app = ""
         self.pending_api_image = None
+        self.pending_api_image_mime_type = "image/png"
+
+    def _start_fresh_subtask_context(self) -> None:
+        """Hide prior execution history but retain durable cross-goal facts."""
+        self.subtask_action_log_start_index = len(self.action_logs)
+        self.subgoal_anchors = []
+        self.current_subgoal = ""
+        self.current_proposed_subgoal = ""
+        self.last_full_summary = None
+        self.last_summary_log_index = self.subtask_action_log_start_index
+        self.last_refinement_log_count = self.subtask_action_log_start_index
+        self.last_refinement_step = self.current_step_id
+        self.last_execution_status = "continue"
+        self.last_recovery_feedback_event = None
+        self.last_recovery_feedback = None
+        self.last_error_feedback = None
+        self.consecutive_stall_count = 0
+        self.current_step_context_refinement = False
+        self.current_step_final_verification = False
+        self.pending_api_image = None
+        self._jev_memory_cache_initialized = False
+        self._jev_memory_cache_subgoal = ""
+        self._jev_memory_start_step = None
         self.pending_api_image_mime_type = "image/png"
 
     def _extract_foreground_window_context(self) -> Tuple[str, str, str]:
@@ -719,7 +829,8 @@ print(output)
 
     def _count_recent_nonprogress_steps(self, tool_type: Optional[str] = None, window: int = 3) -> int:
         count = 0
-        for log in reversed(self.action_logs[-max(1, int(window)):]):
+        active_logs = self.action_logs[self.subtask_action_log_start_index:]
+        for log in reversed(active_logs[-max(1, int(window)):]):
             if log.get("execution_status") not in {"error", "stall"}:
                 continue
             if tool_type and log.get("type") != tool_type:
@@ -732,7 +843,7 @@ print(output)
             return False
         if self._get_active_recovery_feedback():
             return True
-        recent_logs = self.action_logs[-2:]
+        recent_logs = self.action_logs[self.subtask_action_log_start_index:][-2:]
         return any(not log.get("execution_success", True) for log in recent_logs)
 
     def _get_active_recovery_feedback(self) -> str:
@@ -744,6 +855,11 @@ print(output)
         return [
             self._get_global_planner_prompt(),
             self._get_response_format_prompt(),
+            (
+                NO_SUBTASK_EXECUTION_PROMPT
+                if self.wo_subtask
+                else SUBTASK_EXECUTION_PROMPT
+            ),
         ]
 
     def _get_global_planner_prompt(self) -> str:
@@ -1247,6 +1363,8 @@ print(output)
     def _mark_current_step_event(self, field: str) -> None:
         if field == "context_refinement":
             self.current_step_context_refinement = True
+        elif field == "final_verification":
+            self.current_step_final_verification = True
         else:
             return
 
@@ -1258,8 +1376,7 @@ print(output)
     def _current_step_event_fields(self) -> Dict[str, bool]:
         return {
             "context_refinement": bool(getattr(self, "current_step_context_refinement", False)),
-            # Retain the field for consumers of older execution-log schemas.
-            "final_verification": False,
+            "final_verification": bool(getattr(self, "current_step_final_verification", False)),
         }
 
     def _ensure_action_log_event_defaults(self) -> None:
@@ -1268,6 +1385,164 @@ print(output)
             log.setdefault("final_verification", False)
             log.setdefault("evidence_mode", "raw" if self.wo_sa else "semantic")
             log.setdefault("state_routing_applied", self._state_routing_enabled())
+
+    def _record_termination_attempt(
+        self,
+        *,
+        step: int,
+        detail: str,
+        verification: str,
+        next_hint: str,
+        screenshot_file: str = "",
+        token_usage: Optional[Dict[str, Any]] = None,
+    ) -> None:
+        self.action_logs.append({
+            "step": step,
+            "type": "termination_attempt",
+            "execution_success": False,
+            "screenshot": screenshot_file,
+            "subgoal": self._step_abstraction_subgoal() or "Verify the current goal",
+            "execution_status": "stall",
+            "detail": detail,
+            "compact": self._build_compact_log_entry(
+                step=step,
+                tool_type="termination_attempt",
+                success=False,
+                detail=detail,
+                verification=verification,
+                next_hint=next_hint,
+            ),
+            "step_time": 0.0,
+            "token_usage": token_usage or {
+                "global_planner": self._zero_usage_entry(),
+                "visual_grounder": self._zero_usage_entry(),
+                "state_manager": self._zero_usage_entry(),
+                "total": self._zero_usage_entry(),
+            },
+            **self._current_step_event_fields(),
+        })
+
+    def _get_last_meaningful_tool(self) -> str:
+        for log in reversed(self.action_logs):
+            tool_type = str(log.get("type", "") or "")
+            if tool_type in {"bash_execution", "gui_action", API_TOOL}:
+                return tool_type
+        return ""
+
+    def _extract_task_open_path(self, task_config: dict) -> str:
+        for item in task_config.get("config", []) or []:
+            if str(item.get("type", "")).strip().lower() != "open":
+                continue
+            path = str((item.get("parameters") or {}).get("path", "") or "").strip()
+            if path:
+                return path
+        return ""
+
+    def _extract_task_window_name(self, task_config: dict) -> str:
+        evaluator = task_config.get("evaluator") or {}
+        for item in evaluator.get("postconfig", []) or []:
+            if str(item.get("type", "")).strip().lower() != "activate_window":
+                continue
+            window_name = str((item.get("parameters") or {}).get("window_name", "") or "").strip()
+            if window_name:
+                return window_name
+        return ""
+
+    def _maybe_reopen_office_file_before_final_verification(self, task_config: dict) -> None:
+        app_domains = {
+            self._normalize_skill_domain(domain)
+            for domain in (
+                self._extract_related_domains(task_config)
+                or getattr(self, "task_related_domains", [])
+                or []
+            )
+        }
+        if not (app_domains & {"libreoffice_calc", "libreoffice_writer", "libreoffice_impress"}):
+            return
+        if self._get_last_meaningful_tool() != "bash_execution":
+            return
+        file_path = self._extract_task_open_path(task_config)
+        window_name = self._extract_task_window_name(task_config)
+        if not file_path or not window_name:
+            self.logger.info(
+                "Skipping pre-final-verification office reopen: missing file_path=%s or window_name=%s",
+                bool(file_path),
+                bool(window_name),
+            )
+            return
+        self.logger.info(
+            "Pre-final-verification office reload: reopening %s after bash_execution-based file edits.",
+            file_path,
+        )
+        try:
+            self._setup_controller_setup([
+                {"type": "open", "parameters": {"path": file_path}},
+                {"type": "sleep", "parameters": {"seconds": 1.0}},
+            ])
+        except Exception as e:
+            self.logger.warning("Pre-final-verification office reload failed: %s", e)
+
+    def _run_final_verification(self, verification_targets: List[str]) -> Tuple[bool, str]:
+        latest_screenshot = self._wait_until_screenshot_available(timeout_seconds=1.5)
+        latest_screenshot_b64 = (
+            base64.b64encode(latest_screenshot).decode("utf-8") if latest_screenshot else ""
+        )
+        history_lines = [
+            self._render_compact_log(log)
+            for log in self.action_logs[self.subtask_action_log_start_index:]
+            if log.get("compact") or log.get("detail")
+        ]
+        if self.guest_platform == "android":
+            verification_prompt = ANDROID_FINAL_VERIFICATION_PROMPT
+        else:
+            verification_prompt = (
+                NO_L2S_FINAL_VERIFICATION_PROMPT
+                if not self._planner_subgoal_enabled()
+                else FINAL_VERIFICATION_PROMPT
+            )
+        targets_text = "\n".join(f"- {target}" for target in verification_targets)
+        verification_context = (
+            f"Original task:\n{self.task_instruction}\n\n"
+            f"Verification targets that must all be satisfied now:\n{targets_text}\n\n"
+        )
+        if self._planner_subgoal_enabled():
+            verification_context += f"Current subgoal:\n{self._step_abstraction_subgoal()}\n\n"
+        verification_context += "Current subtask execution history:\n" + (
+            "\n".join(history_lines) if history_lines else "None"
+        )
+        messages = [
+            {"role": "system", "content": verification_prompt},
+            {"role": "user", "content": verification_context},
+        ]
+        if latest_screenshot_b64:
+            messages.append({
+                "role": "user",
+                "content": [
+                    {"type": "input_text", "text": "Latest screenshot at this termination attempt:"},
+                    {"type": "input_image", "image_url": f"data:image/png;base64,{latest_screenshot_b64}"},
+                ],
+            })
+        else:
+            self.logger.warning("Final verification is proceeding without a latest screenshot.")
+
+        self._dump_prompt_entry(stage="final_verification", payload={"messages": messages})
+        response = self.state_manager_llm(
+            messages,
+            enable_thinking=False,
+            thinking_token_budget=self.thinking_token_budget,
+        )
+        self._dump_prompt_entry(stage="final_verification_response", payload=response)
+        result = str(response or "").strip()
+        match = re.fullmatch(r"(?is)(PASS|FAIL)\s*:\s*(\S(?:.*\S)?)", result)
+        if match:
+            status = match.group(1).upper()
+            reason = re.sub(r"\s+", " ", match.group(2)).strip()
+            return status == "PASS", reason
+        self.logger.warning(
+            "Final verification returned invalid text. Treating as fail. Response=%r",
+            response,
+        )
+        return False, "Final verifier returned an invalid response. Completion was not confirmed."
 
     def _build_subgoal_context_lines(self) -> List[str]:
         if not self._planner_subgoal_enabled():
@@ -1294,18 +1569,23 @@ print(output)
     ) -> List[str]:
         history_items: List[str] = []
 
+        active_logs = self.action_logs[self.subtask_action_log_start_index:]
         if start_step is not None:
             logs_to_use = [
                 log
-                for log in self.action_logs
+                for log in active_logs
                 if int(log.get("step", 0) or 0) >= int(start_step)
             ]
         elif self.last_full_summary:
             if include_summary:
                 history_items.append(self.last_full_summary)
-            logs_to_use = self.action_logs[self.last_summary_log_index:]
+            summary_offset = max(
+                self.last_summary_log_index,
+                self.subtask_action_log_start_index,
+            )
+            logs_to_use = self.action_logs[summary_offset:]
         else:
-            logs_to_use = self.action_logs
+            logs_to_use = active_logs
 
         for log in logs_to_use:
             if log.get("compact") or log.get("detail"):
@@ -1329,6 +1609,34 @@ print(output)
 
         if include_task_header:
             self._append_context_section(sections, "Task", self.task_instruction)
+            if self.wo_subtask:
+                criteria_text = "\n".join(
+                    f"- {criterion}" for criterion in self.completion_criteria
+                )
+                self._append_context_section(
+                    sections,
+                    "Verification goals (all required)",
+                    criteria_text,
+                )
+            elif self.completion_criteria_index < len(self.completion_criteria):
+                completed_criteria_text = "\n".join(
+                    f"- {criterion}"
+                    for criterion in self.completed_completion_criteria
+                )
+                self._append_context_section(
+                    sections,
+                    "Completed verification goals (keep satisfied; do not redo)",
+                    completed_criteria_text,
+                )
+                criterion = self.completion_criteria[self.completion_criteria_index]
+                self._append_context_section(
+                    sections,
+                    (
+                        "Current verification goal "
+                        f"({self.completion_criteria_index + 1}/{len(self.completion_criteria)})"
+                    ),
+                    criterion,
+                )
             foreground_lines = []
             if self.current_foreground_app:
                 foreground_lines.append(f"Foreground app: {self.current_foreground_app}")
@@ -1409,11 +1717,11 @@ print(output)
     def _maybe_refine_context(self, reason: str = "") -> None:
         if not self.wo_jev_memory:
             return
-        total_logs = len(self.action_logs)
-        if total_logs <= 0:
+        active_logs = self.action_logs[self.subtask_action_log_start_index:]
+        if not active_logs:
             return
 
-        current_end_step = int(self.action_logs[-1]["step"])
+        current_end_step = int(active_logs[-1]["step"])
         last_refinement_step = int(getattr(self, "last_refinement_step", 0) or 0)
         steps_since_refinement = current_end_step - last_refinement_step
         if steps_since_refinement < max(1, int(self.refine_period)):
@@ -1431,9 +1739,13 @@ print(output)
             reason = "forced"
 
         if self.last_full_summary:
-            logs_to_summarize = self.action_logs[self.last_summary_log_index:]
-            start_step = self.action_logs[0]["step"]
-            end_step = self.action_logs[-1]["step"]
+            summary_offset = max(
+                self.last_summary_log_index,
+                self.subtask_action_log_start_index,
+            )
+            logs_to_summarize = self.action_logs[summary_offset:]
+            start_step = active_logs[0]["step"]
+            end_step = active_logs[-1]["step"]
             summary = self._context_refinement(
                 logs_to_summarize,
                 start_step,
@@ -1441,14 +1753,14 @@ print(output)
                 previous_summary=self.last_full_summary,
             )
         else:
-            logs_to_summarize = self.action_logs
+            logs_to_summarize = active_logs
             start_step = logs_to_summarize[0]["step"]
             end_step = logs_to_summarize[-1]["step"]
             summary = self._context_refinement(logs_to_summarize, start_step, end_step)
 
         self.last_full_summary = summary
-        self.last_summary_log_index = total_logs
-        self.last_refinement_log_count = total_logs
+        self.last_summary_log_index = len(self.action_logs)
+        self.last_refinement_log_count = len(self.action_logs)
         self.last_refinement_step = end_step
         self._mark_current_step_event("context_refinement")
         self.logger.info(f"[refinement:{reason or 'periodic'}] {summary}")
@@ -1608,6 +1920,12 @@ print(output)
                 "Recovery feedback: the last tool execution failed.\n"
                 "Fix the concrete failure instead of repeating the same action."
                 + (f"\nError: {detail}" if detail else "")
+            )
+        if event_type == "termination_verification_failed":
+            return (
+                "Recovery feedback: final verification did not confirm the current verification goal.\n"
+                "Finish the missing state, verify it directly, and only then terminate again."
+                + (f"\nContext: {detail}" if detail else "")
             )
         return detail or "Recovery feedback: reassess the current subgoal and choose a different strategy."
 
@@ -2070,6 +2388,7 @@ print(output)
         self.logger.info(f"wo_ps: {self.wo_ps}")
         self.logger.info(f"wo_sa: {self.wo_sa}")
         self.logger.info(f"wo_sr: {self.wo_sr}")
+        self.logger.info(f"wo_subtask: {self.wo_subtask}")
         self.logger.info(
             "[ablation] wo_global_facts=%s wo_jev_memory=%s wo_jev_api=%s",
             str(self.wo_global_facts).lower(),
@@ -2103,6 +2422,7 @@ print(output)
         is_infeasible = False
         infeasible_reason = ""
         try:
+            self.completion_criteria = self._generate_completion_criteria()
             while self.operation_count < self.max_steps:
                 self.current_step_id = 0
                 self._jev_step_usage = self._zero_jev_usage_entry()
@@ -2202,6 +2522,7 @@ print(output)
                 self.last_recovery_feedback_event = None
                 self.current_step_id = self.operation_count + 1
                 self.current_step_context_refinement = False
+                self.current_step_final_verification = False
                 execution_result_text, terminal_status, terminal_message = self._execute_tool(decision, global_planner_usage)
                 self.operation_count += 1
                 
@@ -2223,15 +2544,126 @@ print(output)
 
                 if terminal_status == "termination":
                     step = self.current_step_id or (self.operation_count + 1)
-                    termination_execution_status = self._assign_unrouted_termination_status(decision)
+                    if self.completion_criteria_index >= len(self.completion_criteria):
+                        raise RuntimeError(
+                            "Planner returned TERMINATE without an active verification goal"
+                        )
+                    completed_goal = self.completion_criteria[self.completion_criteria_index]
+                    verification_targets = (
+                        list(self.completion_criteria)
+                        if self.wo_subtask
+                        else [completed_goal]
+                    )
+                    self._maybe_reopen_office_file_before_final_verification(task_config)
                     screenshot_file = f"step_{step}.png"
                     try:
                         screenshot = self.env.controller.get_screenshot()
                         with open(os.path.join(self.operations_dir, screenshot_file), "wb") as f:
                             f.write(screenshot)
                     except Exception as e:
-                        self.logger.warning(f"Failed to capture termination screenshot: {e}")
+                        self.logger.warning(
+                            "Failed to capture termination-attempt screenshot: %s", e
+                        )
                         screenshot_file = ""
+
+                    verification, verification_failure = self._run_final_verification(
+                        verification_targets
+                    )
+                    self._mark_current_step_event("final_verification")
+                    if not verification:
+                        if self._state_routing_enabled():
+                            self._apply_step_log_status(
+                                step=step,
+                                subgoal=decision.get(
+                                    "subgoal", self.current_subgoal or "Verify the current goal"
+                                ),
+                                status="stall",
+                            )
+                        self.consecutive_stall_count += 1
+                        self.last_execution_status = "stall"
+                        failure_detail = (
+                            "Final verification failed for the current subtask and counted as "
+                            f"stall ({self.consecutive_stall_count}/3 consecutive stalls).\n"
+                            f"Verifier findings:\n{verification_failure}"
+                        )
+                        self._record_termination_attempt(
+                            step=step,
+                            detail=terminal_message or "TERMINATE",
+                            verification=(
+                                "Final verification did not confirm the current subtask. "
+                                f"{verification_failure}"
+                            ),
+                            next_hint="Finish or restore the missing target, verify it directly, then terminate again.",
+                            screenshot_file=screenshot_file,
+                            token_usage=self.step_token_usage,
+                        )
+                        self._set_active_recovery_feedback(
+                            self._build_recovery_feedback(
+                                "termination_verification_failed", failure_detail
+                            )
+                        )
+                        if not self.wo_sls and self._should_fail_after_consecutive_stalls():
+                            is_infeasible = True
+                            infeasible_reason = self._build_consecutive_stall_reason()
+                            self.logger.warning(infeasible_reason)
+                            try:
+                                self.env.step("FAIL", 0)
+                            except Exception as e:
+                                self.logger.warning("Failed to send FAIL action: %s", e)
+                            break
+                        self.logger.info(
+                            "Termination deferred: final verification failed for goal %s/%s",
+                            self.completion_criteria_index + 1,
+                            len(self.completion_criteria),
+                        )
+                        continue
+
+                    self.logger.info(
+                        "Final verification passed for goal %s/%s",
+                        self.completion_criteria_index + 1,
+                        len(self.completion_criteria),
+                    )
+                    self.consecutive_stall_count = 0
+                    if self.wo_subtask:
+                        self.completed_completion_criteria = list(self.completion_criteria)
+                        next_goal_index = len(self.completion_criteria)
+                    else:
+                        self.completed_completion_criteria.append(completed_goal)
+                        next_goal_index = self.completion_criteria_index + 1
+                    if next_goal_index < len(self.completion_criteria):
+                        self.action_logs.append({
+                            "step": step,
+                            "type": "goal_termination",
+                            "execution_success": True,
+                            "screenshot": screenshot_file,
+                            "subgoal": self._step_abstraction_subgoal() if self._planner_subgoal_enabled() else "",
+                            "execution_status": "advance",
+                            "detail": f"TERMINATE goal {self.completion_criteria_index + 1}: {completed_goal}",
+                            "compact": self._build_compact_log_entry(
+                                step=step,
+                                tool_type="goal_termination",
+                                success=True,
+                                detail=completed_goal,
+                                verification="Final verification confirmed the current subtask.",
+                                next_hint="Continue with the next immutable verification goal.",
+                            ),
+                            "step_time": 0.0,
+                            "token_usage": self.step_token_usage,
+                            "state_routing_applied": self._state_routing_enabled(),
+                            **self._current_step_event_fields(),
+                        })
+                        self.completion_criteria_index = next_goal_index
+                        self._start_fresh_subtask_context()
+                        self.logger.info(
+                            "[completion_criteria] completed=%s/%s next=%s",
+                            next_goal_index,
+                            len(self.completion_criteria),
+                            self.completion_criteria[next_goal_index],
+                        )
+                        continue
+
+                    self.completion_criteria_index = len(self.completion_criteria)
+                    termination_execution_status = self._assign_unrouted_termination_status(decision)
                     if self._state_routing_enabled():
                         self._apply_step_log_status(
                             step=step,
@@ -2253,7 +2685,10 @@ print(output)
                             tool_type="termination",
                             success=True,
                             detail=terminal_message or "TERMINATE",
-                            verification="Planner requested task termination.",
+                            verification=(
+                                "Final verification confirmed the final current subtask; "
+                                "earlier subtasks were verified at their own termination points."
+                            ),
                         ),
                         "step_time": 0.0,
                         "token_usage": self.step_token_usage,
@@ -3374,11 +3809,77 @@ print(output)
 
         return grounded_code
     
+    @staticmethod
+    def _parse_uitars_grounding_point(
+        response: str,
+        screenshot_width: int,
+        screenshot_height: int,
+    ) -> Tuple[int, int]:
+        """Parse the pixel-space point returned by AgentS3's UI-TARS prompt."""
+        numericals = re.findall(r"\d+", str(response or ""))
+        if len(numericals) < 2:
+            raise ValueError(
+                "UI-TARS grounding did not return a coordinate pair: "
+                f"{response!r}"
+            )
+
+        x, y = int(numericals[0]), int(numericals[1])
+        if not (0 <= x < screenshot_width and 0 <= y < screenshot_height):
+            raise ValueError(
+                "UI-TARS grounding returned a point outside the screenshot: "
+                f"({x}, {y}) for {screenshot_width}x{screenshot_height}"
+            )
+        return x, y
+
+    def _call_uitars_grounder(
+        self,
+        description: str,
+        img: Image.Image,
+        code: str,
+    ) -> str:
+        """Ground one point using the same query contract as AgentS3."""
+        screenshot_width, screenshot_height = img.size
+        prompt = (
+            f"Query:{description}\n"
+            "Output only the coordinate of one point in your response.\n"
+        )
+        messages = [
+            {
+                "role": "system",
+                "content": [
+                    {"type": "input_text", "text": "You are a helpful assistant."}
+                ],
+            },
+            {
+                "role": "user",
+                "content": [
+                    {"type": "input_text", "text": prompt},
+                    {"type": "input_image", "image_url": encode_image(img)},
+                ],
+            },
+        ]
+        raw_response = self.visual_grounder_llm(messages, max_retries=3) or ""
+        x, y = self._parse_uitars_grounding_point(
+            raw_response,
+            screenshot_width,
+            screenshot_height,
+        )
+        self._dump_prompt_entry(
+            stage="visual_grounder_response",
+            payload={
+                "raw_response": raw_response,
+                "point": [x, y],
+                "coordinate_space": "screenshot_pixels",
+            },
+        )
+        return code.replace("X_COORD", str(x)).replace("Y_COORD", str(y))
+
     def _call_visual_grounder(self, description: str, screenshot: bytes, code: str):
         """Call visual grounder to get coordinates or code using call_cua.
         
         Returns:
             - If GTA1: dict with {"x": x, "y": y} for coordinate replacement
+            - If UI-TARS (the default): fill the template from AgentS3-style point grounding
             - If other models: string with complete pyautogui code
         """
         # Convert screenshot bytes to PIL Image
@@ -3386,6 +3887,20 @@ print(output)
         screenshot_width, screenshot_height = img.size
         self.current_screen_width = screenshot_width
         self.current_screen_height = screenshot_height
+
+        if "uitars" in self.visual_grounder_model.lower():
+            self._dump_prompt_entry(
+                stage="visual_grounder",
+                payload={
+                    "target_description": description,
+                    "code_template": code,
+                    "screen_width": screenshot_width,
+                    "screen_height": screenshot_height,
+                    "prompt_contract": "agents3_point_grounding",
+                    "screenshot": "<omitted image bytes>",
+                },
+            )
+            return self._call_uitars_grounder(description, img, code)
 
         def call_grounder(target_desc: str):
             scale = self.visual_grounder_scale if self.visual_grounder_llm.model_name.startswith("gta1") else 1.0
@@ -4795,6 +5310,7 @@ except subprocess.TimeoutExpired as e:
                 "wo_global_facts": self.wo_global_facts,
                 "wo_jev_memory": self.wo_jev_memory,
                 "wo_jev_api": self.wo_jev_api,
+                "wo_subtask": self.wo_subtask,
                 "jev_api_include_threshold": self._get_jev_api_include_threshold(),
                 "l2s_enabled": self._planner_subgoal_enabled(),
                 "s2l_enabled": self._s2l_enabled(),
@@ -4807,8 +5323,11 @@ except subprocess.TimeoutExpired as e:
                 "software_api_enabled": self.api_enabled,
                 "direct_coordinate_grounding": self.direct_coordinate_grounding,
                 "stall_loop_suppression_enabled": self._state_routing_enabled() and (not self.wo_sls),
-                "final_verification_enabled": False,
+                "final_verification_enabled": True,
+                "subtask_enabled": not self.wo_subtask,
             },
+            "completion_criteria": list(self.completion_criteria),
+            "completed_completion_criteria": list(self.completed_completion_criteria),
             "task_config": task_config,
             "additional_context": additional_context,
             "action_logs": self.action_logs,
