@@ -11,7 +11,7 @@
   ],
   "difficulty": "medium",
   "operation_time": 115.06,
-  "instruction": "I cannot reliably hear the recording and need larger captions. Use Windows Live captions with the caption style set to Large text to identify the three operational warnings in the cloud-cluster meeting audio, then record them in a Sticky Note.",
+  "instruction": "I cannot reliably hear the recording and need larger captions. Turn on Windows Live captions, set the caption style to Large text, and leave it enabled. Identify the three operational warnings in the cloud-cluster meeting audio, then record them in a Sticky Note.",
   "source": "synthetic",
   "transcript": "Alright team, thanks for joining the sync. Regarding the new deployment workflow on the cloud cluster, there are three absolute deal-breakers you need to remember. First, under no circumstances should you manually delete the cluster cache—this will crash the live gateway. Second, please, never bypass the pre-check script before pushing your updates to staging. Um, and the last one, let's see... ah, yes, do not hardcode any API tokens in the configuration files, use the environment vault instead. Make sure to log these down so the rest of the team doesn't mess up.",
   "gt_steps": [

@@ -307,6 +307,7 @@ def _run_hisa(env, example, args, example_result_dir) -> float:
         wo_step=args.wo_step,
         wo_refinement=args.wo_refinement,
         sliding_window_size=args.sliding_window_size,
+        thinking_token_budget=args.thinking_token_budget,
     )
     return framework.execute_task(
         example, additional_context=build_additional_context(args, example)

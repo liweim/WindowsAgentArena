@@ -10,7 +10,7 @@
   ],
   "difficulty": "easy",
   "operation_time": 86.82,
-  "instruction": "I rely on a screen reader to shop online. Turn on Windows Narrator, then use OneStopShop to find the ThinSlim Foods plain keto bread sold as a pack of two that has zero net carbs and is soy free. Add exactly two units to the shopping cart and leave the cart page open.",
+  "instruction": "I rely on a screen reader to shop online. Turn on Windows Narrator and find the ThinSlim Foods plain keto bread sold as a pack of two that has zero net carbs and is soy free on OneStopShop. Add exactly two units to the shopping cart and leave the cart page open.",
   "source": "synthetic",
   "gt_steps": [
     "Turn on Windows Narrator.",

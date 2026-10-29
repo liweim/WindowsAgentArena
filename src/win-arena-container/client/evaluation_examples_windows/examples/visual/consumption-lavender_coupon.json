@@ -10,7 +10,7 @@
   ],
   "difficulty": "medium",
   "operation_time": 50.59,
-  "instruction": "I rely on a screen reader to shop online. Turn on Windows Narrator, then use OneStopShop to find the French Provence live lavender plant with blue flowers that comes as one plant in a 2.5-quart pot. Add exactly two units to the shopping cart, enter coupon code `LAVENDER20` without applying it, and leave the cart page open.",
+  "instruction": "I rely on a screen reader to shop online. Turn on Windows Narrator and find the French Provence live lavender plant with blue flowers that comes as one plant in a 2.5-quart pot on OneStopShop. Add exactly two units to the shopping cart, enter coupon code `LAVENDER20` without applying it, and leave the cart page open.",
   "source": "synthetic",
   "gt_steps": [
     "Turn on Windows Narrator.",

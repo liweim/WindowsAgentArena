@@ -753,7 +753,8 @@ class HiSA:
         bash_timeout: int = 60,  # Timeout for bash script execution in seconds
         wo_step: bool = False,  # If True, skip step abstraction and use full conversation history
         wo_refinement: bool = False,  # If True, disable context refinement and use sliding window
-        sliding_window_size: int = 5  # Sliding window size (number of conversation turns to keep)
+        sliding_window_size: int = 5,  # Sliding window size (number of conversation turns to keep)
+        thinking_token_budget: Optional[int] = None,
     ):
         self.env = env
         self.global_planner_model = global_planner_model
@@ -775,6 +776,7 @@ class HiSA:
         self.wo_step = wo_step  # Skip step abstraction if True
         self.wo_refinement = wo_refinement  # Disable context refinement if True
         self.sliding_window_size = sliding_window_size  # Sliding window size for conversation history
+        self.thinking_token_budget = thinking_token_budget
         self.direct_coordinate_grounding = uses_direct_coordinate_grounding(
             global_planner_model,
             visual_grounder_model,
@@ -1312,7 +1314,10 @@ Based on the execution_history and current screenshot, decide the next action. A
                     self.logger.warning(f"Retry attempt {attempt}/{self.max_parse_retries}")
 
                 # Call global planner
-                response = self.global_planner_llm(messages)
+                response = self.global_planner_llm(
+                    messages,
+                    thinking_token_budget=self.thinking_token_budget,
+                )
                 
                 # Extract JSON
                 json_str = response

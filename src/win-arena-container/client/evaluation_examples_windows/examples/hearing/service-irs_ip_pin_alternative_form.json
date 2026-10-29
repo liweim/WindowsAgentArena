@@ -10,7 +10,7 @@
   ],
   "difficulty": "hard",
   "operation_time": 150.05,
-  "instruction": "I cannot reliably hear the recording. Use Chrome Live Caption on the customer's voicemail, then use the official IRS website to find the alternative IP PIN application option that fits the customer's situation. Leave the official application form open and keep Chrome Live Caption enabled.",
+  "instruction": "I cannot reliably hear the recording. Turn on Chrome Live Caption and leave it enabled. Use the customer's voicemail, then use the official IRS website to find the alternative IP PIN application option that fits the customer's situation. Leave the official application form open and keep Chrome Live Caption enabled.",
   "source": "https://www.irs.gov/identity-theft-fraud-scams/get-an-identity-protection-pin",
   "transcript": "Hi, I'm calling because I couldn't get through the IRS online identity check. My adjusted gross income on my last return was 72400 dollars, and I file as an individual. I still need another way to apply for an Identity Protection PIN.",
   "gt_steps": [

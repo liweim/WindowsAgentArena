@@ -11,7 +11,7 @@
   ],
   "difficulty": "medium",
   "operation_time": 89.08,
-  "instruction": "I hear primarily through one ear and rely on captions for clarity. Turn on Mono audio, then use Chrome Live Caption to read the delivery reminder on the Desktop. Create a Sticky Note containing the delivery date, arrival window, preparation instruction, and delivery reference.",
+  "instruction": "I hear primarily through one ear and rely on captions for clarity. Turn on Mono audio and leave it enabled. Turn on Chrome Live Caption and leave it enabled. Read the delivery reminder on the Desktop. Create a Sticky Note containing the delivery date, arrival window, preparation instruction, and delivery reference.",
   "source": "synthetic",
   "transcript": "Delivery reminder. Your mobility equipment delivery is scheduled for Thursday, September 24, 2026. The arrival window is 1:20 PM to 2:10 PM. Keep the side gate clear. Delivery reference DL-731.",
   "gt_steps": [

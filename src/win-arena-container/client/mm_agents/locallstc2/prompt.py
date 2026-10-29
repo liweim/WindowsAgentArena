@@ -1,8 +1,8 @@
 # ==================== PROMPTS ====================
 COMPLETION_CRITERIA_PROMPT = """Derive the immutable final verification goals for a task from its instruction.
 
-Return exactly one JSON object:
-{"criteria": ["final goal 1", "final goal 2"]}
+Return exactly one JSON list:
+["final goal 1", "final goal 2"]
 
 Rules:
 - Include only independently required final deliverables or final states.
@@ -10,11 +10,10 @@ Rules:
 - Keep every requirement of one artifact or app state in one goal. Do not split its existence, contents, formatting, correctness, or saved state across goals.
 - Preserve the full requested outcome. Bookkeeping such as checking off or saving a list does not replace completing the underlying item.
 - Keep the list short and high level.
-- Order ordinary deliverables and app changes first. Put fragile final-state goals that must remain enabled or open, such as On-Screen Keyboard, Narrator, Mouse Keys, Sticky Keys, and similar accessibility states, last so they are established immediately before task completion.
-- Exception: if a feature must be used while completing another goal, place it before that work. In particular, Live Caption required for understanding audio or video must be enabled before processing that media and remain enabled.
-- If the instruction involves understanding audio, video, or a recording, include that Chrome Live Caption is enabled and remains enabled.
+- Order the goals in the operational sequence you judge most efficient and reliable for completing the task. Infer this order from dependencies and expected app interactions rather than copying the order in which requirements are mentioned.
+- Place each required state where you judge it can be established and preserved most reliably within that operational sequence.
 - Do not include actions, tool calls, intermediate findings, or verification steps.
-- Do not solve the task or output anything except the JSON object.
+- Do not solve the task or output anything except the JSON list.
 """
 
 FINAL_VERIFICATION_PROMPT = """Decide whether the listed verification targets are fully satisfied after the observed workflow.
@@ -63,7 +62,8 @@ Rules:
 
 SUBTASK_EXECUTION_PROMPT = """# Completion Mode
 - Work on the single current verification goal while keeping every completed verification goal satisfied.
-- Keep completed goals satisfied. Avoid redoing them. Avoid actions that disable, close, overwrite, remove, or invalidate them. Restore one if current evidence shows it was invalidated.
+- Treat every completed verification goal as an immutable state constraint for all later subtasks. Do not disable, close, overwrite, remove, replace, or otherwise change its satisfied state.
+- Choose actions that preserve completed goals. If an unavoidable interaction changes one, restore and verify its exact prior satisfied state before terminating the current subtask.
 - Output `TERMINATE` only when the current goal is satisfied and completed goals remain satisfied. This completes the current subtask. The system will then start the next goal from fresh planner context or exit after the last goal.
 """
 

@@ -412,12 +412,11 @@ class LocalLSTC:
                 payload = json.loads(
                     repair_json(self._extract_final_planner_json(str(response or "")))
                 )
-                raw_criteria = payload.get("criteria") if isinstance(payload, dict) else None
-                if not isinstance(raw_criteria, list) or not raw_criteria:
+                if not isinstance(payload, list) or not payload:
                     raise ValueError("criteria must be a non-empty list")
                 criteria: List[str] = []
                 seen = set()
-                for item in raw_criteria:
+                for item in payload:
                     criterion = re.sub(r"\s+", " ", str(item or "").strip())
                     if not criterion or criterion in seen:
                         continue
@@ -1625,9 +1624,21 @@ print(output)
                 )
                 self._append_context_section(
                     sections,
-                    "Completed verification goals (keep satisfied; do not redo)",
+                    (
+                        "Completed verification goals "
+                        "(immutable states; preserve exactly throughout this subtask)"
+                    ),
                     completed_criteria_text,
                 )
+                if completed_criteria_text:
+                    sections.append(
+                        "Preservation requirement:\n"
+                        "The completed states above must remain unchanged. Do not disable, close, "
+                        "overwrite, remove, replace, or otherwise invalidate any of them while "
+                        "working on the current goal. If an unavoidable interaction changes one, "
+                        "restore and verify its exact prior satisfied state before terminating "
+                        "this subtask."
+                    )
                 criterion = self.completion_criteria[self.completion_criteria_index]
                 self._append_context_section(
                     sections,

@@ -10,7 +10,7 @@
   ],
   "difficulty": "medium",
   "operation_time": 84.94,
-  "instruction": "I rely on a screen reader to navigate maps. Turn on Windows Narrator and use it to find public-transit directions in Google Maps from Grand Central Terminal to the Statue of Liberty Ferry Terminal. Leave the directions open.",
+  "instruction": "I rely on a screen reader to navigate maps. Turn on Windows Narrator and find public-transit directions in Google Maps from Grand Central Terminal to the Statue of Liberty Ferry Terminal. Leave the directions open.",
   "source": "synthetic",
   "gt_steps": [
     "Open Google Maps in Chrome.",

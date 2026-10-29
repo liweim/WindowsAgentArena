@@ -36,7 +36,7 @@ nohup python -m vllm.entrypoints.openai.api_server \
 
 Jev服务：
 DECIDER_DEVICE=cuda \
-DECIDER_CUDA_MEMORY_FRACTION=0.25 \
+DECIDER_CUDA_MEMORY_FRACTION=0.1 \
 DECIDER_USE_GRAPHS=false \
 DECIDER_SHARED_FORK_GB=1 \
 PYTHONPATH=/home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client \

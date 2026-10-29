@@ -10,7 +10,7 @@
   ],
   "difficulty": "hard",
   "operation_time": 157.01,
-  "instruction": "I cannot reliably hear the recording. Use Chrome Live Caption to read the website service recording on the Desktop, then apply every requested change to the specified CMS page. Keep Chrome Live Caption enabled. Use username `admin` and password `admin1234`.",
+  "instruction": "I cannot reliably hear the recording. Turn on Chrome Live Caption and leave it enabled. Read the website service recording on the Desktop, then apply every requested change to the specified CMS page. Use username `admin` and password `admin1234`.",
   "source": "synthetic",
   "transcript": "Website service update. The page titled Customer Support Schedule Draft needs to be published as Access Desk Hours. The desk is open Monday through Friday from 8 AM to 6 PM, Saturday from 9 AM to 1 PM, and is closed Sunday.",
   "gt_steps": [

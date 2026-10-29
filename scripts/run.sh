@@ -145,23 +145,35 @@ ram_bytes=$(memory_to_bytes "$ram_size")
 
 check_host_resources() {
     local concurrent_workers=$1
-    local required_memory_bytes
+    local required_memory_bytes required_cpu_cores
     local available_memory_kib available_memory_bytes
+    local available_cpu_cores
 
     required_memory_bytes=$((concurrent_workers * ram_bytes))
+    required_cpu_cores=$((concurrent_workers * cpu_cores))
     available_memory_kib=$(awk '/^MemAvailable:/ { print $2; exit }' /proc/meminfo)
+    available_cpu_cores=$(nproc 2>/dev/null) || \
+        log_error_exit "Unable to determine available CPU cores with nproc."
 
     if ! [[ "$available_memory_kib" =~ ^[1-9][0-9]*$ ]]; then
         log_error_exit "Unable to determine available memory from /proc/meminfo."
     fi
+    if ! [[ "$available_cpu_cores" =~ ^[1-9][0-9]*$ ]]; then
+        log_error_exit "Unable to determine available CPU cores with nproc."
+    fi
     available_memory_bytes=$((available_memory_kib * 1024))
 
-    echo "Host memory check: ${concurrent_workers} concurrent worker(s) x ${ram_size} RAM"
-    echo "  Need $(format_gib "$required_memory_bytes"), available $(format_gib "$available_memory_bytes")"
+    echo "Host resource check: ${concurrent_workers} concurrent worker(s)"
+    echo "  Memory: need $(format_gib "$required_memory_bytes") (${ram_size} each), available $(format_gib "$available_memory_bytes")"
+    echo "  CPU: need ${required_cpu_cores} core(s) (${cpu_cores} each), available ${available_cpu_cores}"
 
     if [ "$available_memory_bytes" -lt "$required_memory_bytes" ]; then
         echo "Error: Insufficient available memory for $concurrent_workers concurrent worker(s)." >&2
         log_error_exit "Reduce --num-workers or --ram-size and try again."
+    fi
+    if [ "$available_cpu_cores" -lt "$required_cpu_cores" ]; then
+        echo "Error: Insufficient available CPU cores for $concurrent_workers concurrent worker(s)." >&2
+        log_error_exit "Reduce --num-workers or --cpu-cores and try again."
     fi
 }
 

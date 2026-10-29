@@ -329,6 +329,9 @@ def _add_hisa_options(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         "--sliding_window_size", "--sliding-window-size", type=int, default=5
     )
+    parser.add_argument(
+        "--thinking_token_budget", "--thinking-token-budget", type=int, default=None
+    )
     parser.set_defaults(
         observation_type="screenshot",
         screen_width=1280,
