@@ -171,10 +171,6 @@ check_host_resources() {
         echo "Error: Insufficient available memory for $concurrent_workers concurrent worker(s)." >&2
         log_error_exit "Reduce --num-workers or --ram-size and try again."
     fi
-    if [ "$available_cpu_cores" -lt "$required_cpu_cores" ]; then
-        echo "Error: Insufficient available CPU cores for $concurrent_workers concurrent worker(s)." >&2
-        log_error_exit "Reduce --num-workers or --cpu-cores and try again."
-    fi
 }
 
 if [ "$connect" != true ]; then
@@ -453,7 +449,7 @@ summarize_batch() {
 }
 
 run_isolated_tasks() {
-    local source_json_path manifest_path storage_run_root result_host_dir
+    local source_json_path manifest_path service_manifest_path storage_run_root result_host_dir
     local original_json_name original_storage_mount_path original_clean_results
     local line domain example_id current_storage next_storage
     local index next_index copy_pid task_status overall_status golden_signature current_golden_signature
@@ -469,6 +465,7 @@ run_isolated_tasks() {
         log_error_exit "Golden VM storage is missing data.img: $vm_storage_base_path"
     fi
     command -v qemu-img >/dev/null || log_error_exit "Task isolation requires qemu-img on the host (qemu-utils)."
+    command -v flock >/dev/null || log_error_exit "Task isolation requires flock on the host (util-linux)."
     golden_disk_kib=$(python3 - "$vm_storage_base_path/data.img" <<'PY'
 import json
 import subprocess
@@ -492,6 +489,10 @@ PY
     if [ ! -f "$source_json_path" ]; then
         log_error_exit "Task JSON not found on host: $source_json_path"
     fi
+    service_manifest_path="$client_mount_path/evaluation_examples_windows/task_service_manifest.json"
+    if [ ! -f "$service_manifest_path" ]; then
+        log_error_exit "Task service manifest not found: $service_manifest_path (run scripts/build_task_service_manifest.py)."
+    fi
 
     result_host_dir=""
     if [[ "$result_dir" == /locallstc/* ]]; then
@@ -506,14 +507,14 @@ PY
     cp -- "$source_json_path" "$storage_run_root/batch.json"
     source_json_path="$storage_run_root/batch.json"
     manifest_path="$storage_run_root/tasks.tsv"
-    python3 - "$source_json_path" "$manifest_path" "$result_host_dir" "${LOCALLSTC_EXTRA_ARGS:-}" "${MM_AGENTS_EXTRA_ARGS:-}" "$clean_results" <<'PY'
+    python3 - "$source_json_path" "$manifest_path" "$service_manifest_path" "$result_host_dir" "${LOCALLSTC_EXTRA_ARGS:-}" "${MM_AGENTS_EXTRA_ARGS:-}" "$clean_results" <<'PY'
 import json
 import os
 import shlex
 import shutil
 import sys
 
-source_path, manifest_path, result_dir, legacy_args, method_args, clean_results = sys.argv[1:]
+source_path, manifest_path, service_manifest_path, result_dir, legacy_args, method_args, clean_results = sys.argv[1:]
 extra_argv = shlex.split(legacy_args) + shlex.split(method_args)
 rerun = "--rerun" in extra_argv or clean_results == "true"
 rerun_fail = "--rerun_fail" in extra_argv or "--rerun-fail" in extra_argv
@@ -548,6 +549,13 @@ def should_run(domain, example_id):
 
 with open(source_path, "r", encoding="utf-8") as source_file:
     tasks = json.load(source_file)
+with open(service_manifest_path, "r", encoding="utf-8") as service_manifest_file:
+    service_manifest = json.load(service_manifest_file)
+exclusive_services = {"shopping", "shopping_admin"}
+task_services = {}
+for service, example_ids in service_manifest.items():
+    for example_id in example_ids:
+        task_services.setdefault(example_id, []).append(service)
 total_task_count = sum(len(example_ids) for example_ids in tasks.values())
 scheduled_task_count = 0
 removed_result_count = 0
@@ -565,7 +573,13 @@ with open(manifest_path, "w", encoding="utf-8") as manifest_file:
                     if os.path.exists(result_path):
                         os.remove(result_path)
                         removed_result_count += 1
-                manifest_file.write(f"{domain}\t{example_id}\n")
+                services_for_task = task_services.get(example_id, [])
+                lanes = ",".join(
+                    service for service in services_for_task
+                    if service in exclusive_services
+                ) or "-"
+                services = ",".join(services_for_task) or "-"
+                manifest_file.write(f"{domain}\t{example_id}\t{lanes}\t{services}\n")
 print(
     f"Task plan: total={total_task_count}, scheduled={scheduled_task_count}, "
     f"removed_result_files={removed_result_count}"
@@ -595,6 +609,11 @@ PY
     run_state_file="$run_state_dir/$run_id.tsv"
     process_group=$(ps -o pgid= -p $$ | tr -d ' ')
     printf '%s\t%s\t%s\t%s\t%s\n' "$run_id" "$$" "$process_group" "$container_name_base" "$safe_agent" > "$run_state_file"
+    queue_claim_dir="$storage_run_root/claimed"
+    queue_lock_path="$storage_run_root/queue.lock"
+    service_lane_dir="${WAA_SERVICE_LANE_DIR:-/tmp/windows-agent-arena-service-lanes-$(id -u)}"
+    mkdir -p "$queue_claim_dir" "$service_lane_dir"
+    echo "Global service lane directory: $service_lane_dir"
 
     cleanup_isolated_run() {
         [ "$BASHPID" = "$main_shell_pid" ] || return 0
@@ -619,22 +638,89 @@ PY
 
     run_isolated_worker() (
         local worker_slot=$1
-        local start_index=$2
-        local end_index=$3
-        local line domain example_id current_storage next_storage
-        local index next_index copy_pid task_status worker_status=0
-        local current_golden_signature
+        local line domain example_id current_storage
+        local index task_status worker_status=0 claim_status
+        local claimed_index claimed_domain claimed_example_id claimed_lanes claimed_services
+        local candidate_index candidate_domain candidate_example_id candidate_lanes candidate_services
+        local current_golden_signature lane_fd lane_wait_seconds=0 pending_tasks
+        local -a acquired_lanes requested_lanes
         local container_name="${container_name_base}-w${worker_slot}"
         local json_name="/winarena-task.json"
         local clean_results=false
         local task_json_mount_path
         local vm_storage_mount_path
+        local queue_fd shopping_lane_fd shopping_admin_lane_fd forum_lane_fd
+
+        exec {queue_fd}> "$queue_lock_path"
+        exec {shopping_lane_fd}> "$service_lane_dir/shopping.lock"
+        exec {shopping_admin_lane_fd}> "$service_lane_dir/shopping_admin.lock"
+        exec {forum_lane_fd}> "$service_lane_dir/forum.lock"
+
+        release_task_lanes() {
+            local lane
+            for lane in "${acquired_lanes[@]:-}"; do
+                case "$lane" in
+                    shopping) flock -u "$shopping_lane_fd" ;;
+                    shopping_admin) flock -u "$shopping_admin_lane_fd" ;;
+                    forum) flock -u "$forum_lane_fd" ;;
+                esac
+            done
+            acquired_lanes=()
+        }
+
+        try_acquire_task_lanes() {
+            local lanes=$1 lane
+            acquired_lanes=()
+            [ "$lanes" != "-" ] || return 0
+            IFS=',' read -r -a requested_lanes <<< "$lanes"
+            for lane in "shopping" "shopping_admin" "forum"; do
+                [[ ",${lanes}," == *",${lane},"* ]] || continue
+                case "$lane" in
+                    shopping) lane_fd=$shopping_lane_fd ;;
+                    shopping_admin) lane_fd=$shopping_admin_lane_fd ;;
+                    forum) lane_fd=$forum_lane_fd ;;
+                esac
+                if flock -n "$lane_fd"; then
+                    acquired_lanes+=("$lane")
+                else
+                    release_task_lanes
+                    return 1
+                fi
+            done
+            if [ "${#acquired_lanes[@]}" -ne "${#requested_lanes[@]}" ]; then
+                release_task_lanes
+                log_error_exit "Unknown exclusive service lane in task manifest: $lanes"
+            fi
+        }
+
+        claim_next_task() {
+            pending_tasks=false
+            flock "$queue_fd"
+            for ((candidate_index = 0; candidate_index < ${#task_entries[@]}; candidate_index++)); do
+                [ ! -e "$queue_claim_dir/$candidate_index" ] || continue
+                pending_tasks=true
+                line=${task_entries[$candidate_index]}
+                IFS=$'\t' read -r candidate_domain candidate_example_id candidate_lanes candidate_services <<< "$line"
+                if try_acquire_task_lanes "$candidate_lanes"; then
+                    : > "$queue_claim_dir/$candidate_index"
+                    claimed_index=$candidate_index
+                    claimed_domain=$candidate_domain
+                    claimed_example_id=$candidate_example_id
+                    claimed_lanes=$candidate_lanes
+                    claimed_services=$candidate_services
+                    flock -u "$queue_fd"
+                    return 0
+                fi
+            done
+            flock -u "$queue_fd"
+            if [ "$pending_tasks" = true ]; then
+                return 2
+            fi
+            return 1
+        }
 
         cleanup_worker() {
-            if [[ "${copy_pid:-}" =~ ^[0-9]+$ ]]; then
-                kill "$copy_pid" >/dev/null 2>&1 || true
-                wait "$copy_pid" >/dev/null 2>&1 || true
-            fi
+            release_task_lanes
             docker rm -f "$container_name" >/dev/null 2>&1 || true
         }
         trap cleanup_worker EXIT
@@ -653,40 +739,37 @@ PY
             log_error_exit "Container $container_name already exists; stop it before starting this run."
         fi
 
-        current_storage="$storage_run_root/storage-${worker_slot}-${start_index}"
-        prepare_task_storage "$current_storage"
-
-        for ((index = start_index; index < end_index; index++)); do
-            line=${task_entries[$index]}
-            domain=${line%%$'\t'*}
-            example_id=${line#*$'\t'}
-
-            copy_pid=""
-            next_index=$((index + 1))
-            if [ "$next_index" -lt "$end_index" ]; then
-                next_storage="$storage_run_root/storage-${worker_slot}-${next_index}"
-                prepare_task_storage "$next_storage" &
-                copy_pid=$!
-                echo "Worker $worker_slot: preparing task $((next_index + 1)) storage in background (PID $copy_pid)."
+        while true; do
+            if claim_next_task; then
+                claim_status=0
+            else
+                claim_status=$?
+            fi
+            if [ "$claim_status" -eq 1 ]; then
+                break
+            fi
+            if [ "$claim_status" -eq 2 ]; then
+                sleep 1
+                lane_wait_seconds=$((lane_wait_seconds + 1))
+                continue
             fi
 
+            index=$claimed_index
+            domain=$claimed_domain
+            example_id=$claimed_example_id
+            current_storage="$storage_run_root/storage-${worker_slot}-${index}"
+            prepare_task_storage "$current_storage"
             task_json_mount_path="$storage_run_root/task-$index.json"
             write_single_task_json "$domain" "$example_id" "$task_json_mount_path"
             vm_storage_mount_path="$current_storage"
 
-            echo "Worker $worker_slot: running isolated task $((index + 1))/${#task_entries[@]}: $domain/$example_id"
+            echo "Worker $worker_slot: running isolated task $((index + 1))/${#task_entries[@]}: $domain/$example_id (services=$claimed_services, lanes=$claimed_lanes)"
             task_status=0
             invoke_docker_container || task_status=$?
 
             docker rm -f "$container_name" >/dev/null 2>&1 || true
             rm -rf "$current_storage"
-
-            if [ -n "$copy_pid" ]; then
-                if ! wait "$copy_pid"; then
-                    log_error_exit "Worker $worker_slot failed to prepare storage for task $((next_index + 1))."
-                fi
-                current_storage="$next_storage"
-            fi
+            release_task_lanes
 
             current_golden_signature=$(stat -c '%s:%b:%Y:%Z' "$vm_storage_base_path/data.img")
             if [ "$current_golden_signature" != "$golden_signature" ]; then
@@ -697,6 +780,8 @@ PY
                 echo "WARNING: Worker $worker_slot task $domain/$example_id exited with status $task_status; continuing with a fresh storage copy." >&2
             fi
         done
+        printf '%s\n' "$lane_wait_seconds" > "$storage_run_root/lane-wait-$worker_slot.txt"
+        echo "Worker $worker_slot: global service lane wait=${lane_wait_seconds}s (excluded from task execution_time)."
         trap - INT TERM
         return "$worker_status"
     )
@@ -709,16 +794,8 @@ PY
     echo "Run ID: $run_id"
     echo "Running $task_count isolated tasks across $active_workers worker(s)."
 
-    tasks_per_worker=$((task_count / num_workers))
-    extra_workers=$((task_count % num_workers))
     for ((worker_slot = 0; worker_slot < active_workers; worker_slot++)); do
-        worker_start=$((worker_slot * tasks_per_worker + (worker_slot < extra_workers ? worker_slot : extra_workers)))
-        worker_size=$tasks_per_worker
-        if [ "$worker_slot" -lt "$extra_workers" ]; then
-            worker_size=$((worker_size + 1))
-        fi
-        worker_end=$((worker_start + worker_size))
-        run_isolated_worker "$worker_slot" "$worker_start" "$worker_end" &
+        run_isolated_worker "$worker_slot" &
         worker_pids+=("$!")
     done
 
@@ -729,6 +806,30 @@ PY
         fi
     done
     worker_pids=()
+
+    if [ -n "$result_host_dir" ]; then
+        mkdir -p "$result_host_dir"
+        python3 - "$storage_run_root" "$result_host_dir/scheduler_lane_wait.json" "$run_id" "$active_workers" <<'PY'
+import json
+import pathlib
+import sys
+
+storage_root, output_path, run_id, worker_count = sys.argv[1:]
+waits = {}
+for worker in range(int(worker_count)):
+    path = pathlib.Path(storage_root) / f"lane-wait-{worker}.txt"
+    waits[str(worker)] = int(path.read_text().strip()) if path.exists() else None
+payload = {
+    "run_id": run_id,
+    "poll_interval_seconds": 1,
+    "worker_lane_wait_seconds": waits,
+    "total_worker_lane_wait_seconds": sum(value or 0 for value in waits.values()),
+    "included_in_task_execution_time": False,
+}
+pathlib.Path(output_path).write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+print(f"Scheduler lane wait stats: {output_path}")
+PY
+    fi
 
     json_name="$original_json_name"
     vm_storage_mount_path="$original_storage_mount_path"

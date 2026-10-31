@@ -220,7 +220,11 @@ def _add_agents3_options(parser: argparse.ArgumentParser) -> None:
     )
 
 
-def _add_planner_options(parser: argparse.ArgumentParser) -> None:
+def _add_planner_options(
+    parser: argparse.ArgumentParser,
+    *,
+    include_wo_roi: bool = True,
+) -> None:
     parser.add_argument(
         "--global_planner_model", "--global-planner-model", default=None
     )
@@ -230,7 +234,8 @@ def _add_planner_options(parser: argparse.ArgumentParser) -> None:
     )
     parser.add_argument("--state_manager_model", "--state-manager-model", default=None)
     parser.add_argument("--client_password", "--client-password", default="password")
-    parser.add_argument("--wo_roi", "--wo-roi", action="store_true")
+    if include_wo_roi:
+        parser.add_argument("--wo_roi", "--wo-roi", action="store_true")
     parser.add_argument("--roi_margin", "--roi-margin", type=int, default=50)
     parser.add_argument("--refine_period", "--refine-period", type=int, default=5)
     parser.add_argument("--bash_timeout", "--bash-timeout", type=int, default=60)
@@ -240,10 +245,12 @@ def _add_locallstc_options(
     parser: argparse.ArgumentParser,
     *,
     include_wo_fv: bool = True,
+    include_core_ablations: bool = True,
+    include_wo_roi: bool = True,
 ) -> None:
     _add_standalone_environment_options(parser, provider=True)
     _add_context_options(parser)
-    _add_planner_options(parser)
+    _add_planner_options(parser, include_wo_roi=include_wo_roi)
     parser.add_argument(
         "--guest_platform",
         "--guest-platform",
@@ -257,25 +264,26 @@ def _add_locallstc_options(
     parser.add_argument(
         "--force_refine_period", "--force-refine-period", type=int, default=20
     )
-    ablation_options = [
-        "wo_l2s",
-        "wo_s2l",
-        "wo_cp",
-        "wo_al",
-        "wo_sls",
-        "wo_ps",
-        "wo_sa",
-        "wo_sr",
-        "wo_think",
-    ]
-    if include_wo_fv:
-        ablation_options.insert(5, "wo_fv")
-    for option in ablation_options:
-        parser.add_argument(
-            "--{}".format(option),
-            "--{}".format(option.replace("_", "-")),
-            action="store_true",
-        )
+    if include_core_ablations:
+        ablation_options = [
+            "wo_l2s",
+            "wo_s2l",
+            "wo_cp",
+            "wo_al",
+            "wo_sls",
+            "wo_ps",
+            "wo_sa",
+            "wo_sr",
+            "wo_think",
+        ]
+        if include_wo_fv:
+            ablation_options.insert(5, "wo_fv")
+        for option in ablation_options:
+            parser.add_argument(
+                "--{}".format(option),
+                "--{}".format(option.replace("_", "-")),
+                action="store_true",
+            )
     parser.add_argument(
         "--thinking_token_budget", "--thinking-token-budget", type=int, default=None
     )
@@ -293,13 +301,17 @@ def _add_locallstc_options(
 
 
 def _add_locallstc2_options(parser: argparse.ArgumentParser) -> None:
-    _add_locallstc_options(parser, include_wo_fv=False)
+    _add_locallstc_options(
+        parser,
+        include_wo_fv=False,
+        include_core_ablations=False,
+        include_wo_roi=False,
+    )
     parser.set_defaults(visual_grounder_model="uitars-1.5-7b")
     for option in (
         "wo_global_facts",
         "wo_jev_memory",
         "wo_jev_api",
-        "wo_jev",
         "wo_subtask",
     ):
         parser.add_argument(
@@ -478,9 +490,10 @@ def _validate_method_options(args: argparse.Namespace, parser: argparse.Argument
         args.grounding_height = args.grounding_height or args.screen_height
 
     if args.agent_name in {"locallstc", "locallstc2"}:
-        if args.agent_name == "locallstc2" and args.wo_jev:
-            args.wo_jev_memory = True
-            args.wo_jev_api = True
+        if args.global_planner_model:
+            args.model = args.global_planner_model
+
+    if args.agent_name == "locallstc":
         enabled = [
             name
             for name in (
@@ -501,8 +514,6 @@ def _validate_method_options(args: argparse.Namespace, parser: argparse.Argument
                 "LocalLSTC ablation flags are mutually exclusive except "
                 "--wo_l2s and --wo_s2l."
             )
-        if args.global_planner_model:
-            args.model = args.global_planner_model
 
     if args.agent_name == "tars":
         if args.max_steps <= 0:

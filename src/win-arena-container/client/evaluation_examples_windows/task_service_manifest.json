@@ -1,0 +1,49 @@
+{
+  "shopping": [
+    "consumption-elsa_water_bottle",
+    "consumption-ginger_ale_note",
+    "consumption-kids_sunscreen_reviews",
+    "consumption-lowest_price_white_mouse",
+    "consumption-movie_night_shopping",
+    "consumption-tomato_egg_stir_fry",
+    "consumption-colgate_slimsoft_six_pack",
+    "consumption-dyson_travel_case",
+    "consumption-ginger_ale",
+    "consumption-insta360",
+    "consumption-sony_alpha",
+    "consumption-cheapest_bathroom_accessory",
+    "consumption-running_shoe_release_comparison",
+    "consumption-shopping_list_cart",
+    "consumption-wireless_mouse_search_result",
+    "consumption-keto_bread",
+    "consumption-lavender_coupon",
+    "consumption-marshmallow_bunnies",
+    "consumption-saute_pan",
+    "consumption-guest_bathroom_towel_holders",
+    "consumption-toothbrush_price_comparison"
+  ],
+  "shopping_admin": [
+    "service-cms_delete_obsolete_pickup_page",
+    "service-cms_import_service_product",
+    "service-cms_product_record",
+    "service-cms_schedule_policy_review",
+    "service-cms_simplify_service_hours",
+    "service-cms_update_voyage_stock",
+    "service-cms_update_access_desk_page_audio",
+    "service-cms_update_voyage_stock_audio"
+  ],
+  "forum": [
+    "information-food_calorie_forum_answer",
+    "service-passport_application_post_office",
+    "service-reddit_monitor_post_count"
+  ],
+  "wikipedia": [
+    "access-edge_immersive_reader_setup",
+    "information-chrome_reference_bookmarks",
+    "information-wikipedia_accessibility_definition",
+    "information-bookmark_accessibility_reference",
+    "information-metal_density_comparison",
+    "information-second_gold_rush",
+    "information-wikipedia_image_person"
+  ]
+}

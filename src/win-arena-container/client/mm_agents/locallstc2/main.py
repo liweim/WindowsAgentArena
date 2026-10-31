@@ -103,6 +103,12 @@ Additional persistent-fact rules:
 - Never persist volatile UI or runtime state such as clipboard contents, keyboard focus, selections, cursor position, scroll position, temporary dialogs, or momentary visibility. If such state contains task-required content, persist that content under a stable semantic key instead.
 - Do not put temporary observations or ordinary step details in GLOBAL.
 """
+
+
+class JEVError(RuntimeError):
+    """Raised when an enabled JEV dependency cannot produce a valid result."""
+
+
 def _validate_scroll_amount(value) -> int:
     if isinstance(value, bool) or not isinstance(value, int):
         raise ValueError("scroll amount must be an integer")
@@ -131,22 +137,12 @@ class LocalLSTC:
         save_dir: str = "",
         record: bool = False,
         max_parse_retries: int = 3,
-        wo_roi: bool = False,  # If True, disable ROI cropping (default: False means ROI cropping is enabled)
         roi_margin: int = 50,  # Margin around ROI when cropping
         refine_period: int = 5,
         force_refine_period: int = 20,
         bash_timeout: int = 60,  # Timeout for bash script execution in seconds
         bash_working_dir: str = "~",  # Working directory for bash execution
         guest_platform: str = "linux",
-        wo_l2s: bool = False,  # If True, disable Long-to-Short Planning
-        wo_s2l: bool = False,  # If True, disable Short-to-Long Control
-        wo_cp: bool = False,  # If True, disable candidate proposals in planner responses
-        wo_al: bool = False,  # If True, disable action lists and require one action per step
-        wo_sls: bool = False,  # If True, disable stall / loop suppression
-        wo_ps: bool = False,  # If True, require the full explicit subgoal every planner turn
-        wo_sa: bool = False,  # If True, expose deterministic raw execution evidence
-        wo_sr: bool = False,  # If True, assign states for logging but do not route on them
-        wo_think: bool = False,  # If True, disable thinking mode for all LocalLSTC agent calls
         wo_global_facts: bool = False,
         wo_jev_memory: bool = False,
         wo_jev_api: bool = False,
@@ -176,7 +172,7 @@ class LocalLSTC:
         self.save_dir = save_dir
         self.record = record
         self.max_parse_retries = max_parse_retries
-        self.wo_roi = wo_roi  # If True, disable ROI cropping (default: False means ROI cropping is enabled)
+        self.wo_roi = False
         self.roi_margin = roi_margin
         self.refine_period = refine_period
         self.force_refine_period = force_refine_period
@@ -194,20 +190,20 @@ class LocalLSTC:
                 "guest_platform must be one of: linux, windows, android"
             )
         self.guest_platform = platform_aliases[requested_platform]
-        self.wo_l2s = wo_l2s
-        self.wo_s2l = wo_s2l
-        self.wo_cp = bool(wo_cp)
-        self.wo_al = bool(wo_al)
-        self.wo_sls = bool(wo_sls)
-        self.wo_ps = bool(wo_ps)
-        self.wo_sa = bool(wo_sa)
-        self.wo_sr = bool(wo_sr)
+        self.wo_l2s = False
+        self.wo_s2l = False
+        self.wo_cp = False
+        self.wo_al = False
+        self.wo_sls = False
+        self.wo_ps = False
+        self.wo_sa = False
+        self.wo_sr = False
         self.wo_global_facts = bool(wo_global_facts)
         self.wo_jev_memory = bool(wo_jev_memory)
         self.wo_jev_api = bool(wo_jev_api)
         self.wo_subtask = bool(wo_subtask)
         self.api_enabled = not self.wo_l2s
-        self.enable_thinking = not wo_think
+        self.enable_thinking = True
         self.thinking_token_budget = thinking_token_budget
         self.temperature = temperature
         self.seed = seed
@@ -883,7 +879,7 @@ print(output)
         if self._jev is not None:
             return self._jev
         if self._jev_init_attempted:
-            return None
+            raise JEVError("JEV client initialization previously failed")
         self._jev_init_attempted = True
         try:
             url = os.environ.get("DECIDER_URL", DEFAULT_DECIDER_URL)
@@ -891,8 +887,9 @@ print(output)
             self._jev = DeciderHTTPClient(url=url, timeout=timeout)
             self.logger.info("[jev] configured service=%s", url)
         except Exception as exc:
-            self.logger.warning("[jev_fallback] service client initialization failed: %s", exc)
             self._jev = None
+            self.logger.error("[jev_error] service client initialization failed: %s", exc)
+            raise JEVError("JEV service client initialization failed") from exc
         return self._jev
 
     def _record_jev_usage(self, result: Dict[str, Any]) -> None:
@@ -982,8 +979,7 @@ print(output)
             return self._jev_memory_start_step
         jev = self._get_jev()
         if jev is None:
-            self._jev_memory_start_step = None
-            return None
+            raise JEVError("JEV memory selection is enabled but no client is available")
         criteria = {
             f"A{index}": f"Keep episodic memory from A{index} onward."
             for index in range(len(self.subgoal_anchors))
@@ -1024,12 +1020,8 @@ print(output)
             self._jev_memory_start_step = int(self.subgoal_anchors[index]["step"])
             return self._jev_memory_start_step
         except Exception as exc:
-            self.logger.warning(
-                "[jev_fallback] memory inference failed; using all compact episodic history: %s",
-                exc,
-            )
-            self._jev_memory_start_step = None
-            return None
+            self.logger.error("[jev_error] memory inference failed: %s", exc)
+            raise JEVError("JEV memory inference failed") from exc
 
     def _get_jev_api_include_threshold(self) -> float:
         raw_value = os.environ.get(
@@ -1070,7 +1062,7 @@ print(output)
         return candidates
 
     def _select_api_methods_for_step(self, planner_context: str) -> Optional[List[str]]:
-        """Select API methods for the current planner step; None means fail open."""
+        """Select API methods for the current planner step."""
         if not self.api_enabled or self.wo_jev_api:
             return None
 
@@ -1080,7 +1072,7 @@ print(output)
 
         jev = self._get_jev()
         if jev is None:
-            return None
+            raise JEVError("JEV API selection is enabled but no client is available")
 
         questions = {}
         for index, (name, description) in enumerate(candidates):
@@ -1130,11 +1122,8 @@ print(output)
             )
             return selected
         except Exception as exc:
-            self.logger.warning(
-                "[jev_fallback] api inference failed; using full-domain API prompt: %s",
-                exc,
-            )
-            return None
+            self.logger.error("[jev_error] api inference failed: %s", exc)
+            raise JEVError("JEV API inference failed") from exc
 
     def _get_action_channel_skill_names(self) -> List[str]:
         if self.guest_platform == "android":
@@ -1357,6 +1346,29 @@ print(output)
             "- Keep the summary concise and concrete.\n"
             "- For bash/API output, preserve exact task-relevant identifiers from the output, especially paths, filenames, URLs, IDs, sheet/table/column names, window titles, counts, and selected values.\n"
             "- Use the task instruction to decide which output details are key; do not replace needed paths or IDs with generic wording."
+        )
+
+    def _build_completed_condition_monitor_prompt(self) -> str:
+        """Build the per-step preservation check for previously completed goals."""
+        completed_conditions = [
+            re.sub(r"\s+", " ", str(condition or "").strip())
+            for condition in getattr(self, "completed_completion_criteria", [])
+            if str(condition or "").strip()
+        ]
+        if not completed_conditions:
+            return ""
+
+        condition_lines = "\n".join(
+            f"{index}. {condition}"
+            for index, condition in enumerate(completed_conditions, start=1)
+        )
+        return (
+            "\n\nPreviously completed conditions that this step must preserve:\n"
+            f"{condition_lines}\n\n"
+            "Also check whether this latest step changed any previously completed condition. "
+            "After the step summary, add one concise sentence that explicitly names every condition "
+            "that was changed and how it changed; if none changed, explicitly say that all previously "
+            "completed conditions remain unchanged."
         )
 
     def _mark_current_step_event(self, field: str) -> None:
@@ -2391,14 +2403,6 @@ print(output)
         )
         self.logger.info(f"State Manager: {self.state_manager_model}")
         self.logger.info(f"Max steps: {self.max_steps}")
-        self.logger.info(f"wo_l2s: {self.wo_l2s}")
-        self.logger.info(f"wo_s2l: {self.wo_s2l}")
-        self.logger.info(f"wo_cp: {self.wo_cp}")
-        self.logger.info(f"wo_al: {self.wo_al}")
-        self.logger.info(f"wo_sls: {self.wo_sls}")
-        self.logger.info(f"wo_ps: {self.wo_ps}")
-        self.logger.info(f"wo_sa: {self.wo_sa}")
-        self.logger.info(f"wo_sr: {self.wo_sr}")
         self.logger.info(f"wo_subtask: {self.wo_subtask}")
         self.logger.info(
             "[ablation] wo_global_facts=%s wo_jev_memory=%s wo_jev_api=%s",
@@ -3047,6 +3051,8 @@ print(output)
                 
                 return decision
                 
+            except JEVError:
+                raise
             except Exception as e:
                 self.logger.error(f"Decision parsing error (attempt {attempt + 1}/{self.max_parse_retries}): {e}")
                 if response:
@@ -4647,6 +4653,7 @@ print(output)
                     action_description=action_description,
                     recovery_hint=recovery_hint if recovery_hint else "None",
                 )
+            prompt += self._build_completed_condition_monitor_prompt()
             if not self.wo_global_facts and self.guest_platform != "android":
                 prompt += GLOBAL_FACT_PROMPT_EXTENSION
             if bash_context is not None:
@@ -4879,7 +4886,10 @@ except subprocess.TimeoutExpired as e:
             if exitcode != 0 or status != "success":
                 recovery_hint = logs or f"exitcode={exitcode}"
             normalized_logs = str(logs or "").strip()
-            if len(normalized_logs) > 300:
+            if (
+                len(normalized_logs) > 300
+                or bool(getattr(self, "completed_completion_criteria", []))
+            ):
                 step_abstraction_summary = self._step_abstraction(
                     before_screenshot=None,
                     after_screenshot=None,
@@ -5310,14 +5320,6 @@ except subprocess.TimeoutExpired as e:
                 }
             },
             "ablation": {
-                "wo_l2s": self.wo_l2s,
-                "wo_s2l": self.wo_s2l,
-                "wo_cp": self.wo_cp,
-                "wo_al": self.wo_al,
-                "wo_sls": self.wo_sls,
-                "wo_ps": self.wo_ps,
-                "wo_sa": self.wo_sa,
-                "wo_sr": self.wo_sr,
                 "wo_global_facts": self.wo_global_facts,
                 "wo_jev_memory": self.wo_jev_memory,
                 "wo_jev_api": self.wo_jev_api,
@@ -5387,7 +5389,6 @@ def create_android_world_agent(
     visual_grounder_model: str,
     state_manager_model: str,
     sleep_after_execution: float = 0.5,
-    wo_think: bool = False,
 ):
     """Create LocalLSTC's AndroidWorld agent without a hard Android dependency."""
     from android_world.agents import base_agent
@@ -5634,7 +5635,6 @@ def create_android_world_agent(
                 result_dir=result_dir,
                 save_dir=save_dir,
                 record=False,
-                wo_think=wo_think,
                 guest_platform="android",
             )
             try:

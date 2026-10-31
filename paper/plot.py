@@ -12,6 +12,21 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from matplotlib.patches import Patch
+from plotnine import (
+    aes,
+    element_blank,
+    element_line,
+    element_rect,
+    element_text,
+    geom_col,
+    geom_text,
+    ggplot,
+    labs,
+    scale_fill_manual,
+    scale_y_continuous,
+    theme,
+    theme_minimal,
+)
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -61,6 +76,17 @@ OUTER_GROUP_COLORS = (
 )
 DIFFICULTY_COLORS = ("#D5DFD0", "#EBD7BD", "#E5C4C1")
 PREFIX_COLORS = dict(zip(("V", "H", "M", "C"), GROUP_COLORS))
+
+BASELINE_SR50 = pd.DataFrame(
+    {
+        "benchmark": [
+            "OSWorld",
+            "WAA",
+            "AccessNeedBench",
+        ],
+        "sr_50": [72.3, 67.9, 55.6],
+    }
+)
 
 
 def configure_style() -> None:
@@ -521,6 +547,53 @@ def plot_app_count(metadata: pd.DataFrame, output_dir: Path) -> Path:
     return save(fig, output_dir, "tasks_by_app_count.png")
 
 
+def plot_baseline_sr50(_: pd.DataFrame, output_dir: Path) -> Path:
+    """Compare the same baseline's SR_50 across the three benchmarks."""
+    data = BASELINE_SR50.copy()
+    data["benchmark"] = pd.Categorical(
+        data["benchmark"], categories=data["benchmark"], ordered=True
+    )
+    data["label"] = data["sr_50"].map(lambda value: f"{value:.1f}")
+
+    chart = (
+        ggplot(data, aes(x="benchmark", y="sr_50", fill="benchmark"))
+        + geom_col(width=0.66, color="white", size=0.8, show_legend=False)
+        + geom_text(
+            aes(label="label"),
+            nudge_y=2.8,
+            size=11,
+            family="Arial",
+            fontweight="normal",
+        )
+        + scale_fill_manual(
+            values=[CATEGORY_COLORS[4], CATEGORY_COLORS[3], CATEGORY_COLORS[0]]
+        )
+        + scale_y_continuous(limits=(0, 82), breaks=range(0, 81, 20))
+        + labs(
+            x=None,
+            y=r"$SR_{50}$ (%)",
+        )
+        + theme_minimal(base_family="Arial", base_size=11)
+        + theme(
+            figure_size=(3.8, 2.35),
+            plot_background=element_rect(fill="white", color="white"),
+            panel_background=element_rect(fill="white", color="white"),
+            panel_grid_major_x=element_blank(),
+            panel_grid_minor=element_blank(),
+            panel_grid_major_y=element_line(color=GRID_COLOR, size=0.6),
+            axis_text_x=element_text(color=TEXT_COLOR, size=11),
+            axis_text_y=element_text(color=TEXT_COLOR, size=10),
+            axis_title_x=element_blank(),
+            axis_title_y=element_text(color=TEXT_COLOR, size=12),
+        )
+    )
+
+    output_dir.mkdir(parents=True, exist_ok=True)
+    output_path = output_dir / "baseline_sr50_comparison.png"
+    chart.save(output_path, dpi=300, verbose=False)
+    return output_path
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -553,6 +626,7 @@ def main() -> None:
         plot_operation_time_ecdf,
         plot_difficulty_time,
         plot_app_count,
+        plot_baseline_sr50,
     )
     outputs = [plotter(metadata, args.output_dir) for plotter in plotters]
 

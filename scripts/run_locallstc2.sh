@@ -27,9 +27,9 @@ nohup setsid env \
     --som-origin oss \
     --a11y-backend uia \
     --clean-results false \
-    --num-workers 2 \
+    --num-workers 4 \
     --result-dir /locallstc/projects/WindowsAgentArena/results/locallstc2_qwen3.8-27b \
-    --json-name evaluation_examples_windows/test_small.json \
+    --json-name evaluation_examples_windows/test_all.json \
     --remove-container true \
     "$@" >"$LOG_FILE" 2>&1 < /dev/null &
 

@@ -3,7 +3,7 @@
 set -e
 
 cd "$(dirname "$0")"
-LOG_FILE="$(pwd)/nohup_locallstc2_ablation_2.out"
+LOG_FILE="$(pwd)/nohup_locallstc2_wo_jev_memory.out"
 
 nohup setsid env \
     PYTHONUNBUFFERED=1 \
@@ -27,11 +27,11 @@ nohup setsid env \
     --som-origin oss \
     --a11y-backend uia \
     --clean-results false \
-    --num-workers 3 \
-    --result-dir /locallstc/projects/WindowsAgentArena/results/locallstc2_qwen3.8-27b_wo_jev_api \
+    --num-workers 1 \
+    --result-dir /locallstc/projects/WindowsAgentArena/results/locallstc2_qwen3.8-27b_wo_jev_memory \
     --json-name evaluation_examples_windows/test_small.json \
     --remove-container true \
-    --wo-jev-api \
+    --wo-jev-memory \
     "$@" >"$LOG_FILE" 2>&1 < /dev/null &
 
 runner_pid=$!

@@ -226,17 +226,28 @@ def _run_locallstc(env, example, args, example_result_dir) -> float:
         from mm_agents.locallstc.main import LocalLSTC
 
     model = args.global_planner_model or args.model
-    jev_options = {}
-    final_verification_options = {}
+    agent_options = {}
     if args.agent_name == "locallstc2":
-        jev_options = {
+        agent_options = {
             "wo_global_facts": args.wo_global_facts,
             "wo_jev_memory": args.wo_jev_memory,
             "wo_jev_api": args.wo_jev_api,
             "wo_subtask": args.wo_subtask,
         }
     else:
-        final_verification_options = {"wo_fv": args.wo_fv}
+        agent_options = {
+            "wo_roi": args.wo_roi,
+            "wo_l2s": args.wo_l2s,
+            "wo_s2l": args.wo_s2l,
+            "wo_cp": args.wo_cp,
+            "wo_al": args.wo_al,
+            "wo_sls": args.wo_sls,
+            "wo_fv": args.wo_fv,
+            "wo_ps": args.wo_ps,
+            "wo_sa": args.wo_sa,
+            "wo_sr": args.wo_sr,
+            "wo_think": args.wo_think,
+        }
 
     framework = LocalLSTC(
         env=env,
@@ -252,28 +263,17 @@ def _run_locallstc(env, example, args, example_result_dir) -> float:
         result_dir=args.result_dir,
         save_dir=example_result_dir,
         record=args.record,
-        wo_roi=args.wo_roi,
         roi_margin=args.roi_margin,
         refine_period=args.refine_period,
         force_refine_period=args.force_refine_period,
         bash_timeout=args.bash_timeout,
         guest_platform=args.guest_platform,
-        wo_l2s=args.wo_l2s,
-        wo_s2l=args.wo_s2l,
-        wo_cp=args.wo_cp,
-        wo_al=args.wo_al,
-        wo_sls=args.wo_sls,
-        wo_ps=args.wo_ps,
-        wo_sa=args.wo_sa,
-        wo_sr=args.wo_sr,
-        wo_think=args.wo_think,
         thinking_token_budget=args.thinking_token_budget,
         temperature=args.temperature,
         seed=args.seed,
         top_p=args.top_p,
         top_k=args.top_k,
-        **final_verification_options,
-        **jev_options,
+        **agent_options,
     )
     return framework.execute_task(
         example, additional_context=build_additional_context(args, example)
