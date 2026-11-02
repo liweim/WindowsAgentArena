@@ -1,5 +1,34 @@
 {
   "cognitive": [
-    "consumption-elsa_water_bottle"
+    "access-chrome_font_size_large",
+    "access-edge_immersive_reader_setup",
+    "consumption-movie_night_shopping",
+    "service-cms_product_record",
+    "service-cms_update_voyage_stock"
+  ],
+  "hearing": [
+    "communication-pharmacy_pickup_voicemail",
+    "consumption-colgate_slimsoft_six_pack",
+    "consumption-insta360"
+  ],
+  "motor": [
+    "access-enable_sticky_keys",
+    "access-set_primary_mouse_button_right",
+    "captcha-click_sequence_1",
+    "captcha-slide_puzzle_1",
+    "communication-osk_referral_email",
+    "consumption-cheapest_polisher",
+    "health-parkinsons_medication_reminders",
+    "information-singapore_real_gdp_comparison",
+    "management-monthly_expenses_total",
+    "mobility-mouse_keys_google_maps_route",
+    "service-reddit_monitor_post_count"
+  ],
+  "visual": [
+    "access-windows_color_filter_grayscale_inverted",
+    "consumption-lavender_coupon",
+    "consumption-saute_pan",
+    "information-wikipedia_image_person",
+    "mobility-walking_route_wat_arun"
   ]
 }

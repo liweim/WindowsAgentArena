@@ -77,6 +77,9 @@ BASH_STEP_ABSTRACTION_LOG_CHAR_LIMIT = 20000
 BASH_STEP_ABSTRACTION_LOG_OMISSION = "Output truncated because it exceeded the length limit."
 DEFAULT_JEV_API_INCLUDE_THRESHOLD = 0.1
 ALWAYS_AVAILABLE_API_DOMAINS = ("pdf",)
+COMPLETION_CRITERIA_CACHE_PATH = os.path.join(
+    os.path.dirname(__file__), "completion_criteria_cache.json"
+)
 GLOBAL_FACT_KEY_MAX_CHARS = 128
 GLOBAL_FACT_VALUE_MAX_CHARS = 1024
 VOLATILE_GLOBAL_FACT_KEY_TOKENS = (
@@ -218,6 +221,7 @@ class LocalLSTC:
         self.logger = logging.getLogger("desktopenv")
         self.skills_dir = os.path.join(os.path.dirname(__file__), "skills")
         self.api_registry = APIRegistry(os.path.dirname(__file__))
+        self.completion_criteria_cache = self._load_completion_criteria_cache()
         self._jev = None
         self._jev_init_attempted = False
         self._jev_model_name = ""
@@ -372,6 +376,24 @@ class LocalLSTC:
 
     def _generate_completion_criteria(self) -> Tuple[str, ...]:
         """Generate the task's immutable final verification goals once."""
+        task_id = str(getattr(self, "current_task_id", "") or "").strip()
+        cached = self.completion_criteria_cache.get(task_id)
+        if cached:
+            result = tuple(cached)
+            self.logger.info(
+                "[completion_criteria_cache] hit task_id=%s criteria=%s",
+                task_id,
+                json.dumps(result, ensure_ascii=False),
+            )
+            self._dump_prompt_entry(
+                stage="completion_criteria_cache",
+                payload=list(result),
+                step=0,
+                attempt=1,
+            )
+            return result
+
+        self.logger.info("[completion_criteria_cache] miss task_id=%s", task_id)
         messages = [
             {"role": "system", "content": COMPLETION_CRITERIA_PROMPT},
             {"role": "user", "content": self.task_instruction},
@@ -437,6 +459,45 @@ class LocalLSTC:
                     exc,
                 )
         raise ValueError(f"Failed to generate completion criteria: {last_error}")
+
+    def _load_completion_criteria_cache(self) -> Dict[str, Tuple[str, ...]]:
+        if not os.path.isfile(COMPLETION_CRITERIA_CACHE_PATH):
+            self.logger.warning(
+                "[completion_criteria_cache] file not found: %s",
+                COMPLETION_CRITERIA_CACHE_PATH,
+            )
+            return {}
+
+        try:
+            with open(COMPLETION_CRITERIA_CACHE_PATH, "r", encoding="utf-8") as f:
+                payload = json.load(f)
+            if not isinstance(payload, dict):
+                raise ValueError("cache root must be a JSON object")
+
+            cache: Dict[str, Tuple[str, ...]] = {}
+            for raw_task_id, raw_criteria in payload.items():
+                task_id = str(raw_task_id or "").strip()
+                if not task_id or not isinstance(raw_criteria, list):
+                    raise ValueError(f"invalid cache entry for {raw_task_id!r}")
+                criteria = tuple(
+                    re.sub(r"\s+", " ", str(item or "").strip())
+                    for item in raw_criteria
+                    if str(item or "").strip()
+                )
+                if not criteria or len(criteria) > 12:
+                    raise ValueError(f"invalid criteria for task_id={task_id}")
+                cache[task_id] = criteria
+            self.logger.info(
+                "[completion_criteria_cache] loaded=%s path=%s",
+                len(cache),
+                COMPLETION_CRITERIA_CACHE_PATH,
+            )
+            return cache
+        except Exception as exc:
+            raise ValueError(
+                f"Failed to load completion criteria cache "
+                f"{COMPLETION_CRITERIA_CACHE_PATH}: {exc}"
+            ) from exc
 
     def _reset_execution_state(self) -> None:
         self.operation_count = 0

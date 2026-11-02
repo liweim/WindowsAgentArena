@@ -31,19 +31,5 @@
     "service-cms_update_voyage_stock",
     "service-cms_update_access_desk_page_audio",
     "service-cms_update_voyage_stock_audio"
-  ],
-  "forum": [
-    "information-food_calorie_forum_answer",
-    "service-passport_application_post_office",
-    "service-reddit_monitor_post_count"
-  ],
-  "wikipedia": [
-    "access-edge_immersive_reader_setup",
-    "information-chrome_reference_bookmarks",
-    "information-wikipedia_accessibility_definition",
-    "information-bookmark_accessibility_reference",
-    "information-metal_density_comparison",
-    "information-second_gold_rush",
-    "information-wikipedia_image_person"
   ]
 }

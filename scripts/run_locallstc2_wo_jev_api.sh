@@ -28,8 +28,8 @@ nohup setsid env \
     --a11y-backend uia \
     --clean-results false \
     --num-workers 1 \
-    --result-dir /locallstc/projects/WindowsAgentArena/results/locallstc2_qwen3.8-27b_wo_jev_api \
-    --json-name evaluation_examples_windows/test_small.json \
+    --result-dir /locallstc/projects/WindowsAgentArena/results/debug/locallstc2_qwen3.8-27b_wo_jev_api \
+    --json-name evaluation_examples_windows/debug.json \
     --remove-container true \
     --wo-jev-api \
     "$@" >"$LOG_FILE" 2>&1 < /dev/null &

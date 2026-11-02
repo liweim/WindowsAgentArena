@@ -491,7 +491,7 @@ PY
     fi
     service_manifest_path="$client_mount_path/evaluation_examples_windows/task_service_manifest.json"
     if [ ! -f "$service_manifest_path" ]; then
-        log_error_exit "Task service manifest not found: $service_manifest_path (run scripts/build_task_service_manifest.py)."
+        log_error_exit "Task service manifest not found: $service_manifest_path"
     fi
 
     result_host_dir=""
@@ -612,7 +612,8 @@ PY
     queue_claim_dir="$storage_run_root/claimed"
     queue_lock_path="$storage_run_root/queue.lock"
     service_lane_dir="${WAA_SERVICE_LANE_DIR:-/tmp/windows-agent-arena-service-lanes-$(id -u)}"
-    mkdir -p "$queue_claim_dir" "$service_lane_dir"
+    service_queue_lock_path="$service_lane_dir/waiters.lock"
+    mkdir -p "$queue_claim_dir" "$service_lane_dir/shopping.waiters" "$service_lane_dir/shopping_admin.waiters"
     echo "Global service lane directory: $service_lane_dir"
 
     cleanup_isolated_run() {
@@ -630,6 +631,7 @@ PY
         if [[ -n "$storage_run_root" && "$storage_run_root" == */task-storage.* ]]; then
             rm -rf "$storage_run_root"
         fi
+        rm -f "$service_lane_dir/shopping.waiters/$run_id" "$service_lane_dir/shopping_admin.waiters/$run_id"
         rm -f "$run_state_file"
     }
     trap cleanup_isolated_run EXIT
@@ -642,19 +644,72 @@ PY
         local index task_status worker_status=0 claim_status
         local claimed_index claimed_domain claimed_example_id claimed_lanes claimed_services
         local candidate_index candidate_domain candidate_example_id candidate_lanes candidate_services
-        local current_golden_signature lane_fd lane_wait_seconds=0 pending_tasks
+        local current_golden_signature lane_fd lane_wait_seconds=0 pending_tasks blocked_lanes
+        local lane waiter_file waiter_run waiter_dir waiter_head
         local -a acquired_lanes requested_lanes
         local container_name="${container_name_base}-w${worker_slot}"
         local json_name="/winarena-task.json"
         local clean_results=false
         local task_json_mount_path
         local vm_storage_mount_path
-        local queue_fd shopping_lane_fd shopping_admin_lane_fd forum_lane_fd
+        local queue_fd service_queue_fd shopping_lane_fd shopping_admin_lane_fd
 
         exec {queue_fd}> "$queue_lock_path"
+        exec {service_queue_fd}> "$service_queue_lock_path"
         exec {shopping_lane_fd}> "$service_lane_dir/shopping.lock"
         exec {shopping_admin_lane_fd}> "$service_lane_dir/shopping_admin.lock"
-        exec {forum_lane_fd}> "$service_lane_dir/forum.lock"
+
+        set_waiter_dir() {
+            case "$1" in
+                shopping) waiter_dir="$service_lane_dir/shopping.waiters" ;;
+                shopping_admin) waiter_dir="$service_lane_dir/shopping_admin.waiters" ;;
+                *) log_error_exit "Unknown service lane: $1" ;;
+            esac
+        }
+
+        prune_stale_waiters() {
+            local stale_lane=$1
+            set_waiter_dir "$stale_lane"
+            for waiter_file in "$waiter_dir"/*; do
+                [ -e "$waiter_file" ] || continue
+                IFS= read -r waiter_run < "$waiter_file" || waiter_run=""
+                [ -n "$waiter_run" ] && [ -f "$waiter_run" ] || rm -f "$waiter_file"
+            done
+        }
+
+        find_waiter_head() {
+            local head_lane=$1 head_line
+            set_waiter_dir "$head_lane"
+            head_line=$(find "$waiter_dir" -mindepth 1 -maxdepth 1 -type f -printf '%T@\t%f\n' | sort -n | head -1)
+            waiter_head=${head_line#*$'\t'}
+            [ "$waiter_head" != "$head_line" ] || waiter_head=""
+        }
+
+        remove_run_waiters() {
+            flock "$service_queue_fd"
+            rm -f "$service_lane_dir/shopping.waiters/$run_id" "$service_lane_dir/shopping_admin.waiters/$run_id"
+            flock -u "$service_queue_fd"
+        }
+
+        register_lane_waiter() {
+            local lanes=$1 queued_lane
+            [ "$lanes" != "-" ] || return 0
+            flock "$service_queue_fd"
+            if [ -e "$service_lane_dir/shopping.waiters/$run_id" ] || [ -e "$service_lane_dir/shopping_admin.waiters/$run_id" ]; then
+                flock -u "$service_queue_fd"
+                return 0
+            fi
+            for queued_lane in "shopping" "shopping_admin"; do
+                [[ ",${lanes}," == *",${queued_lane},"* ]] || continue
+                prune_stale_waiters "$queued_lane"
+                set_waiter_dir "$queued_lane"
+                printf '%s\n' "$run_state_file" > "$waiter_dir/$run_id"
+                echo "Worker $worker_slot: queued run $run_id for global service lane $queued_lane."
+                flock -u "$service_queue_fd"
+                return 0
+            done
+            flock -u "$service_queue_fd"
+        }
 
         release_task_lanes() {
             local lane
@@ -662,7 +717,6 @@ PY
                 case "$lane" in
                     shopping) flock -u "$shopping_lane_fd" ;;
                     shopping_admin) flock -u "$shopping_admin_lane_fd" ;;
-                    forum) flock -u "$forum_lane_fd" ;;
                 esac
             done
             acquired_lanes=()
@@ -673,20 +727,31 @@ PY
             acquired_lanes=()
             [ "$lanes" != "-" ] || return 0
             IFS=',' read -r -a requested_lanes <<< "$lanes"
-            for lane in "shopping" "shopping_admin" "forum"; do
+            flock "$service_queue_fd"
+            for lane in "shopping" "shopping_admin"; do
                 [[ ",${lanes}," == *",${lane},"* ]] || continue
+                prune_stale_waiters "$lane"
+                find_waiter_head "$lane"
+                if [ -n "$waiter_head" ] && [ "$waiter_head" != "$run_id" ]; then
+                    flock -u "$service_queue_fd"
+                    release_task_lanes
+                    return 1
+                fi
                 case "$lane" in
                     shopping) lane_fd=$shopping_lane_fd ;;
                     shopping_admin) lane_fd=$shopping_admin_lane_fd ;;
-                    forum) lane_fd=$forum_lane_fd ;;
                 esac
                 if flock -n "$lane_fd"; then
                     acquired_lanes+=("$lane")
+                    set_waiter_dir "$lane"
+                    rm -f "$waiter_dir/$run_id"
                 else
+                    flock -u "$service_queue_fd"
                     release_task_lanes
                     return 1
                 fi
             done
+            flock -u "$service_queue_fd"
             if [ "${#acquired_lanes[@]}" -ne "${#requested_lanes[@]}" ]; then
                 release_task_lanes
                 log_error_exit "Unknown exclusive service lane in task manifest: $lanes"
@@ -695,6 +760,7 @@ PY
 
         claim_next_task() {
             pending_tasks=false
+            blocked_lanes=""
             flock "$queue_fd"
             for ((candidate_index = 0; candidate_index < ${#task_entries[@]}; candidate_index++)); do
                 [ ! -e "$queue_claim_dir/$candidate_index" ] || continue
@@ -710,6 +776,9 @@ PY
                     claimed_services=$candidate_services
                     flock -u "$queue_fd"
                     return 0
+                fi
+                if [ "$candidate_lanes" != "-" ] && [[ ",${blocked_lanes}," != *",${candidate_lanes},"* ]]; then
+                    blocked_lanes="${blocked_lanes:+$blocked_lanes,}$candidate_lanes"
                 fi
             done
             flock -u "$queue_fd"
@@ -746,11 +815,16 @@ PY
                 claim_status=$?
             fi
             if [ "$claim_status" -eq 1 ]; then
+                remove_run_waiters
                 break
             fi
             if [ "$claim_status" -eq 2 ]; then
+                register_lane_waiter "$blocked_lanes"
                 sleep 1
                 lane_wait_seconds=$((lane_wait_seconds + 1))
+                if [ "$lane_wait_seconds" -eq 1 ] || [ $((lane_wait_seconds % 30)) -eq 0 ]; then
+                    echo "Worker $worker_slot: waiting ${lane_wait_seconds}s for queued global service lane(s): $blocked_lanes"
+                fi
                 continue
             fi
 

@@ -923,7 +923,7 @@ class LocalLLM(BaseLLMClient):
             request_kwargs = {
                 "temperature": self.temperature,
                 "top_p": self.top_p,
-                "presence_penalty": 1.5,
+                "presence_penalty": 0.0,
                 "extra_body": extra_body,
             }
         elif self.model_type == "gemma":
