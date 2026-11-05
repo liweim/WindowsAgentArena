@@ -77,9 +77,6 @@ BASH_STEP_ABSTRACTION_LOG_CHAR_LIMIT = 20000
 BASH_STEP_ABSTRACTION_LOG_OMISSION = "Output truncated because it exceeded the length limit."
 DEFAULT_JEV_API_INCLUDE_THRESHOLD = 0.1
 ALWAYS_AVAILABLE_API_DOMAINS = ("pdf",)
-COMPLETION_CRITERIA_CACHE_PATH = os.path.join(
-    os.path.dirname(__file__), "completion_criteria_cache.json"
-)
 GLOBAL_FACT_KEY_MAX_CHARS = 128
 GLOBAL_FACT_VALUE_MAX_CHARS = 1024
 VOLATILE_GLOBAL_FACT_KEY_TOKENS = (
@@ -151,6 +148,9 @@ class LocalLSTC:
         wo_jev_api: bool = False,
         wo_subtask: bool = False,
         thinking_token_budget: Optional[int] = None,
+        enable_thinking: bool = True,
+        preserve_thinking: bool = True,
+        reasoning_effort: Optional[str] = None,
         temperature: float = 1,
         seed: Optional[int] = 42,
         top_p: float = 0.95,
@@ -206,8 +206,10 @@ class LocalLSTC:
         self.wo_jev_api = bool(wo_jev_api)
         self.wo_subtask = bool(wo_subtask)
         self.api_enabled = not self.wo_l2s
-        self.enable_thinking = True
+        self.enable_thinking = enable_thinking
         self.thinking_token_budget = thinking_token_budget
+        self.preserve_thinking = preserve_thinking
+        self.reasoning_effort = reasoning_effort
         self.temperature = temperature
         self.seed = seed
         self.top_p = top_p
@@ -221,7 +223,6 @@ class LocalLSTC:
         self.logger = logging.getLogger("desktopenv")
         self.skills_dir = os.path.join(os.path.dirname(__file__), "skills")
         self.api_registry = APIRegistry(os.path.dirname(__file__))
-        self.completion_criteria_cache = self._load_completion_criteria_cache()
         self._jev = None
         self._jev_init_attempted = False
         self._jev_model_name = ""
@@ -376,24 +377,6 @@ class LocalLSTC:
 
     def _generate_completion_criteria(self) -> Tuple[str, ...]:
         """Generate the task's immutable final verification goals once."""
-        task_id = str(getattr(self, "current_task_id", "") or "").strip()
-        cached = self.completion_criteria_cache.get(task_id)
-        if cached:
-            result = tuple(cached)
-            self.logger.info(
-                "[completion_criteria_cache] hit task_id=%s criteria=%s",
-                task_id,
-                json.dumps(result, ensure_ascii=False),
-            )
-            self._dump_prompt_entry(
-                stage="completion_criteria_cache",
-                payload=list(result),
-                step=0,
-                attempt=1,
-            )
-            return result
-
-        self.logger.info("[completion_criteria_cache] miss task_id=%s", task_id)
         messages = [
             {"role": "system", "content": COMPLETION_CRITERIA_PROMPT},
             {"role": "user", "content": self.task_instruction},
@@ -412,6 +395,8 @@ class LocalLSTC:
                     messages,
                     enable_thinking=self.enable_thinking,
                     thinking_token_budget=self.thinking_token_budget,
+                    preserve_thinking=self.preserve_thinking,
+                    reasoning_effort=self.reasoning_effort,
                 )
             finally:
                 latency = time.perf_counter() - started_at
@@ -459,45 +444,6 @@ class LocalLSTC:
                     exc,
                 )
         raise ValueError(f"Failed to generate completion criteria: {last_error}")
-
-    def _load_completion_criteria_cache(self) -> Dict[str, Tuple[str, ...]]:
-        if not os.path.isfile(COMPLETION_CRITERIA_CACHE_PATH):
-            self.logger.warning(
-                "[completion_criteria_cache] file not found: %s",
-                COMPLETION_CRITERIA_CACHE_PATH,
-            )
-            return {}
-
-        try:
-            with open(COMPLETION_CRITERIA_CACHE_PATH, "r", encoding="utf-8") as f:
-                payload = json.load(f)
-            if not isinstance(payload, dict):
-                raise ValueError("cache root must be a JSON object")
-
-            cache: Dict[str, Tuple[str, ...]] = {}
-            for raw_task_id, raw_criteria in payload.items():
-                task_id = str(raw_task_id or "").strip()
-                if not task_id or not isinstance(raw_criteria, list):
-                    raise ValueError(f"invalid cache entry for {raw_task_id!r}")
-                criteria = tuple(
-                    re.sub(r"\s+", " ", str(item or "").strip())
-                    for item in raw_criteria
-                    if str(item or "").strip()
-                )
-                if not criteria or len(criteria) > 12:
-                    raise ValueError(f"invalid criteria for task_id={task_id}")
-                cache[task_id] = criteria
-            self.logger.info(
-                "[completion_criteria_cache] loaded=%s path=%s",
-                len(cache),
-                COMPLETION_CRITERIA_CACHE_PATH,
-            )
-            return cache
-        except Exception as exc:
-            raise ValueError(
-                f"Failed to load completion criteria cache "
-                f"{COMPLETION_CRITERIA_CACHE_PATH}: {exc}"
-            ) from exc
 
     def _reset_execution_state(self) -> None:
         self.operation_count = 0
@@ -1270,7 +1216,15 @@ print(output)
         sections.extend(self._build_domain_planner_sections())
         sections.extend(self._build_recovery_planner_sections())
         if self.direct_coordinate_grounding:
-            sections.append(DIRECT_COORDINATE_GROUNDING_PROMPT)
+            sections.append(
+                DIRECT_COORDINATE_GROUNDING_PROMPT
+                + "\n\n"
+                + (
+                    "The width and height of the image are "
+                    f"{self.current_screen_width} and {self.current_screen_height}. "
+                    "The origin coordinate of the image is top-left corner."
+                )
+            )
         return "\n\n".join(section.strip() for section in sections if section)
 
     def _normalize_subgoal(self, value: str) -> str:
@@ -1602,6 +1556,7 @@ print(output)
             messages,
             enable_thinking=False,
             thinking_token_budget=self.thinking_token_budget,
+            preserve_thinking=self.preserve_thinking,
         )
         self._dump_prompt_entry(stage="final_verification_response", payload=response)
         result = str(response or "").strip()
@@ -2412,6 +2367,7 @@ print(output)
                 messages,
                 enable_thinking=False,
                 thinking_token_budget=self.thinking_token_budget,
+                preserve_thinking=self.preserve_thinking,
             )
             self._dump_prompt_entry(
                 stage="context_refinement_response",
@@ -2861,6 +2817,8 @@ print(output)
                 screenshot = self._wait_until_screenshot_available()
                 if screenshot is None:
                     raise RuntimeError("Failed to capture screenshot for planning after retries.")
+                with Image.open(io.BytesIO(screenshot)) as screenshot_image:
+                    self.current_screen_width, self.current_screen_height = screenshot_image.size
                 screenshot_b64 = base64.b64encode(screenshot).decode("utf-8")
                 pending_api_image_b64 = (
                     base64.b64encode(self.pending_api_image).decode("utf-8")
@@ -2959,6 +2917,8 @@ print(output)
                         messages,
                         enable_thinking=self.enable_thinking,
                         thinking_token_budget=self.thinking_token_budget,
+                        preserve_thinking=self.preserve_thinking,
+                        reasoning_effort=self.reasoning_effort,
                     )
                 finally:
                     planner_latency = time.perf_counter() - planner_started_at
@@ -3789,12 +3749,8 @@ print(output)
         return int(match.group(1)), int(match.group(2))
 
     def _has_valid_direct_coordinates(self, code: str) -> bool:
-        """Validate planner coordinates in Qwen's normalized 0..1000 space."""
-        return self.direct_coordinate_adapter.has_valid_coordinates(code)
-
-    def _map_direct_coordinates_to_pixels(self, code: str) -> str:
-        """Convert direct planner coordinates from 0..1000 to screenshot pixels."""
-        return self.direct_coordinate_adapter.map_to_pixels(
+        """Validate planner coordinates in the current screenshot's pixel space."""
+        return self.direct_coordinate_adapter.has_valid_coordinates(
             code,
             self.current_screen_width,
             self.current_screen_height,
@@ -4575,9 +4531,8 @@ print(output)
 
             step_time = time.time() - step_start_time
             result_fingerprint = self._hash_text("success=True")
-            # Keep coordinates normalized for the planner while recording all
-            # other parameters after execution postprocessing. The native-pixel
-            # action remains available separately for diagnostics.
+            # Direct-coordinate mode already uses native screenshot pixels, so
+            # the recorded and executed actions have the same coordinates.
             self.action_logs.append({
                 "step": step,
                 "type": "gui_action",
@@ -4799,7 +4754,12 @@ print(output)
                 ]
 
             self._dump_prompt_entry(stage="step_abstraction", payload={"messages": messages})
-            step_abstraction = self.state_manager_llm(messages, enable_thinking=False, thinking_token_budget=self.thinking_token_budget)
+            step_abstraction = self.state_manager_llm(
+                messages,
+                enable_thinking=False,
+                thinking_token_budget=self.thinking_token_budget,
+                preserve_thinking=self.preserve_thinking,
+            )
             self._dump_prompt_entry(stage="step_abstraction_response", payload=step_abstraction)
             return self._parse_abstraction_payload(step_abstraction.strip())
 

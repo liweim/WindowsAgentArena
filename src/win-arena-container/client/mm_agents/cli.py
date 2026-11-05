@@ -307,6 +307,29 @@ def _add_locallstc2_options(parser: argparse.ArgumentParser) -> None:
         include_core_ablations=False,
         include_wo_roi=False,
     )
+    parser.add_argument(
+        "--enable_thinking",
+        "--enable-thinking",
+        nargs="?",
+        const=True,
+        type=_parse_bool,
+        default=True,
+    )
+    parser.add_argument(
+        "--preserve_thinking",
+        "--preserve-thinking",
+        nargs="?",
+        const=True,
+        type=_parse_bool,
+        default=True,
+    )
+    parser.add_argument(
+        "--reasoning_effort",
+        "--reasoning-effort",
+        choices=("xhigh", "medium", "low"),
+        default=None,
+        help="Qwen thinking depth; omit to use the model's default xhigh setting.",
+    )
     parser.set_defaults(visual_grounder_model="uitars-1.5-7b")
     for option in (
         "wo_global_facts",
@@ -465,11 +488,12 @@ METHOD_CONFIGURERS: Dict[str, Optional[ParserConfigurer]] = {
     "coact": _add_coact_options,
     "tars": _add_tars_options,
     "os_symphony": _add_os_symphony_options,
+    "os_symphony_fix": _add_os_symphony_options,
 }
 
 
 def _validate_method_options(args: argparse.Namespace, parser: argparse.ArgumentParser) -> None:
-    if args.agent_name == "os_symphony":
+    if args.agent_name in {"os_symphony", "os_symphony_fix"}:
         if args.symphony_search_mode == "linux" and not (
                 args.symphony_search_url and args.symphony_search_token_file):
             parser.error("Linux search mode requires --symphony-search-url and --symphony-search-token-file")

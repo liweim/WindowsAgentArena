@@ -3051,12 +3051,8 @@ print(output)
         return int(match.group(1)), int(match.group(2))
 
     def _has_valid_direct_coordinates(self, code: str) -> bool:
-        """Validate planner coordinates in Qwen's normalized 0..1000 space."""
-        return self.direct_coordinate_adapter.has_valid_coordinates(code)
-
-    def _map_direct_coordinates_to_pixels(self, code: str) -> str:
-        """Convert direct planner coordinates from 0..1000 to screenshot pixels."""
-        return self.direct_coordinate_adapter.map_to_pixels(
+        """Validate planner coordinates in the current screenshot's pixel space."""
+        return self.direct_coordinate_adapter.has_valid_coordinates(
             code,
             self.current_screen_width,
             self.current_screen_height,
@@ -3710,9 +3706,8 @@ print(output)
 
             step_time = time.time() - step_start_time
             result_fingerprint = self._hash_text("success=True")
-            # Keep coordinates normalized for the planner while recording all
-            # other parameters after execution postprocessing. The native-pixel
-            # action remains available separately for diagnostics.
+            # Direct-coordinate mode already uses native screenshot pixels, so
+            # the recorded and executed actions have the same coordinates.
             self.action_logs.append({
                 "step": step,
                 "type": "gui_action",

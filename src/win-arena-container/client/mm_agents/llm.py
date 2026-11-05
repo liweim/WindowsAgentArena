@@ -118,15 +118,16 @@ MODEL_CONFIGS = {
 }
 
 DIRECT_COORDINATE_GROUNDING_PROMPT = """# Direct Screenshot Coordinate Grounding
-For every visible mouse target, use the attached current screenshot to emit normalized coordinates directly in the `pyautogui` action.
+For each mouse interaction you generate, determine the coordinate by answering: "In the image, where should I click if I want to {instruction}?" Here, `{instruction}` is the local interaction intent or target description for that action.
 
-- Every x and y coordinate in the new actions you generate must use the model's 0-to-1000 normalized coordinate space, independent of screenshot resolution. Origin `(0, 0)` is top-left and bottom-right is `(1000, 1000)`.
+Follow the existing planner response protocol. Output the final screenshot-pixel coordinate directly as `(x, y)` inside its `pyautogui` action string in the planner JSON; do not output a separate coordinate-only response or a separate grounding JSON object. For example: `pyautogui.click(100, 100)`.
+
+- Use the attached current screenshot's native pixel coordinate space. Origin `(0, 0)` is the screenshot's top-left; x must be smaller than the screenshot width and y must be smaller than the screenshot height.
 - Use the center of the visible target, not a bounding-box corner.
 - Never emit coordinate placeholders such as `X_COORD`, `Y_COORD`, `START_X_COORD`, or `END_X_COORD`.
 - For `click`, `doubleClick`, `rightClick`, and `moveTo`, always include `(x, y)`.
-- For a drag, include both `pyautogui.moveTo(start_x, start_y)` and `pyautogui.dragTo(end_x, end_y, duration=...)`.
+- For a drag, apply the same grounding question separately to its start and end instructions, then include both `pyautogui.moveTo(start_x, start_y)` and `pyautogui.dragTo(end_x, end_y, duration=...)`.
 - For a region-specific scroll, include `pyautogui.moveTo(x, y)` immediately before `pyautogui.scroll(...)`.
-- Do not describe a target in place of coordinates.
 """
 
 
@@ -143,20 +144,14 @@ def uses_direct_coordinate_grounding(planner_model: str, grounder_model: str) ->
 
 @dataclass(frozen=True)
 class PreparedDirectAction:
-    """The two representations of one direct-coordinate planner action."""
+    """The recorded and executable forms of one direct-coordinate action."""
 
     history_action: str
     executed_action: str
 
 
 class DirectCoordinateActionAdapter:
-    """Validate, postprocess and map normalized planner actions to pixels.
-
-    `history_action` retains normalized coordinates but includes all non-coordinate
-    execution postprocessing. `executed_action` contains the corresponding native
-    screenshot pixels. This prevents both pixel-coordinate history pollution and
-    misleading history such as recording scroll(-10) when scroll(-5) ran.
-    """
+    """Validate and postprocess planner actions containing native pixel coordinates."""
 
     COORDINATE_METHODS = {
         "click",
@@ -222,7 +217,12 @@ class DirectCoordinateActionAdapter:
             return call.args[0], call.args[1]
         return None
 
-    def has_valid_coordinates(self, code: str) -> bool:
+    def has_valid_coordinates(
+        self,
+        code: str,
+        screen_width: Optional[int] = None,
+        screen_height: Optional[int] = None,
+    ) -> bool:
         if any(token in str(code or "") for token in self.PLACEHOLDERS):
             return False
         try:
@@ -245,53 +245,25 @@ class DirectCoordinateActionAdapter:
                 return False
             x = self._numeric_value(point_nodes[0])
             y = self._numeric_value(point_nodes[1])
-            if x is None or y is None or not 0 <= x <= 1000 or not 0 <= y <= 1000:
+            if x is None or y is None or x < 0 or y < 0:
+                return False
+            if screen_width is not None and x >= screen_width:
+                return False
+            if screen_height is not None and y >= screen_height:
                 return False
         return not saw_drag or saw_move
 
-    @staticmethod
-    def _pixel_coordinate(value: float, size: int) -> int:
-        return min(max(0, size - 1), round(float(value) * size / 1000))
-
-    def map_to_pixels(self, code: str, screen_width: int, screen_height: int) -> str:
-        tree = self._parse(self.normalize_code(code))
-        for node in ast.walk(tree):
-            if not isinstance(node, ast.Call):
-                continue
-            if self._pyautogui_method(node) not in self.COORDINATE_METHODS:
-                continue
-            point_nodes = self._point_nodes(node)
-            if point_nodes is None:
-                continue
-            normalized_x = self._numeric_value(point_nodes[0])
-            normalized_y = self._numeric_value(point_nodes[1])
-            if normalized_x is None or normalized_y is None:
-                continue
-            pixel_x = ast.Constant(self._pixel_coordinate(normalized_x, screen_width))
-            pixel_y = ast.Constant(self._pixel_coordinate(normalized_y, screen_height))
-            keyword_nodes = {kw.arg: kw for kw in node.keywords if kw.arg}
-            if "x" in keyword_nodes and "y" in keyword_nodes:
-                keyword_nodes["x"].value = pixel_x
-                keyword_nodes["y"].value = pixel_y
-            else:
-                node.args[0] = pixel_x
-                node.args[1] = pixel_y
-        ast.fix_missing_locations(tree)
-        return ast.unparse(tree).strip()
-
     def prepare(self, code: str, screen_width: int, screen_height: int) -> PreparedDirectAction:
-        normalized_code = self.normalize_code(code)
-        history_action = self.action_postprocessor(normalized_code)
-        if not self.has_valid_coordinates(history_action):
+        pixel_code = self.normalize_code(code)
+        final_action = self.action_postprocessor(pixel_code)
+        if not self.has_valid_coordinates(final_action, screen_width, screen_height):
             raise ValueError(
                 "Direct-coordinate planner returned missing, placeholder, or "
-                "out-of-range 0..1000 coordinates; no visual-grounder fallback is configured."
+                "out-of-screenshot pixel coordinates; no visual-grounder fallback is configured."
             )
-        executed_action = self.map_to_pixels(history_action, screen_width, screen_height)
-        executed_action = self.action_postprocessor(executed_action)
         return PreparedDirectAction(
-            history_action=history_action,
-            executed_action=executed_action,
+            history_action=final_action,
+            executed_action=final_action,
         )
 
 def resize_image(img, max_size=1024):
@@ -891,6 +863,8 @@ class LocalLLM(BaseLLMClient):
         messages: list,
         enable_thinking: Optional[bool] = None,
         thinking_token_budget: Optional[int] = None,
+        preserve_thinking: bool = False,
+        reasoning_effort: Optional[str] = None,
     ) -> str:
         """
         Call local model with messages
@@ -916,7 +890,10 @@ class LocalLLM(BaseLLMClient):
         elif self.model_type == "qwen":
             extra_body = {
                 "top_k": self.top_k,
-                "chat_template_kwargs": {"enable_thinking": enable_thinking},
+                "chat_template_kwargs": {
+                    "enable_thinking": enable_thinking,
+                    "preserve_thinking": preserve_thinking,
+                },
             }
             if enable_thinking and thinking_token_budget is not None:
                 extra_body["thinking_token_budget"] = thinking_token_budget
@@ -926,6 +903,8 @@ class LocalLLM(BaseLLMClient):
                 "presence_penalty": 0.0,
                 "extra_body": extra_body,
             }
+            if enable_thinking and reasoning_effort is not None:
+                request_kwargs["reasoning_effort"] = reasoning_effort
         elif self.model_type == "gemma":
             extra_body = {
                 "top_k": self.top_k,
@@ -1858,6 +1837,8 @@ class AbstractLLM:
         max_retries: int = 1,
         enable_thinking: Optional[bool] = None,
         thinking_token_budget: Optional[int] = None,
+        preserve_thinking: bool = False,
+        reasoning_effort: Optional[str] = None,
     ) -> Optional[str]:
         """
         Call LLM with timeout and retry mechanism
@@ -1879,8 +1860,12 @@ class AbstractLLM:
                 def call_llm():
                     # The client will automatically format messages using its formatter
                     client_kwargs = {"enable_thinking": enable_thinking}
-                    if isinstance(self.client, LocalLLM) and thinking_token_budget is not None:
-                        client_kwargs["thinking_token_budget"] = thinking_token_budget
+                    if isinstance(self.client, LocalLLM):
+                        client_kwargs["preserve_thinking"] = preserve_thinking
+                        if reasoning_effort is not None:
+                            client_kwargs["reasoning_effort"] = reasoning_effort
+                        if thinking_token_budget is not None:
+                            client_kwargs["thinking_token_budget"] = thinking_token_budget
                     return self.client(messages, **client_kwargs)
                 
                 response = call_llm()

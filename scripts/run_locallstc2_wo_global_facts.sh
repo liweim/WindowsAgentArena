@@ -21,7 +21,7 @@ nohup setsid env \
     --model qwen3.8-27b \
     --thinking_token_budget 2048 \
     --global_planner_model qwen3.8-27b \
-    --visual_grounder_model gta1-7b \
+    --visual_grounder_model qwen3.8-27b \
     --state_manager_model qwen3.8-27b \
     --max_steps 50 \
     --som-origin oss \
@@ -29,7 +29,7 @@ nohup setsid env \
     --clean-results false \
     --num-workers 1 \
     --result-dir /locallstc/projects/WindowsAgentArena/results/locallstc2_qwen3.8-27b_wo_global_facts \
-    --json-name evaluation_examples_windows/test_small.json \
+    --json-name evaluation_examples_windows/test_all.json \
     --remove-container true \
     --wo-global-facts \
     "$@" >"$LOG_FILE" 2>&1 < /dev/null &

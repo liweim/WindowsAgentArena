@@ -288,27 +288,31 @@ def test(
                 logger.error(error_traceback)
                 # Keep fatal task failures visible to both the batch scheduler
                 # and summary(), matching the LocalLSTC error artifact format.
-                with open(os.path.join(example_result_dir, "result.txt"), "w", encoding="utf-8") as f:
-                    f.write("0.0")
-                with open(os.path.join(example_result_dir, "err_reason.txt"), "w", encoding="utf-8") as f:
-                    f.write(f"Fatal error: {e}\n\n{error_traceback}")
-                execution_log_path = os.path.join(example_result_dir, "execution_log.json")
-                if os.path.exists(execution_log_path):
-                    with open(execution_log_path, "r", encoding="utf-8") as f:
-                        execution_log = json.load(f)
+                if args.agent_name == "os_symphony_fix":
+                    from mm_agents.os_symphony_fix.execution import record_task_failure
+                    record_task_failure(example_result_dir, example, e, error_traceback)
                 else:
-                    execution_log = {
-                        "statistics": {"score": 0.0},
-                        "task_config": example,
+                    with open(os.path.join(example_result_dir, "result.txt"), "w", encoding="utf-8") as f:
+                        f.write("0.0")
+                    with open(os.path.join(example_result_dir, "err_reason.txt"), "w", encoding="utf-8") as f:
+                        f.write(f"Fatal error: {e}\n\n{error_traceback}")
+                    execution_log_path = os.path.join(example_result_dir, "execution_log.json")
+                    if os.path.exists(execution_log_path):
+                        with open(execution_log_path, "r", encoding="utf-8") as f:
+                            execution_log = json.load(f)
+                    else:
+                        execution_log = {
+                            "statistics": {"score": 0.0},
+                            "task_config": example,
+                        }
+                    execution_log["evaluation"] = {
+                        "task_outcome": 0.0,
+                        "access_requirement": 0.0,
+                        "success_rate": 0.0,
+                        "requirement_relation": "coincident",
                     }
-                execution_log["evaluation"] = {
-                    "task_outcome": 0.0,
-                    "access_requirement": 0.0,
-                    "success_rate": 0.0,
-                    "requirement_relation": "coincident",
-                }
-                with open(execution_log_path, "w", encoding="utf-8") as f:
-                    json.dump(execution_log, f, indent=2, ensure_ascii=False)
+                    with open(execution_log_path, "w", encoding="utf-8") as f:
+                        json.dump(execution_log, f, indent=2, ensure_ascii=False)
                 # env.controller.end_recording(os.path.join(example_result_dir, "recording.mp4"))
                 # Write error details to traj.jsonl
                 with open(os.path.join(example_result_dir, "traj.jsonl"), "a") as f:
@@ -340,7 +344,7 @@ def test(
         logger.info("No examples finished.")
     else:
         logger.info(f"Average score: {sum(scores) / len(scores)}")
-    if args.agent_name == "os_symphony" and task_errors:
+    if args.agent_name in {"os_symphony", "os_symphony_fix"} and task_errors:
         raise SystemExit(1)
 
 

@@ -867,3 +867,103 @@ $py310 = "$env:LOCALAPPDATA\Programs\Python\Python310\python.exe"
 | Hearing impairment | weiming |
 | Motor impairment | chaw & kaung |
 | Cognitive impairment | weiming |
+
+## 8. cset2 Self-Hosted Service Security Upgrade
+
+The following procedure records the security upgrade applied to `cset2` on 4 November 2026. It supplements the original setup instructions above and leaves them unchanged. The upgraded deployment uses PHP 8.2.35 on ports 7770, 7780, and 9999, and Python 3.12.16 for the OSWorld service on port 5000.
+
+### Build the PHP 8.2.35 Images
+
+The shared Dockerfile compiles PHP 8.2.35 from the official source archive, verifies its SHA-256 checksum, installs the extensions required by the existing applications, and disables the `X-Powered-By` header.
+
+Run these commands from the repository root after loading the original service images described in the Self-Hosted Services section:
+
+```bash
+docker build -f docker/php82-upgrade/Dockerfile \
+  --build-arg BUILD_BASE=shopping_final_0712:latest \
+  --build-arg RUNTIME_BASE=shopping_final_0712:latest \
+  -t cset2/shopping:php-8.2.35 .
+
+docker build -f docker/php82-upgrade/Dockerfile \
+  --build-arg BUILD_BASE=shopping_admin_final_0719:latest \
+  --build-arg RUNTIME_BASE=shopping_admin_final_0719:latest \
+  -t cset2/shopping-admin:php-8.2.35 .
+
+docker build -f docker/php82-upgrade/Dockerfile \
+  --build-arg BUILD_BASE=postmill-populated-exposed-withimg:latest \
+  --build-arg RUNTIME_BASE=postmill-populated-exposed-withimg:latest \
+  -t cset2/forum:php-8.2.35 .
+```
+
+For a fresh deployment, start the upgraded images with the original ports:
+
+```bash
+docker run --name shopping -p 7770:80 -p 13306:3306 -d cset2/shopping:php-8.2.35
+docker run --name shopping_admin -p 7780:80 -d cset2/shopping-admin:php-8.2.35
+docker run --name forum -p 9999:80 -d cset2/forum:php-8.2.35
+```
+
+Wait for the application services to start, then configure the Magento URLs used by the GUI-agent VM:
+
+```bash
+docker exec shopping /var/www/magento2/bin/magento setup:store-config:set \
+  --base-url="http://host.docker.internal:7770"
+docker exec shopping mysql -u magentouser -pMyPassword magentodb \
+  -e 'UPDATE core_config_data SET value="http://host.docker.internal:7770/" WHERE path = "web/secure/base_url";'
+docker exec shopping /var/www/magento2/bin/magento cache:flush
+
+docker exec shopping_admin /var/www/magento2/bin/magento setup:store-config:set \
+  --base-url="http://host.docker.internal:7780"
+docker exec shopping_admin mysql -u magentouser -pMyPassword magentodb \
+  -e 'UPDATE core_config_data SET value="http://host.docker.internal:7780/" WHERE path = "web/secure/base_url";'
+docker exec shopping_admin /var/www/magento2/bin/magento cache:flush
+```
+
+If replacing an existing deployment, preserve the old containers by stopping and renaming them before assigning the original names to the upgraded containers. The original application data is not required: it can be recreated from the source images and setup commands above.
+
+### Upgrade the OSWorld Service to Python 3.12
+
+The upgrade uses an isolated virtual environment at `/home/user/.venvs/osworld-py312`. The first script installs Python 3.12 and its GUI/accessibility dependencies, starts a temporary server on port 15000, and tests the platform, screenshot, and accessibility endpoints without changing the live service. The second script switches the systemd service only after staging succeeds and automatically rolls back if the live checks fail.
+
+Copy these scripts into the OSWorld Ubuntu guest:
+
+- `scripts/upgrade_osworld_python312.sh`
+- `scripts/cutover_osworld_python312.sh`
+
+Then run them inside the guest as the `user` account:
+
+```bash
+export OSWORLD_SUDO_PASSWORD='<guest sudo password>'
+bash upgrade_osworld_python312.sh
+# Continue only when the script prints STAGE_OK.
+bash cutover_osworld_python312.sh
+cat /tmp/osworld-python312-cutover.result
+unset OSWORLD_SUDO_PASSWORD
+```
+
+A successful cutover prints `CUTOVER_OK`. The cutover script creates a timestamped backup under `/home/user/osworld-python-backup-*` before changing `/etc/systemd/system/osworld.service` or `/home/user/server/main.py`.
+
+### Configure Access from the GUI VM
+
+The GUI VM must resolve `host.docker.internal` to the Docker host gateway. On the current `cset2` OSWorld deployment, the gateway is `172.17.0.1`. Add the mapping inside the guest if it is absent:
+
+```bash
+getent hosts host.docker.internal || \
+  echo '172.17.0.1 host.docker.internal' | sudo tee -a /etc/hosts
+```
+
+If Docker uses a different bridge subnet, replace `172.17.0.1` with that bridge's host-gateway address.
+
+### Validate the Upgraded Deployment
+
+```bash
+docker exec shopping php -r 'echo PHP_VERSION, "\n";'
+docker exec shopping_admin php -r 'echo PHP_VERSION, "\n";'
+docker exec forum php -r 'echo PHP_VERSION, "\n";'
+
+curl -fsS http://127.0.0.1:5000/platform
+curl -fsS http://127.0.0.1:5000/screenshot -o /tmp/osworld-screenshot.png
+curl -fsS http://127.0.0.1:5000/accessibility -o /tmp/osworld-accessibility.json
+```
+
+The three PHP commands should report `8.2.35`. The OSWorld platform endpoint should report `Linux`, and both output files should be non-empty. From inside the GUI VM, verify that `http://host.docker.internal:7770/`, `http://host.docker.internal:7780/admin`, and `http://host.docker.internal:9999/` return successful pages.

@@ -23,10 +23,11 @@ AGENT_ALIASES = {
     "local_lstc2": "locallstc2",
     "tars_agent": "tars",
     "os-symphony": "os_symphony",
+    "os-symphony-fix": "os_symphony_fix",
 }
 STEP_AGENT_NAMES = frozenset({"gta1", "agents3"})
 FRAMEWORK_AGENT_NAMES = frozenset(
-    {"locallstc", "locallstc2", "hisa", "coact", "tars", "os_symphony"}
+    {"locallstc", "locallstc2", "hisa", "coact", "tars", "os_symphony", "os_symphony_fix"}
 )
 SUPPORTED_AGENT_NAMES = frozenset(
     {"navi", "claude"} | STEP_AGENT_NAMES | FRAMEWORK_AGENT_NAMES
@@ -40,6 +41,7 @@ FRAMEWORK_DEFAULT_MODELS = {
     "locallstc2": "qwen3.8-27b",
     "tars": "qwen3.8-27b",
     "os_symphony": "qwen3.8-27b",
+    "os_symphony_fix": "qwen3.8-27b",
 }
 
 
@@ -233,6 +235,9 @@ def _run_locallstc(env, example, args, example_result_dir) -> float:
             "wo_jev_memory": args.wo_jev_memory,
             "wo_jev_api": args.wo_jev_api,
             "wo_subtask": args.wo_subtask,
+            "enable_thinking": args.enable_thinking,
+            "preserve_thinking": args.preserve_thinking,
+            "reasoning_effort": args.reasoning_effort,
         }
     else:
         agent_options = {
@@ -391,6 +396,10 @@ def run_framework_example(
         score = _run_coact(env, example, args, example_result_dir)
     elif args.agent_name == "tars":
         score = _run_tars(env, example, args, example_result_dir)
+    elif args.agent_name == "os_symphony_fix":
+        from mm_agents.os_symphony_fix.main import run_task
+
+        score = run_task(env, example, args, example_result_dir)
     elif args.agent_name == "os_symphony":
         from mm_agents.os_symphony.main import run_task
 
