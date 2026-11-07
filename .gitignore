@@ -4,6 +4,9 @@ tmp
 *.bak
 results
 paper/plot
+docker
+experiments
+paper/acl2027/figures
 
 # LaTeX compilation intermediates (keep generated PDFs trackable)
 *.aux
