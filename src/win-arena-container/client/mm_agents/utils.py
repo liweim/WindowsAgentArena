@@ -754,9 +754,10 @@ def calculate_resolution_token_increase(result_dir: str) -> Dict[str, float]:
 def summary(result_dir, test_all_meta):
     """Generate aggregate result statistics.
 
-    AccessCUA evaluation details are stored under ``evaluation`` in each task's
-    ``execution_log.json``. ``result.txt`` remains the final fallback for runs
-    without a detailed evaluation, which are treated as coincident tasks.
+    Result metrics are read from each task's ``execution_log.json`` evaluation.
+    ``result.txt`` is used as a fallback for legacy logs without evaluation
+    fields. The execution log also provides runtime, step, token, and cost
+    statistics.
     """
     if not os.path.exists(result_dir):
         print(f"Result directory not found: {result_dir}")
@@ -812,40 +813,6 @@ def summary(result_dir, test_all_meta):
             return min(instance_dirs)[1]
         return task_dir
 
-    def read_evaluation(task_result_dir, fallback_success_rate):
-        evaluation = None
-        evaluation_source = None
-
-        execution_log_file = os.path.join(task_result_dir, "execution_log.json")
-        if os.path.exists(execution_log_file):
-            try:
-                with open(execution_log_file, "r", encoding="utf-8") as f:
-                    execution_log = json.load(f)
-                evaluation = execution_log.get("evaluation")
-                if evaluation is not None:
-                    evaluation_source = execution_log_file
-            except Exception as e:
-                print(f"Warning: could not read {execution_log_file}: {e}")
-
-        if evaluation is None:
-            return fallback_success_rate, fallback_success_rate, fallback_success_rate
-
-        try:
-            success_rate = float(
-                evaluation.get(
-                    "success_rate",
-                    evaluation.get("full_success", fallback_success_rate),
-                )
-            ) * 100
-            task_outcome = float(evaluation.get("task_outcome", success_rate / 100)) * 100
-            access_requirement = float(
-                evaluation.get("access_requirement", success_rate / 100)
-            ) * 100
-            return task_outcome, access_requirement, success_rate
-        except Exception as e:
-            print(f"Warning: invalid evaluation in {evaluation_source}: {e}")
-            return fallback_success_rate, fallback_success_rate, fallback_success_rate
-
     for domain in test_all_meta:
         stats[domain] = {
             "task_outcome": [],
@@ -880,9 +847,31 @@ def summary(result_dir, test_all_meta):
             else:
                 result_success_rate = 0.0
 
-            task_outcome, access_requirement, success_rate = read_evaluation(
-                task_result_dir, result_success_rate
-            )
+            task_outcome = result_success_rate
+            access_requirement = result_success_rate
+            success_rate = result_success_rate
+            if os.path.exists(execution_log_file):
+                try:
+                    with open(execution_log_file, "r", encoding="utf-8") as f:
+                        evaluation = json.load(f).get("evaluation")
+                    if evaluation is not None:
+                        success_rate = float(
+                            evaluation.get(
+                                "success_rate",
+                                evaluation.get("full_success", result_success_rate / 100),
+                            )
+                        ) * 100
+                        task_outcome = float(
+                            evaluation.get("task_outcome", success_rate / 100)
+                        ) * 100
+                        access_requirement = float(
+                            evaluation.get("access_requirement", success_rate / 100)
+                        ) * 100
+                except (OSError, ValueError, TypeError, AttributeError) as e:
+                    print(
+                        f"Warning: invalid evaluation in {execution_log_file}: {e}; "
+                        "falling back to result.txt"
+                    )
 
             if success_rate > 0 and os.path.exists(error_file):
                 os.remove(error_file)
@@ -949,7 +938,10 @@ def summary(result_dir, test_all_meta):
                         total_task_steps = gui_steps + api_steps + code_steps
                         other_steps = execution_stats.get("other_steps", 0)
                     else:
-                        gui_steps = execution_stats.get("total_steps", 0)
+                        # OS-Symphony logs outer turns as harness_steps.
+                        gui_steps = execution_stats.get(
+                            "total_steps", execution_stats.get("harness_steps", 0)
+                        )
                         api_steps = execution_stats.get(
                             "api_steps", execution_stats.get(legacy_api_steps_key, 0)
                         )
@@ -1027,15 +1019,18 @@ def summary(result_dir, test_all_meta):
     num_tasks = sum(len(example_ids) for example_ids in test_all_meta.values())
     num_completed_scores = len(all_success_rates)
     num_tasks_with_log = len(all_costs)
-    avg_task_outcome = np.mean(all_task_outcomes) if num_completed_scores > 0 else 0
-    avg_task_outcome_15 = np.mean(all_task_outcomes_15) if num_completed_scores > 0 else 0
-    avg_task_outcome_50 = np.mean(all_task_outcomes_50) if num_completed_scores > 0 else 0
-    avg_access_requirement = np.mean(all_access_requirements) if num_completed_scores > 0 else 0
-    avg_success_rate = np.mean(all_success_rates) if num_completed_scores > 0 else 0
-    avg_success_rate_15 = np.mean(all_success_rates_15) if num_completed_scores > 0 else 0
-    avg_success_rate_50 = np.mean(all_success_rates_50) if num_completed_scores > 0 else 0
-    avg_access_requirement_15 = np.mean(all_access_requirements_15) if num_completed_scores > 0 else 0
-    avg_access_requirement_50 = np.mean(all_access_requirements_50) if num_completed_scores > 0 else 0
+    # Match OSWorld's show_result.py and LocalGUI's summary(): calculate result
+    # rates only over scored tasks (those with result.txt). Unfinished tasks are
+    # excluded from the denominator.
+    avg_task_outcome = sum(all_task_outcomes) / num_completed_scores if num_completed_scores > 0 else 0
+    avg_task_outcome_15 = sum(all_task_outcomes_15) / num_completed_scores if num_completed_scores > 0 else 0
+    avg_task_outcome_50 = sum(all_task_outcomes_50) / num_completed_scores if num_completed_scores > 0 else 0
+    avg_access_requirement = sum(all_access_requirements) / num_completed_scores if num_completed_scores > 0 else 0
+    avg_success_rate = sum(all_success_rates) / num_completed_scores if num_completed_scores > 0 else 0
+    avg_success_rate_15 = sum(all_success_rates_15) / num_completed_scores if num_completed_scores > 0 else 0
+    avg_success_rate_50 = sum(all_success_rates_50) / num_completed_scores if num_completed_scores > 0 else 0
+    avg_access_requirement_15 = sum(all_access_requirements_15) / num_completed_scores if num_completed_scores > 0 else 0
+    avg_access_requirement_50 = sum(all_access_requirements_50) / num_completed_scores if num_completed_scores > 0 else 0
     total_cost = sum(all_costs)
 
     total_gui_steps = sum(sum(stats[domain]["gui_steps"]) for domain in stats)
@@ -1116,7 +1111,10 @@ def summary(result_dir, test_all_meta):
                     "task_outcome": np.mean(stats[domain]["task_outcome"]) if stats[domain]["task_outcome"] else 0,
                     "access_requirement": np.mean(stats[domain]["access_requirement"]) if stats[domain]["access_requirement"] else 0,
                     "success_rate": np.mean(stats[domain]["success_rate"]) if stats[domain]["success_rate"] else 0,
-                    "success_rate_50": np.mean(stats[domain]["success_rate_50"]) if stats[domain]["success_rate_50"] else 0,
+                    "success_rate_50": (
+                        sum(stats[domain]["success_rate_50"]) / len(stats[domain]["success_rate"])
+                        if stats[domain]["success_rate"] else 0
+                    ),
                 }
                 for domain in test_all_meta
             },
@@ -1127,7 +1125,10 @@ def summary(result_dir, test_all_meta):
                 "task_outcome": np.mean(stats[domain]["task_outcome"]) if stats[domain]["task_outcome"] else 0,
                 "access_requirement": np.mean(stats[domain]["access_requirement"]) if stats[domain]["access_requirement"] else 0,
                 "success_rate": np.mean(stats[domain]["success_rate"]) if stats[domain]["success_rate"] else 0,
-                "success_rate_50": np.mean(stats[domain]["success_rate_50"]) if stats[domain]["success_rate_50"] else 0,
+                "success_rate_50": (
+                    sum(stats[domain]["success_rate_50"]) / len(stats[domain]["success_rate"])
+                    if stats[domain]["success_rate"] else 0
+                ),
                 "cost": np.mean(stats[domain]["cost"]) if stats[domain]["cost"] else 0,
                 "tokens": (
                     np.mean(stats[domain]["prompt_tokens"])
@@ -1239,17 +1240,13 @@ def save_detail_results():
 
 if __name__ == "__main__":
     # summary('/home/weimingli/projects/WindowsAgentArena/results/hisa_qwen3.8-27b_wo_pattern', '/home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client/evaluation_examples_windows/test_all.json')
+    summary('/home/weimingli/projects/WindowsAgentArena/results/agents3_qwen3.8-27b', '/home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client/evaluation_examples_windows/test_all.json')
+    summary('/home/weimingli/projects/WindowsAgentArena/results/coact_qwen3.8-27b', '/home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client/evaluation_examples_windows/test_all.json')
     # summary('/home/weimingli/projects/WindowsAgentArena/results/locallstc_qwen3.8-27b', '/home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client/evaluation_examples_windows/test_all.json')
-    # summary('/home/weimingli/projects/WindowsAgentArena/results/agents3_qwen3.8-27b', '/home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client/evaluation_examples_windows/test_all.json')
-    # summary('/home/weimingli/projects/WindowsAgentArena/results/coact_qwen3.8-27b', '/home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client/evaluation_examples_windows/test_all.json')
-    # summary('/home/weimingli/projects/WindowsAgentArena/results/locallstc2_qwen3.8-27b_wo_grounder', '/home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client/evaluation_examples_windows/test_small.json')
-    # summary('/home/weimingli/projects/WindowsAgentArena/results/locallstc2_qwen3.8-27b_wo_grounder_thinking', '/home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client/evaluation_examples_windows/test_small.json')
-    # summary('/home/weimingli/projects/WindowsAgentArena/results/locallstc2_qwen3.8-27b_wo_grounder_preserve', '/home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client/evaluation_examples_windows/test_small.json')
-    summary('/home/weimingli/projects/WindowsAgentArena/results/locallstc2_qwen3.8-27b', '/home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client/evaluation_examples_windows/test_all.json')
-    # summary('/home/weimingli/projects/WindowsAgentArena/results/locallstc2_qwen3.8-27b_wo_jev', '/home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client/evaluation_examples_windows/test_small.json')
-    summary('/home/weimingli/projects/WindowsAgentArena/results/locallstc2_qwen3.8-27b_wo_jev_api', '/home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client/evaluation_examples_windows/test_all.json')
-    summary('/home/weimingli/projects/WindowsAgentArena/results/locallstc2_qwen3.8-27b_wo_jev_memory', '/home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client/evaluation_examples_windows/test_all.json')
-    summary('/home/weimingli/projects/WindowsAgentArena/results/locallstc2_qwen3.8-27b_wo_global_facts', '/home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client/evaluation_examples_windows/test_all.json')
-    summary('/home/weimingli/projects/WindowsAgentArena/results/locallstc2_qwen3.8-27b_wo_subtask', '/home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client/evaluation_examples_windows/test_all.json')
+    # summary('/home/weimingli/projects/WindowsAgentArena/results/locallstc2_qwen3.8-27b', '/home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client/evaluation_examples_windows/test_all.json')
+    # summary('/home/weimingli/projects/WindowsAgentArena/results/locallstc2_qwen3.8-27b_wo_jev_api', '/home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client/evaluation_examples_windows/test_all.json')
+    # summary('/home/weimingli/projects/WindowsAgentArena/results/locallstc2_qwen3.8-27b_wo_jev_memory', '/home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client/evaluation_examples_windows/test_all.json')
+    # summary('/home/weimingli/projects/WindowsAgentArena/results/locallstc2_qwen3.8-27b_wo_global_facts', '/home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client/evaluation_examples_windows/test_all.json')
+    # summary('/home/weimingli/projects/WindowsAgentArena/results/locallstc2_qwen3.8-27b_wo_subtask', '/home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client/evaluation_examples_windows/test_all.json')
     
     # summary('/home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client/results', '/home/weimingli/projects/WindowsAgentArena/src/win-arena-container/client/evaluation_examples_windows/test_small.json')
