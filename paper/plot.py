@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate publication figures for AccessCUA metadata and experiment results."""
+"""Generate publication figures for AccessNeedBench metadata and results."""
 
 from __future__ import annotations
 
@@ -36,7 +36,7 @@ DEFAULT_EXAMPLES_DIR = (
     REPO_ROOT
     / "src/win-arena-container/client/evaluation_examples_windows/examples"
 )
-DEFAULT_OUTPUT_DIR = Path(__file__).with_name("plot")
+DEFAULT_OUTPUT_DIR = Path(__file__).parent / "acl2027" / "figs"
 DEFAULT_RESULTS_DIR = REPO_ROOT / "results"
 
 USER_GROUPS = ("visual", "hearing", "motor", "cognitive")
@@ -53,56 +53,105 @@ CATEGORIES = (
 )
 DIFFICULTIES = ("easy", "medium", "hard")
 
-# Keep the muted Morandi palette and Arial typography of the original figure.
-BACKGROUND_COLOR = "#F7F9F4"
-TEXT_COLOR = "#3F4542"
-GRID_COLOR = "#E2E6E1"
-GROUP_COLORS = ("#CFD9E5", "#ECD2C6", "#D5DFD0", "#E0D1DF")
+# Shared visual language from benchmark_pipeline.pdf and method.pdf: navy text,
+# pastel purple-to-teal fills, stronger matching outlines, and coral only for
+# failure or high-difficulty states.
+BACKGROUND_COLOR = "#FFFFFF"
+TEXT_COLOR = "#24344A"
+GRID_COLOR = "#DCE4EA"
+NEUTRAL_EDGE_COLOR = "#71808E"
+FRAMEWORK_FILLS = ("#DCD1EC", "#D6DDF0", "#CFE0EF", "#CBE5EB", "#C5E4DE")
+FRAMEWORK_ACCENTS = ("#A28BBC", "#91A4C6", "#87ACC9", "#79ACB5", "#70A99F")
+# Figure fills sit between the framework headers and their darker outlines.
+PLOT_FILLS = ("#BCAAD2", "#B0BED9", "#A7C3DA", "#9EC6CD", "#96C4BB")
+FAIL_FILL_COLOR = "#DDA79A"
+FAIL_ACCENT_COLOR = "#D58C7D"
+DISTRIBUTION_BAR_COLOR = PLOT_FILLS[2]
+
+GROUP_COLORS = (
+    PLOT_FILLS[0],
+    PLOT_FILLS[2],
+    PLOT_FILLS[3],
+    PLOT_FILLS[4],
+)
 CATEGORY_COLORS = (
-    "#CFD9E5",
-    "#D0E2DE",
-    "#EBD7BD",
-    "#E5C4C1",
-    "#D1DECA",
-    "#EBE1BD",
-    "#DCD0DD",
-    "#E8CDCD",
-    "#DDCABE",
+    "#BCAAD2",  # lavender
+    "#B0BED9",  # periwinkle
+    "#A7C3DA",  # sky blue
+    "#9EC6CD",  # aqua
+    "#96C4BB",  # mint
+    "#B8C89E",  # sage
+    "#D4B98A",  # sand
+    "#DDA79A",  # coral
+    "#C9A8BD",  # rose
 )
-# A more saturated companion palette for the narrow outer user-group ring.
-# The inner category ring stays light so its larger wedges remain understated.
+INNER_CATEGORY_COLORS = (
+    "#E5DDED",  # light lavender
+    "#E2E7F1",  # light periwinkle
+    "#DDE9F2",  # light sky blue
+    "#DCEBED",  # light aqua
+    "#D9E9E5",  # light mint
+    "#E4E9D8",  # light sage
+    "#EDE3CE",  # light sand
+    "#F0D9D3",  # light coral
+    "#E9DCE3",  # light rose
+)
+DISTRIBUTION_BAR_COLORS = CATEGORY_COLORS + (
+    "#A7B8C9",  # slate blue
+    "#B7ADD0",  # mauve
+    "#AFCBBF",  # soft teal
+    "#D2C7A9",  # khaki
+    "#D6B5A7",  # clay
+)
 OUTER_GROUP_COLORS = (
-    "#9BB4CC",
-    "#D8A28C",
-    "#A8BC98",
-    "#B89DBD",
+    PLOT_FILLS[0],
+    PLOT_FILLS[2],
+    PLOT_FILLS[3],
+    PLOT_FILLS[4],
 )
-DIFFICULTY_COLORS = ("#D5DFD0", "#EBD7BD", "#E5C4C1")
+DIFFICULTY_FILL_COLORS = (
+    DISTRIBUTION_BAR_COLORS[0],
+    DISTRIBUTION_BAR_COLORS[1],
+    DISTRIBUTION_BAR_COLORS[2],
+)
+DIFFICULTY_COLORS = (
+    DISTRIBUTION_BAR_COLORS[0],
+    DISTRIBUTION_BAR_COLORS[1],
+    DISTRIBUTION_BAR_COLORS[2],
+)
 PREFIX_COLORS = dict(zip(("V", "H", "M", "C"), GROUP_COLORS))
 RESULT_METHODS = {
     "Agent S3": "agents3_qwen3.8-27b",
     "CoAct": "coact_qwen3.8-27b",
-    "HISA": "hisa_qwen3.8-27b_wo_pattern",
+    "HISA": "hisa_qwen3.8-27b",
     "LocalLSTC": "locallstc_qwen3.8-27b",
+    "Ours": "locallstc2_qwen3.8-27b",
 }
-METRIC_COLORS = {
-    "F": OUTER_GROUP_COLORS[0],
-    "T": OUTER_GROUP_COLORS[1],
-    "H": OUTER_GROUP_COLORS[2],
+METRIC_FILL_COLORS = {
+    "F": DISTRIBUTION_BAR_COLORS[0],
+    "T": DISTRIBUTION_BAR_COLORS[1],
+    "H": DISTRIBUTION_BAR_COLORS[2],
 }
-MORANDI_BLUE_CMAP = LinearSegmentedColormap.from_list(
-    "morandi_blue",
-    (BACKGROUND_COLOR, GROUP_COLORS[0], OUTER_GROUP_COLORS[0]),
+METRIC_LINE_COLORS = {
+    "F": DISTRIBUTION_BAR_COLORS[0],
+    "T": DISTRIBUTION_BAR_COLORS[1],
+    "H": FRAMEWORK_ACCENTS[4],
+}
+FIGURE_2B_CMAP = LinearSegmentedColormap.from_list(
+    "figure_2b_blue",
+    (BACKGROUND_COLOR, CATEGORY_COLORS[1], FRAMEWORK_ACCENTS[1]),
 )
 
-BASELINE_SR50 = pd.DataFrame(
+LOCAL_LSTC_BENCHMARK_COMPARISON = pd.DataFrame(
     {
         "benchmark": [
             "OSWorld",
             "WAA",
-            "AccessNeedBench",
+            "Ours",
         ],
-        "sr_50": [72.3, 67.9, 55.6],
+        "sr_50": [71.1, 65.7, 54.0],
+        "steps": [13.3, 14.1, 22.8],
+        "time": [698.9, 1088.4, 1548.9],
     }
 )
 
@@ -217,7 +266,7 @@ def plot_user_groups(metadata: pd.DataFrame, output_dir: Path) -> Path:
     bars = ax.bar(
         [name.title() for name in USER_GROUPS],
         counts,
-        color=GROUP_COLORS,
+        color=DISTRIBUTION_BAR_COLORS[: len(counts)],
         edgecolor="white",
         linewidth=1.0,
         width=0.68,
@@ -238,7 +287,7 @@ def plot_categories(metadata: pd.DataFrame, output_dir: Path) -> Path:
     bars = ax.bar(
         [name.title() for name in CATEGORIES],
         counts,
-        color=CATEGORY_COLORS,
+        color=DISTRIBUTION_BAR_COLORS[: len(counts)],
         edgecolor="white",
         linewidth=0.8,
         width=0.72,
@@ -268,7 +317,7 @@ def plot_applications(metadata: pd.DataFrame, output_dir: Path) -> Path:
     bars = ax.barh(
         y,
         [counts[app] for app in ordered],
-        color=[CATEGORY_COLORS[i] for i in range(len(ordered))],
+        color=CATEGORY_COLORS[1],
         edgecolor="white",
         linewidth=0.8,
     )
@@ -333,7 +382,7 @@ def plot_group_category(metadata: pd.DataFrame, output_dir: Path) -> Path:
         radius=0.70,
         labels=inner_labels,
         labeldistance=0.62,
-        colors=CATEGORY_COLORS,
+        colors=INNER_CATEGORY_COLORS,
         startangle=90,
         counterclock=False,
         center=(center_x, 0),
@@ -408,7 +457,7 @@ def plot_needs(metadata: pd.DataFrame, output_dir: Path) -> Path:
     bars = ax.barh(
         y,
         [counts[need] for need in ordered],
-        color=[PREFIX_COLORS[need[0]] for need in ordered],
+        color=CATEGORY_COLORS[1],
         edgecolor="white",
         linewidth=0.7,
     )
@@ -434,7 +483,7 @@ def plot_subgroups(metadata: pd.DataFrame, output_dir: Path) -> Path:
     bars = ax.barh(
         y,
         [counts[subgroup] for subgroup in ordered],
-        color=[PREFIX_COLORS[subgroup[0]] for subgroup in ordered],
+        color=CATEGORY_COLORS[1],
         edgecolor="white",
     )
     ax.set_yticks(y, ordered)
@@ -455,7 +504,7 @@ def plot_difficulty(metadata: pd.DataFrame, output_dir: Path) -> Path:
     bars = ax.bar(
         [name.title() for name in DIFFICULTIES],
         counts,
-        color=DIFFICULTY_COLORS,
+        color=DIFFICULTY_FILL_COLORS,
         edgecolor="white",
         linewidth=1.0,
         width=0.66,
@@ -513,10 +562,10 @@ def plot_difficulty_time(metadata: pd.DataFrame, output_dir: Path) -> Path:
         widths=0.58,
         showfliers=False,
         medianprops={"color": TEXT_COLOR, "linewidth": 1.5},
-        whiskerprops={"color": "#777777"},
-        capprops={"color": "#777777"},
+        whiskerprops={"color": NEUTRAL_EDGE_COLOR},
+        capprops={"color": NEUTRAL_EDGE_COLOR},
     )
-    for patch, color in zip(box["boxes"], DIFFICULTY_COLORS):
+    for patch, color in zip(box["boxes"], DIFFICULTY_FILL_COLORS):
         patch.set_facecolor(color)
         patch.set_edgecolor("white")
 
@@ -530,7 +579,7 @@ def plot_difficulty_time(metadata: pd.DataFrame, output_dir: Path) -> Path:
             values,
             s=8,
             color=color,
-            edgecolor="#777777",
+            edgecolor=NEUTRAL_EDGE_COLOR,
             linewidth=0.2,
             alpha=0.75,
             zorder=2,
@@ -546,11 +595,10 @@ def plot_difficulty_time(metadata: pd.DataFrame, output_dir: Path) -> Path:
 def plot_app_count(metadata: pd.DataFrame, output_dir: Path) -> Path:
     app_counts = metadata["related_apps"].map(len).value_counts().sort_index()
     fig, ax = plt.subplots(figsize=(3.3, 2.35))
-    colors = CATEGORY_COLORS[: len(app_counts)]
     bars = ax.bar(
         [str(value) for value in app_counts.index],
         app_counts.values,
-        color=colors,
+        color=DISTRIBUTION_BAR_COLORS[: len(app_counts)],
         edgecolor="white",
         linewidth=1.0,
         width=0.66,
@@ -566,51 +614,46 @@ def plot_app_count(metadata: pd.DataFrame, output_dir: Path) -> Path:
     return save(fig, output_dir, "tasks_by_app_count.png")
 
 
-def plot_baseline_sr50(_: pd.DataFrame, output_dir: Path) -> Path:
-    """Compare the same baseline's SR_50 across the three benchmarks."""
-    data = BASELINE_SR50.copy()
-    data["benchmark"] = pd.Categorical(
-        data["benchmark"], categories=data["benchmark"], ordered=True
-    )
-    data["label"] = data["sr_50"].map(lambda value: f"{value:.1f}")
-
-    chart = (
-        ggplot(data, aes(x="benchmark", y="sr_50", fill="benchmark"))
-        + geom_col(width=0.66, color="white", size=0.8, show_legend=False)
-        + geom_text(
-            aes(label="label"),
-            nudge_y=2.8,
-            size=11,
-            family="Arial",
-            fontweight="normal",
-        )
-        + scale_fill_manual(
-            values=[CATEGORY_COLORS[4], CATEGORY_COLORS[3], CATEGORY_COLORS[0]]
-        )
-        + scale_y_continuous(limits=(0, 82), breaks=range(0, 81, 20))
-        + labs(
-            x=None,
-            y=r"$SR_{50}$ (%)",
-        )
-        + theme_minimal(base_family="Arial", base_size=11)
-        + theme(
-            figure_size=(3.8, 2.35),
-            plot_background=element_rect(fill="white", color="white"),
-            panel_background=element_rect(fill="white", color="white"),
-            panel_grid_major_x=element_blank(),
-            panel_grid_minor=element_blank(),
-            panel_grid_major_y=element_line(color=GRID_COLOR, size=0.6),
-            axis_text_x=element_text(color=TEXT_COLOR, size=11),
-            axis_text_y=element_text(color=TEXT_COLOR, size=10),
-            axis_title_x=element_blank(),
-            axis_title_y=element_text(color=TEXT_COLOR, size=12),
-        )
+def plot_cross_benchmark_comparison(_: pd.DataFrame, output_dir: Path) -> Path:
+    """Compare LocalLSTC quality and execution cost across three benchmarks."""
+    data = LOCAL_LSTC_BENCHMARK_COMPARISON
+    # Reuse the exact benchmark-count palette from Figure 2(d).
+    colors = DISTRIBUTION_BAR_COLORS[: len(data)]
+    panels = (
+        ("sr_50", r"$SR_{50}$ (\%)", 80, "{:.1f}"),
+        ("steps", "Avg. steps", 26, "{:.1f}"),
+        ("time", "Avg. time (s)", 1750, "{:.1f}"),
     )
 
-    output_dir.mkdir(parents=True, exist_ok=True)
-    output_path = output_dir / "baseline_sr50_comparison.png"
-    chart.save(output_path, dpi=300, verbose=False)
-    return output_path
+    # Keep the standard 7.1-inch double-column width while using a compact
+    # half-height canvas for this single-row comparison.
+    fig, axes = plt.subplots(1, 3, figsize=(7.1, 1.4))
+    x = np.arange(len(data))
+    for ax, (metric, ylabel, ymax, label_format) in zip(axes, panels):
+        values = data[metric].to_numpy()
+        bars = ax.bar(
+            x,
+            values,
+            color=colors,
+            edgecolor="white",
+            linewidth=0.8,
+            width=0.68,
+        )
+        ax.set_xticks(x, data["benchmark"])
+        ax.set_ylabel(ylabel)
+        ax.set_ylim(0, ymax)
+        ax.grid(axis="y", color=GRID_COLOR, linewidth=0.6)
+        ax.set_axisbelow(True)
+        ax.bar_label(
+            bars,
+            labels=[label_format.format(value) for value in values],
+            padding=2,
+            fontsize=8,
+            color=TEXT_COLOR,
+        )
+
+    fig.tight_layout(w_pad=1.4)
+    return save(fig, output_dir, "cross_benchmark_comparison.png")
 
 
 def _task_result_dir(method_dir: Path, group: str, task_id: str) -> Path | None:
@@ -625,7 +668,10 @@ def _task_result_dir(method_dir: Path, group: str, task_id: str) -> Path | None:
     return instances[0] if instances else None
 
 
-def _read_result_metrics(task_dir: Path) -> tuple[float, float, float]:
+def _read_result_metrics(
+    task_dir: Path, max_steps: int = 50
+) -> tuple[float, float, float]:
+    """Read F/T/H using the same step-budget rule as ``utils.summary``."""
     fallback = float(task_dir.joinpath("result.txt").read_text().strip())
     log_path = task_dir / "execution_log.json"
     if not log_path.exists():
@@ -637,6 +683,22 @@ def _read_result_metrics(task_dir: Path) -> tuple[float, float, float]:
     )
     task = float(evaluation.get("task_outcome", full))
     handoff = float(evaluation.get("access_requirement", full))
+    statistics = log.get("statistics", {})
+    if "total_steps" in statistics:
+        total_steps = statistics.get("total_steps", 0)
+    elif "cua_steps" in statistics:
+        total_steps = (
+            statistics.get("cua_steps", 0)
+            + statistics.get("api_steps", statistics.get("mcp_steps", 0))
+            + statistics.get("coding_steps", 0)
+        )
+    else:
+        total_steps = (
+            statistics.get("harness_steps", 0)
+            + statistics.get("api_steps", statistics.get("mcp_steps", 0))
+        )
+    if total_steps > max_steps or task_dir.joinpath("err_reason.txt").exists():
+        return 0.0, 0.0, 0.0
     return full, task, handoff
 
 
@@ -751,12 +813,12 @@ def plot_complexity_analysis(
     step_quartiles = _bootstrap_means(
         results, "step_quartile", ("Q1", "Q2", "Q3", "Q4"), ("F", "T", "H")
     )
-    fig, axes = plt.subplots(2, 2, figsize=(7.1, 5.0), sharey=True)
+    fig, axes = plt.subplots(1, 4, figsize=(7.1, 1.65), sharey=True)
     panels = (
-        (axes[0, 0], difficulty, DIFFICULTIES, "(a) Annotated difficulty", "plain"),
-        (axes[0, 1], quartiles, ("Q1", "Q2", "Q3", "Q4"), "(b) Human operating time", "quartile"),
-        (axes[1, 0], apps, app_counts, "(c) Related applications", "apps"),
-        (axes[1, 1], step_quartiles, ("Q1", "Q2", "Q3", "Q4"), "(d) Reference-step count", "quartile"),
+        (axes[0], difficulty, DIFFICULTIES, "(a) Difficulty", "plain"),
+        (axes[1], apps, app_counts, "(b) Applications", "apps"),
+        (axes[2], quartiles, ("Q1", "Q2", "Q3", "Q4"), "(c) Human time", "quartile"),
+        (axes[3], step_quartiles, ("Q1", "Q2", "Q3", "Q4"), "(d) Reference steps", "quartile"),
     )
     for ax, data, order, title, label_kind in panels:
         x = np.arange(len(order))
@@ -772,9 +834,11 @@ def plot_complexity_analysis(
                     ]
                 ),
                 marker="o",
-                linewidth=1.7,
+                markersize=4.5,
+                linewidth=1.1,
+                elinewidth=0.9,
                 capsize=2.2,
-                color=METRIC_COLORS[metric],
+                color=METRIC_LINE_COLORS[metric],
                 label=metric,
             )
         labels = [name.title() for name in order]
@@ -783,18 +847,23 @@ def plot_complexity_analysis(
         elif label_kind == "apps":
             labels = [f"{name} app" if name == "1" else f"{name} apps" for name in order]
         ax.set_xticks(x, labels)
-        ax.set_title(title)
+        ax.set_title(title, fontsize=8.5, fontweight="bold", pad=2)
         ax.set_ylim(0, 100)
         ax.grid(axis="y", color=GRID_COLOR, linewidth=0.6)
         ax.set_axisbelow(True)
-    axes[0, 0].set_ylabel("Mean evaluator score (%)")
-    axes[1, 0].set_ylabel("Mean evaluator score (%)")
-    axes[1, 1].legend(title="Metric", frameon=False, ncol=3, loc="lower left")
-    fig.suptitle(
-        f"Generic task complexity (common completed tasks: n={common_n})",
-        fontweight="bold",
+    axes[0].set_ylabel("Mean evaluator score (%)")
+    handles, labels = axes[0].get_legend_handles_labels()
+    fig.legend(
+        handles,
+        labels,
+        frameon=False,
+        ncol=3,
+        loc="upper center",
+        bbox_to_anchor=(0.5, 1.13),
+        columnspacing=1.6,
+        handlelength=2.0,
     )
-    fig.tight_layout()
+    fig.tight_layout(w_pad=0.8)
     return save(fig, output_dir, "complexity_analysis.png")
 
 
@@ -802,7 +871,7 @@ def plot_handoff_gap(
     results: pd.DataFrame, common_n: int, output_dir: Path
 ) -> Path:
     fig, axes = plt.subplots(1, 2, figsize=(7.1, 2.75))
-    methods = list(RESULT_METHODS)
+    methods = [method for method in RESULT_METHODS if method != "Ours"]
     x = np.arange(len(methods))
     width = 0.23
     for offset, metric in zip((-width, 0, width), ("F", "T", "H")):
@@ -812,7 +881,7 @@ def plot_handoff_gap(
             means,
             width,
             label=metric,
-            color=METRIC_COLORS[metric],
+            color=METRIC_FILL_COLORS[metric],
             edgecolor="white",
         )
     axes[0].set_xticks(x, methods, rotation=18, ha="right")
@@ -838,7 +907,7 @@ def plot_handoff_gap(
         gaps,
         width,
         label=r"$P(T=1,H=0)$",
-        color=CATEGORY_COLORS[3],
+        color=FAIL_FILL_COLOR,
         edgecolor="white",
     )
     axes[1].bar(
@@ -846,7 +915,7 @@ def plot_handoff_gap(
         conditional,
         width,
         label=r"$P(H=1\mid T=1)$",
-        color=GROUP_COLORS[2],
+        color=PLOT_FILLS[4],
         edgecolor="white",
     )
     axes[1].set_xticks(x, methods, rotation=18, ha="right")
@@ -873,17 +942,9 @@ def plot_handoff_gap(
 def plot_need_analysis(
     results: pd.DataFrame, common_n: int, output_dir: Path
 ) -> Path:
-    """Plot supported group and need-ID slices; no unannotated contract types."""
+    """Plot documented need-ID slices; group results are reported in the main table."""
     exploded = results.explode("need_ids")
     methods = list(RESULT_METHODS)
-    group_order = ("cognitive", "hearing", "motor", "visual")
-    group_table = (
-        results.pivot_table(
-            index="method", columns="user_group", values="F", aggfunc="mean"
-        )
-        .reindex(index=methods, columns=group_order)
-        * 100
-    )
     need_order = sorted(
         exploded["need_ids"].unique(),
         key=lambda value: (
@@ -898,43 +959,31 @@ def plot_need_analysis(
         .reindex(index=methods, columns=need_order)
         * 100
     )
-    fig, axes = plt.subplots(
-        1,
-        2,
-        figsize=(9.4, 2.9),
-        gridspec_kw={"width_ratios": [1, 2.9]},
-        constrained_layout=True,
+    fig, ax = plt.subplots(figsize=(7.1, 2.8), constrained_layout=True)
+    image = ax.imshow(
+        need_table.to_numpy(),
+        vmin=0,
+        vmax=100,
+        cmap=FIGURE_2B_CMAP,
+        aspect="auto",
     )
-    image = None
-    for ax, table, title in (
-        (axes[0], group_table, "(a) Functional group"),
-        (axes[1], need_table, "(b) Documented need ID"),
-    ):
-        image = ax.imshow(
-            table.to_numpy(), vmin=0, vmax=100, cmap=MORANDI_BLUE_CMAP, aspect="auto"
-        )
-        ax.set_xticks(
-            np.arange(len(table.columns)),
-            [str(value).title() for value in table.columns],
-            rotation=45,
-            ha="right",
-        )
-        ax.set_yticks(np.arange(len(table.index)), table.index)
-        ax.set_title(title)
-        for row in range(table.shape[0]):
-            for column in range(table.shape[1]):
-                value = table.iloc[row, column]
-                if pd.notna(value):
-                    ax.text(
-                        column,
-                        row,
-                        f"{value:.0f}",
-                        ha="center",
-                        va="center",
-                        fontsize=6.5,
-                        color="white" if value > 55 else TEXT_COLOR,
-                    )
-    colorbar = fig.colorbar(image, ax=axes.ravel().tolist(), shrink=0.82, pad=0.02)
+    ax.set_xticks(np.arange(len(need_table.columns)), need_table.columns)
+    ax.set_yticks(np.arange(len(need_table.index)), need_table.index)
+    ax.set_title("Documented need ID")
+    for row in range(need_table.shape[0]):
+        for column in range(need_table.shape[1]):
+            value = need_table.iloc[row, column]
+            if pd.notna(value):
+                ax.text(
+                    column,
+                    row,
+                    f"{value:.0f}",
+                    ha="center",
+                    va="center",
+                    fontsize=7,
+                    color=TEXT_COLOR,
+                )
+    colorbar = fig.colorbar(image, ax=ax, shrink=0.82, pad=0.02)
     colorbar.set_label("Mean full-success score (%)")
     fig.suptitle(
         f"Full success across access needs (common completed tasks: n={common_n})",
@@ -981,7 +1030,7 @@ def main() -> None:
         plot_operation_time_ecdf,
         plot_difficulty_time,
         plot_app_count,
-        plot_baseline_sr50,
+        plot_cross_benchmark_comparison,
     )
     outputs = [plotter(metadata, args.output_dir) for plotter in plotters]
     results, completed_counts, common_n = load_result_data(metadata, args.results_dir)
