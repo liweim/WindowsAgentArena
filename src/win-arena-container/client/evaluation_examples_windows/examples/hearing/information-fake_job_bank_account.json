@@ -9,7 +9,7 @@
     "H1"
   ],
   "difficulty": "medium",
-  "operation_time": 159.50,
+  "operation_time": 255.14,
   "instruction": "I cannot reliably hear the recording. Turn on Chrome Live Caption and leave it enabled. Use the opened video to identify the personal financial information requested in the fake job opportunity example, then save the answer in `answer.txt` on the Desktop.",
   "source": "https://www.ftc.gov/media/video-0054-how-file-complaint-federal-trade-commission",
   "gt_steps": [

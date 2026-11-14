@@ -9,7 +9,7 @@
     "C2"
   ],
   "difficulty": "medium",
-  "operation_time": 96.76,
+  "operation_time": 147.94,
   "instruction": "I find long forum discussions hard to process. In the forum, find the discussion about how manufacturers determine the calories shown on food packages. Read the main answer and save a concise, two-line reference note in `answer.txt` on the Desktop: the first line must begin with `Question:` and briefly state the issue; the second must begin with `Answer:` and give the discussion's conclusion in your own words. Do not include any other lines.",
   "source": "synthetic",
   "gt_steps": [

@@ -9,7 +9,7 @@
     "H2"
   ],
   "difficulty": "easy",
-  "operation_time": 37.66,
+  "operation_time": 59.86,
   "instruction": "I rely on captions for spoken browser content. Enable Live Caption in Chrome, add Spanish as a supported caption language, and leave it enabled.",
   "source": "synthetic",
   "gt_steps": [

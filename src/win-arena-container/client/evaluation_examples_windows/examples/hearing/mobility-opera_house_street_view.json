@@ -9,7 +9,7 @@
     "H1"
   ],
   "difficulty": "medium",
-  "operation_time": 120.99,
+  "operation_time": 180.72,
   "instruction": "I cannot reliably hear the video. Use the available captions on the opened video to identify the scenic place shown there, then open Street View for it in Google Maps.",
   "source": "https://worldheritagejourney.com/unesco-sites-new-south-wales",
   "gt_steps": [

@@ -11,7 +11,7 @@
     "C2"
   ],
   "difficulty": "hard",
-  "operation_time": 150.29,
+  "operation_time": 211.37,
   "instruction": "I find dense or distracting information difficult to process. Use `ServiceHoursFormattingReference.txt` on the Desktop as the formatting guide, then simplify the CMS page with URL key `service-hours-draft` without changing its schedule. Set both the page title and content heading to `Service Hours`, rewrite the body using the reference format, enable the page, and save it. Use username `admin` and password `admin1234`.",
   "source": "synthetic",
   "gt_steps": [

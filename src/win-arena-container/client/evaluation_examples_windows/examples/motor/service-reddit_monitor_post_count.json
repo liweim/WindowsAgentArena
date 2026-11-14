@@ -9,7 +9,7 @@
     "M3"
   ],
   "difficulty": "medium",
-  "operation_time": 85.96,
+  "operation_time": 133.69,
   "instruction": "Precise mouse control is difficult for me. Turn on Windows Mouse Keys and leave it enabled for me. Find the total number of posts in Reddit's `monitor` forum and save only that number to `answer.txt` on the Desktop.",
   "source": "synthetic",
   "gt_steps": [

@@ -9,7 +9,7 @@
     "C3"
   ],
   "difficulty": "medium",
-  "operation_time": 78.80,
+  "operation_time": 113.66,
   "instruction": "I rely on persistent written records so I do not have to remember important details. Read the pending ingredients in `tomato_egg_shopping_list.xlsx` on the Desktop and add one matching product for each pending ingredient to the shopping cart. Change each purchased item's `Status` from `Pending` to `Done`, then save the spreadsheet.",
   "source": "synthetic",
   "gt_steps": [

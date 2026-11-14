@@ -9,7 +9,7 @@
     "V1"
   ],
   "difficulty": "medium",
-  "operation_time": 106.73,
+  "operation_time": 169.85,
   "instruction": "I rely on a screen reader to follow the content. Turn on Windows Narrator and choose the pharmacy with the shortest displayed walking distance from Marina Bay Sands, Singapore in the provided walking-distance directory, breaking a tie by the shorter walking time. Open that pharmacy's place details and leave them open.",
   "source": "synthetic",
   "gt_steps": [

@@ -9,7 +9,7 @@
     "C3"
   ],
   "difficulty": "medium",
-  "operation_time": 75.40,
+  "operation_time": 108.11,
   "instruction": "I rely on persistent written records so I do not have to remember important details. Read the ginger-ale item and its preferences in `ginger_ale_shopping_list.xlsx` on the Desktop, use the listed preferences and customer reviews to find the matching product on the shopping website, and add exactly one unit to the shopping cart. When finished, check off the ginger-ale item by changing its `Status` from `Pending` to `Done`, then save the spreadsheet.",
   "source": "synthetic",
   "gt_steps": [

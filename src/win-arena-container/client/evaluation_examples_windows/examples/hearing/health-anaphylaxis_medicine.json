@@ -9,7 +9,7 @@
     "H1"
   ],
   "difficulty": "medium",
-  "operation_time": 285.39,
+  "operation_time": 448.62,
   "instruction": "I cannot reliably hear the recording. Turn on Chrome Live Caption and leave it enabled. Identify the medicine needed for anaphylaxis in the opened video, then save the answer in `answer.txt` on the Desktop.",
   "source": "https://medlineplus.gov/medlineplus-videos/histamine-the-stuff-allergies-are-made-of",
   "gt_steps": [
